@@ -129,7 +129,12 @@ class TestF1Score(MetricClassTester):
         target = torch.randint(
             high=num_classes - 1, size=(NUM_TOTAL_UPDATES, BATCH_SIZE)
         )
-        self._test_f1_score_class_with_input(input, target)
+        self._test_f1_score_class_with_input(
+            input,
+            target,
+            num_classes=num_classes,
+            average="macro",
+        )
 
         input = torch.randint(
             high=num_classes - 1, size=(NUM_TOTAL_UPDATES, BATCH_SIZE)

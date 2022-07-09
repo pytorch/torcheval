@@ -91,7 +91,9 @@ class TestF1Score(unittest.TestCase):
 
         input = torch.randint(high=num_classes - 1, size=(BATCH_SIZE,))
         target = torch.randint(high=num_classes - 1, size=(BATCH_SIZE,))
-        self._test_f1_score_with_input(input, target)
+        self._test_f1_score_with_input(
+            input, target, num_classes=num_classes, average="macro"
+        )
 
         input = torch.randint(high=num_classes - 1, size=(BATCH_SIZE,))
         target = torch.randint(high=num_classes, size=(BATCH_SIZE,))
