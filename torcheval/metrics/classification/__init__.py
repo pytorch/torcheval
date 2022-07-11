@@ -6,5 +6,6 @@
 
 from torcheval.metrics.classification.accuracy import Accuracy
 from torcheval.metrics.classification.f1_score import F1Score
+from torcheval.metrics.classification.precision import Precision
 
-__all__ = ["Accuracy", "F1Score"]
+__all__ = ["Accuracy", "F1Score", "Precision"]

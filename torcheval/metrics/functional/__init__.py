@@ -12,6 +12,7 @@ from torcheval.metrics.functional.regression import mean_squared_error, r2_score
 __all__ = [
     "accuracy",
     "f1_score",
+    "precision",
     "mean_squared_error",
     "r2_score",
     "reciprocal_rank",

@@ -20,6 +20,7 @@ __all__ = [
     "Accuracy",
     "Cat",
     "F1Score",
+    "Precision",
     "Max",
     "Mean",
     "MeanSquaredError",
