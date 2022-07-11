@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from torcheval.metrics.functional.aggregation import sum
-from torcheval.metrics.functional.classification import accuracy, f1_score
+from torcheval.metrics.functional.classification import accuracy, f1_score, recall
 from torcheval.metrics.functional.ranking import reciprocal_rank
 from torcheval.metrics.functional.regression import mean_squared_error, r2_score
 
@@ -17,4 +17,5 @@ __all__ = [
     "r2_score",
     "reciprocal_rank",
     "sum",
+    "recall",
 ]
