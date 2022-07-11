@@ -6,6 +6,7 @@
 
 # pyre-ignore-all-errors[6]: expect int got Optional[int] for num_classes
 
+import logging
 from typing import Optional, Tuple
 
 import torch
@@ -111,9 +112,15 @@ def _f1_score_compute(
     num_label: torch.Tensor,
     average: Optional[str],
 ) -> torch.Tensor:
+    # Check if all classes exist in either ``input`` or ``target``
+    mask = (num_label != 0) | ((num_tp + num_fp) != 0)
+    if False in mask:
+        logging.warning(
+            "Warning: there are classes that do not exist in both input and target."
+        )
+
     if average in ("macro", "weighted"):
         # Ignore the class that has no samples in both ``input`` and `target`
-        mask = (num_label != 0) | ((num_tp + num_fp) != 0)
         num_tp, num_fp, num_fn = num_tp[mask], num_fp[mask], num_fn[mask]
 
     precision = num_tp / (num_tp + num_fp)
