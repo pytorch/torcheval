@@ -35,8 +35,8 @@ class TestR2Score(unittest.TestCase):
             my_compute_result,
             compute_result,
             equal_nan=True,
-            atol=1e-8,
-            rtol=1e-5,
+            atol=1e-6,
+            rtol=1e-4,
         )
 
     def test_r2_score_base(self) -> None:
