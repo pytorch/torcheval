@@ -6,7 +6,7 @@
 
 from torcheval.metrics import functional
 from torcheval.metrics.aggregation import Cat, Max, Mean, Min, Sum
-from torcheval.metrics.classification import Accuracy, F1Score
+from torcheval.metrics.classification import Accuracy, F1Score, Recall
 from torcheval.metrics.metric import Metric
 from torcheval.metrics.ranking import ReciprocalRank
 from torcheval.metrics.regression import MeanSquaredError, R2Score
@@ -21,6 +21,7 @@ __all__ = [
     "Cat",
     "F1Score",
     "Precision",
+    "Recall",
     "Max",
     "Mean",
     "MeanSquaredError",
