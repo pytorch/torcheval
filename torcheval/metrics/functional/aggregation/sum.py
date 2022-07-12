@@ -31,7 +31,7 @@ def sum(
         tensor(5.)
         >>> sum(torch.tensor([2, 3]), torch.tensor([0.1, 0.6]))
         tensor(2.)
-        >>> sum(torch.tensor([2, 3]), torch.tensor(0.5)
+        >>> sum(torch.tensor([2, 3]), 0.5)
         tensor(2.5)
     """
     return _sum_update(input, weight)
