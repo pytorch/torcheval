@@ -71,10 +71,10 @@ def f1_score(
         tensor(0.5)
     """
     _f1_score_param_check(num_classes, average)
-    num_tp, num_fp, num_fn, num_label = _f1_score_update(
+    num_tp, num_label, num_prediction = _f1_score_update(
         input, target, num_classes, average
     )
-    return _f1_score_compute(num_tp, num_fp, num_fn, num_label, average)
+    return _f1_score_compute(num_tp, num_label, num_prediction, average)
 
 
 def _f1_score_update(
@@ -82,7 +82,7 @@ def _f1_score_update(
     target: torch.Tensor,
     num_classes: Optional[int],
     average: Optional[str],
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     _f1_score_update_input_check(input, target, num_classes)
 
     if input.ndim == 2:
@@ -90,41 +90,42 @@ def _f1_score_update(
 
     if average == "micro":
         num_tp = (input == target).sum()
-        num_fp = (input != target).sum()
-        num_fn = num_fp
-        return num_tp, num_fp, num_fn, torch.tensor(0.0)
+        num_label = target.new_tensor(target.shape[0])
+        num_prediction = num_label
+        return num_tp, num_label, num_prediction
 
     num_label = target.new_zeros(num_classes).scatter_(0, target, 1, reduce="add")
+    num_prediction = target.new_zeros(num_classes).scatter_(0, input, 1, reduce="add")
     num_tp = target.new_zeros(num_classes).scatter_(
         0, target[input == target], 1, reduce="add"
     )
-    num_fp = target.new_zeros(num_classes).scatter_(
-        0, input[input != target], 1, reduce="add"
-    )
-    num_fn = num_label - num_tp
-    return num_tp, num_fp, num_fn, num_label
+    return num_tp, num_label, num_prediction
 
 
 def _f1_score_compute(
     num_tp: torch.Tensor,
-    num_fp: torch.Tensor,
-    num_fn: torch.Tensor,
     num_label: torch.Tensor,
+    num_prediction: torch.Tensor,
     average: Optional[str],
 ) -> torch.Tensor:
-    # Check if all classes exist in either ``input`` or ``target``
-    mask = (num_label != 0) | ((num_tp + num_fp) != 0)
-    if False in mask:
+    # Check if all classes exist in either ``target``.
+    num_label_is_zero = num_label == 0
+    if num_label_is_zero.any():
         logging.warning(
-            "Warning: there are classes that do not exist in both input and target."
+            "Warning: Some classes do not exist in the target. F1 scores for these classes will be cast to zeros."
         )
 
     if average in ("macro", "weighted"):
-        # Ignore the class that has no samples in both ``input`` and `target`
-        num_tp, num_fp, num_fn = num_tp[mask], num_fp[mask], num_fn[mask]
+        # Ignore the class that has no samples in both ``input`` and `target`.
+        mask = (~num_label_is_zero) | (num_prediction != 0)
+        num_tp, num_label, num_prediction = (
+            num_tp[mask],
+            num_label[mask],
+            num_prediction[mask],
+        )
 
-    precision = num_tp / (num_tp + num_fp)
-    recall = num_tp / (num_tp + num_fn)
+    precision = num_tp / num_prediction
+    recall = num_tp / num_label
     f1 = 2 * precision * recall / (precision + recall)
 
     # Convert NaN to zero when f1 score is NaN. This happens when either precision or recall is NaN or when both precision and recall are zero.

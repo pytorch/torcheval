@@ -87,9 +87,8 @@ class F1Score(Metric[torch.Tensor]):
         self.average = average
         if average == "micro":
             self._add_state("num_tp", torch.tensor(0.0))
-            self._add_state("num_fp", torch.tensor(0.0))
-            self._add_state("num_fn", torch.tensor(0.0))
             self._add_state("num_label", torch.tensor(0.0))
+            self._add_state("num_prediction", torch.tensor(0.0))
         else:
             # num_classes has been verified as a positive integer. Add this line to bypass pyre.
             assert isinstance(
@@ -97,9 +96,8 @@ class F1Score(Metric[torch.Tensor]):
             ), f"num_classes must be a integer, but got {num_classes}"
 
             self._add_state("num_tp", torch.zeros(num_classes))
-            self._add_state("num_fp", torch.zeros(num_classes))
-            self._add_state("num_fn", torch.zeros(num_classes))
             self._add_state("num_label", torch.zeros(num_classes))
+            self._add_state("num_prediction", torch.zeros(num_classes))
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
@@ -114,13 +112,12 @@ class F1Score(Metric[torch.Tensor]):
                 ``torch.argmax`` will be used to convert input into predicted labels.
             target: Tensor of ground truth labels with shape of (n_sample, ).
         """
-        num_tp, num_fp, num_fn, num_label = _f1_score_update(
+        num_tp, num_label, num_prediction = _f1_score_update(
             input, target, self.num_classes, self.average
         )
         self.num_tp += num_tp
-        self.num_fp += num_fp
-        self.num_fn += num_fn
         self.num_label += num_label
+        self.num_prediction += num_prediction
         return self
 
     @torch.inference_mode()
@@ -131,15 +128,13 @@ class F1Score(Metric[torch.Tensor]):
         NaN is returned if no calls to ``update()`` are made before ``compute()`` is called.
         """
         return _f1_score_compute(
-            self.num_tp, self.num_fp, self.num_fn, self.num_label, self.average
+            self.num_tp, self.num_label, self.num_prediction, self.average
         )
 
     @torch.inference_mode()
     def merge_state(self: TF1Score, metrics: Iterable[TF1Score]) -> TF1Score:
         for metric in metrics:
-
             self.num_tp += metric.num_tp.to(self.device)
-            self.num_fp += metric.num_fp.to(self.device)
-            self.num_fn += metric.num_fn.to(self.device)
             self.num_label += metric.num_label.to(self.device)
+            self.num_prediction += metric.num_prediction.to(self.device)
         return self

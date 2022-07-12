@@ -38,7 +38,7 @@ class TestF1Score(MetricClassTester):
             if average == "micro":
                 self.run_class_implementation_tests(
                     metric=F1Score(),
-                    state_names={"num_tp", "num_fp", "num_fn", "num_label"},
+                    state_names={"num_tp", "num_label", "num_prediction"},
                     update_kwargs={
                         "input": input,
                         "target": target,
@@ -53,7 +53,7 @@ class TestF1Score(MetricClassTester):
                         ).to(torch.float32)
                 self.run_class_implementation_tests(
                     metric=F1Score(average=average),
-                    state_names={"num_tp", "num_fp", "num_fn", "num_label"},
+                    state_names={"num_tp", "num_label", "num_prediction"},
                     update_kwargs={
                         "input": input,
                         "target": target,
@@ -64,7 +64,7 @@ class TestF1Score(MetricClassTester):
             if average == "micro":
                 self.run_class_implementation_tests(
                     metric=F1Score(num_classes=num_classes),
-                    state_names={"num_tp", "num_fp", "num_fn", "num_label"},
+                    state_names={"num_tp", "num_label", "num_prediction"},
                     update_kwargs={
                         "input": input,
                         "target": target,
@@ -79,7 +79,7 @@ class TestF1Score(MetricClassTester):
                         ).to(torch.float32)
                 self.run_class_implementation_tests(
                     metric=F1Score(num_classes=num_classes, average=average),
-                    state_names={"num_tp", "num_fp", "num_fn", "num_label"},
+                    state_names={"num_tp", "num_label", "num_prediction"},
                     update_kwargs={
                         "input": input,
                         "target": target,
@@ -171,7 +171,7 @@ class TestF1Score(MetricClassTester):
         ]
         self.run_class_implementation_tests(
             metric=F1Score(),
-            state_names={"num_tp", "num_fp", "num_fn", "num_label"},
+            state_names={"num_tp", "num_label", "num_prediction"},
             update_kwargs={
                 "input": update_input,
                 "target": update_target,
