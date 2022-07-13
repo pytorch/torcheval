@@ -50,12 +50,14 @@ class TestSum(unittest.TestCase):
             torch.rand(BATCH_SIZE, 4),
             torch.rand(BATCH_SIZE, 3, 4),
             torch.rand(5),
+            torch.rand(10),
         ]
         weights = [
             torch.rand(1),
             torch.rand(BATCH_SIZE, 4),
             torch.rand(BATCH_SIZE, 3, 4),
             0.8,
+            2,
         ]
 
         for input, weight in zip(inputs, weights):
@@ -70,6 +72,6 @@ class TestSum(unittest.TestCase):
     def test_sum_input_invalid_weight(self) -> None:
         with self.assertRaisesRegex(
             ValueError,
-            r"Weight must be either a float value or a tensor that matches the input tensor size.",
+            r"Weight must be either a float value or an int value or a tensor that matches the input tensor size.",
         ):
             sum(torch.tensor([2.0, 3.0]), torch.tensor([0.5]))

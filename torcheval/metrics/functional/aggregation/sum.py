@@ -20,9 +20,9 @@ def sum(
 
     Args:
         input: Tensor of input values.
-        weight(optional): Float or Tensor of input weights. It is default to 1.0. If weight is a Tensor, its size should match the input tensor size.
+        weight(optional): Float or Int or Tensor of input weights. It is default to 1.0. If weight is a Tensor, its size should match the input tensor size.
     Raises:
-        ValueError: If value of weight is neither a ``float`` nor a ``torch.Tensor`` that matches the input tensor size.
+        ValueError: If value of weight is neither a ``float`` nor an ``int`` nor a ``torch.Tensor`` that matches the input tensor size.
 
     Example:
         >>> import torch
@@ -33,19 +33,23 @@ def sum(
         tensor(2.)
         >>> sum(torch.tensor([2, 3]), 0.5)
         tensor(2.5)
+        >>> sum(torch.tensor([2, 3]), 2)
+        tensor(10.)
     """
     return _sum_update(input, weight)
 
 
 def _sum_update(
-    input: torch.Tensor, weight: Union[float, torch.Tensor]
+    input: torch.Tensor, weight: Union[float, int, torch.Tensor]
 ) -> torch.Tensor:
-    if isinstance(weight, float) or (
-        isinstance(weight, torch.Tensor) and input.size() == weight.size()
+    if (
+        isinstance(weight, float)
+        or isinstance(weight, int)
+        or (isinstance(weight, torch.Tensor) and input.size() == weight.size())
     ):
         return (input * weight).sum()
     else:
         raise ValueError(
-            "Weight must be either a float value or a tensor that matches the input tensor size. "
+            "Weight must be either a float value or an int value or a tensor that matches the input tensor size. "
             f"Got {weight} instead."
         )

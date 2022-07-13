@@ -55,12 +55,14 @@ class TestSum(MetricClassTester):
             torch.rand(BATCH_SIZE, 4),
             torch.rand(BATCH_SIZE, 3, 4),
             torch.rand(5),
+            torch.rand(10),
         ]
         update_weights = [
             torch.rand(BATCH_SIZE),
             torch.rand(BATCH_SIZE, 4),
             torch.rand(BATCH_SIZE, 3, 4),
             0.8,
+            2,
         ]
 
         def _compute_result(
@@ -82,15 +84,15 @@ class TestSum(MetricClassTester):
                 "weight": update_weights,
             },
             compute_result=_compute_result(update_inputs, update_weights),
-            num_total_updates=4,
-            num_processes=2,
+            num_total_updates=5,
+            num_processes=5,
         )
 
     def test_sum_class_update_input_invalid_weight(self) -> None:
         metric = Sum()
         with self.assertRaisesRegex(
             ValueError,
-            r"Weight must be either a float value or a tensor that matches the input tensor size.",
+            r"Weight must be either a float value or an int value or a tensor that matches the input tensor size.",
         ):
             metric.update(torch.tensor([2.0, 3.0]), torch.tensor([0.5]))
 

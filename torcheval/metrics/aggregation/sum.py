@@ -40,6 +40,8 @@ class Sum(Metric[torch.Tensor]):
         tensor(2.)
         >>> metric.update(torch.tensor([2, 3]), 0.5).compute()
         tensor(4.5)
+        >>> metric.update(torch.tensor([4, 6]), 1).compute()
+        tensor(14.5)
     """
 
     def __init__(self: TSum) -> None:
@@ -49,16 +51,16 @@ class Sum(Metric[torch.Tensor]):
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
     def update(
-        self: TSum, input: torch.Tensor, weight: Union[float, torch.Tensor] = 1.0
+        self: TSum, input: torch.Tensor, weight: Union[float, int, torch.Tensor] = 1.0
     ) -> TSum:
         """
         Update states with the values and weights.
 
         Args:
             input: Tensor of input values.
-            weight(optional): Float or Tensor of input weights. It is default to 1.0. If weight is a Tensor, its size should match the input tensor size.
+            weight(optional): Float or Int or Tensor of input weights. It is default to 1.0. If weight is a Tensor, its size should match the input tensor size.
         Raises:
-            ValueError: If value of weight is neither a ``float`` nor a ``torch.Tensor`` that matches the input tensor size.
+            ValueError: If value of weight is neither a ``float`` nor ``int`` nor a ``torch.Tensor`` that matches the input tensor size.
         """
 
         self.weighted_sum += _sum_update(input, weight)
