@@ -29,7 +29,7 @@ def precision_recall_curve(
             It should be probabilities or logits with shape of (n_sample, n_class),
             or with shape of (n_sample, ) for binary classification.
         target: Tensor of ground truth labels with shape of (n_samples, ).
-        num_classes:
+        num_classes (Optional):
             Number of classes. Required for multi-class classification.
 
     Return:
