@@ -4,6 +4,9 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import List, Union
+
+import numpy as np
 import torch
 from torcheval.metrics import Mean
 from torcheval.test_utils.metric_class_tester import (
@@ -17,7 +20,7 @@ class TestMean(MetricClassTester):
     def _test_mean_class_with_input(self, input_val_tensor: torch.Tensor) -> None:
         self.run_class_implementation_tests(
             metric=Mean(),
-            state_names={"value_sum", "weight"},
+            state_names={"weighted_sum", "weights"},
             update_kwargs={"input": input_val_tensor},
             compute_result=torch.mean(input_val_tensor),
         )
@@ -33,7 +36,7 @@ class TestMean(MetricClassTester):
     def test_mean_class_update_input_dimension_different(self) -> None:
         self.run_class_implementation_tests(
             metric=Mean(),
-            state_names={"value_sum", "weight"},
+            state_names={"weighted_sum", "weights"},
             update_kwargs={
                 "input": [
                     torch.tensor(1.0),
@@ -50,3 +53,57 @@ class TestMean(MetricClassTester):
     def test_mean_class_compute_without_update(self) -> None:
         metric = Mean()
         self.assertEqual(metric.compute(), torch.tensor(0.0))
+
+    def test_mean_class_update_input_valid_weight(self) -> None:
+        update_value = [
+            torch.rand(BATCH_SIZE),
+            torch.rand(BATCH_SIZE, 4),
+            torch.rand(BATCH_SIZE, 3, 4),
+            torch.rand(5),
+            torch.rand(10),
+        ]
+        update_weight = [
+            torch.rand(BATCH_SIZE),
+            torch.rand(BATCH_SIZE, 4),
+            torch.rand(BATCH_SIZE, 3, 4),
+            0.8,
+            4,
+        ]
+
+        def _compute_result(
+            update_value: List[torch.Tensor],
+            update_weight: List[Union[float, int, torch.Tensor]],
+        ) -> torch.Tensor:
+            weighted_sum = 0.0
+            weights = 0.0
+            for v, w in zip(update_value, update_weight):
+                v = v.numpy().flatten()
+                if isinstance(w, torch.Tensor):
+                    w = w.numpy().flatten()
+                else:
+                    w = np.ones_like(v) * w
+                average, sum_weights = np.average(v, weights=w, returned=True)
+                weights += sum_weights
+                weighted_sum += average * sum_weights
+            weighted_mean = weighted_sum / weights
+            return torch.tensor(weighted_mean, dtype=torch.float32)
+
+        self.run_class_implementation_tests(
+            metric=Mean(),
+            state_names={"weighted_sum", "weights"},
+            update_kwargs={
+                "input": update_value,
+                "weight": update_weight,
+            },
+            compute_result=_compute_result(update_value, update_weight),
+            num_total_updates=5,
+            num_processes=5,
+        )
+
+    def test_mean_class_update_input_invalid_weight(self) -> None:
+        metric = Mean()
+        with self.assertRaisesRegex(
+            ValueError,
+            r"Weight must be either a float value or a tensor that matches the input tensor size.",
+        ):
+            metric.update(torch.tensor([2.0, 3.0]), torch.tensor([0.5]))

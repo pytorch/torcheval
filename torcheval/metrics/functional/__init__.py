@@ -14,6 +14,7 @@ __all__ = [
     "f1_score",
     "hit_rate",
     "precision",
+    "mean",
     "mean_squared_error",
     "r2_score",
     "reciprocal_rank",
