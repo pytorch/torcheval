@@ -153,6 +153,7 @@ class MetricClassTester(unittest.TestCase):
             result = test_metric.update(**current_batch_update_kwargs).compute()
 
         final_computation_result = test_metric.compute()
+        # compute result from single process should be same as one merged from multiple processes
         self.assert_result_close(
             final_computation_result,
             self._test_case_spec.compute_result,
@@ -207,10 +208,10 @@ class MetricClassTester(unittest.TestCase):
         self.assert_result_close(result_before_merge, test_metric_0_copy.compute())
 
         # update, merge, compute
-        for i in range(num_total_updates // num_processes):
-            for j in range(num_processes):
+        for i in range(num_processes):
+            for j in range(num_total_updates // num_processes):
                 metric_i_current_batch_update_kwargs = {
-                    k: v[i * num_processes + j]
+                    k: v[i * num_total_updates // num_processes + j]
                     for k, v in self._test_case_spec.update_kwargs.items()
                 }
                 test_metrics[i].update(**metric_i_current_batch_update_kwargs).compute()

@@ -9,5 +9,6 @@ from torcheval.metrics.aggregation.max import Max
 from torcheval.metrics.aggregation.mean import Mean
 from torcheval.metrics.aggregation.min import Min
 from torcheval.metrics.aggregation.sum import Sum
+from torcheval.metrics.aggregation.throughput import Throughput
 
-__all__ = ["Cat", "Max", "Mean", "Min", "Sum"]
+__all__ = ["Cat", "Max", "Mean", "Min", "Sum", "Throughput"]

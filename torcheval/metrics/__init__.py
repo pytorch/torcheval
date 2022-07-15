@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from torcheval.metrics import functional
-from torcheval.metrics.aggregation import Cat, Max, Mean, Min, Sum
+from torcheval.metrics.aggregation import Cat, Max, Mean, Min, Sum, Throughput
 from torcheval.metrics.classification import (
     Accuracy,
     F1Score,
@@ -35,4 +35,5 @@ __all__ = [
     "R2Score",
     "ReciprocalRank",
     "Sum",
+    "Throughput",
 ]
