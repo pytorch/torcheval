@@ -28,6 +28,8 @@ class _MetricClassTestCaseSpecs:
     update_kwargs: Dict[str, Any]
     # pyre-ignore[4]: There's no restrictions on return types of a specific metric computation
     compute_result: Any
+    # pyre-ignore[4]: There's no restrictions on return types of a specific metric computation
+    merge_and_compute_result: Any
     num_total_updates: int = NUM_TOTAL_UPDATES
     num_processes: int = NUM_PROCESSES
     atol: float = 1e-8
@@ -46,6 +48,8 @@ class MetricClassTester(unittest.TestCase):
         update_kwargs: Dict[str, Any],
         # pyre-ignore[2]: There's no restrictions on return types of a specific metric computation
         compute_result: Any,
+        # pyre-ignore[2]: There's no restrictions on return types of a specific metric computation
+        merge_and_compute_result: Any = None,
         num_total_updates: int = NUM_TOTAL_UPDATES,
         num_processes: int = NUM_PROCESSES,
         atol: float = 1e-8,
@@ -88,11 +92,17 @@ class MetricClassTester(unittest.TestCase):
         self.assertGreater(num_processes, 1)
         self.assertEqual(num_total_updates % num_processes, 0)
 
+        merge_and_compute_result = (
+            compute_result
+            if merge_and_compute_result is None
+            else merge_and_compute_result
+        )
         self._test_case_spec = _MetricClassTestCaseSpecs(
             metric,
             state_names,
             update_kwargs,
             compute_result,
+            merge_and_compute_result,
             num_total_updates,
             num_processes,
             atol,
@@ -210,7 +220,7 @@ class MetricClassTester(unittest.TestCase):
         )
         self.assert_result_close(
             final_computation_result,
-            self._test_case_spec.compute_result,
+            self._test_case_spec.merge_and_compute_result,
             atol=self._test_case_spec.atol,
             rtol=self._test_case_spec.rtol,
         )
