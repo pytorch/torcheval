@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from torcheval.metrics.functional.classification.accuracy import accuracy
+from torcheval.metrics.functional.classification.auroc import auroc
 from torcheval.metrics.functional.classification.f1_score import f1_score
 from torcheval.metrics.functional.classification.precision import precision
 from torcheval.metrics.functional.classification.precision_recall_curve import (
@@ -12,4 +13,11 @@ from torcheval.metrics.functional.classification.precision_recall_curve import (
 )
 from torcheval.metrics.functional.classification.recall import recall
 
-__all__ = ["accuracy", "f1_score", "precision", "precision_recall_curve", "recall"]
+__all__ = [
+    "accuracy",
+    "auroc",
+    "f1_score",
+    "precision",
+    "precision_recall_curve",
+    "recall",
+]

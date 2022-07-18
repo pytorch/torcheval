@@ -7,6 +7,7 @@
 from torcheval.metrics.functional.aggregation import sum
 from torcheval.metrics.functional.classification import (
     accuracy,
+    auroc,
     f1_score,
     precision_recall_curve,
     recall,
@@ -16,6 +17,7 @@ from torcheval.metrics.functional.regression import mean_squared_error, r2_score
 
 __all__ = [
     "accuracy",
+    "auroc",
     "f1_score",
     "hit_rate",
     "precision",
