@@ -39,8 +39,10 @@ class ModuleSummaryTest(unittest.TestCase):
         )
 
         inp = torch.randn(10, 4, 5)
+        # pyre-fixme[28]: Unexpected keyword argument `requires_grad`.
         inp = torch.autograd.Variable(inp, requires_grad=True)
 
+        # pyre-fixme[6]: For 1st param expected `Tensor` but got `Variable`.
         inp = FlopTensor(inp)
         start_counting()
         res = inp.bmm(bmm_mat).matmul(mm_mat)
@@ -131,6 +133,7 @@ class ModuleSummaryTest(unittest.TestCase):
 
     def test_torch_pretrained_module(self) -> None:
         """Make sure FLOPs calculation works for a resnet18."""
+        # pyre-fixme[16]: Module `models` has no attribute `resnet18`.
         mod = models.resnet18()
         inp = torch.randn(1, 3, 224, 224)
         all_hooks = []

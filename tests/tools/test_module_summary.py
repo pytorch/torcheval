@@ -66,6 +66,7 @@ class ModuleSummaryTest(unittest.TestCase):
         self.assertEqual(ms1.submodule_summaries["1"].flops_forward, 5760)
         self.assertEqual(ms1.submodule_summaries["1"].flops_backward, 11520)
 
+    # pyre-fixme[3]: Return type must be annotated.
     def test_invalid_max_depth(self):
         """Test for ValueError when providing bad max_depth"""
         model = torch.nn.Conv2d(3, 8, 3)
@@ -74,6 +75,7 @@ class ModuleSummaryTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Got 0."):
             get_module_summary(model, max_depth=0)
 
+    # pyre-fixme[3]: Return type must be annotated.
     def test_lazy_tensor(self):
         """Check for warning when passing in a lazy weight Tensor"""
         model = torch.nn.LazyLinear(10)
@@ -84,6 +86,7 @@ class ModuleSummaryTest(unittest.TestCase):
             ms.num_trainable_parameters
         self.assertTrue(ms.has_uninitialized_param)
 
+    # pyre-fixme[3]: Return type must be annotated.
     def test_lazy_tensor_flops(self):
         """Check for warnings when passing in a lazy weight Tensor
         Even when asking for flops calculation."""
@@ -97,8 +100,10 @@ class ModuleSummaryTest(unittest.TestCase):
         self.assertEqual(ms.flops_backward, -1)
         self.assertEqual(ms.flops_forward, -1)
 
+    # pyre-fixme[3]: Return type must be annotated.
     def test_resnet_max_depth(self):
         """Test the behavior of max_depth on a layered model like ResNet"""
+        # pyre-fixme[16]: Module `models` has no attribute `resnet18`.
         pretrained_model = models.resnet18(pretrained=True)
 
         # max_depth = None
@@ -218,6 +223,7 @@ class ModuleSummaryTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "received -1"):
             _get_human_readable_count(-1)
         with self.assertRaisesRegex(TypeError, "received <class 'float'>"):
+            # pyre-fixme[6]: For 1st param expected `int` but got `float`.
             _get_human_readable_count(0.1)
         self.assertEqual(_get_human_readable_count(1), "1  ")
         self.assertEqual(_get_human_readable_count(123), "123  ")
