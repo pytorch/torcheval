@@ -12,7 +12,7 @@ import numpy as np
 import torch
 from sklearn.metrics import f1_score
 from torcheval.metrics.functional import f1_score as my_f1_score
-from torcheval.test_utils.metric_class_tester import BATCH_SIZE
+from torcheval.utils.test_utils.metric_class_tester import BATCH_SIZE
 
 
 class TestF1Score(unittest.TestCase):

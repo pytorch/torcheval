@@ -12,7 +12,7 @@ import torch
 from sklearn.metrics import recall_score
 
 from torcheval.metrics.classification import Recall
-from torcheval.test_utils.metric_class_tester import (
+from torcheval.utils.test_utils.metric_class_tester import (
     BATCH_SIZE,
     MetricClassTester,
     NUM_TOTAL_UPDATES,

@@ -10,7 +10,7 @@
 import unittest
 
 import torch
-from torcheval.test_utils.dummy_metric import (
+from torcheval.utils.test_utils.dummy_metric import (
     DummySumDictStateMetric,
     DummySumListStateMetric,
     DummySumMetric,

@@ -18,8 +18,11 @@ from torcheval.metrics.toolkit import (
     get_synced_state_dict,
     sync_and_compute,
 )
-from torcheval.test_utils.dummy_metric import DummySumListStateMetric, DummySumMetric
-from torchtlc.utilities.env import init_from_env
+from torcheval.utils.env import init_from_env
+from torcheval.utils.test_utils.dummy_metric import (
+    DummySumListStateMetric,
+    DummySumMetric,
+)
 
 
 class MetricToolkitTest(unittest.TestCase):

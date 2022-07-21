@@ -9,7 +9,7 @@ from typing import Optional
 import torch
 from sklearn.metrics import mean_squared_error
 from torcheval.metrics import MeanSquaredError
-from torcheval.test_utils.metric_class_tester import (
+from torcheval.utils.test_utils.metric_class_tester import (
     BATCH_SIZE,
     MetricClassTester,
     NUM_TOTAL_UPDATES,

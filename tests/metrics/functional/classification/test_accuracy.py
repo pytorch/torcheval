@@ -11,7 +11,7 @@ import numpy as np
 import torch
 from sklearn.metrics import accuracy_score
 from torcheval.metrics.functional import accuracy
-from torcheval.test_utils.metric_class_tester import BATCH_SIZE
+from torcheval.utils.test_utils.metric_class_tester import BATCH_SIZE
 
 
 class TestAccuracy(unittest.TestCase):

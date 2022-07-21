@@ -10,7 +10,7 @@ from typing import Union
 import numpy as np
 import torch
 from torcheval.metrics.functional.aggregation import mean
-from torcheval.test_utils.metric_class_tester import BATCH_SIZE, NUM_TOTAL_UPDATES
+from torcheval.utils.test_utils.metric_class_tester import BATCH_SIZE, NUM_TOTAL_UPDATES
 
 
 class TestMean(unittest.TestCase):

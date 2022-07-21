@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Literal, Sequence, Set
 
 import torch
 from torcheval.metrics import Metric
-from torchtlc.utilities.device import copy_data_to_device
+from torcheval.utils.device import copy_data_to_device
 
 BATCH_SIZE = 16
 # By default, we can test merge_state() on 4 processes with

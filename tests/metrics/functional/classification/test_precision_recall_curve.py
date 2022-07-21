@@ -13,7 +13,7 @@ from torch.nn import functional as F
 from torcheval.metrics.functional import (
     precision_recall_curve as my_precision_recall_curve,
 )
-from torcheval.test_utils.metric_class_tester import BATCH_SIZE
+from torcheval.utils.test_utils.metric_class_tester import BATCH_SIZE
 
 
 class TestPrecisionRecallCurve(unittest.TestCase):

@@ -9,7 +9,7 @@ import unittest
 import torch
 from sklearn.metrics import roc_auc_score
 from torcheval.metrics.functional import auroc
-from torcheval.test_utils.metric_class_tester import BATCH_SIZE
+from torcheval.utils.test_utils.metric_class_tester import BATCH_SIZE
 
 
 class TestAUROC(unittest.TestCase):

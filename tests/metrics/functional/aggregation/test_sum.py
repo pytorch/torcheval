@@ -9,7 +9,7 @@ from typing import Union
 
 import torch
 from torcheval.metrics.functional import sum
-from torcheval.test_utils.metric_class_tester import BATCH_SIZE, NUM_TOTAL_UPDATES
+from torcheval.utils.test_utils.metric_class_tester import BATCH_SIZE, NUM_TOTAL_UPDATES
 
 
 class TestSum(unittest.TestCase):

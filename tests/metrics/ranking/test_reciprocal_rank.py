@@ -6,7 +6,7 @@
 
 import torch
 from torcheval.metrics.ranking import ReciprocalRank
-from torcheval.test_utils.metric_class_tester import MetricClassTester
+from torcheval.utils.test_utils.metric_class_tester import MetricClassTester
 
 
 class TestReciprocalRank(MetricClassTester):

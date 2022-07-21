@@ -6,7 +6,7 @@
 
 import torch
 from torcheval.metrics import Max
-from torcheval.test_utils.metric_class_tester import (
+from torcheval.utils.test_utils.metric_class_tester import (
     BATCH_SIZE,
     MetricClassTester,
     NUM_TOTAL_UPDATES,

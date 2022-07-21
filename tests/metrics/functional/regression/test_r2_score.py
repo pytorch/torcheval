@@ -9,7 +9,7 @@ import unittest
 import torch
 from sklearn.metrics import r2_score
 from torcheval.metrics.functional import r2_score as my_r2_score
-from torcheval.test_utils.metric_class_tester import BATCH_SIZE
+from torcheval.utils.test_utils.metric_class_tester import BATCH_SIZE
 
 
 class TestR2Score(unittest.TestCase):

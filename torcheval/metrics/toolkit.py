@@ -11,7 +11,7 @@ from typing import Any, Dict, List, Literal, Optional, Union
 import torch.distributed as dist
 from torcheval.metrics import Metric
 
-from torchtlc.utilities.distributed import PGWrapper
+from torcheval.utils.distributed import PGWrapper
 
 log: logging.Logger = logging.getLogger(__name__)
 

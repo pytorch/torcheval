@@ -9,7 +9,7 @@ from typing import List
 
 import torch
 from torcheval.metrics import Throughput
-from torcheval.test_utils.metric_class_tester import (
+from torcheval.utils.test_utils.metric_class_tester import (
     MetricClassTester,
     NUM_PROCESSES,
     NUM_TOTAL_UPDATES,

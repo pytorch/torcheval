@@ -12,7 +12,7 @@ from sklearn.metrics import precision_recall_curve
 from torch.nn import functional as F
 
 from torcheval.metrics import PrecisionRecallCurve
-from torcheval.test_utils.metric_class_tester import (
+from torcheval.utils.test_utils.metric_class_tester import (
     BATCH_SIZE,
     MetricClassTester,
     NUM_TOTAL_UPDATES,

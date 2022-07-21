@@ -10,7 +10,7 @@ from typing import Optional
 import torch
 from sklearn.metrics import mean_squared_error
 from torcheval.metrics.functional import mean_squared_error as my_mean_squared_error
-from torcheval.test_utils.metric_class_tester import BATCH_SIZE
+from torcheval.utils.test_utils.metric_class_tester import BATCH_SIZE
 
 
 class TestMeanSquaredError(unittest.TestCase):

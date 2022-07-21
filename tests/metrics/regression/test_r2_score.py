@@ -7,7 +7,7 @@
 import torch
 from sklearn.metrics import r2_score
 from torcheval.metrics import R2Score
-from torcheval.test_utils.metric_class_tester import (
+from torcheval.utils.test_utils.metric_class_tester import (
     BATCH_SIZE,
     MetricClassTester,
     NUM_TOTAL_UPDATES,

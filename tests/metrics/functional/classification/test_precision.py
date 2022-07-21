@@ -12,7 +12,7 @@ import numpy as np
 import torch
 from sklearn.metrics import precision_score
 from torcheval.metrics.functional.classification import precision as my_precision
-from torcheval.test_utils.metric_class_tester import BATCH_SIZE
+from torcheval.utils.test_utils.metric_class_tester import BATCH_SIZE
 
 
 class TestPrecision(unittest.TestCase):
