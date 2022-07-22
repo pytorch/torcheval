@@ -8,6 +8,7 @@ from torcheval.metrics import functional
 from torcheval.metrics.aggregation import Cat, Max, Mean, Min, Sum, Throughput
 from torcheval.metrics.classification import (
     Accuracy,
+    AUROC,
     F1Score,
     PrecisionRecallCurve,
     Recall,
@@ -23,6 +24,7 @@ __all__ = [
     "functional",
     ## class metrics
     "Accuracy",
+    "AUROC",
     "Cat",
     "F1Score",
     "Precision",
