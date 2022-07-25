@@ -137,3 +137,96 @@ def _accuracy_update_input_check(
             "input should have shape of (num_sample,) or (num_sample, num_classes), "
             f"got {input.shape}."
         )
+
+
+@torch.inference_mode()
+def multi_label_accuracy(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    threshold: float = 0.5,
+    criteria: str = "exact_match",
+) -> torch.Tensor:
+    """
+    Compute multilabel accuracy score, which is the frequency of input matching target.
+    Its class version is ``torcheval.metrics.MultiLabelAccuracy``.
+
+    Args:
+        input: Tensor of label predictions with shape of (n_sample, n_class).
+            `torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
+        target: Tensor of ground truth labels with shape of (n_sample, n_class).
+        threshold: Threshold for computing positive and negative classes in each sample.
+            Raises ``ValueError`` if threshold not in [0, 1].
+        criteria:
+        - ``'exact_match'``[default]:
+            The set of labels predicted for a sample must exactly match the corresponding
+            set of labels in target. Also known as subset accuracy.
+        - ``'hamming'``:
+            Fraction of correct labels over total number of labels.
+
+    Example:
+        >>> import torch
+        >>> from torcheval.metrics.functional import multi_label_accuracy
+        >>> input = torch.tensor([[0, 1], [1, 1], [0, 0], [0, 1]])
+        >>> target = torch.tensor([[0, 1], [1, 0], [0, 0], [1, 1]])
+        >>> multi_label_accuracy(input, target)
+        tensor(0.5)  # 2 / 4
+
+        >>> input = torch.tensor([[0, 1], [1, 1], [0, 0], [0, 1]])
+        >>> target = torch.tensor([[0, 1], [1, 0], [0, 0], [1, 1]])
+        >>> multi_label_accuracy(input, target, criteria="hamming")
+        tensor(0.75)  # 6 / 8
+    """
+
+    _multi_label_accuracy_param_check(threshold, criteria)
+    num_correct, num_total = _multi_label_accuracy_update(
+        input, target, threshold, criteria
+    )
+    return _accuracy_compute(num_correct, num_total, "micro")
+
+
+def _multi_label_accuracy_update(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    threshold: float = 0.5,
+    criteria: str = "exact_match",
+) -> Tuple[torch.Tensor, torch.Tensor]:
+
+    _multi_label_accuracy_update_input_check(input, target)
+
+    input = torch.where(input < threshold, 0, 1)
+
+    if criteria == "exact_match":
+        num_correct = torch.all(input == target, dim=1).sum()
+        num_total = torch.tensor(target.shape[0])
+        return num_correct, num_total
+
+    # Hamming
+    num_correct = (input == target).sum()
+    num_total = target.new_tensor(target.numel())
+    return num_correct, num_total
+
+
+def _multi_label_accuracy_param_check(
+    threshold: float,
+    criteria: str,
+) -> None:
+    if not 0 <= threshold <= 1:
+        raise ValueError(
+            f"`threshold` must be a number between 0 and 1, got {threshold}"
+        )
+    criteria_options = ("exact_match", "hamming")
+    if criteria not in criteria_options:
+        raise ValueError(
+            f"`criteria` was not in the allowed value of {criteria_options}, got {criteria}."
+        )
+
+
+def _multi_label_accuracy_update_input_check(
+    input: torch.Tensor,
+    target: torch.Tensor,
+) -> None:
+    if input.shape != target.shape:
+        raise ValueError(
+            "The `input` and `target` should have the same dimensions, "
+            f"got shapes {input.shape} and {target.shape}."
+        )

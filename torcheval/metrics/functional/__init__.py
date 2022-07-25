@@ -9,6 +9,7 @@ from torcheval.metrics.functional.classification import (
     accuracy,
     auroc,
     f1_score,
+    multi_label_accuracy,
     precision_recall_curve,
     recall,
 )
@@ -22,6 +23,7 @@ __all__ = [
     "hit_rate",
     "precision",
     "mean",
+    "multi_label_accuracy",
     "precision_recall_curve",
     "mean_squared_error",
     "r2_score",
