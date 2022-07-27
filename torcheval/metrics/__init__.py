@@ -9,7 +9,9 @@ from torcheval.metrics.aggregation import Cat, Max, Mean, Min, Sum, Throughput
 from torcheval.metrics.classification import (
     Accuracy,
     AUROC,
+    BinaryPrecisionRecallCurve,
     F1Score,
+    MulticlassPrecisionRecallCurve,
     MultiLabelAccuracy,
     Recall,
 )
@@ -25,9 +27,11 @@ __all__ = [
     ## class metrics
     "Accuracy",
     "AUROC",
+    "BinaryPrecisionRecallCurve",
     "Cat",
     "F1Score",
     "MultiLabelAccuracy",
+    "MulticlassPrecisionRecallCurve",
     "Precision",
     "Recall",
     "Max",
