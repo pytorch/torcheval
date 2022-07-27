@@ -11,7 +11,6 @@ from torcheval.metrics.classification import (
     AUROC,
     F1Score,
     MultiLabelAccuracy,
-    PrecisionRecallCurve,
     Recall,
 )
 from torcheval.metrics.metric import Metric
@@ -30,7 +29,6 @@ __all__ = [
     "F1Score",
     "MultiLabelAccuracy",
     "Precision",
-    "PrecisionRecallCurve",
     "Recall",
     "Max",
     "Mean",

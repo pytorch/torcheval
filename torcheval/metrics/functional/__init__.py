@@ -8,9 +8,10 @@ from torcheval.metrics.functional.aggregation import sum
 from torcheval.metrics.functional.classification import (
     accuracy,
     auroc,
+    binary_precision_recall_curve,
     f1_score,
     multi_label_accuracy,
-    precision_recall_curve,
+    multiclass_precision_recall_curve,
     recall,
 )
 from torcheval.metrics.functional.ranking import hit_rate, reciprocal_rank
@@ -19,6 +20,7 @@ from torcheval.metrics.functional.regression import mean_squared_error, r2_score
 __all__ = [
     "accuracy",
     "auroc",
+    "binary_precision_recall_curve",
     "f1_score",
     "hit_rate",
     "precision",
@@ -26,6 +28,7 @@ __all__ = [
     "multi_label_accuracy",
     "precision_recall_curve",
     "mean_squared_error",
+    "multiclass_precision_recall_curve",
     "r2_score",
     "reciprocal_rank",
     "sum",

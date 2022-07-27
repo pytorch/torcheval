@@ -12,16 +12,18 @@ from torcheval.metrics.functional.classification.auroc import auroc
 from torcheval.metrics.functional.classification.f1_score import f1_score
 from torcheval.metrics.functional.classification.precision import precision
 from torcheval.metrics.functional.classification.precision_recall_curve import (
-    precision_recall_curve,
+    binary_precision_recall_curve,
+    multiclass_precision_recall_curve,
 )
 from torcheval.metrics.functional.classification.recall import recall
 
 __all__ = [
     "accuracy",
     "auroc",
+    "binary_precision_recall_curve",
     "f1_score",
     "multi_label_accuracy",
+    "multiclass_precision_recall_curve",
     "precision",
-    "precision_recall_curve",
     "recall",
 ]
