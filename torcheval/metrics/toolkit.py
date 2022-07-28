@@ -6,12 +6,13 @@
 
 import logging
 from copy import deepcopy
-from typing import Any, Dict, List, Literal, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import torch.distributed as dist
 from torcheval.metrics import Metric
 
 from torcheval.utils.distributed import PGWrapper
+from typing_extensions import Literal
 
 log: logging.Logger = logging.getLogger(__name__)
 
