@@ -173,6 +173,9 @@ def _test_helper(
     compute_result = [
         torch.tensor(x.copy(), dtype=torch.float32) for x in compute_result
     ]
+    if torch.isnan(compute_result[1][0]):
+        compute_result[1] = torch.tensor([1.0, 0.0], device=compute_result[1].device)
+
     for my_tensor, tensor in zip(my_compute_result, compute_result):
         torch.testing.assert_close(
             my_tensor,

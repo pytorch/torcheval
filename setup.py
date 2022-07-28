@@ -6,12 +6,18 @@
 
 import os
 
+from typing import List
 from setuptools import find_packages, setup
 from torcheval import __version__
 
 
 def current_path(file_name):
     return os.path.abspath(os.path.join(__file__, os.path.pardir, file_name))
+
+
+def read_requirements(file_name: str) -> List[str]:
+    with open(current_path(file_name), encoding="utf8") as f:
+        return f.read().strip().split()
 
 
 if __name__ == "__main__":
@@ -30,6 +36,7 @@ if __name__ == "__main__":
         license="BSD-3",
         keywords=["pytorch", "evaluation", "metrics"],
         python_requires=">=3.7",
+        install_requires=read_requirements("requirements.txt"),
         packages=find_packages(),
         zip_safe=True,
         classifiers=[
@@ -41,4 +48,5 @@ if __name__ == "__main__":
             "Programming Language :: Python :: 3.7",
             "Topic :: Scientific/Engineering :: Artificial Intelligence",
         ],
+        extras_require={"dev": read_requirements("dev-requirements.txt")}
     )

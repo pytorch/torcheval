@@ -1,0 +1,7 @@
+numpy
+torchvision
+pre-commit
+pytest
+pytest-cov
+Cython>=0.28.5
+scikit-learn==0.22

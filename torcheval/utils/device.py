@@ -7,9 +7,10 @@
 import os
 from collections import defaultdict
 from dataclasses import fields, is_dataclass
-from typing import Any, Mapping, Protocol, runtime_checkable, TypeVar
+from typing import Any, Mapping, TypeVar
 
 import torch
+from typing_extensions import Protocol, runtime_checkable
 
 
 def get_device_from_env() -> torch.device:

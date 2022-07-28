@@ -7,7 +7,7 @@
 import os
 import unittest
 import uuid
-from typing import Callable, Literal, Type, Union
+from typing import Callable, Type, Union
 
 import torch
 import torch.distributed.launcher as pet
@@ -23,6 +23,7 @@ from torcheval.utils.test_utils.dummy_metric import (
     DummySumListStateMetric,
     DummySumMetric,
 )
+from typing_extensions import Literal
 
 
 class MetricToolkitTest(unittest.TestCase):
