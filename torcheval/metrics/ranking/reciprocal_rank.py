@@ -9,6 +9,7 @@
 from typing import Iterable, Optional, TypeVar
 
 import torch
+
 from torcheval.metrics.functional import reciprocal_rank
 from torcheval.metrics.metric import Metric
 

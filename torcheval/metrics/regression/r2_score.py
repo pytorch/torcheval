@@ -9,6 +9,7 @@
 from typing import Iterable, TypeVar
 
 import torch
+
 from torcheval.metrics.functional.regression.r2_score import (
     _r2_score_compute,
     _r2_score_param_check,

@@ -20,11 +20,11 @@ from torcheval.metrics.ranking import ReciprocalRank
 from torcheval.metrics.regression import MeanSquaredError, R2Score
 
 __all__ = [
-    ## base interface
+    # base interface
     "Metric",
-    ## functional metrics
+    # functional metrics
     "functional",
-    ## class metrics
+    # class metrics
     "Accuracy",
     "AUROC",
     "BinaryPrecisionRecallCurve",

@@ -9,6 +9,7 @@
 from typing import Iterable, Optional, TypeVar
 
 import torch
+
 from torcheval.metrics.functional.regression.mean_squared_error import (
     _mean_squared_error_compute,
     _mean_squared_error_param_check,

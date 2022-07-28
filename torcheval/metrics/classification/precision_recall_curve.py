@@ -9,6 +9,7 @@
 from typing import Iterable, List, Optional, Tuple, TypeVar
 
 import torch
+
 from torcheval.metrics.functional.classification.precision_recall_curve import (
     _binary_precision_recall_curve_compute,
     _binary_precision_recall_curve_update,

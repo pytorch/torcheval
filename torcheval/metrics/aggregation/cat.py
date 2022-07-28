@@ -10,6 +10,7 @@
 from typing import Iterable, TypeVar
 
 import torch
+
 from torcheval.metrics.metric import Metric
 
 TCat = TypeVar("TCat")

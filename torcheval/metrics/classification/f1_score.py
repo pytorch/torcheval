@@ -9,6 +9,7 @@
 from typing import Iterable, Optional, TypeVar
 
 import torch
+
 from torcheval.metrics.functional.classification.f1_score import (
     _f1_score_compute,
     _f1_score_param_check,

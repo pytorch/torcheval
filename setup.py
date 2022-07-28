@@ -7,6 +7,7 @@
 import os
 
 from typing import List
+
 from setuptools import find_packages, setup
 from torcheval import __version__
 
@@ -48,5 +49,5 @@ if __name__ == "__main__":
             "Programming Language :: Python :: 3.7",
             "Topic :: Scientific/Engineering :: Artificial Intelligence",
         ],
-        extras_require={"dev": read_requirements("dev-requirements.txt")}
+        extras_require={"dev": read_requirements("dev-requirements.txt")},
     )

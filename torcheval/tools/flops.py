@@ -5,11 +5,11 @@
 # LICENSE file in the root directory of this source tree.
 
 import logging
+import operator
 from collections import defaultdict
+from functools import reduce
 from numbers import Number
 from typing import Any, Callable, DefaultDict, Dict, List, Optional, Tuple
-from functools import reduce
-import operator
 
 import torch
 from torch.utils._pytree import PyTree, tree_map
@@ -85,7 +85,11 @@ def _conv_flop_count(
     """
     batch_size = x_shape[0]
     conv_shape = (x_shape if transposed else out_shape)[2:]
-    flop = batch_size * reduce(operator.mul, w_shape, 1) * reduce(operator.mul, conv_shape, 1)
+    flop = (
+        batch_size
+        * reduce(operator.mul, w_shape, 1)
+        * reduce(operator.mul, conv_shape, 1)
+    )
     return flop
 
 

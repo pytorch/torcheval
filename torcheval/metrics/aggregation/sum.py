@@ -9,6 +9,7 @@
 from typing import Iterable, TypeVar, Union
 
 import torch
+
 from torcheval.metrics.functional.aggregation.sum import _sum_update
 from torcheval.metrics.metric import Metric
 

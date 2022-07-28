@@ -9,6 +9,7 @@
 from typing import Iterable, Optional, TypeVar
 
 import torch
+
 from torcheval.metrics.functional.classification.accuracy import (
     _accuracy_compute,
     _accuracy_param_check,
