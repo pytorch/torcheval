@@ -4,7 +4,11 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+import argparse
 import os
+import sys
+
+from datetime import date
 
 from typing import List
 
@@ -21,13 +25,36 @@ def read_requirements(file_name: str) -> List[str]:
         return f.read().strip().split()
 
 
+def get_nightly_version() -> str:
+    return date.today().strftime("%Y.%m.%d")
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="torcheval setup")
+    parser.add_argument(
+        "--nightly",
+        dest="nightly",
+        action="store_true",
+        help="enable settings for nightly package build",
+    )
+    parser.set_defaults(nightly=False)
+    return parser.parse_known_args()
+
+
 if __name__ == "__main__":
     with open(current_path("README.md"), encoding="utf8") as f:
         readme = f.read()
 
+    custom_args, setup_args = parse_args()
+    package_name = "torcheval" if not custom_args.nightly else "torcheval-nightly"
+    version = __version__ if not custom_args.nightly else get_nightly_version()
+    print(f"using package_name={package_name}, version={version}")
+
+    sys.argv = [sys.argv[0]] + setup_args
+
     setup(
-        name="torcheval",
-        version=__version__,
+        name=package_name,
+        version=version,
         author="torcheval team",
         author_email="yicongd@fb.com",
         description="A library for providing a simple interface to create new metrics and an easy-to-use toolkit for metric computations and checkpointing.",
