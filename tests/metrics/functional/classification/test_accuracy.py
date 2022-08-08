@@ -245,3 +245,112 @@ class TestMultilabelAccuracy(unittest.TestCase):
             r"got shapes torch.Size\(\[4, 2\]\) and torch.Size\(\[3\]\).",
         ):
             multilabel_accuracy(torch.rand(4, 2), torch.rand(3))
+
+
+class TestTopKAccuracy(unittest.TestCase):
+    def test_topk_accuracy_with_input(self) -> None:
+        input = torch.tensor(
+            [
+                [0.9, 0.1, 0, 0],
+                [0.1, 0.2, 0.4, 0.3],
+                [0.4, 0.4, 0.1, 0.1],
+                [0, 0, 0.8, 0.2],
+            ]
+        )
+        target = torch.tensor([0, 1, 2, 3])
+
+        compute_result = torch.tensor(0.5)
+        torch.testing.assert_close(
+            multiclass_accuracy(input, target, k=2),
+            compute_result,
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+        compute_result = torch.tensor(1.0)
+        torch.testing.assert_close(
+            multiclass_accuracy(input, target, k=4),
+            compute_result,
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+    def test_topk_accuracy_with_input_macro(self) -> None:
+        input = torch.tensor(
+            [
+                [0.9, 0.1, 0, 0],
+                [0.9, 0.1, 0, 0],
+                [0.3, 0.2, 0.4, 0.1],
+                [0.3, 0.2, 0.4, 0.1],
+                [0.4, 0.4, 0.1, 0.1],
+                [0.3, 0.5, 0.1, 0.1],
+            ]
+        )
+        target = torch.tensor([0, 0, 0, 0, 2, 2])
+
+        compute_result = torch.tensor(0.5)
+        torch.testing.assert_close(
+            multiclass_accuracy(input, target, average="macro", num_classes=4, k=2),
+            compute_result,
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+        compute_result = torch.tensor(1.0)
+        torch.testing.assert_close(
+            multiclass_accuracy(input, target, average="macro", num_classes=4, k=4),
+            compute_result,
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+    def test_topk_accuracy_with_input_no_average(self) -> None:
+        input = torch.tensor(
+            [
+                [0.9, 0.1, 0, 0],
+                [0.9, 0.1, 0, 0],
+                [0.3, 0.2, 0.4, 0.1],
+                [0.3, 0.2, 0.4, 0.1],
+                [0.4, 0.4, 0.1, 0.1],
+                [0.3, 0.5, 0.1, 0.1],
+            ]
+        )
+        target = torch.tensor([0, 0, 0, 0, 2, 2])
+
+        compute_result = torch.tensor([1.0, np.NAN, 0, np.NAN])
+        torch.testing.assert_close(
+            multiclass_accuracy(input, target, average=None, num_classes=4, k=2),
+            compute_result,
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+        compute_result = torch.tensor([1.0, np.NAN, 1.0, np.NAN])
+        torch.testing.assert_close(
+            multiclass_accuracy(input, target, average=None, num_classes=4, k=4),
+            compute_result,
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+    def test_topk_accuracy_invalid_params(self) -> None:
+        k = -2
+        with self.assertRaisesRegex(
+            ValueError,
+            f"Expected `k` to be an integer greater than 0, but {k} was provided.",
+        ):
+            multiclass_accuracy(torch.rand(4, 2), torch.rand(4), k=k)
+
+        input = torch.rand(2)
+        with self.assertRaisesRegex(
+            ValueError,
+            r"input should have shape \(num_sample, num_classes\) for k > 1, "
+            r"got shape torch.Size\(\[2\]\).",
+        ):
+            multiclass_accuracy(input, torch.rand(2), k=2)

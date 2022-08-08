@@ -7,6 +7,7 @@
 import numpy as np
 
 import torch
+
 from sklearn.metrics import accuracy_score
 from torcheval.metrics import BinaryAccuracy, MulticlassAccuracy, MultilabelAccuracy
 from torcheval.utils.test_utils.metric_class_tester import (
@@ -241,3 +242,118 @@ class TestMultilabelAccuracy(MetricClassTester):
             r"got shapes torch.Size\(\[4, 2\]\) and torch.Size\(\[3\]\).",
         ):
             metric.update(torch.rand(4, 2), torch.rand(3))
+
+
+class TestTopKAccuracy(MetricClassTester):
+    def test_accuracy_class_base(self) -> None:
+
+        input = torch.tensor(
+            [
+                [
+                    [0.1, 0.2, 0.3, 0.4],
+                    [0.1, 0.2, 0.3, 0.4],
+                ],
+                [
+                    [0.1, 0.2, 0.3, 0.4],
+                    [0.1, 0.2, 0.3, 0.4],
+                ],
+                [
+                    [0.1, 0.2, 0.3, 0.4],
+                    [0.1, 0.2, 0.3, 0.4],
+                ],
+                [
+                    [0.1, 0.2, 0.3, 0.4],
+                    [0.1, 0.2, 0.3, 0.4],
+                ],
+            ]
+        )
+        target = torch.tensor([[0, 1], [2, 3], [0, 1], [2, 3]])
+        compute_result = torch.tensor(0.5)
+        self.run_class_implementation_tests(
+            metric=MulticlassAccuracy(k=2),
+            state_names={"num_correct", "num_total"},
+            update_kwargs={"input": input, "target": target},
+            compute_result=compute_result,
+            num_total_updates=4,
+        )
+
+    def test_accuracy_class_macro(self) -> None:
+
+        input = torch.tensor(
+            [
+                [
+                    [0.9, 0.1, 0, 0],
+                    [0.9, 0.1, 0, 0],
+                ],
+                [
+                    [0.3, 0.2, 0.4, 0.1],
+                    [0.3, 0.2, 0.4, 0.1],
+                ],
+                [
+                    [0.3, 0.2, 0.4, 0.1],
+                    [0.3, 0.2, 0.4, 0.1],
+                ],
+                [
+                    [0.4, 0.4, 0.1, 0.1],
+                    [0.3, 0.5, 0.1, 0.1],
+                ],
+            ]
+        )
+        target = torch.tensor([[0, 0], [0, 0], [0, 0], [2, 2]])
+        compute_result = torch.tensor(0.5)
+        self.run_class_implementation_tests(
+            metric=MulticlassAccuracy(k=2, average="macro", num_classes=4),
+            state_names={"num_correct", "num_total"},
+            update_kwargs={"input": input, "target": target},
+            compute_result=compute_result,
+            num_total_updates=4,
+        )
+
+    def test_accuracy_class_no_average(self) -> None:
+
+        input = torch.tensor(
+            [
+                [
+                    [0.9, 0.1, 0, 0],
+                    [0.9, 0.1, 0, 0],
+                ],
+                [
+                    [0.3, 0.2, 0.4, 0.1],
+                    [0.3, 0.2, 0.4, 0.1],
+                ],
+                [
+                    [0.3, 0.2, 0.4, 0.1],
+                    [0.3, 0.2, 0.4, 0.1],
+                ],
+                [
+                    [0.4, 0.4, 0.1, 0.1],
+                    [0.3, 0.5, 0.1, 0.1],
+                ],
+            ]
+        )
+        target = torch.tensor([[0, 0], [0, 0], [0, 0], [2, 2]])
+        compute_result = torch.tensor([1.0, np.NAN, 0, np.NAN])
+        self.run_class_implementation_tests(
+            metric=MulticlassAccuracy(k=2, average=None, num_classes=4),
+            state_names={"num_correct", "num_total"},
+            update_kwargs={"input": input, "target": target},
+            compute_result=compute_result,
+            num_total_updates=4,
+        )
+
+    def test_topk_accuracy_invalid_params(self) -> None:
+        k = -2
+        with self.assertRaisesRegex(
+            ValueError,
+            f"Expected `k` to be an integer greater than 0, but {k} was provided.",
+        ):
+            MulticlassAccuracy(k=k)
+
+        input = torch.rand(2)
+        metric = MulticlassAccuracy(k=2)
+        with self.assertRaisesRegex(
+            ValueError,
+            r"input should have shape \(num_sample, num_classes\) for k > 1, "
+            r"got shape torch.Size\(\[2\]\).",
+        ):
+            metric.update(input, torch.rand(2))

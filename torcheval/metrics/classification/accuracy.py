@@ -43,6 +43,8 @@ class MulticlassAccuracy(Metric[torch.Tensor]):
                 NaN is returned if a class has no sample in ``target``.
         num_classes:
             Number of classes. Required for ``'macro'`` and ``None`` average methods.
+        k: Number of top probabilities to be considered. K should be an integer greater than or equal to 1.
+            If k >1, the input tensor must contain probabilities or logits for every class.
 
     Example:
         >>> import torch
@@ -80,11 +82,13 @@ class MulticlassAccuracy(Metric[torch.Tensor]):
         self: TAccuracy,
         average: Optional[str] = "micro",
         num_classes: Optional[int] = None,
+        k: int = 1,
     ) -> None:
         super().__init__()
-        _accuracy_param_check(average, num_classes)
+        _accuracy_param_check(average, num_classes, k)
         self.average = average
         self.num_classes = num_classes
+        self.k = k
         if average == "micro":
             self._add_state("num_correct", torch.tensor(0.0))
             self._add_state("num_total", torch.tensor(0.0))
@@ -107,7 +111,7 @@ class MulticlassAccuracy(Metric[torch.Tensor]):
             target: Tensor of ground truth labels with shape of (n_sample, ).
         """
         num_correct, num_total = _multiclass_accuracy_update(
-            input, target, self.average, self.num_classes
+            input, target, self.average, self.num_classes, self.k
         )
         self.num_correct += num_correct
         self.num_total += num_total

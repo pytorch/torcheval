@@ -53,6 +53,7 @@ def multiclass_accuracy(
     target: torch.Tensor,
     average: Optional[str] = "micro",
     num_classes: Optional[int] = None,
+    k: int = 1,
 ) -> torch.Tensor:
     """
     Compute accuracy score, which is the frequency of input matching target.
@@ -76,6 +77,8 @@ def multiclass_accuracy(
                 NaN is returned if a class has no sample in ``target``.
         num_classes:
             Number of classes. Required for ``'macro'`` and ``None`` average methods.
+        k: Number of top probabilities to be considered. K should be an integer greater than or equal to 1.
+            If k >1, the input tensor must contain probabilities or logits for every class.
 
     Example:
         >>> import torch
@@ -93,9 +96,9 @@ def multiclass_accuracy(
         tensor(0.5)
     """
 
-    _accuracy_param_check(average, num_classes)
+    _accuracy_param_check(average, num_classes, k)
     num_correct, num_total = _multiclass_accuracy_update(
-        input, target, average, num_classes
+        input, target, average, num_classes, k
     )
     return _accuracy_compute(num_correct, num_total, average)
 
@@ -149,24 +152,29 @@ def _multiclass_accuracy_update(
     target: torch.Tensor,
     average: Optional[str],
     num_classes: Optional[int],
+    k: int,
 ) -> Tuple[torch.Tensor, torch.Tensor]:
 
-    _accuracy_update_input_check(input, target, num_classes)
+    _accuracy_update_input_check(input, target, num_classes, k)
 
-    if input.ndim == 2:
-        input = torch.argmax(input, dim=1)
+    if k == 1:
+        if input.ndim == 2:
+            input = torch.argmax(input, dim=1)
+        mask = (input == target).long()
+    else:
+        y_score = torch.gather(input, dim=-1, index=target.unsqueeze(dim=-1))
+        rank = torch.gt(input, y_score).sum(dim=-1)
+        mask = (rank < k).float()
 
     if average == "micro":
-        num_correct = (input == target).sum()
+        num_correct = mask.sum()
         num_total = torch.tensor(target.shape[0])
         return num_correct, num_total
 
     # pyre-ignore[6]: expect int got Optional[int] for num_classes
-    num_correct = input.new_zeros((num_classes)).scatter_(
-        0, target, (target == input).long(), reduce="add"
-    )
+    num_correct = mask.new_zeros(num_classes).scatter_(0, target, mask, reduce="add")
     # pyre-ignore[6]: expect int got Optional[int] for num_classes
-    num_total = target.new_zeros((num_classes)).scatter_(0, target, 1, reduce="add")
+    num_total = target.new_zeros(num_classes).scatter_(0, target, 1, reduce="add")
     return num_correct, num_total
 
 
@@ -185,7 +193,8 @@ def _accuracy_compute(
 
 def _accuracy_param_check(
     average: Optional[str],
-    num_classes: Optional[int] = None,
+    num_classes: Optional[int],
+    k: int,
 ) -> None:
     average_options = ("micro", "macro", "none", None)
     if average not in average_options:
@@ -197,12 +206,19 @@ def _accuracy_param_check(
             f"num_classes should be a positive number when average={average}."
             f" Got num_classes={num_classes}."
         )
+    if type(k) != int:
+        raise TypeError(f"Expected `k` to be an integer, but {type(k)} was provided.")
+    if k < 1:
+        raise ValueError(
+            f"Expected `k` to be an integer greater than 0, but {k} was provided."
+        )
 
 
 def _accuracy_update_input_check(
     input: torch.Tensor,
     target: torch.Tensor,
     num_classes: Optional[int],
+    k: int,
 ) -> None:
     if input.size(0) != target.size(0):
         raise ValueError(
@@ -213,6 +229,12 @@ def _accuracy_update_input_check(
     if target.ndim != 1:
         raise ValueError(
             f"target should be a one-dimensional tensor, got shape {target.shape}."
+        )
+
+    if k > 1 and input.ndim != 2:
+        raise ValueError(
+            "input should have shape (num_sample, num_classes) for k > 1, "
+            f"got shape {input.shape}."
         )
 
     if not input.ndim == 1 and not (
