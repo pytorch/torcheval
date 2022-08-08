@@ -21,7 +21,7 @@ pip install --pre torcheval-nightly
 From source:
 
 ```bash
-git clone https://github.com/facebookresearch/torcheval
+git clone https://github.com/pytorch-labs/torcheval
 cd torcheval
 pip install -r requirements.txt
 python setup.py install
@@ -80,7 +80,7 @@ for epoch in range(num_epochs):
     # metric.reset() cleans up all seen data
     metric.reset()
 ```
-See the [example directory](https://github.com/facebookresearch/torcheval/tree/main/examples) for more examples.
+See the [example directory](https://github.com/pytorch-labs/torcheval/tree/main/examples) for more examples.
 
 ## Contributing
 We welcome PRs! See the [CONTRIBUTING](CONTRIBUTING.md) file.

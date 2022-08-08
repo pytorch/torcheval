@@ -6,7 +6,7 @@ body:
     attributes:
       value: >
         #### Before submitting a bug, please make sure the issue hasn't been already addressed by searching through [the
-        existing and past issues](https://github.com/facebookresearch/torcheval/issues?q=is%3Aissue+sort%3Acreated-desc+).
+        existing and past issues](https://github.com/pytorch-labs/torcheval/issues?q=is%3Aissue+sort%3Acreated-desc+).
   - type: textarea
     attributes:
       label: 🐛 Describe the bug
