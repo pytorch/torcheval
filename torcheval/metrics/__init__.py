@@ -18,7 +18,7 @@ from torcheval.metrics.classification import (
     MultilabelAccuracy,
 )
 from torcheval.metrics.metric import Metric
-from torcheval.metrics.ranking import ReciprocalRank
+from torcheval.metrics.ranking import HitRate, ReciprocalRank
 from torcheval.metrics.regression import MeanSquaredError, R2Score
 
 __all__ = [
@@ -31,6 +31,7 @@ __all__ = [
     "BinaryAccuracy",
     "BinaryPrecisionRecallCurve",
     "Cat",
+    "HitRate",
     "Max",
     "Mean",
     "MeanSquaredError",
