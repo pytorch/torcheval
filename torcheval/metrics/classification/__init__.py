@@ -9,6 +9,9 @@ from torcheval.metrics.classification.accuracy import (
     MultilabelAccuracy,
 )
 from torcheval.metrics.classification.auroc import BinaryAUROC
+from torcheval.metrics.classification.binned_precision_recall_curve import (
+    BinaryBinnedPrecisionRecallCurve,
+)
 from torcheval.metrics.classification.f1_score import MulticlassF1Score
 from torcheval.metrics.classification.precision import MulticlassPrecision
 from torcheval.metrics.classification.precision_recall_curve import (
@@ -20,6 +23,7 @@ from torcheval.metrics.classification.recall import MulticlassRecall
 __all__ = [
     "BinaryAUROC",
     "BinaryAccuracy",
+    "BinaryBinnedPrecisionRecallCurve",
     "BinaryPrecisionRecallCurve",
     "MulticlassAccuracy",
     "MulticlassF1Score",

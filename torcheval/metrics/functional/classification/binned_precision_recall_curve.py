@@ -56,6 +56,7 @@ def binary_binned_precision_recall_curve(
         threshold = torch.linspace(0, 1.0, threshold, device=target.device)
     elif isinstance(threshold, list):
         threshold = torch.tensor(threshold, device=target.device)
+    _binary_binned_precision_recall_curve_param_check(threshold)
     num_tp, num_fp, num_fn = _binary_binned_precision_recall_curve_update(
         input, target, threshold
     )
@@ -67,7 +68,7 @@ def _binary_binned_precision_recall_curve_update(
     target: torch.Tensor,
     threshold: torch.Tensor,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-    _binary_binned_precision_recall_curve_update_input_check(input, target, threshold)
+    _binary_binned_precision_recall_curve_update_input_check(input, target)
     return _update(input, target, threshold)
 
 
@@ -115,7 +116,6 @@ def _binary_binned_compute_for_each_class(
 def _binary_binned_precision_recall_curve_update_input_check(
     input: torch.Tensor,
     target: torch.Tensor,
-    threshold: torch.Tensor,
 ) -> None:
     if input.ndim != 1:
         raise ValueError(
@@ -133,6 +133,10 @@ def _binary_binned_precision_recall_curve_update_input_check(
             f"got shapes {input.shape} and {target.shape}."
         )
 
+
+def _binary_binned_precision_recall_curve_param_check(
+    threshold: torch.Tensor,
+) -> None:
     if (torch.diff(threshold) < 0.0).any():
         raise ValueError("The `threshold` should be a sorted array.")
 
