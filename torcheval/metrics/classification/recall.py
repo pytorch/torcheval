@@ -10,6 +10,8 @@ from typing import Iterable, Optional, TypeVar
 
 import torch
 from torcheval.metrics.functional.classification.recall import (
+    _binary_recall_compute,
+    _binary_recall_update,
     _recall_compute,
     _recall_param_check,
     _recall_update,
@@ -17,6 +19,91 @@ from torcheval.metrics.functional.classification.recall import (
 from torcheval.metrics.metric import Metric
 
 TRecall = TypeVar("TRecall")
+TBinaryRecall = TypeVar("TBinaryRecall")
+
+
+class BinaryRecall(Metric[torch.Tensor]):
+    """
+    Compute the recall score for binary classification tasks, which is calculated as the ratio of the true positives and the sum of
+    true positives and false negatives.
+    Its functional version is ``torcheval.metrics.functional.binary_recall``.
+    We cast NaNs to 0 when classes have zero instances in the ground-truth labels
+    (when TP + FN = 0).
+
+    Args:
+        threshold [default: 0.5]: Threshold for converting input into predicted labels for each sample.
+        ``torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
+    Example:
+        >>> import torch
+        >>> from torcheval.metrics.classification import BinaryRecall
+        >>> metric = BinaryRecall()
+        >>> input = torch.tensor([0, 0, 1, 1])
+        >>> target = torch.tensor([0, 1, 1, 1])
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(0.6667)  # 2 / 3
+
+        >>> metric = BinaryRecall()
+        >>> input = torch.tensor([0, 0.2, 0.4, 0.7])
+        >>> target = torch.tensor([1, 0, 1, 1])
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(0.3333)  # 1 / 3
+
+        >>> metric = BinaryRecall(threshold=0.4)
+        >>> input = torch.tensor([0, 0.2, 0.4, 0.7])
+        >>> target = torch.tensor([1, 0, 1, 1])
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(0.5000)  # 1 / 2
+
+    """
+
+    def __init__(
+        self: TBinaryRecall,
+        threshold: float = 0.5,
+    ) -> None:
+        super().__init__()
+        self.threshold = threshold
+
+        self._add_state("num_tp", torch.tensor(0.0))
+        self._add_state("num_true_labels", torch.tensor(0.0))
+
+    @torch.inference_mode()
+    # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
+    def update(
+        self: TBinaryRecall, input: torch.Tensor, target: torch.Tensor
+    ) -> TBinaryRecall:
+        """
+        Update states with the ground truth labels and predictions.
+
+        Args:
+            input: Tensor of the predicted labels/logits/probabilities, with shape of (n_sample, ).
+                ``torch.where(input ‹ threshold, 0, 1)`` will be used to convert input into predicted labels
+            target: Tensor of ground truth labels with shape of (n_sample, ).
+        """
+        num_tp, num_true_labels = _binary_recall_update(input, target, self.threshold)
+        self.num_tp += num_tp
+        self.num_true_labels += num_true_labels
+        return self
+
+    @torch.inference_mode()
+    def compute(self: TBinaryRecall) -> torch.Tensor:
+        """
+        Return the recall score.
+
+        NaN is returned if no calls to ``update()`` are made before ``compute()`` is called.
+        """
+        return _binary_recall_compute(self.num_tp, self.num_true_labels)
+
+    @torch.inference_mode()
+    def merge_state(
+        self: TBinaryRecall, metrics: Iterable[TBinaryRecall]
+    ) -> TBinaryRecall:
+        for metric in metrics:
+            self.num_tp += metric.num_tp.to(self.device)
+            self.num_true_labels += metric.num_true_labels.to(self.device)
+        return self
 
 
 class MulticlassRecall(Metric[torch.Tensor]):

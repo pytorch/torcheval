@@ -11,6 +11,86 @@ import torch
 
 
 @torch.inference_mode()
+def binary_recall(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    threshold: float = 0.5,
+) -> torch.Tensor:
+    """
+    Compute recall score for binary classification class, which is calculated as the ratio between the number of
+    true positives (TP) and the total number of actual positives (TP + FN).
+    Its class version is ``torcheval.metrics.BinaryRecall``.
+
+    Args:
+        input: Tensor of the predicted labels/logits/probabilities, with shape of (n_sample, ).
+        target: Tensor of ground truth labels with shape of (n_sample, ).
+        threshold [default: 0.5]: Threshold for converting input into predicted labels for each sample.
+            ``torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
+    Example:
+        >>> import torch
+        >>> from torcheval.metrics.functional.classification import binary_recall
+        >>> input = torch.tensor([0, 0, 1, 1])
+        >>> target = torch.tensor([0, 1, 1, 1])
+        >>> binary_recall(input, target)
+        tensor(0.6667)  # 2 / 3
+        >>> input = torch.tensor([0, 0.2, 0.4, 0.7])
+        >>> target = torch.tensor([1, 0, 1, 1])
+        >>> binary_recall(input, target)
+        tensor(0.3333)  # 1 / 3
+        >>> binary_recall(input, target, threshold=0.4)
+        tensor(0.5000)  # 1 / 2
+    """
+    num_tp, num_true_labels = _binary_recall_update(input, target, threshold)
+    return _binary_recall_compute(num_tp, num_true_labels)
+
+
+def _binary_recall_update(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    threshold: float = 0.5,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    _binary_recall_update_input_check(input, target)
+
+    input = torch.where(input < threshold, 0, 1)
+
+    num_tp = (input & target).sum()
+    num_true_labels = target.sum()
+
+    return num_tp, num_true_labels
+
+
+def _binary_recall_compute(
+    num_tp: torch.Tensor,
+    num_true_labels: torch.Tensor,
+) -> torch.Tensor:
+
+    recall = num_tp / num_true_labels
+
+    if torch.isnan(recall):
+        logging.warning(
+            "No positive instances have been seen in target. Recall is converted from NaN to 0s."
+        )
+        return torch.nan_to_num(recall)
+
+    return recall
+
+
+def _binary_recall_update_input_check(
+    input: torch.Tensor,
+    target: torch.Tensor,
+) -> None:
+    if input.shape != target.shape:
+        raise ValueError(
+            "The `input` and `target` should have the same dimensions, "
+            f"got shapes {input.shape} and {target.shape}."
+        )
+    if target.ndim != 1:
+        raise ValueError(
+            f"target should be a one-dimensional tensor, got shape {target.shape}."
+        )
+
+
+@torch.inference_mode()
 def multiclass_recall(
     input: torch.Tensor,
     target: torch.Tensor,
