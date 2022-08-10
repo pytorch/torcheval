@@ -24,6 +24,7 @@ _ATTRIB_TO_COL_HEADER = {
     "module_type": "Type",
     "num_parameters": "# Params",
     "num_trainable_parameters": "# Trainable Params",
+    "size_bytes": "Size in bytes",
     "has_uninitialized_param": "Contains Uninitialized Param?",
     "flops_forward": "Forward FLOPs",
     "flops_backward": "Backward FLOPs",
@@ -43,6 +44,7 @@ class ModuleSummary:
     - Type
     - Number of parameters
     - Number of trainable parameters
+    - Overall estimated size in bytes
     - FLOPs for forward (-1 meaning not calculated)
     - FLOPs for backward (-1 meaning not calculated)
     """
@@ -58,6 +60,7 @@ class ModuleSummary:
         self._flops_backward: int = -1
         self._flops_forward_detail: Dict[str, int] = {}
         self._flops_backward_detail: Dict[str, int] = {}
+        self._size_bytes: int = 0
 
     @property
     def submodule_summaries(self) -> Dict[str, "ModuleSummary"]:
@@ -119,6 +122,16 @@ class ModuleSummary:
                 "Thus, the total number of FLOPs detected may be inaccurate."
             )
         return self._flops_backward
+
+    @property
+    def size_bytes(self) -> int:
+        """Returns the total estimated size in bytes of a module."""
+        if self.has_uninitialized_param:
+            warnings.warn(
+                "A layer with UninitializedParameter was found. "
+                "Thus, the total byte sizes detected may be inaccurate."
+            )
+        return self._size_bytes
 
     @property
     def has_uninitialized_param(self) -> bool:
@@ -259,8 +272,11 @@ def _generate_module_summary(
         else:
             numel = param.numel()
             module_summary._num_parameters += numel
+            module_summary._size_bytes += numel * param.element_size()
             if param.requires_grad:
                 module_summary._num_trainable_parameters += numel
+    for buf in module.buffers():
+        module_summary._size_bytes += buf.numel() * buf.element_size()
     # Calculate flops forward/backward.
     if flops_forward is not None:
         module_summary._flops_forward_detail = dict(flops_forward[module_name])
