@@ -11,7 +11,7 @@ import numpy as np
 import torch
 from sklearn.metrics import recall_score
 
-from torcheval.metrics.classification import MulticlassRecall
+from torcheval.metrics.classification import BinaryRecall, MulticlassRecall
 from torcheval.utils.test_utils.metric_class_tester import (
     BATCH_SIZE,
     MetricClassTester,
@@ -227,3 +227,48 @@ class TestMulticlassRecall(MetricClassTester):
             r"got torch.Size\(\[3, 4, 5\]\).",
         ):
             metric.update(torch.rand(3, 4, 5), torch.rand(3))
+
+
+class TestBinaryRecall(MetricClassTester):
+    def _test_binary_recall_class_with_input(
+        self,
+        input: torch.Tensor,
+        target: torch.Tensor,
+        threshold: float = 0.5,
+    ) -> None:
+
+        input_np = np.where(input.numpy() < threshold, 0, 1)
+        target_np = target.squeeze().numpy()
+
+        sklearn_result = torch.tensor(
+            recall_score(target_np.flatten(), input_np.flatten(), average="binary")
+        ).to(torch.float32)
+
+        self.run_class_implementation_tests(
+            metric=BinaryRecall(),
+            state_names={"num_tp", "num_true_labels"},
+            update_kwargs={"input": input, "target": target},
+            compute_result=sklearn_result,
+        )
+
+    def test_binary_recall_class_base(self) -> None:
+        num_classes = 2
+        input = torch.randint(high=num_classes, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
+        target = torch.randint(high=num_classes, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
+        self._test_binary_recall_class_with_input(input, target)
+
+    def test_binary_recall_class_with_rounding(self) -> None:
+        num_classes = 2
+        input = torch.rand(size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
+        target = torch.randint(high=num_classes, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
+
+        self._test_binary_recall_class_with_input(input, target)
+
+    def test_binary_recall_class_invalid_input(self) -> None:
+        metric = BinaryRecall()
+        with self.assertRaisesRegex(
+            ValueError,
+            "The `input` and `target` should have the same dimensions, "
+            r"got shapes torch.Size\(\[4, 2\]\) and torch.Size\(\[3\]\).",
+        ):
+            metric.update(torch.rand(4, 2), torch.rand(3))

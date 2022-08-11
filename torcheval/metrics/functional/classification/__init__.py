@@ -22,7 +22,10 @@ from torcheval.metrics.functional.classification.precision_recall_curve import (
     binary_precision_recall_curve,
     multiclass_precision_recall_curve,
 )
-from torcheval.metrics.functional.classification.recall import multiclass_recall
+from torcheval.metrics.functional.classification.recall import (
+    binary_recall,
+    multiclass_recall,
+)
 
 __all__ = [
     "binary_auroc",
@@ -30,6 +33,7 @@ __all__ = [
     "binary_precision",
     "binary_precision_recall_curve",
     "binary_binned_precision_recall_curve",
+    "binary_recall",
     "multiclass_accuracy",
     "multiclass_f1_score",
     "multiclass_precision",
