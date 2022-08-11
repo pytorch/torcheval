@@ -6,7 +6,7 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from collections import defaultdict
+from collections import defaultdict, deque
 from typing import Iterable, TypeVar
 
 import torch
@@ -99,4 +99,34 @@ class DummySumDictStateMetric(Metric[torch.Tensor]):
             for k in metric.keys():
                 self.x[k] += metric.x[k].to(self.device)
 
+        return self
+
+
+TDummySumDequeStateMetric = TypeVar("TDummySumDequeStateMetric")
+
+
+class DummySumDequeStateMetric(Metric[torch.Tensor]):
+    def __init__(self: TDummySumDequeStateMetric) -> None:
+        super().__init__()
+        self._add_state("x", deque())
+
+    @torch.inference_mode()
+    # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
+    def update(
+        self: TDummySumDequeStateMetric, x: torch.Tensor
+    ) -> TDummySumDequeStateMetric:
+        self.x.append(x)
+        return self
+
+    @torch.inference_mode()
+    def compute(self: TDummySumDequeStateMetric) -> torch.Tensor:
+        # pyre-fixme[7]: Expected `Tensor` but got `int`.
+        return sum(tensor.sum() for tensor in self.x)
+
+    @torch.inference_mode()
+    def merge_state(
+        self: TDummySumDequeStateMetric, metrics: Iterable[TDummySumDequeStateMetric]
+    ) -> TDummySumDequeStateMetric:
+        for metric in metrics:
+            self.x.extend(element.to(self.device) for element in metric.x)
         return self
