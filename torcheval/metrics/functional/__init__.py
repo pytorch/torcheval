@@ -19,7 +19,11 @@ from torcheval.metrics.functional.classification import (
     multiclass_recall,
     multilabel_accuracy,
 )
-from torcheval.metrics.functional.ranking import hit_rate, reciprocal_rank
+from torcheval.metrics.functional.ranking import (
+    hit_rate,
+    num_collisions,
+    reciprocal_rank,
+)
 from torcheval.metrics.functional.regression import mean_squared_error, r2_score
 
 __all__ = [
@@ -38,6 +42,7 @@ __all__ = [
     "multiclass_precision_recall_curve",
     "multiclass_recall",
     "multilabel_accuracy",
+    "num_collisions",
     "r2_score",
     "reciprocal_rank",
     "sum",
