@@ -26,6 +26,7 @@ class ModuleSummaryTest(unittest.TestCase):
         self.assertEqual(ms1.module_type, "Conv2d")
         self.assertEqual(ms1.num_parameters, 224)
         self.assertEqual(ms1.num_trainable_parameters, 224)
+        self.assertEqual(ms1.size_bytes, 224 * 4)
         self.assertEqual(ms1.submodule_summaries, {})
         self.assertFalse(ms1.has_uninitialized_param)
 
@@ -33,12 +34,14 @@ class ModuleSummaryTest(unittest.TestCase):
         self.assertEqual(ms1.module_type, ms2.module_type)
         self.assertEqual(ms1.num_parameters, ms2.num_parameters)
         self.assertEqual(ms1.num_trainable_parameters, ms2.num_trainable_parameters)
+        self.assertEqual(ms1.size_bytes, ms2.size_bytes)
         self.assertEqual(ms1.submodule_summaries, ms2.submodule_summaries)
 
         self.assertEqual(ms1.module_name, ms3.module_name)
         self.assertEqual(ms1.module_type, ms3.module_type)
         self.assertEqual(ms1.num_parameters, ms3.num_parameters)
         self.assertEqual(ms1.num_trainable_parameters, ms3.num_trainable_parameters)
+        self.assertEqual(ms1.size_bytes, ms3.size_bytes)
         self.assertEqual(ms1.submodule_summaries, ms3.submodule_summaries)
 
         self.assertEqual(ms3.flops_forward, 7776)
@@ -149,9 +152,9 @@ class ModuleSummaryTest(unittest.TestCase):
         ms2 = get_module_summary(model, max_depth=1)
 
         summary_table = (
-            "Name | Type   | # Params | # Trainable Params | Contains Uninitialized Param?\n"
-            + "-----------------------------------------------------------------------------\n"
-            + "     | Conv2d | 224      | 224                | No                           \n"
+            "Name | Type   | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameter?\n"
+            + "--------------------------------------------------------------------------------------------------------\n"
+            + "     | Conv2d | 224          | 224                    | 896          | No                               \n"
         )
         self.assertEqual(summary_table, str(ms1))
         self.assertEqual(str(ms1), str(ms2))
@@ -164,18 +167,18 @@ class ModuleSummaryTest(unittest.TestCase):
         ms4 = get_module_summary(pretrained_model)
 
         summary_table1 = (
-            "Name | Type    | # Params | # Trainable Params | Contains Uninitialized Param?\n"
-            + "------------------------------------------------------------------------------\n"
-            + "     | AlexNet | 61.1 M   | 61.1 M             | No                           \n"
+            "Name | Type    | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameter?\n"
+            + "---------------------------------------------------------------------------------------------------------\n"
+            + "     | AlexNet | 61.1 M       | 61.1 M                 | 244 M        | No                               \n"
         )
 
         summary_table2 = (
-            "Name       | Type              | # Params | # Trainable Params | Contains Uninitialized Param?\n"
-            + "----------------------------------------------------------------------------------------------\n"
-            + "           | AlexNet           | 61.1 M   | 61.1 M             | No                           \n"
-            + "features   | Sequential        | 2.5 M    | 2.5 M              | No                           \n"
-            + "avgpool    | AdaptiveAvgPool2d | 0        | 0                  | No                           \n"
-            + "classifier | Sequential        | 58.6 M   | 58.6 M             | No                           \n"
+            "Name       | Type              | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameter?\n"
+            + "-------------------------------------------------------------------------------------------------------------------------\n"
+            + "           | AlexNet           | 61.1 M       | 61.1 M                 | 244 M        | No                               \n"
+            + "features   | Sequential        | 2.5 M        | 2.5 M                  | 9.9 M        | No                               \n"
+            + "avgpool    | AdaptiveAvgPool2d | 0            | 0                      | 0            | No                               \n"
+            + "classifier | Sequential        | 58.6 M       | 58.6 M                 | 234 M        | No                               \n"
         )
 
         self.assertEqual(summary_table1, str(ms1))
@@ -191,24 +194,18 @@ class ModuleSummaryTest(unittest.TestCase):
         ms4 = get_module_summary(pretrained_model, module_input=inp)
 
         summary_table1 = (
-            "Name | Type    | # Params | # Trainable Params | Contains Uninitialized Param? | Forward FLOPs | Backward FLOPs\n"
-            + "---------------------------------------------------------------------------------------------------------------\n"
-            + "     | AlexNet | 61.1 M   | 61.1 M             | No                            | 714 M         | 1.4 G         \n"
+            "Name | Type    | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameter? | Forward FLOPs | Backward FLOPs\n"
+            + "------------------------------------------------------------------------------------------------------------------------------------------\n"
+            + "     | AlexNet | 61.1 M       | 61.1 M                 | 244 M        | No                                | 714 M         | 1.4 G         "
         )
 
         summary_table2 = (
-            "Name       | Type              | # Params | # Trainable Params | "
-            + "Contains Uninitialized Param? | Forward FLOPs | Backward FLOPs\n"
-            + "--------------------------------------------------------------"
-            + "-----------------------------------------------------------------\n"
-            + "           | AlexNet           | 61.1 M   | 61.1 M             "
-            + "| No                            | 714 M         | 1.4 G         \n"
-            + "features   | Sequential        | 2.5 M    | 2.5 M              "
-            + "| No                            | 655 M         | 1.2 G         \n"
-            + "avgpool    | AdaptiveAvgPool2d | 0        | 0                  "
-            + "| No                            | 0             | 0             \n"
-            + "classifier | Sequential        | 58.6 M   | 58.6 M             "
-            + "| No                            | 58.6 M        | 117 M         \n"
+            "Name       | Type              | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameter? | Forward FLOPs | Backward FLOPs\n"
+            + "----------------------------------------------------------------------------------------------------------------------------------------------------------\n"
+            + "           | AlexNet           | 61.1 M       | 61.1 M                 | 244 M        | No                                | 714 M         | 1.4 G         \n"
+            + "features   | Sequential        | 2.5 M        | 2.5 M                  | 9.9 M        | No                                | 655 M         | 1.2 G         \n"
+            + "avgpool    | AdaptiveAvgPool2d | 0            | 0                      | 0            | No                                | 0             | 0             \n"
+            + "classifier | Sequential        | 58.6 M       | 58.6 M                 | 234 M        | No                                | 58.6 M        | 117 M         "
         )
 
         self.assertIn(summary_table1, str(ms1))

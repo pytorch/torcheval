@@ -22,9 +22,10 @@ from torcheval.tools.flops import (
 _ATTRIB_TO_COL_HEADER = {
     "module_name": "Name",
     "module_type": "Type",
-    "num_parameters": "# Params",
-    "num_trainable_parameters": "# Trainable Params",
-    "has_uninitialized_param": "Contains Uninitialized Param?",
+    "num_parameters": "# Parameters",
+    "num_trainable_parameters": "# Trainable Parameters",
+    "size_bytes": "Size (bytes)",
+    "has_uninitialized_param": "Contains Uninitialized Parameter?",
     "flops_forward": "Forward FLOPs",
     "flops_backward": "Backward FLOPs",
 }  # Attribute: column header (in table)
@@ -43,6 +44,8 @@ class ModuleSummary:
     - Type
     - Number of parameters
     - Number of trainable parameters
+    - Estimated size in bytes
+    - Contains uninitialized parameter
     - FLOPs for forward (-1 meaning not calculated)
     - FLOPs for backward (-1 meaning not calculated)
     """
@@ -52,6 +55,7 @@ class ModuleSummary:
         self._module_type: str = ""
         self._num_parameters: int = 0
         self._num_trainable_parameters: int = 0
+        self._size_bytes: int = 0
         self._submodule_summaries: Dict[str, "ModuleSummary"] = {}
         self._has_uninitialized_param: bool = False
         self._flops_forward: int = -1
@@ -119,6 +123,16 @@ class ModuleSummary:
                 "Thus, the total number of FLOPs detected may be inaccurate."
             )
         return self._flops_backward
+
+    @property
+    def size_bytes(self) -> int:
+        """Returns the total estimated size in bytes of a module."""
+        if self.has_uninitialized_param:
+            warnings.warn(
+                "A layer with UninitializedParameter was found. "
+                "Thus, the total byte sizes detected may be inaccurate."
+            )
+        return self._size_bytes
 
     @property
     def has_uninitialized_param(self) -> bool:
@@ -259,8 +273,11 @@ def _generate_module_summary(
         else:
             numel = param.numel()
             module_summary._num_parameters += numel
+            module_summary._size_bytes += numel * param.element_size()
             if param.requires_grad:
                 module_summary._num_trainable_parameters += numel
+    for buf in module.buffers():
+        module_summary._size_bytes += buf.numel() * buf.element_size()
     # Calculate flops forward/backward.
     if flops_forward is not None:
         module_summary._flops_forward_detail = dict(flops_forward[module_name])
