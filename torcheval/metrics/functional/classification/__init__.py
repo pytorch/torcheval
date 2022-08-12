@@ -10,6 +10,9 @@ from torcheval.metrics.functional.classification.accuracy import (
     multilabel_accuracy,
 )
 from torcheval.metrics.functional.classification.auroc import binary_auroc
+from torcheval.metrics.functional.classification.binary_normalized_entropy import (
+    binary_normalized_entropy,
+)
 from torcheval.metrics.functional.classification.binned_precision_recall_curve import (
     binary_binned_precision_recall_curve,
 )
@@ -30,6 +33,7 @@ from torcheval.metrics.functional.classification.recall import (
 __all__ = [
     "binary_auroc",
     "binary_accuracy",
+    "binary_normalized_entropy",
     "binary_precision",
     "binary_precision_recall_curve",
     "binary_binned_precision_recall_curve",

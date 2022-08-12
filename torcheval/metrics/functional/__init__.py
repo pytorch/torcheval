@@ -9,6 +9,7 @@ from torcheval.metrics.functional.classification import (
     binary_accuracy,
     binary_auroc,
     binary_binned_precision_recall_curve,
+    binary_normalized_entropy,
     binary_precision,
     binary_precision_recall_curve,
     binary_recall,
@@ -29,6 +30,7 @@ from torcheval.metrics.functional.regression import mean_squared_error, r2_score
 __all__ = [
     "binary_auroc",
     "binary_accuracy",
+    "binary_normalized_entropy",
     "binary_precision",
     "binary_precision_recall_curve",
     "binary_binned_precision_recall_curve",
