@@ -7,7 +7,7 @@
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
 import logging
-from typing import Iterable, TypeVar, Union
+from typing import Iterable, Optional, TypeVar, Union
 
 import torch
 
@@ -48,10 +48,13 @@ class Mean(Metric[torch.Tensor]):
         tensor(4.825)
     """
 
-    def __init__(self: TMean) -> None:
-        super().__init__()
-        self._add_state("weighted_sum", torch.tensor(0.0))
-        self._add_state("weights", torch.tensor(0.0))
+    def __init__(
+        self: TMean,
+        device: Optional[torch.device] = None,
+    ) -> None:
+        super().__init__(device=device)
+        self._add_state("weighted_sum", torch.tensor(0.0, device=self.device))
+        self._add_state("weights", torch.tensor(0.0, device=self.device))
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any

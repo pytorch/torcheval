@@ -7,7 +7,7 @@
 from abc import ABC, abstractmethod
 from collections import defaultdict, deque
 from copy import deepcopy
-from typing import Any, Deque, Dict, Generic, Iterable, List, TypeVar, Union
+from typing import Any, Deque, Dict, Generic, Iterable, List, Optional, TypeVar, Union
 
 import torch
 
@@ -28,7 +28,10 @@ class Metric(Generic[TComputeReturn], ABC):
     to implement your own metric.
     """
 
-    def __init__(self: TSelf) -> None:
+    def __init__(
+        self: TSelf,
+        device: Optional[torch.device] = None,
+    ) -> None:
         """
         Initialize a metric object and its internal states.
 
@@ -43,7 +46,7 @@ class Metric(Generic[TComputeReturn], ABC):
         # data structures when move/detach/clone tensors. Can open more types up
         # upon user requests in the future.
         self._state_name_to_default: Dict[str, TState] = {}
-        self._device: torch.device = torch.device("cpu")
+        self._device: torch.device = torch.device("cpu") if device is None else device
 
     def _add_state(self: TSelf, name: str, default: TState) -> None:
         """

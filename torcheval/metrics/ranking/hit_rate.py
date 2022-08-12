@@ -42,8 +42,12 @@ class HitRate(Metric[torch.Tensor]):
         tensor([1., 0., 0., 1.])
     """
 
-    def __init__(self: THitRate, k: Optional[int] = None) -> None:
-        super().__init__()
+    def __init__(
+        self: THitRate,
+        k: Optional[int] = None,
+        device: Optional[torch.device] = None,
+    ) -> None:
+        super().__init__(device=device)
         self.k = k
         self._add_state("scores", [])
 

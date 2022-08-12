@@ -42,8 +42,12 @@ class ReciprocalRank(Metric[torch.Tensor]):
         tensor([1.0000, 0.0000, 0.0000, 0.5000])
     """
 
-    def __init__(self: TReciprocalRank, k: Optional[int] = None) -> None:
-        super().__init__()
+    def __init__(
+        self: TReciprocalRank,
+        k: Optional[int] = None,
+        device: Optional[torch.device] = None,
+    ) -> None:
+        super().__init__(device=device)
         self.k = k
         self._add_state("scores", [])
 

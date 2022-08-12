@@ -72,12 +72,16 @@ class MeanSquaredError(Metric[torch.Tensor]):
     def __init__(
         self: TMeanSquaredError,
         multioutput: str = "uniform_average",
+        device: Optional[torch.device] = None,
     ) -> None:
-        super().__init__()
+        super().__init__(device=device)
         _mean_squared_error_param_check(multioutput)
         self.multioutput = multioutput
-        self._add_state("sum_squared_error", torch.tensor(0.0))
-        self._add_state("sum_weight", torch.tensor(0.0))
+        self._add_state(
+            "sum_squared_error",
+            torch.tensor(0.0, device=self.device),
+        )
+        self._add_state("sum_weight", torch.tensor(0.0, device=self.device))
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any

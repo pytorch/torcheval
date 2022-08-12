@@ -6,7 +6,7 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, TypeVar
+from typing import Iterable, Optional, TypeVar
 
 import torch
 
@@ -43,8 +43,9 @@ class BinaryAUROC(Metric[torch.Tensor]):
 
     def __init__(
         self: TAUROC,
+        device: Optional[torch.device] = None,
     ) -> None:
-        super().__init__()
+        super().__init__(device=device)
         self._add_state("inputs", [])
         self._add_state("targets", [])
 

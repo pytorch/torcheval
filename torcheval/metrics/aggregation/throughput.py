@@ -7,7 +7,7 @@
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
 import logging
-from typing import Iterable, TypeVar
+from typing import Iterable, Optional, TypeVar
 
 import torch
 
@@ -41,10 +41,16 @@ class Throughput(Metric[torch.Tensor]):
         tensor(32.)
     """
 
-    def __init__(self: TThroughput) -> None:
-        super().__init__()
-        self._add_state("num_total", torch.tensor(0.0))
-        self._add_state("elapsed_time_sec", torch.tensor(0.0))
+    def __init__(
+        self: TThroughput,
+        device: Optional[torch.device] = None,
+    ) -> None:
+        super().__init__(device=device)
+        self._add_state("num_total", torch.tensor(0.0, device=self.device))
+        self._add_state(
+            "elapsed_time_sec",
+            torch.tensor(0.0, device=self.device),
+        )
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any

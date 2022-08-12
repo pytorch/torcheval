@@ -6,7 +6,7 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, TypeVar
+from typing import Iterable, Optional, TypeVar
 
 import torch
 
@@ -37,9 +37,12 @@ class Min(Metric[torch.Tensor]):
         tensor(5.)
     """
 
-    def __init__(self: TMin) -> None:
-        super().__init__()
-        self._add_state("min", torch.tensor(float("inf")))
+    def __init__(
+        self: TMin,
+        device: Optional[torch.device] = None,
+    ) -> None:
+        super().__init__(device=device)
+        self._add_state("min", torch.tensor(float("inf"), device=self.device))
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any

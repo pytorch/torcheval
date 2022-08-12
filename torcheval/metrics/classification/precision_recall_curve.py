@@ -47,8 +47,9 @@ class BinaryPrecisionRecallCurve(Metric[torch.Tensor]):
 
     def __init__(
         self: TBinaryPrecisionRecallCurve,
+        device: Optional[torch.device] = None,
     ) -> None:
-        super().__init__()
+        super().__init__(device=device)
         self._add_state("inputs", [])
         self._add_state("targets", [])
 
@@ -146,8 +147,9 @@ class MulticlassPrecisionRecallCurve(Metric[torch.Tensor]):
     def __init__(
         self: TMulticlassPrecisionRecallCurve,
         num_classes: Optional[int] = None,
+        device: Optional[torch.device] = None,
     ) -> None:
-        super().__init__()
+        super().__init__(device=device)
         self.num_classes = num_classes
         self._add_state("inputs", [])
         self._add_state("targets", [])

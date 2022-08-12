@@ -48,12 +48,22 @@ class BinaryNormalizedEntropy(Metric[torch.Tensor]):
         tensor(1.4183)
     """
 
-    def __init__(self: TNormalizedEntropy, from_logits: bool = False) -> None:
-        super().__init__()
+    def __init__(
+        self: TNormalizedEntropy,
+        from_logits: bool = False,
+        device: Optional[torch.device] = None,
+    ) -> None:
+        super().__init__(device=device)
         self.from_logits = from_logits
-        self._add_state("total_entropy", torch.tensor(0.0, dtype=torch.float64))
-        self._add_state("num_examples", torch.tensor(0.0, dtype=torch.float64))
-        self._add_state("num_positive", torch.tensor(0.0, dtype=torch.float64))
+        self._add_state(
+            "total_entropy", torch.tensor(0.0, dtype=torch.float64, device=self.device)
+        )
+        self._add_state(
+            "num_examples", torch.tensor(0.0, dtype=torch.float64, device=self.device)
+        )
+        self._add_state(
+            "num_positive", torch.tensor(0.0, dtype=torch.float64, device=self.device)
+        )
 
     @torch.inference_mode()
     # pyre-ignore[14]: `update` overrides method defined in `Metric` inconsistently.
