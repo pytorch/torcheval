@@ -4,9 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-# (c) Meta Platforms, Inc. and affiliates. Confidential and proprietary.
-
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
+
 from typing import Iterable, Optional, TypeVar
 
 import torch
