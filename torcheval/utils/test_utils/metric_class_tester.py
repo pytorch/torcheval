@@ -14,11 +14,11 @@ from typing import Any, Dict, List, Sequence, Set
 
 import torch
 import torch.distributed.launcher as pet
-from torchtnt.utils import copy_data_to_device, init_from_env
-from typing_extensions import Literal
 
 from torcheval.metrics import Metric
 from torcheval.metrics.toolkit import clone_metric, sync_and_compute
+from torchtnt.utils import copy_data_to_device, init_from_env
+from typing_extensions import Literal
 
 BATCH_SIZE = 16
 # By default, we can test merge_state() on 4 processes with
