@@ -30,7 +30,7 @@ __all__ = [
     "Metric",
     # functional metrics
     "functional",
-    ## class metrics
+    # class metrics
     "BinaryAUROC",
     "BinaryAccuracy",
     "BinaryBinnedPrecisionRecallCurve",

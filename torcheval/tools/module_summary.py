@@ -12,6 +12,7 @@ from typing import DefaultDict, Dict, List, Optional, Tuple
 
 import torch
 from torch.nn.parameter import UninitializedParameter
+
 from torcheval.tools.flops import (
     flop_mapping,
     FlopTensor,
