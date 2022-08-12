@@ -6,10 +6,28 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
+from typing import Optional
 
 import torch
 import torchvision.models as models
-from torcheval.tools.module_summary import _get_human_readable_count, get_module_summary
+from torcheval.tools.module_summary import (
+    _get_human_readable_count,
+    get_module_summary,
+    ModuleSummary,
+    prune_module_summary,
+)
+
+
+def get_summary_and_prune(
+    model: torch.nn.Module,
+    *,
+    max_depth: int,
+    module_input: Optional[torch.Tensor] = None,
+) -> ModuleSummary:
+    """Utility function to get module summary and then prune it"""
+    module_summary = get_module_summary(model, module_input=module_input)
+    prune_module_summary(module_summary, max_depth=max_depth)
+    return module_summary
 
 
 class ModuleSummaryTest(unittest.TestCase):
@@ -17,10 +35,7 @@ class ModuleSummaryTest(unittest.TestCase):
         """Make sure ModuleSummary works for a single layer."""
         model = torch.nn.Conv2d(3, 8, 3)
         ms1 = get_module_summary(model)
-        ms2 = get_module_summary(model, max_depth=1)
-        ms3 = get_module_summary(
-            model, max_depth=1, module_input=torch.randn(1, 3, 8, 8)
-        )
+        ms2 = get_module_summary(model, module_input=torch.randn(1, 3, 8, 8))
 
         self.assertEqual(ms1.module_name, "")
         self.assertEqual(ms1.module_type, "Conv2d")
@@ -37,25 +52,14 @@ class ModuleSummaryTest(unittest.TestCase):
         self.assertEqual(ms1.size_bytes, ms2.size_bytes)
         self.assertEqual(ms1.submodule_summaries, ms2.submodule_summaries)
 
-        self.assertEqual(ms1.module_name, ms3.module_name)
-        self.assertEqual(ms1.module_type, ms3.module_type)
-        self.assertEqual(ms1.num_parameters, ms3.num_parameters)
-        self.assertEqual(ms1.num_trainable_parameters, ms3.num_trainable_parameters)
-        self.assertEqual(ms1.size_bytes, ms3.size_bytes)
-        self.assertEqual(ms1.submodule_summaries, ms3.submodule_summaries)
-
-        self.assertEqual(ms3.flops_forward, 7776)
-        self.assertEqual(ms3.flops_backward, 7776)
+        self.assertEqual(ms2.flops_forward, 7776)
+        self.assertEqual(ms2.flops_backward, 7776)
 
     def test_flops_with_Batch(self) -> None:
         """Make sure FLOPs calculate are the same when input data has different batch size."""
         model = torch.nn.Sequential(torch.nn.Conv2d(3, 8, 3), torch.nn.Conv2d(8, 5, 3))
-        ms1 = get_module_summary(
-            model, max_depth=2, module_input=torch.randn(1, 3, 8, 8)
-        )
-        ms3 = get_module_summary(
-            model, max_depth=2, module_input=torch.randn(3, 3, 8, 8)
-        )
+        ms1 = get_module_summary(model, module_input=torch.randn(1, 3, 8, 8))
+        ms3 = get_module_summary(model, module_input=torch.randn(3, 3, 8, 8))
         self.assertEqual(ms3.flops_forward, 13536)
         self.assertEqual(ms3.flops_backward, 19296)
         self.assertEqual(ms1.flops_forward, 13536)
@@ -72,10 +76,11 @@ class ModuleSummaryTest(unittest.TestCase):
     def test_invalid_max_depth(self) -> None:
         """Test for ValueError when providing bad max_depth"""
         model = torch.nn.Conv2d(3, 8, 3)
+        summary = get_module_summary(model)
         with self.assertRaisesRegex(ValueError, "Got -2."):
-            get_module_summary(model, max_depth=-2)
+            prune_module_summary(summary, max_depth=-2)
         with self.assertRaisesRegex(ValueError, "Got 0."):
-            get_module_summary(model, max_depth=0)
+            prune_module_summary(summary, max_depth=0)
 
     def test_lazy_tensor(self) -> None:
         """Check for warning when passing in a lazy weight Tensor"""
@@ -119,18 +124,19 @@ class ModuleSummaryTest(unittest.TestCase):
             6,
         )
 
-        ms2 = get_module_summary(pretrained_model, max_depth=1)
+        ms2 = get_summary_and_prune(pretrained_model, max_depth=1)
         self.assertEqual(len(ms2.submodule_summaries), 0)
         self.assertNotIn("layer2", ms2.submodule_summaries)
 
-        ms3 = get_module_summary(pretrained_model, max_depth=2)
+        ms3 = get_summary_and_prune(pretrained_model, max_depth=2)
         self.assertEqual(len(ms3.submodule_summaries), 10)
         self.assertEqual(len(ms1.submodule_summaries["layer2"].submodule_summaries), 2)
         self.assertNotIn(
             "layer2.0", ms3.submodule_summaries["layer2"].submodule_summaries
         )
         inp = torch.randn(1, 3, 224, 224)
-        ms4 = get_module_summary(pretrained_model, max_depth=2, module_input=inp)
+        ms4 = get_summary_and_prune(pretrained_model, max_depth=2, module_input=inp)
+
         self.assertEqual(len(ms4.submodule_summaries), 10)
         self.assertEqual(ms4.flops_forward, 1814073344)
         self.assertEqual(ms4.flops_backward, 3510132736)
@@ -149,7 +155,6 @@ class ModuleSummaryTest(unittest.TestCase):
     def test_module_summary_layer_print(self) -> None:
         model = torch.nn.Conv2d(3, 8, 3)
         ms1 = get_module_summary(model)
-        ms2 = get_module_summary(model, max_depth=1)
 
         summary_table = (
             "Name | Type   | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameter?\n"
@@ -157,13 +162,12 @@ class ModuleSummaryTest(unittest.TestCase):
             + "     | Conv2d | 224          | 224                    | 896          | No                               \n"
         )
         self.assertEqual(summary_table, str(ms1))
-        self.assertEqual(str(ms1), str(ms2))
 
     def test_alexnet_print(self) -> None:
         pretrained_model = models.alexnet(pretrained=True)
-        ms1 = get_module_summary(pretrained_model, max_depth=1)
-        ms2 = get_module_summary(pretrained_model, max_depth=2)
-        ms3 = get_module_summary(pretrained_model, max_depth=3)
+        ms1 = get_summary_and_prune(pretrained_model, max_depth=1)
+        ms2 = get_summary_and_prune(pretrained_model, max_depth=2)
+        ms3 = get_summary_and_prune(pretrained_model, max_depth=3)
         ms4 = get_module_summary(pretrained_model)
 
         summary_table1 = (
@@ -188,9 +192,9 @@ class ModuleSummaryTest(unittest.TestCase):
     def test_alexnet_print_flops(self) -> None:
         pretrained_model = models.alexnet(pretrained=True)
         inp = torch.randn(1, 3, 224, 224)
-        ms1 = get_module_summary(pretrained_model, max_depth=1, module_input=inp)
-        ms2 = get_module_summary(pretrained_model, max_depth=2, module_input=inp)
-        ms3 = get_module_summary(pretrained_model, max_depth=3, module_input=inp)
+        ms1 = get_summary_and_prune(pretrained_model, max_depth=1, module_input=inp)
+        ms2 = get_summary_and_prune(pretrained_model, max_depth=2, module_input=inp)
+        ms3 = get_summary_and_prune(pretrained_model, max_depth=3, module_input=inp)
         ms4 = get_module_summary(pretrained_model, module_input=inp)
 
         summary_table1 = (

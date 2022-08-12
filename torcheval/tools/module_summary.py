@@ -143,7 +143,7 @@ class ModuleSummary:
         return str(self)
 
     def __str__(self) -> str:
-        return _get_summary_table(self)
+        return get_summary_table(self)
 
 
 def _clean_flops(flop: DefaultDict[str, DefaultDict[str, int]], N: int) -> None:
@@ -196,7 +196,6 @@ def _has_uninitialized_param(module: torch.nn.Module) -> bool:
 
 def get_module_summary(
     module: torch.nn.Module,
-    max_depth: Optional[int] = None,
     module_input: Optional[torch.Tensor] = None,
 ) -> ModuleSummary:
     """
@@ -204,7 +203,6 @@ def get_module_summary(
 
     Args:
         module: The module to be summarized.
-        max_depth: The maximum depth of modules to generate tree.
         Value must be greater than 0. Set to `None` to include
         all submodules.
         module_name: The name of the current module.
@@ -214,14 +212,9 @@ def get_module_summary(
         Note: currently we only support module that takes a single tensor (i.e. module_input should be a torch.Tensor)
             and outputs a single tensor. TODO: to support more flexible input and output for module.
 
-    Raises:
-        ValueError:
-            If `max_depth` is an int less than 1
+
     """
-    if max_depth is not None and max_depth < 1:
-        raise ValueError(
-            f"`max_depth` must be `None` or an int greater than 0. Got {max_depth}."
-        )
+
     flops_forward = None
     flops_backward = None
     has_uninitialized_param = _has_uninitialized_param(module)
@@ -229,7 +222,6 @@ def get_module_summary(
         flops_forward, flops_backward = _get_module_flops(module, module_input)
     return _generate_module_summary(
         module,
-        max_depth,
         "",
         flops_forward=flops_forward,
         flops_backward=flops_backward,
@@ -238,7 +230,6 @@ def get_module_summary(
 
 def _generate_module_summary(
     module: torch.nn.Module,
-    max_depth: Optional[int],
     module_name: str,
     flops_forward: Optional[DefaultDict[str, DefaultDict[str, int]]] = None,
     flops_backward: Optional[DefaultDict[str, DefaultDict[str, int]]] = None,
@@ -247,27 +238,33 @@ def _generate_module_summary(
     Recursively generate and populate metrics for ModelSummary.
     """
     module_summary = ModuleSummary()
-
-    # Populate Submodule Summaries
-    submodule_summaries = {}
-    new_max_depth = max_depth - 1 if max_depth else None
-    if new_max_depth is None or new_max_depth > 0:
-        for name, submodule in module.named_children():
-            formatted_name = name
-            if module_name != "":
-                formatted_name = f"{module_name}.{formatted_name}"
-            submodule_summaries[formatted_name] = _generate_module_summary(
-                submodule,
-                new_max_depth,
-                formatted_name,
-                flops_forward=flops_forward,
-                flops_backward=flops_backward,
-            )
-    # Populate values in module_summary
-    module_summary._submodule_summaries = submodule_summaries
     module_summary._module_name = module_name
     module_summary._module_type = str(module.__class__.__name__)
-    for param in module.parameters():
+
+    for name, submodule in module.named_children():
+
+        formatted_name = f"{module_name}.{name}" if module_name != "" else name
+
+        submodule_summary = _generate_module_summary(
+            submodule,
+            formatted_name,
+            flops_forward=flops_forward,
+            flops_backward=flops_backward,
+        )
+
+        # Add results from submodule summary
+        module_summary._submodule_summaries[formatted_name] = submodule_summary
+        module_summary._has_uninitialized_param = (
+            module_summary._has_uninitialized_param
+            or submodule_summary._has_uninitialized_param
+        )
+        module_summary._num_parameters += submodule_summary._num_parameters
+        module_summary._num_trainable_parameters += (
+            submodule_summary._num_trainable_parameters
+        )
+        module_summary._size_bytes += submodule_summary._size_bytes
+
+    for param in module.parameters(recurse=False):
         if isinstance(param, UninitializedParameter):
             module_summary._has_uninitialized_param = True
         else:
@@ -276,8 +273,10 @@ def _generate_module_summary(
             module_summary._size_bytes += numel * param.element_size()
             if param.requires_grad:
                 module_summary._num_trainable_parameters += numel
-    for buf in module.buffers():
+
+    for buf in module.buffers(recurse=False):
         module_summary._size_bytes += buf.numel() * buf.element_size()
+
     # Calculate flops forward/backward.
     if flops_forward is not None:
         module_summary._flops_forward_detail = dict(flops_forward[module_name])
@@ -293,7 +292,7 @@ def _generate_module_summary(
     return module_summary
 
 
-def _get_summary_table(
+def get_summary_table(
     module_summary: ModuleSummary, human_readable_nums: bool = True
 ) -> str:
     """
@@ -358,6 +357,29 @@ def _get_summary_table(
             + "For backward, we calculated FLOPs based on `loss.backward()`. \n"
         )
     return summary_table
+
+
+def prune_module_summary(module_summary: ModuleSummary, *, max_depth: int) -> None:
+    """
+    Prune the module summaries that are deeper than max_depth in the module
+    summary tree. The ModuleSummary object is prunned inplace.
+
+    Args:
+        module_summary: Root module summary to prune.
+        max_depth: The maximum depth of module summaries to keep.
+
+    Raises:
+        ValueError:
+            If `max_depth` is an int less than 1
+    """
+    if max_depth < 1:
+        raise ValueError(f"`max_depth` must be an int greater than 0. Got {max_depth}.")
+    if max_depth == 1:
+        module_summary._submodule_summaries = {}
+        return
+
+    for submodule_summary in module_summary._submodule_summaries.values():
+        prune_module_summary(submodule_summary, max_depth=max_depth - 1)
 
 
 def _unpack_attributes(
