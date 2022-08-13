@@ -228,6 +228,25 @@ class TestMultilabelAccuracy(MetricClassTester):
 
         self._test_hamming_with_input(input, target)
 
+    def test_other_label(self) -> None:
+        input = torch.tensor([[0, 1], [1, 1], [0, 0], [0, 1]])
+        target = torch.tensor([[0, 1], [1, 0], [0, 0], [1, 1]])
+        # test overlap criteria
+        overlap_accuracy = MultilabelAccuracy(criteria="overlap")
+        overlap_accuracy.update(input, target)
+        result = overlap_accuracy.compute()
+        self.assertEqual(result, torch.tensor(1))
+        # test contain criteria
+        contain_accuracy = MultilabelAccuracy(criteria="contain")
+        contain_accuracy.update(input, target)
+        result = contain_accuracy.compute()
+        self.assertEqual(result, torch.tensor(0.75))
+        # test belong criteria
+        belong_accuracy = MultilabelAccuracy(criteria="belong")
+        belong_accuracy.update(input, target)
+        result = belong_accuracy.compute()
+        self.assertEqual(result, torch.tensor(0.75))
+
     def test_accuracy_class_invalid_intialization(self) -> None:
         with self.assertRaisesRegex(
             ValueError, "`criteria` was not in the allowed value of .*, got weighted."

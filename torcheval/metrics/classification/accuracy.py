@@ -210,6 +210,15 @@ class MultilabelAccuracy(MulticlassAccuracy):
             set of labels in target. Also known as subset accuracy.
         - ``'hamming'``:
             Fraction of correct labels over total number of labels.
+        - ``'overlap'``:
+            The set of labels predicted for a sample must overlap with the corresponding
+            set of labels in target.
+        - ``'contain'``:
+            The set of labels predicted for a sample must contain the corresponding
+            set of labels in target.
+        - ``'belong'``:
+            The set of labels predicted for a sample must (fully) belong to the corresponding
+            set of labels in target.
 
     Example:
         >>> import torch
@@ -227,6 +236,27 @@ class MultilabelAccuracy(MulticlassAccuracy):
         >>> metric.update(input, target)
         >>> metric.compute()
         tensor(0.75)  # 6 / 8
+
+        >>> metric = MultilabelAccuracy(criteria="overlap")
+        >>> input = torch.tensor([[0, 1], [1, 1], [0, 0], [0, 1]])
+        >>> target = torch.tensor([[0, 1], [1, 0], [0, 0], [1, 1]])
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(1)  # 4 / 4
+
+        >>> metric = MultilabelAccuracy(criteria="contain")
+        >>> input = torch.tensor([[0, 1], [1, 1], [0, 0], [0, 1]])
+        >>> target = torch.tensor([[0, 1], [1, 0], [0, 0], [1, 1]])
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(0.75)  # 3 / 4, input[0],input[1],input[2]
+
+        >>> metric = MultilabelAccuracy(criteria="belong")
+        >>> input = torch.tensor([[0, 1], [1, 1], [0, 0], [0, 1]])
+        >>> target = torch.tensor([[0, 1], [1, 0], [0, 0], [1, 1]])
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(0.75)  # 3 / 4, input[0],input[1],input[3]
     """
 
     def __init__(

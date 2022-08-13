@@ -222,6 +222,37 @@ class TestMultilabelAccuracy(unittest.TestCase):
 
         self._test_hamming_with_input(input, target)
 
+    def test_multilabel_accuracy_criteria(self) -> None:
+        input = torch.tensor([[0, 1, 1], [1, 1, 0], [1, 1, 1], [0, 1, 1]])
+        target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        # test overlap criteria
+        overlap_accuracy = multilabel_accuracy(input, target, criteria="overlap")
+        torch.testing.assert_close(
+            overlap_accuracy,
+            torch.tensor(1.0),
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+        # test contain criteria: input[1], input[2], input[3]
+        contain_accuracy = multilabel_accuracy(input, target, criteria="contain")
+        torch.testing.assert_close(
+            contain_accuracy,
+            torch.tensor(3 / 4),
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+        # test belong criteria: input[2]
+        belong_accuracy = multilabel_accuracy(input, target, criteria="belong")
+        torch.testing.assert_close(
+            belong_accuracy,
+            torch.tensor(1 / 4),
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
     def test_multilabel_accuracy_hamming_with_rounding(self) -> None:
         num_classes = 2
         input = torch.rand(size=(BATCH_SIZE, num_classes))
