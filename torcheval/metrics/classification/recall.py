@@ -63,12 +63,13 @@ class BinaryRecall(Metric[torch.Tensor]):
     def __init__(
         self: TBinaryRecall,
         threshold: float = 0.5,
+        device: Optional[torch.device] = None,
     ) -> None:
-        super().__init__()
+        super().__init__(device=device)
         self.threshold = threshold
 
-        self._add_state("num_tp", torch.tensor(0.0))
-        self._add_state("num_true_labels", torch.tensor(0.0))
+        self._add_state("num_tp", torch.tensor(0.0, device=self.device))
+        self._add_state("num_true_labels", torch.tensor(0.0, device=self.device))
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
@@ -168,23 +169,36 @@ class MulticlassRecall(Metric[torch.Tensor]):
         self: TRecall,
         num_classes: Optional[int] = None,
         average: Optional[str] = "micro",
+        device: Optional[torch.device] = None,
     ) -> None:
-        super().__init__()
+        super().__init__(device=device)
         _recall_param_check(num_classes, average)
         self.num_classes = num_classes
         self.average = average
 
         if average == "micro":
-            self._add_state("num_tp", torch.tensor(0.0))
-            self._add_state("num_labels", torch.tensor(0.0))
-            self._add_state("num_predictions", torch.tensor(0.0))
+            self._add_state("num_tp", torch.tensor(0.0, device=self.device))
+            self._add_state("num_labels", torch.tensor(0.0, device=self.device))
+            self._add_state(
+                "num_predictions",
+                torch.tensor(0.0, device=self.device),
+            )
         else:
             assert isinstance(
                 num_classes, int
             ), f"`num_classes` must be an integer, but got {num_classes}."
-            self._add_state("num_tp", torch.zeros(num_classes))
-            self._add_state("num_labels", torch.zeros(num_classes))
-            self._add_state("num_predictions", torch.zeros(num_classes))
+            self._add_state(
+                "num_tp",
+                torch.zeros(num_classes, device=self.device),
+            )
+            self._add_state(
+                "num_labels",
+                torch.zeros(num_classes, device=self.device),
+            )
+            self._add_state(
+                "num_predictions",
+                torch.zeros(num_classes, device=self.device),
+            )
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any

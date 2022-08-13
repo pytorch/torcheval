@@ -6,7 +6,7 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, List, Tuple, TypeVar, Union
+from typing import Iterable, List, Optional, Tuple, TypeVar, Union
 
 import torch
 
@@ -58,18 +58,19 @@ class BinaryBinnedPrecisionRecallCurve(Metric[torch.Tensor]):
     def __init__(
         self: TBinaryBinnedPrecisionRecallCurve,
         threshold: Union[int, List[float], torch.Tensor] = 100,
+        device: Optional[torch.device] = None,
     ) -> None:
-        super().__init__()
+        super().__init__(device=device)
         threshold = (
-            torch.linspace(0, 1.0, threshold)
+            torch.linspace(0, 1.0, threshold, device=self.device)
             if isinstance(threshold, int)
-            else torch.tensor(threshold)
+            else torch.tensor(threshold, device=self.device)
         )
         _binary_binned_precision_recall_curve_param_check(threshold)
         self._add_state("threshold", threshold)
-        self._add_state("num_tp", torch.zeros(len(threshold)))
-        self._add_state("num_fp", torch.zeros(len(threshold)))
-        self._add_state("num_fn", torch.zeros(len(threshold)))
+        self._add_state("num_tp", torch.zeros(len(threshold), device=self.device))
+        self._add_state("num_fp", torch.zeros(len(threshold), device=self.device))
+        self._add_state("num_fn", torch.zeros(len(threshold), device=self.device))
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any

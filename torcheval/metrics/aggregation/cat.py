@@ -7,7 +7,7 @@
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
 
-from typing import Iterable, TypeVar
+from typing import Iterable, Optional, TypeVar
 
 import torch
 
@@ -46,14 +46,18 @@ class Cat(Metric[torch.Tensor]):
         tensor([0])
     """
 
-    def __init__(self: "Cat", dim: int = 0) -> None:
+    def __init__(
+        self: "Cat",
+        dim: int = 0,
+        device: Optional[torch.device] = None,
+    ) -> None:
         """
         Initialize a Cat metric object.
 
         Args:
             dim: The dimension along which to concatenate, as in ``torch.cat()``.
         """
-        super().__init__()
+        super().__init__(device=device)
         self.dim = dim
         self._add_state("inputs", [])
 

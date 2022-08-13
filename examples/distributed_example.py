@@ -71,8 +71,8 @@ def train() -> None:
     train_dataloader = prepare_dataloader(device)
 
     loss_fn = torch.nn.CrossEntropyLoss()
-    metric = MulticlassAccuracy().to(device)
-    throughtput = Throughput().to(device)
+    metric = MulticlassAccuracy(device=device)
+    throughtput = Throughput(device=device)
 
     num_epochs_completed = 0
     while num_epochs_completed < NUM_EPOCHS:

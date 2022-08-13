@@ -81,24 +81,37 @@ class MulticlassF1Score(Metric[torch.Tensor]):
         self: TF1Score,
         num_classes: Optional[int] = None,
         average: Optional[str] = "micro",
+        device: Optional[torch.device] = None,
     ) -> None:
-        super().__init__()
+        super().__init__(device=device)
         _f1_score_param_check(num_classes, average)
         self.num_classes = num_classes
         self.average = average
         if average == "micro":
-            self._add_state("num_tp", torch.tensor(0.0))
-            self._add_state("num_label", torch.tensor(0.0))
-            self._add_state("num_prediction", torch.tensor(0.0))
+            self._add_state("num_tp", torch.tensor(0.0, device=self.device))
+            self._add_state("num_label", torch.tensor(0.0, device=self.device))
+            self._add_state(
+                "num_prediction",
+                torch.tensor(0.0, device=self.device),
+            )
         else:
             # num_classes has been verified as a positive integer. Add this line to bypass pyre.
             assert isinstance(
                 num_classes, int
             ), f"num_classes must be a integer, but got {num_classes}"
 
-            self._add_state("num_tp", torch.zeros(num_classes))
-            self._add_state("num_label", torch.zeros(num_classes))
-            self._add_state("num_prediction", torch.zeros(num_classes))
+            self._add_state(
+                "num_tp",
+                torch.zeros(num_classes, device=self.device),
+            )
+            self._add_state(
+                "num_label",
+                torch.zeros(num_classes, device=self.device),
+            )
+            self._add_state(
+                "num_prediction",
+                torch.zeros(num_classes, device=self.device),
+            )
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any

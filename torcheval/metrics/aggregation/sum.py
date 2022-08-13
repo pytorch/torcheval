@@ -6,7 +6,7 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, TypeVar, Union
+from typing import Iterable, Optional, TypeVar, Union
 
 import torch
 
@@ -45,9 +45,12 @@ class Sum(Metric[torch.Tensor]):
         tensor(14.5)
     """
 
-    def __init__(self: TSum) -> None:
-        super().__init__()
-        self._add_state("weighted_sum", torch.tensor(0.0))
+    def __init__(
+        self: TSum,
+        device: Optional[torch.device] = None,
+    ) -> None:
+        super().__init__(device=device)
+        self._add_state("weighted_sum", torch.tensor(0.0, device=self.device))
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any

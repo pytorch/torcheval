@@ -54,7 +54,7 @@ device = torch.device(
     else "cpu"
 )
 
-metric = MulticlassAccuracy().to(device)
+metric = MulticlassAccuracy(device=device)
 num_epochs, num_batches = 4, 8
 
 for epoch in range(num_epochs):

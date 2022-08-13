@@ -6,7 +6,7 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, TypeVar
+from typing import Iterable, Optional, TypeVar
 
 import torch
 
@@ -37,9 +37,12 @@ class Max(Metric[torch.Tensor]):
         tensor(-1.)
     """
 
-    def __init__(self: TMax) -> None:
-        super().__init__()
-        self._add_state("max", torch.tensor(float("-inf")))
+    def __init__(
+        self: TMax,
+        device: Optional[torch.device] = None,
+    ) -> None:
+        super().__init__(device=device)
+        self._add_state("max", torch.tensor(float("-inf"), device=self.device))
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any

@@ -6,7 +6,7 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, TypeVar
+from typing import Iterable, Optional, TypeVar
 
 import torch
 
@@ -83,15 +83,19 @@ class R2Score(Metric[torch.Tensor]):
         self: TR2Score,
         multioutput: str = "uniform_average",
         num_regressors: int = 0,
+        device: Optional[torch.device] = None,
     ) -> None:
-        super().__init__()
+        super().__init__(device=device)
         _r2_score_param_check(multioutput, num_regressors)
         self.multioutput = multioutput
         self.num_regressors = num_regressors
-        self._add_state("sum_squared_obs", torch.tensor(0.0))
-        self._add_state("sum_obs", torch.tensor(0.0))
-        self._add_state("sum_squared_residual", torch.tensor(0.0))
-        self._add_state("num_obs", torch.tensor(0.0))
+        self._add_state("sum_squared_obs", torch.tensor(0.0, device=self.device))
+        self._add_state("sum_obs", torch.tensor(0.0, device=self.device))
+        self._add_state(
+            "sum_squared_residual",
+            torch.tensor(0.0, device=self.device),
+        )
+        self._add_state("num_obs", torch.tensor(0.0, device=self.device))
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any

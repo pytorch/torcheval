@@ -84,19 +84,26 @@ class MulticlassAccuracy(Metric[torch.Tensor]):
         average: Optional[str] = "micro",
         num_classes: Optional[int] = None,
         k: int = 1,
+        device: Optional[torch.device] = None,
     ) -> None:
-        super().__init__()
+        super().__init__(device=device)
         _accuracy_param_check(average, num_classes, k)
         self.average = average
         self.num_classes = num_classes
         self.k = k
         if average == "micro":
-            self._add_state("num_correct", torch.tensor(0.0))
-            self._add_state("num_total", torch.tensor(0.0))
+            self._add_state("num_correct", torch.tensor(0.0, device=self.device))
+            self._add_state("num_total", torch.tensor(0.0, device=self.device))
         else:
             # num_classes is verified to be not None when average != "micro"
-            self._add_state("num_correct", torch.zeros(num_classes or 0))
-            self._add_state("num_total", torch.zeros(num_classes or 0))
+            self._add_state(
+                "num_correct",
+                torch.zeros(num_classes or 0, device=self.device),
+            )
+            self._add_state(
+                "num_total",
+                torch.zeros(num_classes or 0, device=self.device),
+            )
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
@@ -164,8 +171,9 @@ class BinaryAccuracy(MulticlassAccuracy):
     def __init__(
         self: TBinaryAccuracy,
         threshold: float = 0.5,
+        device: Optional[torch.device] = None,
     ) -> None:
-        super().__init__()
+        super().__init__(device=device)
         self.threshold = threshold
 
     @torch.inference_mode()
@@ -225,8 +233,9 @@ class MultilabelAccuracy(MulticlassAccuracy):
         self: TMultilabelAccuracy,
         threshold: float = 0.5,
         criteria: str = "exact_match",
+        device: Optional[torch.device] = None,
     ) -> None:
-        super().__init__()
+        super().__init__(device=device)
         _multilabel_accuracy_param_check(criteria)
         self.threshold = threshold
         self.criteria = criteria
