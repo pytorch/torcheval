@@ -14,6 +14,7 @@ import torch.nn.functional as F
 def binary_normalized_entropy(
     input: torch.Tensor,
     target: torch.Tensor,
+    *,
     weight: Optional[torch.Tensor] = None,
     from_logits: bool = False,
 ) -> torch.Tensor:

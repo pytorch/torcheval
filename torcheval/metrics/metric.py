@@ -30,6 +30,7 @@ class Metric(Generic[TComputeReturn], ABC):
 
     def __init__(
         self: TSelf,
+        *,
         device: Optional[torch.device] = None,
     ) -> None:
         """

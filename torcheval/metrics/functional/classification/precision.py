@@ -17,6 +17,7 @@ import torch
 def binary_precision(
     input: torch.Tensor,
     target: torch.Tensor,
+    *,
     threshold: float = 0.5,
 ) -> torch.Tensor:
     """
@@ -53,6 +54,7 @@ def binary_precision(
 def multiclass_precision(
     input: torch.Tensor,
     target: torch.Tensor,
+    *,
     num_classes: Optional[int] = None,
     average: Optional[str] = "micro",
 ) -> torch.Tensor:

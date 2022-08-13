@@ -44,6 +44,7 @@ class HitRate(Metric[torch.Tensor]):
 
     def __init__(
         self: THitRate,
+        *,
         k: Optional[int] = None,
         device: Optional[torch.device] = None,
     ) -> None:

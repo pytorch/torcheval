@@ -15,6 +15,7 @@ import torch
 def r2_score(
     input: torch.Tensor,
     target: torch.Tensor,
+    *,
     multioutput: str = "uniform_average",
     num_regressors: int = 0,
 ) -> torch.Tensor:

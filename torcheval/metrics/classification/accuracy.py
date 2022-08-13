@@ -81,6 +81,7 @@ class MulticlassAccuracy(Metric[torch.Tensor]):
 
     def __init__(
         self: TAccuracy,
+        *,
         average: Optional[str] = "micro",
         num_classes: Optional[int] = None,
         k: int = 1,
@@ -170,6 +171,7 @@ class BinaryAccuracy(MulticlassAccuracy):
 
     def __init__(
         self: TBinaryAccuracy,
+        *,
         threshold: float = 0.5,
         device: Optional[torch.device] = None,
     ) -> None:
@@ -231,6 +233,7 @@ class MultilabelAccuracy(MulticlassAccuracy):
 
     def __init__(
         self: TMultilabelAccuracy,
+        *,
         threshold: float = 0.5,
         criteria: str = "exact_match",
         device: Optional[torch.device] = None,

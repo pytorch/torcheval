@@ -62,6 +62,7 @@ class BinaryRecall(Metric[torch.Tensor]):
 
     def __init__(
         self: TBinaryRecall,
+        *,
         threshold: float = 0.5,
         device: Optional[torch.device] = None,
     ) -> None:
@@ -167,6 +168,7 @@ class MulticlassRecall(Metric[torch.Tensor]):
 
     def __init__(
         self: TRecall,
+        *,
         num_classes: Optional[int] = None,
         average: Optional[str] = "micro",
         device: Optional[torch.device] = None,

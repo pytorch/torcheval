@@ -43,6 +43,7 @@ class BinaryAUROC(Metric[torch.Tensor]):
 
     def __init__(
         self: TAUROC,
+        *,
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)

@@ -13,6 +13,7 @@ import torch
 def hit_rate(
     input: torch.Tensor,
     target: torch.Tensor,
+    *,
     k: Optional[int] = None,
 ) -> torch.Tensor:
     """

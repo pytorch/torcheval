@@ -16,6 +16,7 @@ import torch
 def multiclass_f1_score(
     input: torch.Tensor,
     target: torch.Tensor,
+    *,
     num_classes: Optional[int] = None,
     average: Optional[str] = "micro",
 ) -> torch.Tensor:

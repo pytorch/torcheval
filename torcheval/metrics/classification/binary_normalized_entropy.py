@@ -50,6 +50,7 @@ class BinaryNormalizedEntropy(Metric[torch.Tensor]):
 
     def __init__(
         self: TNormalizedEntropy,
+        *,
         from_logits: bool = False,
         device: Optional[torch.device] = None,
     ) -> None:
@@ -71,6 +72,7 @@ class BinaryNormalizedEntropy(Metric[torch.Tensor]):
         self: TNormalizedEntropy,
         input: torch.Tensor,
         target: torch.Tensor,
+        *,
         weight: Optional[torch.Tensor] = None,
     ) -> TNormalizedEntropy:
         """

@@ -50,6 +50,7 @@ class Mean(Metric[torch.Tensor]):
 
     def __init__(
         self: TMean,
+        *,
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)
@@ -59,7 +60,10 @@ class Mean(Metric[torch.Tensor]):
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
     def update(
-        self: TMean, input: torch.Tensor, weight: Union[float, int, torch.Tensor] = 1.0
+        self: TMean,
+        input: torch.Tensor,
+        *,
+        weight: Union[float, int, torch.Tensor] = 1.0,
     ) -> TMean:
         """
         Compute weighted mean. When weight is not provided, it calculates the unweighted mean.

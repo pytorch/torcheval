@@ -44,6 +44,7 @@ class ReciprocalRank(Metric[torch.Tensor]):
 
     def __init__(
         self: TReciprocalRank,
+        *,
         k: Optional[int] = None,
         device: Optional[torch.device] = None,
     ) -> None:

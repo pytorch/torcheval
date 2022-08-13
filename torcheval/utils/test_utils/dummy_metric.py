@@ -7,7 +7,7 @@
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
 from collections import defaultdict, deque
-from typing import Iterable, TypeVar
+from typing import Iterable, Optional, TypeVar
 
 import torch
 
@@ -17,9 +17,11 @@ TDummySumMetric = TypeVar("TDummySumMetric")
 
 
 class DummySumMetric(Metric[torch.Tensor]):
-    def __init__(self: TDummySumMetric) -> None:
-        super().__init__()
-        self._add_state("sum", torch.tensor(0.0))
+    def __init__(
+        self: TDummySumMetric, *, device: Optional[torch.device] = None
+    ) -> None:
+        super().__init__(device=device)
+        self._add_state("sum", torch.tensor(0.0, device=self.device))
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
@@ -44,8 +46,10 @@ TDummySumListStateMetric = TypeVar("TDummySumListStateMetric")
 
 
 class DummySumListStateMetric(Metric[torch.Tensor]):
-    def __init__(self: TDummySumListStateMetric) -> None:
-        super().__init__()
+    def __init__(
+        self: TDummySumListStateMetric, *, device: Optional[torch.device] = None
+    ) -> None:
+        super().__init__(device=device)
         self._add_state("x", [])
 
     @torch.inference_mode()
@@ -74,8 +78,10 @@ TDummySumDictStateMetric = TypeVar("TDummySumDictStateMetric")
 
 
 class DummySumDictStateMetric(Metric[torch.Tensor]):
-    def __init__(self: TDummySumDictStateMetric) -> None:
-        super().__init__()
+    def __init__(
+        self: TDummySumDictStateMetric, *, device: Optional[torch.device] = None
+    ) -> None:
+        super().__init__(device=device)
         self._add_state("x", defaultdict(lambda: torch.tensor(0.0, device=self.device)))
 
     @torch.inference_mode()
@@ -107,8 +113,10 @@ TDummySumDequeStateMetric = TypeVar("TDummySumDequeStateMetric")
 
 
 class DummySumDequeStateMetric(Metric[torch.Tensor]):
-    def __init__(self: TDummySumDequeStateMetric) -> None:
-        super().__init__()
+    def __init__(
+        self: TDummySumDequeStateMetric, *, device: Optional[torch.device] = None
+    ) -> None:
+        super().__init__(device=device)
         self._add_state("x", deque())
 
     @torch.inference_mode()
@@ -116,7 +124,7 @@ class DummySumDequeStateMetric(Metric[torch.Tensor]):
     def update(
         self: TDummySumDequeStateMetric, x: torch.Tensor
     ) -> TDummySumDequeStateMetric:
-        self.x.append(x)
+        self.x.append(x.to(self.device))
         return self
 
     @torch.inference_mode()

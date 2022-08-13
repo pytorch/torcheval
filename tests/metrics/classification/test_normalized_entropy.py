@@ -63,7 +63,9 @@ class TestBinaryNormalizedEntropy(MetricClassTester):
 
         with self.assertRaisesRegex(ValueError, "is different from `input` shape"):
             metric.update(
-                torch.rand((5,)), torch.randint(0, 2, (5,)), torch.randint(0, 20, (3,))
+                torch.rand((5,)),
+                torch.randint(0, 2, (5,)),
+                weight=torch.randint(0, 20, (3,)),
             )
         with self.assertRaisesRegex(
             ValueError,
