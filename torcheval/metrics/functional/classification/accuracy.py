@@ -125,6 +125,15 @@ def multilabel_accuracy(
             set of labels in target. Also known as subset accuracy.
         - ``'hamming'``:
             Fraction of correct labels over total number of labels.
+        - ``'overlap'``:
+            The set of labels predicted for a sample must overlap with the corresponding
+            set of labels in target.
+        - ``'contain'``:
+            The set of labels predicted for a sample must contain the corresponding
+            set of labels in target.
+        - ``'belong'``:
+            The set of labels predicted for a sample must (fully) belong to the corresponding
+            set of labels in target.
 
     Example:
         >>> import torch
@@ -138,6 +147,21 @@ def multilabel_accuracy(
         >>> target = torch.tensor([[0, 1], [1, 0], [0, 0], [1, 1]])
         >>> multilabel_accuracy(input, target, criteria="hamming")
         tensor(0.75)  # 6 / 8
+
+        >>> input = torch.tensor([[0, 1], [1, 1], [0, 0], [0, 1]])
+        >>> target = torch.tensor([[0, 1], [1, 0], [0, 0], [1, 1]])
+        >>> multilabel_accuracy(input, target, criteria="overlap")
+        tensor(1)  # 4 / 4
+
+        >>> input = torch.tensor([[0, 1], [1, 1], [0, 0], [0, 1]])
+        >>> target = torch.tensor([[0, 1], [1, 0], [0, 0], [1, 1]])
+        >>> multilabel_accuracy(input, target, criteria="contain")
+        tensor(0.75)  # 3 / 4, input[0],input[1],input[2]
+
+        >>> input = torch.tensor([[0, 1], [1, 1], [0, 0], [0, 1]])
+        >>> target = torch.tensor([[0, 1], [1, 0], [0, 0], [1, 1]])
+        >>> multilabel_accuracy(input, target, criteria="belong")
+        tensor(0.75)  # 3 / 4, input[0],input[1],input[3]
     """
 
     _multilabel_accuracy_param_check(criteria)
@@ -297,19 +321,38 @@ def _multilabel_update(
 
     if criteria == "exact_match":
         num_correct = torch.all(input == target, dim=1).sum()
-        num_total = torch.tensor(target.shape[0])
+        num_total = torch.tensor(target.shape[0], device=target.device)
         return num_correct, num_total
 
-    # Hamming
-    num_correct = (input == target).sum()
-    num_total = torch.tensor(target.numel(), device=target.device)
+    elif criteria == "hamming":
+        num_correct = (input == target).sum()
+        num_total = torch.tensor(target.numel(), device=target.device)
+        return num_correct, num_total
+
+    elif criteria == "overlap":
+        num_correct = (
+            torch.logical_and(input == target, input == 1).max(dim=1)[0].sum()
+            + torch.all(torch.logical_and(input == 0, target == 0), dim=1).sum()
+        )
+        num_total = torch.tensor(target.shape[0], device=target.device)
+        return num_correct, num_total
+
+    elif criteria == "contain":
+        num_correct = torch.all((input - target) >= 0, dim=1).sum()
+        num_total = torch.tensor(target.shape[0], device=target.device)
+        return num_correct, num_total
+
+    # belong
+    num_correct = torch.all((input - target) <= 0, dim=1).sum()
+    num_total = torch.tensor(target.shape[0], device=target.device)
+
     return num_correct, num_total
 
 
 def _multilabel_accuracy_param_check(
     criteria: str,
 ) -> None:
-    criteria_options = ("exact_match", "hamming")
+    criteria_options = ("exact_match", "hamming", "overlap", "contain", "belong")
     if criteria not in criteria_options:
         raise ValueError(
             f"`criteria` was not in the allowed value of {criteria_options}, got {criteria}."
