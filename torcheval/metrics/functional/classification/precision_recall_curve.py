@@ -43,9 +43,9 @@ def binary_precision_recall_curve(
         >>> input = torch.tensor([0.1, 0.5, 0.7, 0.8])
         >>> target = torch.tensor([0, 0, 1, 1])
         >>> binary_precision_recall_curve(input, target)
-        (tensor([1., 1., 1.]),
-        tensor([1.0000, 0.5000, 0.0000]),
-        tensor([0.7000, 0.8000]))
+        (tensor([0.5000, 0.6667, 1.0000, 1.0000, 1.0000]),
+        tensor([1.0000, 1.0000, 1.0000, 0.5000, 0.0000]),
+        tensor([0.1000, 0.5000, 0.7000, 0.8000]))
     """
     _binary_precision_recall_curve_update(input, target)
     return _binary_precision_recall_curve_compute(input, target)
@@ -117,19 +117,19 @@ def multiclass_precision_recall_curve(
         >>> from torcheval.metrics.functional import multiclass_precision_recall_curve
         >>> input = torch.tensor([[0.1, 0.1, 0.1, 0.1], [0.5, 0.5, 0.5, 0.5], [0.7, 0.7, 0.7, 0.7], [0.8, 0.8, 0.8, 0.8]])
         >>> target = torch.tensor([0, 1, 2, 3])
-        >>> precision_recall_curve(input, target, num_classes=4)
+        >>> multiclass_precision_recall_curve(input, target, num_classes=4)
         ([tensor([0.2500, 0.0000, 0.0000, 0.0000, 1.0000]),
-        tensor([0.3333, 0.0000, 0.0000, 1.0000]),
-        tensor([0.5000, 0.0000, 1.0000]),
-        tensor([1., 1.])],
+        tensor([0.2500, 0.3333, 0.0000, 0.0000, 1.0000]),
+        tensor([0.2500, 0.3333, 0.5000, 0.0000, 1.0000]),
+        tensor([0.2500, 0.3333, 0.5000, 1.0000, 1.0000])],
         [tensor([1., 0., 0., 0., 0.]),
-        tensor([1., 0., 0., 0.]),
-        tensor([1., 0., 0.]),
-        tensor([1., 0.])],
+        tensor([1., 1., 0., 0., 0.]),
+        tensor([1., 1., 1., 0., 0.]),
+        tensor([1., 1., 1., 1., 0.])],
         [tensor([0.1000, 0.5000, 0.7000, 0.8000]),
-        tensor([0.5000, 0.7000, 0.8000]),
-        tensor([0.7000, 0.8000]),
-        tensor([0.8000])])
+        tensor([0.1000, 0.5000, 0.7000, 0.8000]),
+        tensor([0.1000, 0.5000, 0.7000, 0.8000]),
+        tensor([0.1000, 0.5000, 0.7000, 0.8000])])
     """
     if num_classes is None and input.ndim == 2:
         num_classes = input.shape[1]
@@ -155,7 +155,7 @@ def _multiclass_precision_recall_curve_compute(
     num_unique_classes = torch.unique(target)
     if len(num_unique_classes) != num_classes:
         logging.warning(
-            "Warning: Some classes do not exist in the target. Precision Recall Curve for these classes will be straight lines from (1, 0) to (0, 1)."
+            "Warning: Some classes do not exist in the target. Recall is set to one for these classes."
         )
 
     precisions, recalls, thresholds = [], [], []
@@ -207,24 +207,17 @@ def _compute_for_each_class(
     mask = F.pad(threshold.diff(dim=0) != 0, [0, 1], value=1.0)
     num_tp = (target[indices] == pos_label).cumsum(0)[mask]
     num_fp = (1 - (target[indices] == pos_label).long()).cumsum(0)[mask]
-    precision = num_tp / (num_tp + num_fp)
-    recall = num_tp / num_tp[-1]
-
-    # Remove redundant thresholds that result in a recall of 1.0.
-    last_ind = torch.searchsorted(num_tp, num_tp[-1])
-    sl = slice(last_ind + 1)
-    precision = precision[sl].flip(0)
-    recall = recall[sl].flip(0)
-    threshold = threshold[mask][sl].flip(0)
+    precision = (num_tp / (num_tp + num_fp)).flip(0)
+    recall = (num_tp / num_tp[-1]).flip(0)
+    threshold = threshold[mask].flip(0)
 
     # The last precision and recall values are 1.0 and 0.0 without a corresponding threshold.
     # This ensures that the graph starts on the y-axis.
     precision = torch.cat([precision, precision.new_ones(1)])
     recall = torch.cat([recall, recall.new_zeros(1)])
 
-    # If all recalls are NaN, the curve will be a straight line from (1, 0) to (0, 1).
+    # If recalls are NaNs, set NaNs to 1.0s.
     if torch.isnan(recall[0]):
-        precision = torch.tensor([0.0, 1.0], device=precision.device)
-        recall = torch.tensor([1.0, 0.0], device=recall.device)
+        recall = torch.nan_to_num(recall, 1.0)
 
     return precision, recall, threshold

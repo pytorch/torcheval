@@ -12,6 +12,9 @@ from sklearn.metrics import precision_recall_curve
 from torch.nn import functional as F
 
 from torcheval.metrics import BinaryPrecisionRecallCurve, MulticlassPrecisionRecallCurve
+from torcheval.metrics.functional.classification.precision_recall_curve import (
+    binary_precision_recall_curve,
+)
 from torcheval.utils.test_utils.metric_class_tester import (
     BATCH_SIZE,
     MetricClassTester,
@@ -25,10 +28,12 @@ class TestBinaryPrecisionRecallCurve(MetricClassTester):
         input: torch.Tensor,
         target: torch.Tensor,
     ) -> None:
-        input_tensors = input.reshape(-1, 1)
+        input_tensors = input.reshape(-1)
         target_tensors = target.reshape(-1)
 
-        precision, recall, thresholds = _test_helper(input_tensors, target_tensors)
+        precision, recall, thresholds = binary_precision_recall_curve(
+            input_tensors, target_tensors
+        )
 
         compute_result = (precision, recall, thresholds)
         self.run_class_implementation_tests(
@@ -68,7 +73,7 @@ class TestBinaryPrecisionRecallCurve(MetricClassTester):
             torch.randint(high=num_classes, size=(5,)),
         ]
 
-        compute_result = _test_helper(
+        compute_result = binary_precision_recall_curve(
             torch.cat(update_input, dim=0),
             torch.cat(update_target, dim=0),
         )
@@ -126,7 +131,7 @@ class TestMulticlassPrecisionRecallCurve(MetricClassTester):
         precision, recall, thresholds = [], [], []
         target_tensors = F.one_hot(target_tensors, num_classes=num_classes)
         for idx in range(num_classes):
-            p, r, t = _test_helper(
+            p, r, t = binary_precision_recall_curve(
                 input_tensors[:, idx],
                 target_tensors[:, idx],
             )
@@ -196,7 +201,7 @@ class TestMulticlassPrecisionRecallCurve(MetricClassTester):
 
         precision, recall, thresholds = [], [], []
         for idx in range(num_classes):
-            p, r, t = _test_helper(
+            p, r, t = binary_precision_recall_curve(
                 input_tensors[:, idx],
                 target_tensors[:, idx],
             )
@@ -241,16 +246,3 @@ class TestMulticlassPrecisionRecallCurve(MetricClassTester):
         ):
             metric = MulticlassPrecisionRecallCurve(num_classes=2)
             metric.update(torch.rand(3, 4), torch.rand(3))
-
-
-def _test_helper(
-    input: torch.Tensor,
-    target: torch.Tensor,
-) -> List[torch.Tensor]:
-    compute_result = precision_recall_curve(target, input)
-    compute_result = [
-        torch.tensor(x.copy(), dtype=torch.float32) for x in compute_result
-    ]
-    if torch.isnan(compute_result[1][0]):
-        compute_result[1] = torch.tensor([1.0, 0.0], device=compute_result[1].device)
-    return compute_result
