@@ -140,7 +140,7 @@ class MulticlassF1Score(Metric[torch.Tensor]):
         """
         Return the f1 score.
 
-        NaN is returned if no calls to ``update()`` are made before ``compute()`` is called.
+        0 is returned if no calls to ``update()`` are made before ``compute()`` is called.
         """
         return _f1_score_compute(
             self.num_tp, self.num_label, self.num_prediction, self.average
