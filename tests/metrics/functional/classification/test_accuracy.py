@@ -14,6 +14,7 @@ from torcheval.metrics.functional import (
     binary_accuracy,
     multiclass_accuracy,
     multilabel_accuracy,
+    topk_multilabel_accuracy,
 )
 from torcheval.utils.test_utils.metric_class_tester import BATCH_SIZE
 
@@ -385,3 +386,96 @@ class TestTopKAccuracy(unittest.TestCase):
             r"got shape torch.Size\(\[2\]\).",
         ):
             multiclass_accuracy(input, torch.rand(2), k=2)
+
+
+class TestTopKMultilabelAccuracy(unittest.TestCase):
+    def test_topk_accuracy_base(self) -> None:
+        input = torch.tensor(
+            [[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]]
+        )
+        target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+
+        compute_result = torch.tensor(0.0)
+        torch.testing.assert_close(
+            topk_multilabel_accuracy(input, target, k=2),
+            compute_result,
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+    def test_topk_accuracy_hamming(self) -> None:
+        input = torch.tensor(
+            [[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]]
+        )
+        target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+
+        compute_result = torch.tensor(7 / 12)
+        torch.testing.assert_close(
+            topk_multilabel_accuracy(input, target, criteria="hamming", k=2),
+            compute_result,
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+    def test_topk_accuracy_overlap(self) -> None:
+        input = torch.tensor(
+            [[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]]
+        )
+        target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+
+        compute_result = torch.tensor(4 / 4)
+        torch.testing.assert_close(
+            topk_multilabel_accuracy(input, target, criteria="overlap", k=2),
+            compute_result,
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+    def test_topk_accuracy_contain(self) -> None:
+        input = torch.tensor(
+            [[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]]
+        )
+        target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+
+        compute_result = torch.tensor(2 / 4)
+        torch.testing.assert_close(
+            topk_multilabel_accuracy(input, target, criteria="contain", k=2),
+            compute_result,
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+    def test_topk_accuracy_belong(self) -> None:
+        input = torch.tensor(
+            [[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]]
+        )
+        target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+
+        compute_result = torch.tensor(1 / 4)
+        torch.testing.assert_close(
+            topk_multilabel_accuracy(input, target, criteria="belong", k=2),
+            compute_result,
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+    def test_topk_accuracy_invalid_params(self) -> None:
+        k = -2
+        with self.assertRaisesRegex(
+            ValueError,
+            f"Expected `k` to be an integer greater than 1, but {k} was provided.",
+        ):
+            topk_multilabel_accuracy(torch.rand(4, 2), torch.rand(4), k=k)
+
+        input = torch.rand(2)
+        with self.assertRaisesRegex(
+            ValueError,
+            r"input should have shape \(num_sample, num_classes\) for k > 1, "
+            r"got shape torch.Size\(\[2\]\).",
+        ):
+            topk_multilabel_accuracy(input, torch.rand(2), k=2)

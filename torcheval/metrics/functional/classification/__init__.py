@@ -8,6 +8,7 @@ from torcheval.metrics.functional.classification.accuracy import (
     binary_accuracy,
     multiclass_accuracy,
     multilabel_accuracy,
+    topk_multilabel_accuracy,
 )
 from torcheval.metrics.functional.classification.auroc import binary_auroc
 from torcheval.metrics.functional.classification.binary_normalized_entropy import (
@@ -44,4 +45,5 @@ __all__ = [
     "multiclass_precision_recall_curve",
     "multiclass_recall",
     "multilabel_accuracy",
+    "topk_multilabel_accuracy",
 ]

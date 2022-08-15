@@ -170,6 +170,75 @@ def multilabel_accuracy(
     return _accuracy_compute(num_correct, num_total, "micro")
 
 
+@torch.inference_mode()
+def topk_multilabel_accuracy(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    *,
+    criteria: str = "exact_match",
+    k: int = 2,
+) -> torch.Tensor:
+    """
+    Compute multilabel accuracy score, which is the frequency of the top k label predicted matching target.
+    Its class version is ``torcheval.metrics.TopKMultilabelAccuracy``.
+
+    Args:
+        input: Tensor of logits/probabilities with shape of (n_sample, n_class).
+        target: Tensor of ground truth labels with shape of (n_sample, n_class).
+        criteria:
+        - ``'exact_match'``[default]:
+            The set of top-k labels predicted for a sample must exactly match the corresponding
+            set of labels in target. Also known as subset accuracy.
+        - ``'hamming'``:
+            Fraction of top-k correct labels over total number of labels.
+        - ``'overlap'``:
+            The set of top-k labels predicted for a sample must overlap with the corresponding
+            set of labels in target.
+        - ``'contain'``:
+            The set of top-k labels predicted for a sample must contain the corresponding
+            set of labels in target.
+        - ``'belong'``:
+            The set of top-k labels predicted for a sample must (fully) belong to the corresponding
+            set of labels in target.
+        k: Number of top probabilities to be considered. K should be an integer greater than or equal to 1.
+
+    Example:
+        >>> import torch
+        >>> from torcheval.metrics.functional import topkmultilabel_accuracy
+        >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])
+        >>> target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        >>> topkmultilabel_accuracy(input, target, k = 2)
+        tensor(0)  # 0 / 4
+
+        >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])
+        >>> target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        >>> topkmultilabel_accuracy(input, target, criteria="hamming", k = 2)
+        tensor(0.583)  # 7 / 12
+
+        >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])
+        >>> target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        >>> topkmultilabel_accuracy(input, target, criteria="overlap", k = 2)
+        tensor(1)  # 4 / 4
+
+        >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])
+        >>> target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        >>> topkmultilabel_accuracy(input, target, criteria="contain", k = 2)
+        tensor(0.5)  # 2 / 4
+
+        >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])
+        >>> target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        >>> topkmultilabel_accuracy(input, target, criteria="belong", k = 2)
+        tensor(0.25)  # 1 / 4
+
+    """
+
+    _topk_multilabel_accuracy_param_check(criteria, k)
+    num_correct, num_total = _topk_multilabel_accuracy_update(
+        input, target, criteria, k
+    )
+    return _accuracy_compute(num_correct, num_total, "micro")
+
+
 def _multiclass_accuracy_update(
     input: torch.Tensor,
     target: torch.Tensor,
@@ -306,17 +375,29 @@ def _multilabel_accuracy_update(
     criteria: str = "exact_match",
 ) -> Tuple[torch.Tensor, torch.Tensor]:
     _multilabel_accuracy_update_input_check(input, target)
-    return _multilabel_update(input, target, threshold, criteria)
+    input_label = torch.where(input < threshold, 0, 1)
+    return _multilabel_update(input_label, target, criteria)
+
+
+def _topk_multilabel_accuracy_update(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    criteria: str = "exact_match",
+    k: int = 2,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    _topk_multilabel_accuracy_update_input_check(input, target, k)
+    input_label = torch.zeros(input.size(), device=input.device).scatter_(
+        -1, input.topk(k=2, dim=-1).indices, 1.0
+    )
+    return _multilabel_update(input_label, target, criteria)
 
 
 @torch.jit.script
 def _multilabel_update(
     input: torch.Tensor,
     target: torch.Tensor,
-    threshold: float = 0.5,
     criteria: str = "exact_match",
 ) -> Tuple[torch.Tensor, torch.Tensor]:
-    input = torch.where(input < threshold, 0, 1)
 
     if criteria == "exact_match":
         num_correct = torch.all(input == target, dim=1).sum()
@@ -344,7 +425,6 @@ def _multilabel_update(
     # belong
     num_correct = torch.all((input - target) <= 0, dim=1).sum()
     num_total = torch.tensor(target.shape[0], device=target.device)
-
     return num_correct, num_total
 
 
@@ -358,6 +438,23 @@ def _multilabel_accuracy_param_check(
         )
 
 
+def _topk_multilabel_accuracy_param_check(
+    criteria: str,
+    k: int,
+) -> None:
+    _multilabel_accuracy_param_check(criteria)
+    if type(k) != int:
+        raise TypeError(f"Expected `k` to be an integer, but {type(k)} was provided.")
+    if k == 1:
+        raise ValueError(
+            f"Expected `k` to be an integer greater than 1, but {k} was provided. In such case, please use multilabel_accuracy metric."
+        )
+    if k < 1:
+        raise ValueError(
+            f"Expected `k` to be an integer greater than 1, but {k} was provided."
+        )
+
+
 def _multilabel_accuracy_update_input_check(
     input: torch.Tensor,
     target: torch.Tensor,
@@ -366,4 +463,22 @@ def _multilabel_accuracy_update_input_check(
         raise ValueError(
             "The `input` and `target` should have the same dimensions, "
             f"got shapes {input.shape} and {target.shape}."
+        )
+
+
+def _topk_multilabel_accuracy_update_input_check(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    k: int,
+) -> None:
+    if input.shape != target.shape:
+        raise ValueError(
+            "The `input` and `target` should have the same dimensions, "
+            f"got shapes {input.shape} and {target.shape}."
+        )
+
+    if input.ndim != 2:
+        raise ValueError(
+            "input should have shape (num_sample, num_classes) for k > 1, "
+            f"got shape {input.shape}."
         )

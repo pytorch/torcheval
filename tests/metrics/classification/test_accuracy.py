@@ -9,7 +9,12 @@ import numpy as np
 import torch
 
 from sklearn.metrics import accuracy_score
-from torcheval.metrics import BinaryAccuracy, MulticlassAccuracy, MultilabelAccuracy
+from torcheval.metrics import (
+    BinaryAccuracy,
+    MulticlassAccuracy,
+    MultilabelAccuracy,
+    TopKMultilabelAccuracy,
+)
 from torcheval.utils.test_utils.metric_class_tester import (
     BATCH_SIZE,
     MetricClassTester,
@@ -370,6 +375,75 @@ class TestTopKAccuracy(MetricClassTester):
 
         input = torch.rand(2)
         metric = MulticlassAccuracy(k=2)
+        with self.assertRaisesRegex(
+            ValueError,
+            r"input should have shape \(num_sample, num_classes\) for k > 1, "
+            r"got shape torch.Size\(\[2\]\).",
+        ):
+            metric.update(input, torch.rand(2))
+
+
+class TestTopKMultilabelAccuracy(MetricClassTester):
+    def test_accuracy_label_base(self) -> None:
+        input = torch.tensor(
+            [[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]]
+        )
+        target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        accuracy = TopKMultilabelAccuracy(k=2)
+        accuracy.update(input, target)
+        result = accuracy.compute()
+        self.assertEqual(result, torch.tensor(0.0))
+
+    def test_accuracy_label_hamming(self) -> None:
+        input = torch.tensor(
+            [[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]]
+        )
+        target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        hamming_accuracy = TopKMultilabelAccuracy(k=2, criteria="hamming")
+        hamming_accuracy.update(input, target)
+        result = hamming_accuracy.compute()
+        self.assertEqual(result, torch.tensor(7 / 12))
+
+    def test_accuracy_label_overlap(self) -> None:
+        input = torch.tensor(
+            [[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]]
+        )
+        target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        overlap_accuracy = TopKMultilabelAccuracy(k=2, criteria="overlap")
+        overlap_accuracy.update(input, target)
+        result = overlap_accuracy.compute()
+        self.assertEqual(result, torch.tensor(4 / 4))
+
+    def test_accuracy_label_contain(self) -> None:
+        input = torch.tensor(
+            [[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]]
+        )
+        target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        contain_accuracy = TopKMultilabelAccuracy(k=2, criteria="contain")
+        contain_accuracy.update(input, target)
+        result = contain_accuracy.compute()
+        self.assertEqual(result, torch.tensor(2 / 4))
+
+    def test_accuracy_label_belong(self) -> None:
+        input = torch.tensor(
+            [[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]]
+        )
+        target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        belong_accuracy = TopKMultilabelAccuracy(k=2, criteria="belong")
+        belong_accuracy.update(input, target)
+        result = belong_accuracy.compute()
+        self.assertEqual(result, torch.tensor(1 / 4))
+
+    def test_topk_accuracy_invalid_params(self) -> None:
+        k = -2
+        with self.assertRaisesRegex(
+            ValueError,
+            f"Expected `k` to be an integer greater than 1, but {k} was provided.",
+        ):
+            TopKMultilabelAccuracy(k=k)
+
+        input = torch.rand(2)
+        metric = TopKMultilabelAccuracy(k=2)
         with self.assertRaisesRegex(
             ValueError,
             r"input should have shape \(num_sample, num_classes\) for k > 1, "
