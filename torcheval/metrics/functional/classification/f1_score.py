@@ -13,6 +13,41 @@ import torch
 
 
 @torch.inference_mode()
+def binary_f1_score(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    *,
+    threshold: float = 0.5,
+) -> torch.Tensor:
+    """
+    Compute binary f1 score, the harmonic mean of precision and recall.
+
+    Args:
+        input: Tensor of label predictions with shape of (n_sample,).
+            ``torch.where(input < threshold, 0, 1)`` will be applied to the input.
+        target: Tensor of ground truth labels with shape of (n_sample,).
+        threshold [default: 0.5]: Threshold for converting input into predicted labels for each sample.
+            ``torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
+    Example:
+        >>> import torch
+        >>> from torcheval.metrics.functional import binary_f1_score
+        >>> input = torch.tensor([0, 1, 0.7, 0.6])
+        >>> target = torch.tensor([0, 1, 1, 0])
+        >>> binary_f1_score(input, target, threshold=0.5)
+        tensor(0.8000)
+
+        >>> input = torch.tensor([1, 1, 0, 0])
+        >>> target = torch.tensor([0, 1, 1, 1])
+        >>> binary_f1_score(input, target, threshold=1)
+        tensor(0.4000)
+    """
+    num_tp, num_label, num_prediction = _binary_f1_score_update(
+        input, target, threshold
+    )
+    return _f1_score_compute(num_tp, num_label, num_prediction, "micro")
+
+
+@torch.inference_mode()
 def multiclass_f1_score(
     input: torch.Tensor,
     target: torch.Tensor,
@@ -76,6 +111,42 @@ def multiclass_f1_score(
         input, target, num_classes, average
     )
     return _f1_score_compute(num_tp, num_label, num_prediction, average)
+
+
+def _binary_f1_score_update(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    threshold: float = 0.5,
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+
+    _binary_f1_score_update_input_check(input, target)
+
+    input = torch.where(input < threshold, 0, 1)
+
+    num_tp = (input * target).sum()  # num true positive
+    num_label = target.sum()  # tp + fn (num condition positive)
+    num_prediction = input.sum()  # tp + fp (num predicted positive)
+
+    return num_tp, num_label, num_prediction
+
+
+def _binary_f1_score_update_input_check(
+    input: torch.Tensor,
+    target: torch.Tensor,
+) -> None:
+    if input.ndim != 1:
+        raise ValueError(
+            f"input should be a one-dimensional tensor for binary f1 score, got shape {input.shape}."
+        )
+    if target.ndim != 1:
+        raise ValueError(
+            f"target should be a one-dimensional tensor for binary f1 score, got shape {target.shape}."
+        )
+    if input.shape != target.shape:
+        raise ValueError(
+            "The `input` and `target` should have the same dimensions, "
+            f"got shapes {input.shape} and {target.shape}."
+        )
 
 
 def _f1_score_update(

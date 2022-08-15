@@ -11,8 +11,102 @@ import numpy as np
 
 import torch
 from sklearn.metrics import f1_score
-from torcheval.metrics.functional import multiclass_f1_score as my_f1_score
+from torcheval.metrics.functional import (
+    binary_f1_score as my_binary_f1_score,
+    multiclass_f1_score as my_f1_score,
+)
 from torcheval.utils.test_utils.metric_class_tester import BATCH_SIZE
+
+
+class TestBinaryF1Score(unittest.TestCase):
+    def _test_binary_f1_score_with_input(
+        self,
+        input: torch.Tensor,
+        target: torch.Tensor,
+        threshold: float = 0.5,
+    ) -> None:
+        input_np = input.numpy().round()
+        target_np = target.squeeze().numpy()
+        sklearn_result = torch.tensor(f1_score(target_np, input_np)).to(torch.float32)
+
+        torch.testing.assert_close(
+            my_binary_f1_score(input, target, threshold=threshold),
+            sklearn_result,
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+    def test_binary_f1_score(self) -> None:
+        num_classes = 2
+        input = torch.randint(high=num_classes, size=(BATCH_SIZE,))
+        target = torch.randint(high=num_classes, size=(BATCH_SIZE,))
+
+        self._test_binary_f1_score_with_input(input, target)
+
+    def test_binary_f1_score_with_0s(self) -> None:
+        num_classes = 2
+
+        # test input all 0s
+        input = torch.zeros(size=(BATCH_SIZE,))
+        target = torch.randint(high=num_classes, size=(BATCH_SIZE,))
+
+        torch.testing.assert_close(
+            my_binary_f1_score(input, target),
+            torch.Tensor([0.0]).sum(),
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+        # test target all 0s
+        input = torch.randint(high=num_classes, size=(BATCH_SIZE,))
+        target = torch.zeros(size=(BATCH_SIZE,))
+
+        torch.testing.assert_close(
+            my_binary_f1_score(input, target),
+            torch.Tensor([0.0]).sum(),
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+    def test_binary_f1_score_thresholding(self) -> None:
+        num_classes = 2
+        input = torch.randint(high=num_classes, size=(BATCH_SIZE,))
+        target = torch.randint(high=num_classes, size=(BATCH_SIZE,))
+
+        # test threshold larger than every prediction gives 0
+        torch.testing.assert_close(
+            my_binary_f1_score(input, target, threshold=2),
+            torch.Tensor([0.0]).sum(),
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+    def test_binary_f1_score_invalid_input(self) -> None:
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "input should be a one-dimensional tensor for binary f1 score, "
+            r"got shape torch.Size\(\[4, 2\]\).",
+        ):
+            my_binary_f1_score(torch.rand(4, 2), torch.rand(3))
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "target should be a one-dimensional tensor for binary f1 score, "
+            r"got shape torch.Size\(\[4, 2\]\).",
+        ):
+            my_binary_f1_score(torch.rand(3), torch.rand(4, 2))
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "The `input` and `target` should have the same dimensions, "
+            r"got shapes torch.Size\(\[11\]\) and torch.Size\(\[10\]\).",
+        ):
+            my_binary_f1_score(torch.rand(11), torch.rand(10))
 
 
 class TestMultiClassF1Score(unittest.TestCase):
