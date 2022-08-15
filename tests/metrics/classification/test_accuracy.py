@@ -233,7 +233,7 @@ class TestMultilabelAccuracy(MetricClassTester):
 
         self._test_hamming_with_input(input, target)
 
-    def test_other_label(self) -> None:
+    def test_multilabel_accuracy_criteria(self) -> None:
         input = torch.tensor([[0, 1], [1, 1], [0, 0], [0, 1]])
         target = torch.tensor([[0, 1], [1, 0], [0, 0], [1, 1]])
         # test overlap criteria
@@ -241,6 +241,17 @@ class TestMultilabelAccuracy(MetricClassTester):
         overlap_accuracy.update(input, target)
         result = overlap_accuracy.compute()
         self.assertEqual(result, torch.tensor(1))
+        # test overlap criteria with no positive inputs: input[2]
+        input_overlap_no_pos = torch.tensor(
+            [[0, 0, 1], [0, 0, 0], [0, 0, 0], [1, 0, 0]]
+        )
+        target_overlap_no_pos = torch.tensor(
+            [[0, 0, 0], [0, 1, 0], [0, 0, 0], [0, 0, 1]]
+        )
+        overlap_accuracy = MultilabelAccuracy(criteria="overlap")
+        overlap_accuracy.update(input_overlap_no_pos, target_overlap_no_pos)
+        result = overlap_accuracy.compute()
+        self.assertEqual(result, torch.tensor(0.25))
         # test contain criteria
         contain_accuracy = MultilabelAccuracy(criteria="contain")
         contain_accuracy.update(input, target)

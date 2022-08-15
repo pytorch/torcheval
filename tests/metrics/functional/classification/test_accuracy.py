@@ -226,11 +226,28 @@ class TestMultilabelAccuracy(unittest.TestCase):
     def test_multilabel_accuracy_criteria(self) -> None:
         input = torch.tensor([[0, 1, 1], [1, 1, 0], [1, 1, 1], [0, 1, 1]])
         target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
-        # test overlap criteria
+        # test overlap criteria with positive inputs
         overlap_accuracy = multilabel_accuracy(input, target, criteria="overlap")
         torch.testing.assert_close(
             overlap_accuracy,
             torch.tensor(1.0),
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+        # test overlap criteria with no positive inputs: input[2]
+        input_overlap_no_pos = torch.tensor(
+            [[0, 0, 1], [0, 0, 0], [0, 0, 0], [1, 0, 0]]
+        )
+        target_overlap_no_pos = torch.tensor(
+            [[0, 0, 0], [0, 1, 0], [0, 0, 0], [0, 0, 1]]
+        )
+        overlap_accuracy = multilabel_accuracy(
+            input_overlap_no_pos, target_overlap_no_pos, criteria="overlap"
+        )
+        torch.testing.assert_close(
+            overlap_accuracy,
+            torch.tensor(1 / 4),
             equal_nan=True,
             atol=1e-8,
             rtol=1e-5,
