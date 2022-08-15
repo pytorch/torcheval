@@ -16,6 +16,7 @@ from torcheval.metrics.functional.classification.binary_normalized_entropy impor
 )
 from torcheval.metrics.functional.classification.binned_precision_recall_curve import (
     binary_binned_precision_recall_curve,
+    multiclass_binned_precision_recall_curve,
 )
 from torcheval.metrics.functional.classification.f1_score import multiclass_f1_score
 from torcheval.metrics.functional.classification.precision import (
@@ -40,6 +41,7 @@ __all__ = [
     "binary_binned_precision_recall_curve",
     "binary_recall",
     "multiclass_accuracy",
+    "multiclass_binned_precision_recall_curve",
     "multiclass_f1_score",
     "multiclass_precision",
     "multiclass_precision_recall_curve",

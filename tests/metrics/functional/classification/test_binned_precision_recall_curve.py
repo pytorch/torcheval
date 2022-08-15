@@ -8,7 +8,10 @@ import unittest
 from typing import Tuple, Union
 
 import torch
-from torcheval.metrics.functional import binary_binned_precision_recall_curve
+from torcheval.metrics.functional import (
+    binary_binned_precision_recall_curve,
+    multiclass_binned_precision_recall_curve,
+)
 
 
 class TestBinaryBinnedPrecisionRecallCurve(unittest.TestCase):
@@ -24,7 +27,13 @@ class TestBinaryBinnedPrecisionRecallCurve(unittest.TestCase):
             target,
             threshold=threshold,
         )
-        _test_helper(input, target, my_compute_result, compute_result)
+        torch.testing.assert_close(
+            my_compute_result,
+            compute_result,
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
 
     def test_binary_binned_precision_recall_curve_base(self) -> None:
         input = torch.tensor([0.2, 0.3, 0.4, 0.5])
@@ -126,17 +135,163 @@ class TestBinaryBinnedPrecisionRecallCurve(unittest.TestCase):
             )
 
 
-def _test_helper(
-    input: torch.Tensor,
-    target: torch.Tensor,
-    my_compute_result: Tuple[torch.Tensor, torch.Tensor, torch.Tensor],
-    compute_result: Tuple[torch.Tensor, torch.Tensor, torch.Tensor],
-) -> None:
-    for my_tensor, tensor in zip(my_compute_result, compute_result):
-        torch.testing.assert_close(
-            my_tensor,
-            tensor,
-            equal_nan=True,
-            atol=1e-8,
-            rtol=1e-5,
+class TestMulticlassBinnedPrecisionRecallCurve(unittest.TestCase):
+    def test_multiclass_binned_precision_recall_curve_base(self) -> None:
+        input = torch.tensor(
+            [
+                [0.1, 0.2, 0.1],
+                [0.4, 0.2, 0.1],
+                [0.6, 0.1, 0.2],
+                [0.4, 0.2, 0.3],
+                [0.6, 0.2, 0.4],
+            ]
         )
+        target = torch.tensor([0, 1, 2, 1, 0])
+        threshold = 10
+        my_compute_result = multiclass_binned_precision_recall_curve(
+            input, target, num_classes=3, threshold=threshold
+        )
+
+        compute_result = (
+            [
+                torch.tensor(
+                    [
+                        0.4,
+                        0.25,
+                        0.25,
+                        0.25,
+                        0.5,
+                        0.5,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                    ]
+                ),
+                torch.tensor(
+                    [
+                        0.4,
+                        0.5,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                    ]
+                ),
+                torch.tensor(
+                    [
+                        0.2,
+                        0.3333,
+                        0.0,
+                        0.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                    ]
+                ),
+            ],
+            [
+                torch.tensor(
+                    [
+                        1.0,
+                        0.5,
+                        0.5,
+                        0.5,
+                        0.5,
+                        0.5,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                    ]
+                ),
+                torch.tensor([1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
+                torch.tensor([1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
+            ],
+            torch.tensor(
+                [
+                    0.0,
+                    0.1111,
+                    0.2222,
+                    0.3333,
+                    0.4444,
+                    0.5556,
+                    0.6667,
+                    0.7778,
+                    0.8889,
+                    1.0,
+                ]
+            ),
+        )
+        torch.testing.assert_close(
+            my_compute_result,
+            compute_result,
+            equal_nan=True,
+            atol=1e-4,
+            rtol=1e-4,
+        )
+
+    def test_multiclass_binned_precision_recall_curve_invalid_input(self) -> None:
+        with self.assertRaisesRegex(
+            ValueError,
+            "The `input` and `target` should have the same first dimension, "
+            r"got shapes torch.Size\(\[4, 2\]\) and torch.Size\(\[3\]\).",
+        ):
+            multiclass_binned_precision_recall_curve(
+                torch.rand(4, 2), torch.rand(3), num_classes=2
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "target should be a one-dimensional tensor, "
+            r"got shape torch.Size\(\[3, 2\]\).",
+        ):
+            multiclass_binned_precision_recall_curve(
+                torch.rand(3, 2), torch.rand(3, 2), num_classes=2
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"input should have shape of \(num_sample, num_classes\), "
+            r"got torch.Size\(\[3, 4\]\) and num_classes=2.",
+        ):
+            multiclass_binned_precision_recall_curve(
+                torch.rand(3, 4), torch.rand(3), num_classes=2
+            )
+        with self.assertRaisesRegex(
+            ValueError, "The `threshold` should be a sorted array."
+        ):
+            multiclass_binned_precision_recall_curve(
+                torch.rand(4),
+                torch.rand(4),
+                threshold=torch.tensor([0.1, 0.2, 0.5, 0.7, 0.6]),
+            )
+        with self.assertRaisesRegex(
+            ValueError,
+            r"The values in `threshold` should be in the range of \[0, 1\].",
+        ):
+            multiclass_binned_precision_recall_curve(
+                torch.rand(4),
+                torch.rand(4),
+                threshold=torch.tensor([-0.1, 0.2, 0.5, 0.7]),
+            )
+        with self.assertRaisesRegex(
+            ValueError,
+            r"The values in `threshold` should be in the range of \[0, 1\].",
+        ):
+            multiclass_binned_precision_recall_curve(
+                torch.rand(4),
+                torch.rand(4),
+                threshold=torch.tensor([0.1, 0.2, 0.5, 1.7]),
+            )

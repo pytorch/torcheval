@@ -12,8 +12,8 @@ import torch
 
 from torcheval.metrics.functional.classification.binned_precision_recall_curve import (
     _binary_binned_precision_recall_curve_compute,
-    _binary_binned_precision_recall_curve_param_check,
     _binary_binned_precision_recall_curve_update,
+    _binned_precision_recall_curve_param_check,
 )
 from torcheval.metrics.metric import Metric
 
@@ -67,7 +67,7 @@ class BinaryBinnedPrecisionRecallCurve(Metric[torch.Tensor]):
             if isinstance(threshold, int)
             else torch.tensor(threshold, device=self.device)
         )
-        _binary_binned_precision_recall_curve_param_check(threshold)
+        _binned_precision_recall_curve_param_check(threshold)
         self._add_state("threshold", threshold)
         self._add_state("num_tp", torch.zeros(len(threshold), device=self.device))
         self._add_state("num_fp", torch.zeros(len(threshold), device=self.device))
