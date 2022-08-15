@@ -13,11 +13,12 @@ import torch
 def binary_accuracy(
     input: torch.Tensor,
     target: torch.Tensor,
+    *,
     threshold: float = 0.5,
 ) -> torch.Tensor:
     """
     Compute binary accuracy score, which is the frequency of input matching target.
-    Its functional version is ``torcheval.metrics.functional.binary_accuracy``.
+    Its class version is ``torcheval.metrics.BinaryAccuracy``.
 
     Args:
         input: Tensor of label predictions with shape of (n_sample,).
@@ -27,19 +28,15 @@ def binary_accuracy(
             ``torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
     Example:
         >>> import torch
-        >>> from torcheval.metrics import BinaryAccuracy
-        >>> metric = BinaryAccuracy()
+        >>> from torcheval.metrics.functional import binary_accuracy
         >>> input = torch.tensor([0, 0, 1, 1])
         >>> target = torch.tensor([1, 0, 1, 1])
-        >>> metric.update(input, target)
-        >>> metric.compute()
+        >>> binary_accuracy(input, target)
         tensor(0.75)  # 3 / 4
 
-        >>> metric = BinaryAccuracy(threshold=0.7)
         >>> input = torch.tensor([0, 0.2, 0.6, 0.7])
         >>> target = torch.tensor([1, 0, 1, 1])
-        >>> metric.update(input, target)
-        >>> metric.compute()
+        >>> binary_accuracy(input, target, threshold=0.7)
         tensor(0.5)  # 2 / 4
     """
 
@@ -51,6 +48,7 @@ def binary_accuracy(
 def multiclass_accuracy(
     input: torch.Tensor,
     target: torch.Tensor,
+    *,
     average: Optional[str] = "micro",
     num_classes: Optional[int] = None,
     k: int = 1,
@@ -107,6 +105,7 @@ def multiclass_accuracy(
 def multilabel_accuracy(
     input: torch.Tensor,
     target: torch.Tensor,
+    *,
     threshold: float = 0.5,
     criteria: str = "exact_match",
 ) -> torch.Tensor:

@@ -13,6 +13,7 @@ import torch
 def mean_squared_error(
     input: torch.Tensor,
     target: torch.Tensor,
+    *,
     sample_weight: Optional[torch.Tensor] = None,
     multioutput: str = "uniform_average",
 ) -> torch.Tensor:

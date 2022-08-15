@@ -39,6 +39,7 @@ class Max(Metric[torch.Tensor]):
 
     def __init__(
         self: TMax,
+        *,
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)

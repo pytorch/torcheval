@@ -92,6 +92,7 @@ def _binary_precision_recall_curve_update_input_check(
 def multiclass_precision_recall_curve(
     input: torch.Tensor,
     target: torch.Tensor,
+    *,
     num_classes: Optional[int] = None,
 ) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]:
     """

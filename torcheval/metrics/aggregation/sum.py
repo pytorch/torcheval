@@ -47,6 +47,7 @@ class Sum(Metric[torch.Tensor]):
 
     def __init__(
         self: TSum,
+        *,
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)
@@ -55,7 +56,10 @@ class Sum(Metric[torch.Tensor]):
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
     def update(
-        self: TSum, input: torch.Tensor, weight: Union[float, int, torch.Tensor] = 1.0
+        self: TSum,
+        input: torch.Tensor,
+        *,
+        weight: Union[float, int, torch.Tensor] = 1.0,
     ) -> TSum:
         """
         Update states with the values and weights.

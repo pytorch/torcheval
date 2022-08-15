@@ -22,7 +22,7 @@ class TestBinaryBinnedPrecisionRecallCurve(unittest.TestCase):
         my_compute_result = binary_binned_precision_recall_curve(
             input,
             target,
-            threshold,
+            threshold=threshold,
         )
         _test_helper(input, target, my_compute_result, compute_result)
 
@@ -102,21 +102,27 @@ class TestBinaryBinnedPrecisionRecallCurve(unittest.TestCase):
             ValueError, "The `threshold` should be a sorted array."
         ):
             binary_binned_precision_recall_curve(
-                torch.rand(4), torch.rand(4), torch.tensor([0.1, 0.2, 0.5, 0.7, 0.6])
+                torch.rand(4),
+                torch.rand(4),
+                threshold=torch.tensor([0.1, 0.2, 0.5, 0.7, 0.6]),
             )
         with self.assertRaisesRegex(
             ValueError,
             r"The values in `threshold` should be in the range of \[0, 1\].",
         ):
             binary_binned_precision_recall_curve(
-                torch.rand(4), torch.rand(4), torch.tensor([-0.1, 0.2, 0.5, 0.7])
+                torch.rand(4),
+                torch.rand(4),
+                threshold=torch.tensor([-0.1, 0.2, 0.5, 0.7]),
             )
         with self.assertRaisesRegex(
             ValueError,
             r"The values in `threshold` should be in the range of \[0, 1\].",
         ):
             binary_binned_precision_recall_curve(
-                torch.rand(4), torch.rand(4), torch.tensor([0.1, 0.2, 0.5, 1.7])
+                torch.rand(4),
+                torch.rand(4),
+                threshold=torch.tensor([0.1, 0.2, 0.5, 1.7]),
             )
 
 

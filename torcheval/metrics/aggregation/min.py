@@ -39,6 +39,7 @@ class Min(Metric[torch.Tensor]):
 
     def __init__(
         self: TMin,
+        *,
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)

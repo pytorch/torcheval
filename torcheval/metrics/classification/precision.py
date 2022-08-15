@@ -80,6 +80,7 @@ class MulticlassPrecision(Metric[torch.Tensor]):
 
     def __init__(
         self: TPrecision,
+        *,
         num_classes: Optional[int] = None,
         average: Optional[str] = "micro",
         device: Optional[torch.device] = None,
@@ -186,6 +187,7 @@ class BinaryPrecision(MulticlassPrecision):
 
     def __init__(
         self: TBinaryPrecision,
+        *,
         threshold: float = 0.5,
         device: Optional[torch.device] = None,
     ) -> None:

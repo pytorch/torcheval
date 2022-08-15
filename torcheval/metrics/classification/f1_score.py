@@ -79,6 +79,7 @@ class MulticlassF1Score(Metric[torch.Tensor]):
 
     def __init__(
         self: TF1Score,
+        *,
         num_classes: Optional[int] = None,
         average: Optional[str] = "micro",
         device: Optional[torch.device] = None,

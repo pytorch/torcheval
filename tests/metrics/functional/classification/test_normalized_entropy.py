@@ -25,7 +25,7 @@ class TestBinaryNormalizedEntropy(unittest.TestCase):
 
         # with weight and input are probability value
         torch.testing.assert_close(
-            binary_normalized_entropy(input, target, weight, from_logits=False),
+            binary_normalized_entropy(input, target, weight=weight, from_logits=False),
             torch.tensor(1.0060274419349144, dtype=torch.float64),
         )
 
@@ -39,7 +39,9 @@ class TestBinaryNormalizedEntropy(unittest.TestCase):
 
         # with weight and input are logit value
         torch.testing.assert_close(
-            binary_normalized_entropy(input_logit, target, weight, from_logits=True),
+            binary_normalized_entropy(
+                input_logit, target, weight=weight, from_logits=True
+            ),
             torch.tensor(1.0060274419349144, dtype=torch.float64),
         )
 
@@ -49,7 +51,9 @@ class TestBinaryNormalizedEntropy(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "is different from `input` shape"):
             binary_normalized_entropy(
-                torch.rand((5,)), torch.randint(0, 2, (5,)), torch.randint(0, 20, (3,))
+                torch.rand((5,)),
+                torch.randint(0, 2, (5,)),
+                weight=torch.randint(0, 20, (3,)),
             )
         with self.assertRaisesRegex(
             ValueError,

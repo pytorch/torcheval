@@ -94,7 +94,7 @@ class TestSum(MetricClassTester):
             ValueError,
             r"Weight must be either a float value or an int value or a tensor that matches the input tensor size.",
         ):
-            metric.update(torch.tensor([2.0, 3.0]), torch.tensor([0.5]))
+            metric.update(torch.tensor([2.0, 3.0]), weight=torch.tensor([0.5]))
 
     def test_sum_class_compute_without_update(self) -> None:
         metric = Sum()

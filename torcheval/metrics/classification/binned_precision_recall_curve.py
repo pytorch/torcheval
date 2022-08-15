@@ -57,6 +57,7 @@ class BinaryBinnedPrecisionRecallCurve(Metric[torch.Tensor]):
 
     def __init__(
         self: TBinaryBinnedPrecisionRecallCurve,
+        *,
         threshold: Union[int, List[float], torch.Tensor] = 100,
         device: Optional[torch.device] = None,
     ) -> None:

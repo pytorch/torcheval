@@ -30,7 +30,9 @@ class TestR2Score(unittest.TestCase):
             compute_result = 1 - (1 - compute_result) * (num_obs - 1) / (
                 num_obs - num_regressors - 1
             )
-        my_compute_result = my_r2_score(input, target, multioutput, num_regressors)
+        my_compute_result = my_r2_score(
+            input, target, multioutput=multioutput, num_regressors=num_regressors
+        )
         torch.testing.assert_close(
             my_compute_result,
             compute_result,

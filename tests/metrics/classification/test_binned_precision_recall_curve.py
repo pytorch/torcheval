@@ -26,7 +26,7 @@ class TestBinaryBinnedPrecisionRecallCurve(MetricClassTester):
     ) -> None:
 
         compute_result = binary_binned_precision_recall_curve(
-            input.reshape(-1), target.reshape(-1), threshold
+            input.reshape(-1), target.reshape(-1), threshold=threshold
         )
 
         self.run_class_implementation_tests(
@@ -99,7 +99,9 @@ class TestBinaryBinnedPrecisionRecallCurve(MetricClassTester):
         )
 
     def test_binary_binned_precision_recall_curve_class_invalid_input(self) -> None:
-        metric = BinaryBinnedPrecisionRecallCurve(torch.tensor([0.1, 0.5, 0.9]))
+        metric = BinaryBinnedPrecisionRecallCurve(
+            threshold=torch.tensor([0.1, 0.5, 0.9])
+        )
         with self.assertRaisesRegex(
             ValueError,
             "input should be a one-dimensional tensor, "
@@ -124,16 +126,18 @@ class TestBinaryBinnedPrecisionRecallCurve(MetricClassTester):
         with self.assertRaisesRegex(
             ValueError, "The `threshold` should be a sorted array."
         ):
-            BinaryBinnedPrecisionRecallCurve(torch.tensor([0.1, 0.9, 0.5]))
+            BinaryBinnedPrecisionRecallCurve(threshold=torch.tensor([0.1, 0.9, 0.5]))
 
         with self.assertRaisesRegex(
             ValueError,
             r"The values in `threshold` should be in the range of \[0, 1\].",
         ):
-            BinaryBinnedPrecisionRecallCurve(torch.tensor([-0.1, 0.5, 0.9]))
+            BinaryBinnedPrecisionRecallCurve(threshold=torch.tensor([-0.1, 0.5, 0.9]))
 
         with self.assertRaisesRegex(
             ValueError,
             r"The values in `threshold` should be in the range of \[0, 1\].",
         ):
-            BinaryBinnedPrecisionRecallCurve(torch.tensor([0.1, 0.2, 0.5, 1.7]))
+            BinaryBinnedPrecisionRecallCurve(
+                threshold=torch.tensor([0.1, 0.2, 0.5, 1.7])
+            )

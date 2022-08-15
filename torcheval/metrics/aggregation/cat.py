@@ -48,6 +48,7 @@ class Cat(Metric[torch.Tensor]):
 
     def __init__(
         self: "Cat",
+        *,
         dim: int = 0,
         device: Optional[torch.device] = None,
     ) -> None:

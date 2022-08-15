@@ -81,6 +81,7 @@ class R2Score(Metric[torch.Tensor]):
 
     def __init__(
         self: TR2Score,
+        *,
         multioutput: str = "uniform_average",
         num_regressors: int = 0,
         device: Optional[torch.device] = None,

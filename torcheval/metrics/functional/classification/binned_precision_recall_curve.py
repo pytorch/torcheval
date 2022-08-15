@@ -13,6 +13,7 @@ import torch
 def binary_binned_precision_recall_curve(
     input: torch.Tensor,
     target: torch.Tensor,
+    *,
     threshold: Union[int, List[float], torch.Tensor] = 100,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """

@@ -33,7 +33,7 @@ class TestBinaryPrecision(unittest.TestCase):
         )
 
         torch.testing.assert_close(
-            binary_precision(input, target, threshold),
+            binary_precision(input, target, threshold=threshold),
             sklearn_result,
             equal_nan=True,
             atol=1e-8,

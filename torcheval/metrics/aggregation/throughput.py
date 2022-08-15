@@ -43,6 +43,7 @@ class Throughput(Metric[torch.Tensor]):
 
     def __init__(
         self: TThroughput,
+        *,
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)

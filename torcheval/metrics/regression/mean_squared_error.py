@@ -71,6 +71,7 @@ class MeanSquaredError(Metric[torch.Tensor]):
 
     def __init__(
         self: TMeanSquaredError,
+        *,
         multioutput: str = "uniform_average",
         device: Optional[torch.device] = None,
     ) -> None:
@@ -89,6 +90,7 @@ class MeanSquaredError(Metric[torch.Tensor]):
         self: TMeanSquaredError,
         input: torch.Tensor,
         target: torch.Tensor,
+        *,
         sample_weight: Optional[torch.Tensor] = None,
     ) -> TMeanSquaredError:
         """

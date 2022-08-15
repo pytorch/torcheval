@@ -13,6 +13,7 @@ import torch
 def reciprocal_rank(
     input: torch.Tensor,
     target: torch.Tensor,
+    *,
     k: Optional[int] = None,
 ) -> torch.Tensor:
     """
