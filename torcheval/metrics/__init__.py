@@ -20,6 +20,7 @@ from torcheval.metrics.classification import (
     MulticlassPrecisionRecallCurve,
     MulticlassRecall,
     MultilabelAccuracy,
+    TopKMultilabelAccuracy,
 )
 from torcheval.metrics.metric import Metric
 from torcheval.metrics.ranking import HitRate, ReciprocalRank
@@ -50,6 +51,7 @@ __all__ = [
     "MulticlassPrecisionRecallCurve",
     "MulticlassRecall",
     "MultilabelAccuracy",
+    "TopKMultilabelAccuracy",
     "R2Score",
     "ReciprocalRank",
     "Sum",

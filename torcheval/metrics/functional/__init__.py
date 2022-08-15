@@ -19,6 +19,7 @@ from torcheval.metrics.functional.classification import (
     multiclass_precision_recall_curve,
     multiclass_recall,
     multilabel_accuracy,
+    topk_multilabel_accuracy,
 )
 from torcheval.metrics.functional.ranking import (
     hit_rate,
@@ -45,6 +46,7 @@ __all__ = [
     "multiclass_recall",
     "multilabel_accuracy",
     "num_collisions",
+    "topk_multilabel_accuracy",
     "r2_score",
     "reciprocal_rank",
     "sum",

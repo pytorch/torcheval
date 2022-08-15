@@ -8,6 +8,7 @@ from torcheval.metrics.classification.accuracy import (
     BinaryAccuracy,
     MulticlassAccuracy,
     MultilabelAccuracy,
+    TopKMultilabelAccuracy,
 )
 from torcheval.metrics.classification.auroc import BinaryAUROC
 from torcheval.metrics.classification.binary_normalized_entropy import (
@@ -41,4 +42,6 @@ __all__ = [
     "MulticlassPrecisionRecallCurve",
     "MulticlassRecall",
     "MultilabelAccuracy",
+    "TopKMultilabelAccuracy",
+    "MulticlassPrecisionRecallCurve",
 ]

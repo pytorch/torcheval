@@ -17,6 +17,8 @@ from torcheval.metrics.functional.classification.accuracy import (
     _multiclass_accuracy_update,
     _multilabel_accuracy_param_check,
     _multilabel_accuracy_update,
+    _topk_multilabel_accuracy_param_check,
+    _topk_multilabel_accuracy_update,
 )
 from torcheval.metrics.metric import Metric
 
@@ -24,6 +26,7 @@ from torcheval.metrics.metric import Metric
 TAccuracy = TypeVar("TAccuracy")
 TBinaryAccuracy = TypeVar("TBinaryAccuracy")
 TMultilabelAccuracy = TypeVar("TMultilabelAccuracy")
+TTopKMultilabelAccuracy = TypeVar("TTopKMultilabelAccuracy")
 
 
 class MulticlassAccuracy(Metric[torch.Tensor]):
@@ -289,6 +292,102 @@ class MultilabelAccuracy(MulticlassAccuracy):
         """
         num_correct, num_total = _multilabel_accuracy_update(
             input, target, self.threshold, self.criteria
+        )
+        self.num_correct += num_correct
+        self.num_total += num_total
+        return self
+
+
+class TopKMultilabelAccuracy(MulticlassAccuracy):
+    """
+    Compute multilabel accuracy score, which is the frequency of the top k label predicted matching target.
+    Its functional version is ``torcheval.metrics.functional.topk_multilabel_accuracy``.
+
+    Args:
+        criteria:
+        - ``'exact_match'``[default]:
+            The set of top-k labels predicted for a sample must exactly match the corresponding
+            set of labels in target. Also known as subset accuracy.
+        - ``'hamming'``:
+            Fraction of top-k correct labels over total number of labels.
+        - ``'overlap'``:
+            The set of top-k labels predicted for a sample must overlap with the corresponding
+            set of labels in target.
+        - ``'contain'``:
+            The set of top-k labels predicted for a sample must contain the corresponding
+            set of labels in target.
+        - ``'belong'``:
+            The set of top-k labels predicted for a sample must (fully) belong to the corresponding
+            set of labels in target.
+        k: Number of top probabilities to be considered. K should be an integer greater than or equal to 1.
+
+    Example:
+        >>> import torch
+        >>> from torcheval.metrics import TopKMultilabelAccuracy
+        >>> metric = TopKMultilabelAccuracy(k = 2)
+        >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])
+        >>> target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(0)  # 0 / 4
+
+        >>> metric = TopKMultilabelAccuracy(criteria="hamming", k=2)
+        >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])
+        >>> target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(0.583)  # 7 / 12
+
+        >>> metric = TopKMultilabelAccuracy(criteria="overlap", k=2)
+        >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])
+        >>> target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(1)  # 4 / 4
+
+        >>> metric = TopKMultilabelAccuracy(criteria="contain", k=2)
+        >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])
+        >>> target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(0.5)  # 2 / 4
+
+        >>> metric = TopKMultilabelAccuracy(criteria="belong", k=2)
+        >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])
+        >>> target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(0.25)  # 1 / 4
+    """
+
+    def __init__(
+        self: TTopKMultilabelAccuracy,
+        *,
+        criteria: str = "exact_match",
+        k: int = 1,
+        device: Optional[torch.device] = None,
+    ) -> None:
+        super().__init__(device=device)
+        _topk_multilabel_accuracy_param_check(criteria, k)
+        self.criteria = criteria
+        self.k = k
+
+    @torch.inference_mode()
+    def update(
+        self: TTopKMultilabelAccuracy,
+        input: torch.Tensor,
+        target: torch.Tensor,
+    ) -> TTopKMultilabelAccuracy:
+        """
+        Update states with the ground truth labels and predictions.
+
+        Args:
+            input: Tensor of label predictions with shape of (n_sample, n_class).
+                ``torch.where(input < threshold, 0, 1)`` will be applied to the input.
+            target: Tensor of ground truth labels with shape of (n_sample, n_class).
+        """
+        num_correct, num_total = _topk_multilabel_accuracy_update(
+            input, target, self.criteria, self.k
         )
         self.num_correct += num_correct
         self.num_total += num_total
