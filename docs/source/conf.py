@@ -21,7 +21,7 @@ import os
 import sys
 
 import pytorch_sphinx_theme
-from torchsnapshot import __version__
+from torcheval import __version__
 
 current_dir = os.path.dirname(__file__)
 target_dir = os.path.abspath(os.path.join(current_dir, "../.."))
@@ -30,7 +30,7 @@ print(target_dir)
 
 # -- Project information -----------------------------------------------------
 
-project = "TorchSnapshot"
+project = "TorchEval"
 copyright = "2022, Meta"
 author = "Meta"
 
