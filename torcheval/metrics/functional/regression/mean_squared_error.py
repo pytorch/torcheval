@@ -22,12 +22,12 @@ def mean_squared_error(
     Its class version is ``torcheval.metrics.MeanSquaredError``.
 
     Args:
-        input: Tensor of predicted values with shape of (n_sample, n_output).
-        target: Tensor of ground truth values with shape of (n_sample, n_output).
+        input (Tensor): Tensor of predicted values with shape of (n_sample, n_output).
+        target (Tensor): Tensor of ground truth values with shape of (n_sample, n_output).
         sample_weight (Optional):
             Tensor of sample weights with shape of (n_sample, ). Defaults to None.
         multioutput (Optional):
-            - ``'uniform_average'``[default]:
+            - ``'uniform_average'`` [default]:
                 Return scores of all outputs are averaged with uniform weight.
             - ``'raw_values'``:
                 Return a full set of scores.
@@ -38,7 +38,8 @@ def mean_squared_error(
             - If the `input` and `target` do not have the same size.
             - If the first dimension of `input`, `target` and `sample_weight` are not the same.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.function import mean_squared_error
         >>> input = torch.tensor([0.9, 0.5, 0.3, 0.5])

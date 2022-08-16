@@ -22,13 +22,16 @@ class BinaryNormalizedEntropy(Metric[torch.Tensor]):
     """
     Compute the normalized binary cross entropy between predicted input and
     ground-truth binary target.
-    Its functional version is ``torcheval.metrics.functional.binary_normalized_entropy``
+    Its functional version is :func:`torcheval.metrics.functional.binary_normalized_entropy`
+
     Args:
-    from_logits: bool. A boolean indicator whether the predicted value `y_pred` is
-                a floating-point logit value (i.e., value in [-inf, inf] when `from_logits=True`)
-                or a probablity value (i.e., value in [0., 1.] when `from_logits=False`)
-                Default value is False.
-    Example:
+        from_logits (bool): A boolean indicator whether the predicted value `y_pred` is
+                    a floating-point logit value (i.e., value in [-inf, inf] when `from_logits=True`)
+                    or a probablity value (i.e., value in [0., 1.] when `from_logits=False`)
+                    Default value is False.
+
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import NormalizedEntropy
 

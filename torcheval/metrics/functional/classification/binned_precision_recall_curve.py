@@ -26,20 +26,21 @@ def binary_binned_precision_recall_curve(
     Its class version is ``torcheval.metrics.BinaryBinnedPrecisionRecallCurve``.
 
     Args:
-        input: Tensor of label predictions
+        input (Tensor): Tensor of label predictions
             It should be probabilities or logits with shape of (n_sample, ).
-        target: Tensor of ground truth labels with shape of (n_samples, ).
+        target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
         threshold:
             a integer representing number of bins, a list of thresholds,
             or a tensor of thresholds.
 
-    Return:
-        a tuple of (precision: torch.Tensor, recall: torch.Tensor, thresholds: torch.Tensor)
-            precision: Tensor of precision result. Its shape is (n_thresholds + 1, )
-            recall: Tensor of recall result. Its shape is (n_thresholds + 1, )
-            thresholds: Tensor of threshold. Its shape is (n_thresholds, )
+    Returns:
+        Tuple:
+            - precision (Tensor): Tensor of precision result. Its shape is (n_thresholds + 1, )
+            - recall (Tensor): Tensor of recall result. Its shape is (n_thresholds + 1, )
+            - thresholds (Tensor): Tensor of threshold. Its shape is (n_thresholds, )
+ 
+    Examples::
 
-    Example:
         >>> import torch
         >>> from torcheval.metrics.functional import binary_binned_precision_recall_curve
         >>> input = torch.tensor([0.2, 0.8, 0.5, 0.9])
@@ -121,9 +122,9 @@ def multiclass_binned_precision_recall_curve(
     Its class version is ``torcheval.metrics.MulticlassBinnedPrecisionRecallCurve``.
 
     Args:
-        input: Tensor of label predictions
+        input (Tensor): Tensor of label predictions
             It should be probabilities or logits with shape of (n_sample, n_class).
-        target: Tensor of ground truth labels with shape of (n_samples, ).
+        target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
         num_classes (Optional):
             Number of classes. Set to the second dimension of the input if num_classes is None.
         threshold:
@@ -136,7 +137,8 @@ def multiclass_binned_precision_recall_curve(
             recall: List of recall result. Each index indicates the result of a class.
             thresholds: Tensor of threshold. The threshold is used for all classes.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import multiclass_binned_precision_recall_curve
         >>> input = torch.tensor([[0.1, 0.1, 0.1, 0.1], [0.5, 0.5, 0.5, 0.5], [0.7, 0.7, 0.7, 0.7], [0.8, 0.8, 0.8, 0.8]])

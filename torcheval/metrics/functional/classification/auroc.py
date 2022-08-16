@@ -18,11 +18,12 @@ def binary_auroc(
     Its class version is ``torcheval.metrics.BinaryAUROC``.
 
     Args:
-        input: Tensor of label predictions
+        input (Tensor): Tensor of label predictions
             It should be predicted label, probabilities or logits with shape of (n_sample, ),
-        target: Tensor of ground truth labels with shape of (n_samples, ).
+        target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import binary_auroc
         >>> input = torch.tensor([0.1, 0.5, 0.7, 0.8])

@@ -26,7 +26,8 @@ def reciprocal_rank(
         target (Tensor): Ground truth class indices of shape (num_samples,).
         k (int, optional): Number of top class probabilities to be considered.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import reciprocal_rank
         >>> input = torch.tensor([[0.3, 0.1, 0.6], [0.5, 0.2, 0.3], [0.2, 0.1, 0.7], [0.3, 0.3, 0.4]])

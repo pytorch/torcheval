@@ -20,12 +20,13 @@ TReciprocalRank = TypeVar("TReciprocalRank")
 class ReciprocalRank(Metric[torch.Tensor]):
     """
     Compute the reciprocal rank of the correct class among the top predicted classes.
-    Its functional version is ``torcheval.metrics.functional.reciprocal_rank``.
+    Its functional version is :func:`torcheval.metrics.functional.reciprocal_rank`.
 
     Args:
         k (int, optional): Number of top class probabilities to be considered.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import ReciprocalRank
 

@@ -23,12 +23,13 @@ def binary_f1_score(
     Compute binary f1 score, the harmonic mean of precision and recall.
 
     Args:
-        input: Tensor of label predictions with shape of (n_sample,).
+        input (Tensor): Tensor of label predictions with shape of (n_sample,).
             ``torch.where(input < threshold, 0, 1)`` will be applied to the input.
-        target: Tensor of ground truth labels with shape of (n_sample,).
-        threshold [default: 0.5]: Threshold for converting input into predicted labels for each sample.
+        target (Tensor): Tensor of ground truth labels with shape of (n_sample,).
+        threshold (float, default 0.5): Threshold for converting input into predicted labels for each sample.
             ``torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import binary_f1_score
         >>> input = torch.tensor([0, 1, 0.7, 0.6])
@@ -62,15 +63,15 @@ def multiclass_f1_score(
     Its class version is ``torcheval.metrics.MultiClassF1Score``.
 
     Args:
-        input: Tensor of label predictions.
+        input (Tensor): Tensor of label predictions.
             It could be the predicted labels, with shape of (n_sample, ).
             It could also be probabilities or logits with shape of (n_sample, n_class).
             ``torch.argmax`` will be used to convert input into predicted labels.
-        target: Tensor of ground truth labels with shape of (n_sample, ).
+        target (Tensor): Tensor of ground truth labels with shape of (n_sample, ).
         num_classes:
             Number of classes.
         average:
-            - ``'micro'``[default]:
+            - ``'micro'`` [default]:
                 Calculate the metrics globally.
             - ``'macro'``:
                 Calculate metrics for each class separately, and return their unweighted mean.
@@ -83,7 +84,8 @@ def multiclass_f1_score(
                 Calculate the metric for each class separately, and return
                 the metric for every class.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import multiclass_f1_score
         >>> input = torch.tensor([0, 2, 1, 3])

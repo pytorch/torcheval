@@ -23,7 +23,8 @@ class Mean(Metric[torch.Tensor]):
     When weight is not provided, it calculates the unweighted mean.
     Its functional version is ``torcheval.functional.mean()``.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import Mean
         >>> metric = Mean()
@@ -71,7 +72,7 @@ class Mean(Metric[torch.Tensor]):
         weighted_mean = sum(weight * input) / sum(weight)
 
         Args:
-            input: Tensor of input values.
+            input (Tensor): Tensor of input values.
             weight(optional): Float or Int or Tensor of input weights. It is default to 1.0. If weight is a Tensor, its size should match the input tensor size.
         Raises:
             ValueError: If value of weight is neither a ``float`` nor a ``int'' nor a ``torch.Tensor`` that matches the input tensor size.

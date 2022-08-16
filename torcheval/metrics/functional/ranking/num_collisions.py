@@ -16,7 +16,8 @@ def num_collisions(input: torch.Tensor) -> torch.Tensor:
         input (Tensor): a tensor of input ids (num_samples, ).
             class probabilities of shape (num_samples, num_classes).
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import num_collisions
         >>> input = torch.tensor([3, 4, 2, 3])

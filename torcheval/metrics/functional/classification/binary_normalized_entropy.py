@@ -22,6 +22,7 @@ def binary_normalized_entropy(
     Compute the normalized binary cross entropy between predicted input and
     ground-truth binary target.
     Its class version is ``torcheval.metrics.binary_normalized_entropy``
+    
     Args:
         input (Tensor): Predicted unnormalized scores (often referred to as logits) or
                 binary class probabilities (num_samples, ).
@@ -31,7 +32,8 @@ def binary_normalized_entropy(
                 a floating-point logit value (i.e., value in [-inf, inf] when `from_logits=True`)
                 or a probablity value (i.e., value in [0., 1.] when `from_logits=False`)
                 Default value is False.
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import normalized_entropy
 

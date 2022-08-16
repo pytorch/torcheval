@@ -19,12 +19,13 @@ def sum(
     Its class version is ``torcheval.metrics.Sum``.
 
     Args:
-        input: Tensor of input values.
+        input (Tensor): Tensor of input values.
         weight(optional): Float or Int or Tensor of input weights. It is default to 1.0. If weight is a Tensor, its size should match the input tensor size.
     Raises:
         ValueError: If value of weight is neither a ``float`` nor an ``int`` nor a ``torch.Tensor`` that matches the input tensor size.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import sum
         >>> sum(torch.tensor([2, 3]))

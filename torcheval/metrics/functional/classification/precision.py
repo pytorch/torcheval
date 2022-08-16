@@ -26,12 +26,13 @@ def binary_precision(
     Its class version is ``torcheval.metrics.BinaryPrecision``.
 
     Args:
-        input: Tensor of label predictions
+        input (Tensor): Tensor of label predictions
             It could be the predicted labels, with shape of (n_sample, ).
             ``torch.where(input < threshold, 0, 1)`` will be applied to the input.
-        target: Tensor of ground truth labels with shape of (n_sample,).
-        threshold [default: 0.5]: Threshold for converting input into predicted labels for each sample.
-    Example:
+        target (Tensor): Tensor of ground truth labels with shape of (n_sample,).
+        threshold (float, default 0.5): Threshold for converting input into predicted labels for each sample.
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import binary_precision
         >>> input = torch.tensor([0, 0, 1, 1])
@@ -64,15 +65,15 @@ def multiclass_precision(
     Its class version is ``torcheval.metrics.MultiClassPrecision``.
 
     Args:
-        input: Tensor of label predictions
+        input (Tensor): Tensor of label predictions
             It could be the predicted labels, with shape of (n_sample, ).
             It could also be probabilities or logits with shape of (n_sample, n_class).
             ``torch.argmax`` will be used to convert input into predicted labels.
-        target: Tensor of ground truth labels with shape of (n_sample, ).
+        target (Tensor): Tensor of ground truth labels with shape of (n_sample, ).
         num_classes:
             Number of classes.
         average:
-            - ``'micro'``[default]:
+            - ``'micro'`` [default]:
                 Calculate the metrics globally, by using the total true positives and false
                 positives across all classes.
             - ``'macro'``:
@@ -87,7 +88,8 @@ def multiclass_precision(
                 the metric for every class.
                 NaN is returned if a class has no sample in ``target``.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import multiclass_precision
         >>> input = torch.tensor([0, 2, 1, 3])

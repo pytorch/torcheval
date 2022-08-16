@@ -26,26 +26,23 @@ class MulticlassF1Score(Metric[torch.Tensor]):
     Compute f1 score, which is defined as the harmonic mean of precision and recall.
     We convert NaN to zero when f1 score is NaN. This happens when either precision
     or recall is NaN or when both precision and recall are zero.
-    Its functional version is ``torcheval.metrics.functional.multi_class_f1_score``.
+    Its functional version is :func:`torcheval.metrics.functional.multi_class_f1_score`.
 
     Args:
-        num_classes:
+        num_classes (int):
             Number of classes.
-        average:
-            - ``'micro'``[default]:
-                Calculate the metrics globally.
-            - ``'macro'``:
-                Calculate metrics for each class separately, and return their unweighted mean.
-                Classes with 0 true and predicted instances are ignored.
-            - ``'weighted'``"
-                Calculate metrics for each class separately, and return their weighted sum.
-                Weights are defined as the proportion of occurrences of each class in "target".
-                Classes with 0 true and predicted instances are ignored.
-            - ``None``:
-                Calculate the metric for each class separately, and return
-                the metric for every class.
+        average (str, Optional):
+            - ``'micro'`` [default]: Calculate the metrics globally.
+            - ``'macro'``: Calculate metrics for each class separately, and return their unweighted mean.
+              Classes with 0 true and predicted instances are ignored.
+            - ``'weighted'``" Calculate metrics for each class separately, and return their weighted sum.
+              Weights are defined as the proportion of occurrences of each class in "target".
+              Classes with 0 true and predicted instances are ignored.
+            - ``None``: Calculate the metric for each class separately, and return
+              the metric for every class.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import MulticlassF1Score
         >>> metric = MulticlassF1Score(num_classes=4)
@@ -121,11 +118,11 @@ class MulticlassF1Score(Metric[torch.Tensor]):
         Update states with the ground truth labels and predictions.
 
         Args:
-            input: Tensor of label predictions.
+            input (Tensor): Tensor of label predictions.
                 It could be the predicted labels, with shape of (n_sample, ).
                 It could also be probabilities or logits with shape of (n_sample, n_class).
                 ``torch.argmax`` will be used to convert input into predicted labels.
-            target: Tensor of ground truth labels with shape of (n_sample, ).
+            target (Tensor): Tensor of ground truth labels with shape of (n_sample, ).
         """
         num_tp, num_label, num_prediction = _f1_score_update(
             input, target, self.num_classes, self.average

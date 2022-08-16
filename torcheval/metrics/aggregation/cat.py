@@ -28,7 +28,8 @@ class Cat(Metric[torch.Tensor]):
     ``torch.flatten()`` can be used to flatten zero-dimensional into
     an one-dimensional tensor before passing in ``Cat.update()``.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import Cat
         >>> metric = Cat(dim=1)

@@ -18,15 +18,16 @@ def binary_accuracy(
 ) -> torch.Tensor:
     """
     Compute binary accuracy score, which is the frequency of input matching target.
-    Its class version is ``torcheval.metrics.BinaryAccuracy``.
+    Its class version is :obj:`torcheval.metrics.BinaryAccuracy`.
 
     Args:
-        input: Tensor of label predictions with shape of (n_sample,).
+        input (Tensor): Tensor of label predictions with shape of (n_sample,).
             ``torch.where(input < threshold, 0, 1)`` will be applied to the input.
-        target: Tensor of ground truth labels with shape of (n_sample,).
-        threshold [default: 0.5]: Threshold for converting input into predicted labels for each sample.
+        target (Tensor): Tensor of ground truth labels with shape of (n_sample,).
+        threshold (float, default 0.5): Threshold for converting input into predicted labels for each sample.
             ``torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import binary_accuracy
         >>> input = torch.tensor([0, 0, 1, 1])
@@ -58,13 +59,13 @@ def multiclass_accuracy(
     Its class version is ``torcheval.metrics.MultiClassAccuracy``.
 
     Args:
-        input: Tensor of label predictions
+        input (Tensor): Tensor of label predictions
             It could be the predicted labels, with shape of (n_sample, ).
             It could also be probabilities or logits with shape of (n_sample, n_class).
             ``torch.argmax`` will be used to convert input into predicted labels.
-        target: Tensor of ground truth labels with shape of (n_sample, ).
+        target (Tensor): Tensor of ground truth labels with shape of (n_sample, ).
         average:
-            - ``'micro'``[default]:
+            - ``'micro'`` [default]:
                 Calculate the metrics globally.
             - ``'macro'``:
                 Calculate metrics for each class separately, and return their unweighted
@@ -78,7 +79,8 @@ def multiclass_accuracy(
         k: Number of top probabilities to be considered. K should be an integer greater than or equal to 1.
             If k >1, the input tensor must contain probabilities or logits for every class.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import multiclass_accuracy
         >>> input = torch.tensor([0, 2, 1, 3])
@@ -114,12 +116,12 @@ def multilabel_accuracy(
     Its class version is ``torcheval.metrics.MultilabelAccuracy``.
 
     Args:
-        input: Tensor of label predictions with shape of (n_sample, n_class).
+        input (Tensor): Tensor of label predictions with shape of (n_sample, n_class).
             `torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
-        target: Tensor of ground truth labels with shape of (n_sample, n_class).
+        target (Tensor): Tensor of ground truth labels with shape of (n_sample, n_class).
         threshold: Threshold for converting input into predicted labels for each sample.
         criteria:
-        - ``'exact_match'``[default]:
+        - ``'exact_match'`` [default]:
             The set of labels predicted for a sample must exactly match the corresponding
             set of labels in target. Also known as subset accuracy.
         - ``'hamming'``:
@@ -134,7 +136,8 @@ def multilabel_accuracy(
             The set of labels predicted for a sample must (fully) belong to the corresponding
             set of labels in target.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import multilabel_accuracy
         >>> input = torch.tensor([[0, 1], [1, 1], [0, 0], [0, 1]])
@@ -183,10 +186,10 @@ def topk_multilabel_accuracy(
     Its class version is ``torcheval.metrics.TopKMultilabelAccuracy``.
 
     Args:
-        input: Tensor of logits/probabilities with shape of (n_sample, n_class).
-        target: Tensor of ground truth labels with shape of (n_sample, n_class).
+        input (Tensor): Tensor of logits/probabilities with shape of (n_sample, n_class).
+        target (Tensor): Tensor of ground truth labels with shape of (n_sample, n_class).
         criteria:
-        - ``'exact_match'``[default]:
+        - ``'exact_match'`` [default]:
             The set of top-k labels predicted for a sample must exactly match the corresponding
             set of labels in target. Also known as subset accuracy.
         - ``'hamming'``:
@@ -202,7 +205,8 @@ def topk_multilabel_accuracy(
             set of labels in target.
         k: Number of top probabilities to be considered. K should be an integer greater than or equal to 1.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import topkmultilabel_accuracy
         >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])

@@ -27,14 +27,15 @@ class BinaryRecall(Metric[torch.Tensor]):
     """
     Compute the recall score for binary classification tasks, which is calculated as the ratio of the true positives and the sum of
     true positives and false negatives.
-    Its functional version is ``torcheval.metrics.functional.binary_recall``.
+    Its functional version is :func:`torcheval.metrics.functional.binary_recall`.
     We cast NaNs to 0 when classes have zero instances in the ground-truth labels
     (when TP + FN = 0).
 
     Args:
-        threshold [default: 0.5]: Threshold for converting input into predicted labels for each sample.
-        ``torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
-    Example:
+        threshold (float, default 0.5): Threshold for converting input into predicted labels for each sample.
+            ``torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.classification import BinaryRecall
         >>> metric = BinaryRecall()
@@ -81,9 +82,9 @@ class BinaryRecall(Metric[torch.Tensor]):
         Update states with the ground truth labels and predictions.
 
         Args:
-            input: Tensor of the predicted labels/logits/probabilities, with shape of (n_sample, ).
+            input (Tensor): Tensor of the predicted labels/logits/probabilities, with shape of (n_sample, ).
                 ``torch.where(input ‹ threshold, 0, 1)`` will be used to convert input into predicted labels
-            target: Tensor of ground truth labels with shape of (n_sample, ).
+            target (Tensor): Tensor of ground truth labels with shape of (n_sample, ).
         """
         num_tp, num_true_labels = _binary_recall_update(input, target, self.threshold)
         self.num_tp += num_tp
@@ -113,28 +114,29 @@ class MulticlassRecall(Metric[torch.Tensor]):
     """
     Compute the recall score, the ratio of the true positives and the sum of
     true positives and false negatives.
-    Its functional version is ``torcheval.metrics.functional.multiclass_recall``.
+    Its functional version is :func:`torcheval.metrics.functional.multiclass_recall`.
     We cast NaNs to 0 when classes have zero instances in the ground-truth labels
     (when TP + FN = 0).
 
     Args:
-        num_classes:
+        num_classes (int):
             Number of classes.
-        average:
-            - ``'micro'``[default]:
-                Calculate the metrics globally.
+        average (str, Optional):
+            - ``'micro'`` [default]:
+              Calculate the metrics globally.
             - ``'macro'``:
-                Calculate metrics for each class separately, and return their unweighted mean.
-                Classes with 0 true and predicted instances are ignored.
+              Calculate metrics for each class separately, and return their unweighted mean.
+              Classes with 0 true and predicted instances are ignored.
             - ``'weighted'``"
-                Calculate metrics for each class separately, and return their weighted sum.
-                Weights are defined as the proportion of occurrences of each class in "target".
-                Classes with 0 true and predicted instances are ignored.
+              Calculate metrics for each class separately, and return their weighted sum.
+              Weights are defined as the proportion of occurrences of each class in "target".
+              Classes with 0 true and predicted instances are ignored.
             - ``None``:
-                Calculate the metric for each class separately, and return
-                the metric for every class.
+              Calculate the metric for each class separately, and return
+              the metric for every class.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.classification import MulticlassRecall
         >>> metric = MulticlassRecall(num_classes=4)
@@ -209,11 +211,11 @@ class MulticlassRecall(Metric[torch.Tensor]):
         Update states with the ground truth labels and predictions.
 
         Args:
-            input: Tensor of label predictions.
+            input (Tensor): Tensor of label predictions.
                 It could be the predicted labels, with shape of (n_sample, ).
                 It could also be probabilities or logits with shape of (n_sample, n_class).
                 ``torch.argmax`` will be used to convert input into predicted labels.
-            target: Tensor of ground truth labels with shape of (n_sample, ).
+            target (Tensor): Tensor of ground truth labels with shape of (n_sample, ).
         """
         num_tp, num_labels, num_predictions = _recall_update(
             input, target, self.num_classes, self.average

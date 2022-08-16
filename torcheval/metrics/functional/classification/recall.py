@@ -23,11 +23,12 @@ def binary_recall(
     Its class version is ``torcheval.metrics.BinaryRecall``.
 
     Args:
-        input: Tensor of the predicted labels/logits/probabilities, with shape of (n_sample, ).
-        target: Tensor of ground truth labels with shape of (n_sample, ).
-        threshold [default: 0.5]: Threshold for converting input into predicted labels for each sample.
+        input (Tensor): Tensor of the predicted labels/logits/probabilities, with shape of (n_sample, ).
+        target (Tensor): Tensor of ground truth labels with shape of (n_sample, ).
+        threshold (float, default 0.5): Threshold for converting input into predicted labels for each sample.
             ``torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional.classification import binary_recall
         >>> input = torch.tensor([0, 0, 1, 1])
@@ -105,15 +106,15 @@ def multiclass_recall(
     Its class version is ``torcheval.metrics.MultiClassRecall``.
 
     Args:
-        input: Tensor of label predictions
+        input (Tensor): Tensor of label predictions
             It could be the predicted labels, with shape of (n_sample, ).
             It could also be probabilities or logits with shape of (n_sample, n_class).
             ``torch.argmax`` will be used to convert input into predicted labels.
-        target: Tensor of ground truth labels with shape of (n_sample, ).
+        target (Tensor): Tensor of ground truth labels with shape of (n_sample, ).
         num_classes:
             Number of classes.
         average:
-            - ``'micro'``[default]:
+            - ``'micro'`` [default]:
                 Calculate the metrics globally, by using the total true positives and false
                 negatives across all classes.
             - ``'macro'``:
@@ -127,7 +128,8 @@ def multiclass_recall(
                 Calculate the metric for each class separately, and return
                 the metric for every class.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional.classification import multiclass_recall
         >>> input = torch.tensor([0, 2, 1, 3])
