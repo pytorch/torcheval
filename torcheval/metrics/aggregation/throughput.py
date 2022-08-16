@@ -27,7 +27,8 @@ class Throughput(Metric[torch.Tensor]):
     state sync. Additionally, `sync_and_compute(metric)` will give a slightly different value compared
     to `world_size * metric.compute()`.
 
-    Example:
+    Examples::
+
         >>> import time
         >>> import torch
         >>> from torcheval.metrics import Throughput

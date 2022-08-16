@@ -29,7 +29,7 @@ def r2_score(
         target:
             Tensor of ground truth values with shape of (n_sample, n_output).
         multioutput (Optional):
-            - ``'uniform_average'``[default]:
+            - ``'uniform_average'`` [default]:
                 Return scores of all outputs are averaged with uniform weight.
             - ``'raw_values'``:
                 Return a full set of scores.
@@ -42,7 +42,8 @@ def r2_score(
             - If value of multioutput does not exist in (``raw_values``, ``uniform_average``, ``variance_weighted``).
             - If value of num_regressors is not an ``integer`` in the range of [0, n_samples - 1].
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import r2_score
         >>> input = torch.tensor([0, 2, 1, 3])

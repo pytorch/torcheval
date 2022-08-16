@@ -19,13 +19,14 @@ THitRate = TypeVar("THitRate")
 class HitRate(Metric[torch.Tensor]):
     """
     Compute the hit rate of the correct class among the top predicted classes.
-    Its functional version is ``torcheval.metrics.functional.hit_rate``.
+    Its functional version is :func:`torcheval.metrics.functional.hit_rate`.
 
     Args:
         k (int, optional): Number of top class probabilities to be considered.
             If k is None, all classes are considered and a hit rate of 1.0 is returned.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import HitRate
 

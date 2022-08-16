@@ -21,7 +21,8 @@ class Min(Metric[torch.Tensor]):
     Calculate the minimum value of all elements in all the input tensors.
     Its functional version is ``torch.min(input)``.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import Min
         >>> metric = Min()

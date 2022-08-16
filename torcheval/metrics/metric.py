@@ -100,7 +100,7 @@ class Metric(Generic[TComputeReturn], ABC):
         performance by disabling view tracking.
 
         ``self.merge_state`` might change the size/shape of state variables.
-        Make sure ``self.update``and ``self.compute`` can still be called
+        Make sure ``self.update`` and ``self.compute`` can still be called
         without exceptions when state variables are merged.
 
         This method can be used as a building block for syncing metric states
@@ -190,9 +190,10 @@ class Metric(Generic[TComputeReturn], ABC):
         Loads metric state variables from state_dict.
 
         Args:
-            state_dict: The name of the state variable.
-            strict: Whether to strictly enforce that the keys in ``state_dict`` matches
+            state_dict (Dict[str, Any]): A dict containing metric state variables.
+            strict (bool, Optional): Whether to strictly enforce that the keys in ``state_dict`` matches
                 all names of the metric states.
+
         Raises:
             RuntimeError: If ``strict`` is ``True`` and keys in state_dict does not match
                 all names of the metric states.

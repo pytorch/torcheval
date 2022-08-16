@@ -30,9 +30,10 @@ class BinaryPrecisionRecallCurve(Metric[torch.Tensor]):
     """
     Compute precision recall curve, which is precision-recall pair with corresponding thresholds,
         for binary classification tasks.
-    Its functional version is ``torcheval.metrics.functional.binary_precision_recall_curve``.
+    Its functional version is :func:`torcheval.metrics.functional.binary_precision_recall_curve`.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import BinaryPrecisionRecallCurve
         >>> metric = BinaryPrecisionRecallCurve()
@@ -65,9 +66,9 @@ class BinaryPrecisionRecallCurve(Metric[torch.Tensor]):
         Update states with the ground truth labels and predictions.
 
         Args:
-            input: Tensor of label predictions
+            input (Tensor): Tensor of label predictions
                 It should be probabilities or logits with shape of (n_sample, ).
-            target: Tensor of ground truth labels with shape of (n_samples, ).
+            target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
         """
         _binary_precision_recall_curve_update(
             input,
@@ -83,11 +84,11 @@ class BinaryPrecisionRecallCurve(Metric[torch.Tensor]):
         self: TBinaryPrecisionRecallCurve,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """
-        Return:
-            a tuple of (precision: torch.Tensor, recall: torch.Tensor, thresholds: torch.Tensor)
-                precision: Tensor of precision result. Its shape is (n_thresholds + 1, )
-                recall: Tensor of recall result. Its shape is (n_thresholds + 1, )
-                thresholds: Tensor of threshold. Its shape is (n_thresholds, )
+        Returns:
+            Tuple:
+                - precision (Tensor): Tensor of precision result. Its shape is (n_thresholds + 1, )
+                - recall (Tensor): Tensor of recall result. Its shape is (n_thresholds + 1, )
+                - thresholds (Tensor): Tensor of threshold. Its shape is (n_thresholds, )
         """
         return _binary_precision_recall_curve_compute(
             torch.cat(self.inputs), torch.cat(self.targets)
@@ -116,14 +117,15 @@ class BinaryPrecisionRecallCurve(Metric[torch.Tensor]):
 class MulticlassPrecisionRecallCurve(Metric[torch.Tensor]):
     """
     Compute precision recall curve, which is precision-recall pair with corresponding thresholds,
-        for multi-class classification tasks.
-    Its functional version is ``torcheval.metrics.functional.multiclass_precision_recall_curve``.
+    for multi-class classification tasks.
+    Its functional version is :func:`torcheval.metrics.functional.multiclass_precision_recall_curve`.
 
     Args:
-        num_classes (Optional):
+        num_classes (int, Optional):
             Number of classes. Set to the second dimension of the input if num_classes is None.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import MulticlassPrecisionRecallCurve
         >>> metric = MulticlassPrecisionRecallCurve(num_classes=4)
@@ -167,9 +169,9 @@ class MulticlassPrecisionRecallCurve(Metric[torch.Tensor]):
         Update states with the ground truth labels and predictions.
 
         Args:
-            input: Tensor of label predictions
+            input (Tensor): Tensor of label predictions
                 It should be probabilities or logits with shape of (n_sample, n_class).
-            target: Tensor of ground truth labels with shape of (n_samples, ).
+            target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
         """
         _multiclass_precision_recall_curve_update(
             input,
@@ -186,11 +188,12 @@ class MulticlassPrecisionRecallCurve(Metric[torch.Tensor]):
         self: TMulticlassPrecisionRecallCurve,
     ) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]:
         """
-        Return:
-            a tuple of (precision: List[torch.Tensor], recall: List[torch.Tensor], thresholds: List[torch.Tensor])
-                precision: List of precision result. Each index indicates the result of a class.
-                recall: List of recall result. Each index indicates the result of a class.
-                thresholds: List of threshold. Each index indicates the result of a class.
+        Returns:
+
+            - precision: List of precision result. Each index indicates the result of a class.
+            - recall: List of recall result. Each index indicates the result of a class.
+            - thresholds: List of threshold. Each index indicates the result of a class.
+
         """
         return _multiclass_precision_recall_curve_compute(
             torch.cat(self.inputs), torch.cat(self.targets), self.num_classes

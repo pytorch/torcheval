@@ -23,9 +23,10 @@ TAUROC = TypeVar("TAUROC")
 class BinaryAUROC(Metric[torch.Tensor]):
     """
     Compute AUROC, which is the area under the ROC Curve, for binary classification.
-    Its functional version is ``torcheval.metrics.functional.binary_auroc``.
+    Its functional version is :func:`torcheval.metrics.functional.binary_auroc`.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import BinaryAUROC
         >>> metric = BinaryAUROC()
@@ -61,9 +62,9 @@ class BinaryAUROC(Metric[torch.Tensor]):
         Update states with the ground truth labels and predictions.
 
         Args:
-            input: Tensor of label predictions
+            input (Tensor): Tensor of label predictions
                 It should be predicted label, probabilities or logits with shape of (n_sample, ).
-            target: Tensor of ground truth labels with shape of (n_samples, ).
+            target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
         """
         _auroc_update(input, target)
         self.inputs.append(input)

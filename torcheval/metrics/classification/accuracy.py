@@ -32,25 +32,23 @@ TTopKMultilabelAccuracy = TypeVar("TTopKMultilabelAccuracy")
 class MulticlassAccuracy(Metric[torch.Tensor]):
     """
     Compute accuracy score, which is the frequency of input matching target.
-    Its functional version is ``torcheval.metrics.functional.multiclass_accuracy``.
+    Its functional version is :func:`torcheval.metrics.functional.multiclass_accuracy`.
 
     Args:
-        average:
-            - ``'micro'``[default]:
-                Calculate the metrics globally.
-            - ``'macro'``:
-                Calculate metrics for each class separately, and return their unweighted
-                mean. Classes with 0 true instances are ignored.
-            - ``None``:
-                Calculate the metric for each class separately, and return
-                the metric for every class.
-                NaN is returned if a class has no sample in ``target``.
+        average (str, Optional)
+            - ``'micro'`` [default]: Calculate the metrics globally.
+            - ``'macro'`` : Calculate metrics for each class separately, and return their unweighted
+              mean. Classes with 0 true instances are ignored.
+            - ``None``: Calculate the metric for each class separately, and return
+              the metric for every class.
+              NaN is returned if a class has no sample in ``target``.
         num_classes:
             Number of classes. Required for ``'macro'`` and ``None`` average methods.
         k: Number of top probabilities to be considered. K should be an integer greater than or equal to 1.
             If k >1, the input tensor must contain probabilities or logits for every class.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import MulticlassAccuracy
         >>> metric = MulticlassAccuracy()
@@ -116,11 +114,11 @@ class MulticlassAccuracy(Metric[torch.Tensor]):
         Update states with the ground truth labels and predictions.
 
         Args:
-            input: Tensor of label predictions
+            input (Tensor): Tensor of label predictions
                 It could be the predicted labels, with shape of (n_sample, ).
                 It could also be probabilities or logits with shape of (n_sample, n_class).
                 ``torch.argmax`` will be used to convert input into predicted labels.
-            target: Tensor of ground truth labels with shape of (n_sample, ).
+            target (Tensor): Tensor of ground truth labels with shape of (n_sample, ).
         """
         num_correct, num_total = _multiclass_accuracy_update(
             input, target, self.average, self.num_classes, self.k
@@ -149,12 +147,15 @@ class MulticlassAccuracy(Metric[torch.Tensor]):
 class BinaryAccuracy(MulticlassAccuracy):
     """
     Compute binary accuracy score, which is the frequency of input matching target.
-    Its functional version is ``torcheval.metrics.functional.binary_accuracy``.
+    Its functional version is :func:`torcheval.metrics.functional.binary_accuracy`.
 
     Args:
-        threshold [default: 0.5]: Threshold for converting input into predicted labels for each sample.
-        ``torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
-    Example:
+
+        threshold (float, default 0.5): Threshold for converting input into predicted labels for each sample.
+          ``torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
+
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import BinaryAccuracy
         >>> metric = BinaryAccuracy()
@@ -164,12 +165,14 @@ class BinaryAccuracy(MulticlassAccuracy):
         >>> metric.compute()
         tensor(0.75)  # 3 / 4
 
+
         >>> metric = BinaryAccuracy(threshold=0.7)
         >>> input = torch.tensor([0, 0.2, 0.6, 0.7])
         >>> target = torch.tensor([1, 0, 1, 1])
         >>> metric.update(input, target)
         >>> metric.compute()
         tensor(0.5)  # 2 / 4
+
     """
 
     def __init__(
@@ -191,9 +194,9 @@ class BinaryAccuracy(MulticlassAccuracy):
         Update states with the ground truth labels and predictions.
 
         Args:
-            input: Tensor of label predictions with shape of (n_sample,).
+            input (Tensor): Tensor of label predictions with shape of (n_sample,).
                 ``torch.where(input < threshold, 0, 1)`` will be applied to the input.
-            target: Tensor of ground truth labels with shape of (n_sample,).
+            target (Tensor): Tensor of ground truth labels with shape of (n_sample,).
         """
         num_correct, num_total = _binary_accuracy_update(input, target, self.threshold)
         self.num_correct += num_correct
@@ -204,28 +207,29 @@ class BinaryAccuracy(MulticlassAccuracy):
 class MultilabelAccuracy(MulticlassAccuracy):
     """
     Compute multilabel accuracy score, which is the frequency of input matching target.
-    Its functional version is ``torcheval.metrics.functional.multilabel_accuracy``.
+    Its functional version is :func:`torcheval.metrics.functional.multilabel_accuracy`.
 
     Args:
-        threshold: Threshold for converting input into predicted labels for each sample.
+        threshold (float, Optional): Threshold for converting input into predicted labels for each sample.
             ``torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
-        criteria:
-        - ``'exact_match'``[default]:
-            The set of labels predicted for a sample must exactly match the corresponding
-            set of labels in target. Also known as subset accuracy.
-        - ``'hamming'``:
-            Fraction of correct labels over total number of labels.
-        - ``'overlap'``:
-            The set of labels predicted for a sample must overlap with the corresponding
-            set of labels in target.
-        - ``'contain'``:
-            The set of labels predicted for a sample must contain the corresponding
-            set of labels in target.
-        - ``'belong'``:
-            The set of labels predicted for a sample must (fully) belong to the corresponding
-            set of labels in target.
+        criteria (str, Optional):
+            - ``'exact_match'`` [default]:
+              The set of labels predicted for a sample must exactly match the corresponding
+              set of labels in target. Also known as subset accuracy.
+            - ``'hamming'``:
+              Fraction of correct labels over total number of labels.
+            - ``'overlap'``:
+              The set of labels predicted for a sample must overlap with the corresponding
+              set of labels in target.
+            - ``'contain'``:
+              The set of labels predicted for a sample must contain the corresponding
+              set of labels in target.
+            - ``'belong'``:
+              The set of labels predicted for a sample must (fully) belong to the corresponding
+              set of labels in target.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import MultilabelAccuracy
         >>> metric = MultilabelAccuracy()
@@ -286,9 +290,9 @@ class MultilabelAccuracy(MulticlassAccuracy):
         Update states with the ground truth labels and predictions.
 
         Args:
-            input: Tensor of label predictions with shape of (n_sample, n_class).
+            input (Tensor): Tensor of label predictions with shape of (n_sample, n_class).
                 ``torch.where(input < threshold, 0, 1)`` will be applied to the input.
-            target: Tensor of ground truth labels with shape of (n_sample, n_class).
+            target (Tensor): Tensor of ground truth labels with shape of (n_sample, n_class).
         """
         num_correct, num_total = _multilabel_accuracy_update(
             input, target, self.threshold, self.criteria
@@ -301,27 +305,23 @@ class MultilabelAccuracy(MulticlassAccuracy):
 class TopKMultilabelAccuracy(MulticlassAccuracy):
     """
     Compute multilabel accuracy score, which is the frequency of the top k label predicted matching target.
-    Its functional version is ``torcheval.metrics.functional.topk_multilabel_accuracy``.
+    Its functional version is :func:`torcheval.metrics.functional.topk_multilabel_accuracy`.
 
     Args:
-        criteria:
-        - ``'exact_match'``[default]:
-            The set of top-k labels predicted for a sample must exactly match the corresponding
-            set of labels in target. Also known as subset accuracy.
-        - ``'hamming'``:
-            Fraction of top-k correct labels over total number of labels.
-        - ``'overlap'``:
-            The set of top-k labels predicted for a sample must overlap with the corresponding
-            set of labels in target.
-        - ``'contain'``:
-            The set of top-k labels predicted for a sample must contain the corresponding
-            set of labels in target.
-        - ``'belong'``:
-            The set of top-k labels predicted for a sample must (fully) belong to the corresponding
-            set of labels in target.
-        k: Number of top probabilities to be considered. K should be an integer greater than or equal to 1.
+        criteria (string):
+            - ``'exact_match'`` [default]: The set of top-k labels predicted for a sample must exactly match the corresponding
+              set of labels in target. Also known as subset accuracy.
+            - ``'hamming'``: Fraction of top-k correct labels over total number of labels.
+            - ``'overlap'``: The set of top-k labels predicted for a sample must overlap with the corresponding
+              set of labels in target.
+            - ``'contain'``: The set of top-k labels predicted for a sample must contain the corresponding
+              set of labels in target.
+            - ``'belong'``: The set of top-k labels predicted for a sample must (fully) belong to the corresponding
+              set of labels in target.
+        k (int): Number of top probabilities to be considered. K should be an integer greater than or equal to 1.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import TopKMultilabelAccuracy
         >>> metric = TopKMultilabelAccuracy(k = 2)
@@ -382,9 +382,9 @@ class TopKMultilabelAccuracy(MulticlassAccuracy):
         Update states with the ground truth labels and predictions.
 
         Args:
-            input: Tensor of label predictions with shape of (n_sample, n_class).
+            input (Tensor): Tensor of label predictions with shape of (n_sample, n_class).
                 ``torch.where(input < threshold, 0, 1)`` will be applied to the input.
-            target: Tensor of ground truth labels with shape of (n_sample, n_class).
+            target (Tensor): Tensor of ground truth labels with shape of (n_sample, n_class).
         """
         num_correct, num_total = _topk_multilabel_accuracy_update(
             input, target, self.criteria, self.k

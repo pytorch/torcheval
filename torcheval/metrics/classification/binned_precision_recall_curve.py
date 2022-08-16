@@ -24,35 +24,36 @@ TBinaryBinnedPrecisionRecallCurve = TypeVar("TBinaryBinnedPrecisionRecallCurve")
 class BinaryBinnedPrecisionRecallCurve(Metric[torch.Tensor]):
     """
     Compute precision recall curve with given thresholds.
-    Its functional version is ``torcheval.metrics.functional.binned_binary_precision_recall_curve``.
+    Its functional version is :func:`torcheval.metrics.functional.binary_binned_precision_recall_curve`.
 
     Args:
-        threshold:
-            a integer representing number of bins, a list of thresholds,
+        threshold (int):
+            an integer representing number of bins, a list of thresholds,
             or a tensor of thresholds.
 
-    Example:
-    >>> import torch
-    >>> from torcheval.metrics import BinaryBinnedPrecisionRecallCurve
-    >>> input = torch.tensor([0.2, 0.8, 0.5, 0.9])
-    >>> target = torch.tensor([0, 1, 0, 1])
-    >>> threshold = 5
-    >>> metric = BinaryBinnedPrecisionRecallCurve(threshold)
-    >>> metric.update(input, target)
-    >>> metric.compute()
-    (tensor([0.5000, 0.6667, 0.6667, 1.0000, 1.0000, 1.0000]),
-    tensor([1., 1., 1., 1., 0., 0.]),
-    tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]))
+    Examples::
 
-    >>> input = torch.tensor([0.2, 0.3, 0.4, 0.5])
-    >>> target = torch.tensor([0, 0, 1, 1])
-    >>> threshold = torch.tensor([0.0000, 0.2500, 0.7500, 1.0000])
-    >>> metric = BinaryBinnedPrecisionRecallCurve(threshold)
-    >>> metric.update(input, target)
-    >>> metric.compute()
-    (tensor([0.5000, 0.6667, 1.0000, 1.0000, 1.0000]),
-    tensor([1., 1., 0., 0., 0.]),
-    tensor([0.0000, 0.2500, 0.7500, 1.0000]))
+        >>> import torch
+        >>> from torcheval.metrics import BinaryBinnedPrecisionRecallCurve
+        >>> input = torch.tensor([0.2, 0.8, 0.5, 0.9])
+        >>> target = torch.tensor([0, 1, 0, 1])
+        >>> threshold = 5
+        >>> metric = BinaryBinnedPrecisionRecallCurve(threshold)
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        (tensor([0.5000, 0.6667, 0.6667, 1.0000, 1.0000, 1.0000]),
+        tensor([1., 1., 1., 1., 0., 0.]),
+        tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]))
+
+        >>> input = torch.tensor([0.2, 0.3, 0.4, 0.5])
+        >>> target = torch.tensor([0, 0, 1, 1])
+        >>> threshold = torch.tensor([0.0000, 0.2500, 0.7500, 1.0000])
+        >>> metric = BinaryBinnedPrecisionRecallCurve(threshold)
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        (tensor([0.5000, 0.6667, 1.0000, 1.0000, 1.0000]),
+        tensor([1., 1., 0., 0., 0.]),
+        tensor([0.0000, 0.2500, 0.7500, 1.0000]))
     """
 
     def __init__(
@@ -84,9 +85,9 @@ class BinaryBinnedPrecisionRecallCurve(Metric[torch.Tensor]):
         Update states with the ground truth labels and predictions.
 
         Args:
-            input: Tensor of label predictions
+            input (Tensor): Tensor of label predictions
                 It should be probabilities or logits with shape of (n_sample, ).
-            target: Tensor of ground truth labels with shape of (n_samples, ).
+            target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
         """
         num_tp, num_fp, num_fn = _binary_binned_precision_recall_curve_update(
             input, target, self.threshold
@@ -102,11 +103,11 @@ class BinaryBinnedPrecisionRecallCurve(Metric[torch.Tensor]):
         self: TBinaryBinnedPrecisionRecallCurve,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """
-        Return:
-            a tuple of (precision: torch.Tensor, recall: torch.Tensor, thresholds: torch.Tensor)
-                precision: Tensor of precision result. Its shape is (n_thresholds + 1, )
-                recall: Tensor of recall result. Its shape is (n_thresholds + 1, )
-                thresholds: Tensor of threshold. Its shape is (n_thresholds, )
+        Returns:
+            Tuple:
+                - precision (Tensor): Tensor of precision result. Its shape is (n_thresholds + 1, )
+                - recall (Tensor): Tensor of recall result. Its shape is (n_thresholds + 1, )
+                - thresholds (Tensor): Tensor of threshold. Its shape is (n_thresholds, )
         """
         return _binary_binned_precision_recall_curve_compute(
             self.num_tp, self.num_fp, self.num_fn, self.threshold

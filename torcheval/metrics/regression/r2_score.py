@@ -23,24 +23,26 @@ TR2Score = TypeVar("TR2Score")
 class R2Score(Metric[torch.Tensor]):
     """
     Compute R-squared score, which is the proportion of variance in the dependent variable that can be explained by the independent variable.
-    Its functional version is ``torcheval.metrics.functional.r2_score``.
+    Its functional version is :func:`torcheval.metrics.functional.r2_score`.
 
     Args:
-        multioutput (Optional):
-            - ``'uniform_average'``[default]:
-                Return scores of all outputs are averaged with uniform weight.
+        multioutput (str, Optional):
+            - ``'uniform_average'`` [default]:
+              Return scores of all outputs are averaged with uniform weight.
             - ``'raw_values'``:
-                Return a full set of scores.
+              Return a full set of scores.
             - ``variance_weighted``:
-                Return scores of all outputs are averaged with weighted by the variances of each individual output.
-        num_regressors (Optional):
+              Return scores of all outputs are averaged with weighted by the variances of each individual output.
+        num_regressors (int, Optional):
             Number of independent variables used, applied to adjusted R-squared score. Defaults to zero (standard R-squared score).
+
     Raises:
         ValueError:
             - If value of multioutput does not exist in (``raw_values``, ``uniform_average``, ``variance_weighted``).
             - If value of num_regressors is not an ``integer`` in the range of [0, n_samples - 1].
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import R2Score
         >>> metric = R2Score()
@@ -109,8 +111,8 @@ class R2Score(Metric[torch.Tensor]):
         Update states with the ground truth values and predictions.
 
         Args:
-            input: Tensor of predicted values with shape of (n_sample, n_output).
-            target: Tensor of ground truth values with shape of (n_sample, n_output).
+            input (Tensor): Tensor of predicted values with shape of (n_sample, n_output).
+            target (Tensor): Tensor of ground truth values with shape of (n_sample, n_output).
         """
         (
             sum_squared_obs,

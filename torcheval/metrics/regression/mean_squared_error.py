@@ -23,14 +23,12 @@ TMeanSquaredError = TypeVar("TMeanSquaredError")
 class MeanSquaredError(Metric[torch.Tensor]):
     """
     Compute Mean Squared Error, which is the mean of squared error of `input` and `target`.
-    Its functional version is ``torcheval.metrics.functional.mean_squared_error``.
+    Its functional version is :func:`torcheval.metrics.functional.mean_squared_error`.
 
     Args:
-        multioutput (Optional):
-            - ``'uniform_average'``[default]:
-                Return scores of all outputs are averaged with uniform weight.
-            - ``'raw_values'``:
-                Return a full set of scores.
+        multioutput (str, Optional)
+            - ``'uniform_average'`` [default]: Return scores of all outputs are averaged with uniform weight.
+            - ``'raw_values'``: Return a full set of scores.
     Raises:
         ValueError:
             - If value of multioutput does not exist in (``raw_values``, ``uniform_average``).
@@ -38,7 +36,8 @@ class MeanSquaredError(Metric[torch.Tensor]):
             - If the `input` and `target` do not have the same size.
             - If the first dimension of `input`, `target` and `sample_weight` are not the same.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import MeanSquaredError
         >>> metric = MeanSquaredError()
@@ -97,8 +96,8 @@ class MeanSquaredError(Metric[torch.Tensor]):
         Update states with the ground truth values and predictions.
 
         Args:
-            input: Tensor of predicted values with shape of (n_sample, n_output).
-            target: Tensor of ground truth values with shape of (n_sample, n_output).
+            input (Tensor): Tensor of predicted values with shape of (n_sample, n_output).
+            target (Tensor): Tensor of ground truth values with shape of (n_sample, n_output).
             sample_weight (Optional):
                 Tensor of sample weights with shape of (n_sample, ). Defaults to None.
         """

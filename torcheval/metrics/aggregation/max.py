@@ -21,7 +21,8 @@ class Max(Metric[torch.Tensor]):
     Calculate the maximum value of all elements in all the input tensors.
     Its functional version is ``torch.max(input)``.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import Max
         >>> metric = Max()

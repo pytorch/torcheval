@@ -27,7 +27,8 @@ def hit_rate(
         k (int, optional): Number of top predicted classes to be considered.
             If k is None, all classes are considered and a hit rate of 1.0 is returned.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics.functional import hit_rate
         >>> input = torch.tensor([[0.3, 0.1, 0.6], [0.5, 0.2, 0.3], [0.2, 0.1, 0.7], [0.3, 0.3, 0.4]])

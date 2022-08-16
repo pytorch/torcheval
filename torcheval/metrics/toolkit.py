@@ -37,7 +37,8 @@ def sync_and_compute(
         recipient_rank: The destination rank. If string "all" is passed in,
             then all ranks are the destination ranks.
 
-    Example:
+    Examples::
+
         >>> # Assumes world_size of 3.
         >>> # Process group initialization omitted on each rank.
         >>> import torch
@@ -95,7 +96,8 @@ def get_synced_state_dict(
     Returns:
         state dict of synced metric
 
-    Example:
+    Examples::
+
         >>> # Assumes world_size of 3.
         >>> # Process group initialization omitted on each rank.
         >>> import torch
@@ -163,7 +165,8 @@ def get_synced_metric(
         ValueError: when ``recipient_rank`` is not an integer or string
             "all".
 
-    Example:
+    Examples::
+
         >>> # Assumes world_size of 3.
         >>> # Process group initialization omitted on each rank.
         >>> import torch
@@ -261,7 +264,8 @@ def reset_metrics(metrics: _TMetrics) -> _TMetrics:
     Args:
         metrics: The metrics to be reset
 
-    Example:
+    Examples::
+
         >>> from torcheval.metrics import Max, Min
         >>> max = Max()
         >>> min = Min()
@@ -291,7 +295,8 @@ def to_device(
         *args: Variadic arguments forwarded to ``Metric.to``
         **kwargs: Named arguments forwarded to ``Metric.to``
 
-    Example:
+    Examples::
+
         >>> from torcheval.metrics import Max, Min
         >>> max = Max()
         >>> min = Min()

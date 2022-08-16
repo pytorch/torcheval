@@ -20,9 +20,10 @@ class Sum(Metric[torch.Tensor]):
     """
     Calculate the weighted sum value of all elements in all the input tensors.
     When weight is not provided, it calculates the unweighted sum.
-    Its functional version is ``torcheval.metrics.functional.sum``.
+    Its functional version is :func:`torcheval.metrics.functional.sum`.
 
-    Example:
+    Examples::
+
         >>> import torch
         >>> from torcheval.metrics import Sum
         >>> metric = Sum()
@@ -65,7 +66,7 @@ class Sum(Metric[torch.Tensor]):
         Update states with the values and weights.
 
         Args:
-            input: Tensor of input values.
+            input (Tensor): Tensor of input values.
             weight(optional): Float or Int or Tensor of input weights. It is default to 1.0. If weight is a Tensor, its size should match the input tensor size.
         Raises:
             ValueError: If value of weight is neither a ``float`` nor ``int`` nor a ``torch.Tensor`` that matches the input tensor size.
