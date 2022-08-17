@@ -28,11 +28,11 @@ TMulticlassPrecisionRecallCurve = TypeVar("TMulticlassPrecisionRecallCurve")
 
 class BinaryPrecisionRecallCurve(Metric[torch.Tensor]):
     """
-    Compute precision recall curve, which is precision-recall pair with corresponding thresholds,
-        for binary classification tasks.
-    Its functional version is :func:`torcheval.metrics.functional.binary_precision_recall_curve`.
+    Returns precision-recall pairs and their corresponding thresholds for
+    binary classification tasks. If a class is missing from the target tensor,
+    its recall values are set to 1.0.
 
-    Examples::
+    Its functional version is :func:`torcheval.metrics.functional.binary_precision_recall_curve`.
 
         >>> import torch
         >>> from torcheval.metrics import BinaryPrecisionRecallCurve
@@ -116,9 +116,11 @@ class BinaryPrecisionRecallCurve(Metric[torch.Tensor]):
 
 class MulticlassPrecisionRecallCurve(Metric[torch.Tensor]):
     """
-    Compute precision recall curve, which is precision-recall pair with corresponding thresholds,
-    for multi-class classification tasks.
-    Its functional version is :func:`torcheval.metrics.functional.multiclass_precision_recall_curve`.
+    Returns precision-recall pairs and their corresponding thresholds for
+    multi-class classification tasks. If a class is missing from the target
+    tensor, its recall values are set to 1.0.
+
+    Its class version is :func:`torcheval.metrics.functional.multiclass_precision_recall_curve`.
 
     Args:
         num_classes (int, Optional):

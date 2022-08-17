@@ -22,8 +22,10 @@ def binary_precision_recall_curve(
     target: torch.Tensor,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
-    Compute precision recall curve, which is precision-recall pair with corresponding thresholds,
-        for binary classification tasks.
+    Returns precision-recall pairs and their corresponding thresholds for
+    binary classification tasks. If a class is missing from the target tensor,
+    its recall values are set to 1.0.
+
     Its class version is ``torcheval.metrics.BinaryPrecisionRecallCurve``.
 
     Args:
@@ -97,8 +99,10 @@ def multiclass_precision_recall_curve(
     num_classes: Optional[int] = None,
 ) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]:
     """
-    Compute precision recall curve, which is precision-recall pair with corresponding thresholds,
-        for multi-class classification tasks.
+    Returns precision-recall pairs and their corresponding thresholds for
+    multi-class classification tasks. If a class is missing from the target
+    tensor, its recall values are set to 1.0.
+
     Its class version is ``torcheval.metrics.MulticlassPrecisionRecallCurve``.
 
     Args:
@@ -148,33 +152,33 @@ def _multiclass_precision_recall_curve_update(
     _multiclass_precision_recall_curve_update_input_check(input, target, num_classes)
 
 
+@torch.jit.script
 def _multiclass_precision_recall_curve_compute(
     input: torch.Tensor,
     target: torch.Tensor,
     num_classes: Optional[int],
 ) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]:
-    if num_classes is None and input.ndim == 2:
+    if num_classes is None:
         num_classes = input.shape[1]
-    num_unique_classes = torch.unique(target)
-    if len(num_unique_classes) != num_classes:
-        logging.warning(
-            "Warning: Some classes do not exist in the target. Recall is set to one for these classes."
-        )
+    thresholds, indices = input.T.sort(dim=1, descending=True)
+    mask = F.pad(thresholds.diff(dim=1) != 0, [0, 1], value=1.0).flip(1)
+    sizes: List[int] = mask.sum(1).tolist()
+    thresholds = thresholds.flip(1)[mask].split(sizes)
 
-    precisions, recalls, thresholds = [], [], []
-    assert isinstance(num_classes, int)
-    for class_idx in range(num_classes):
-        precision, recall, threshold = _compute_for_each_class(
-            input[:, class_idx], target, class_idx
-        )
-        precisions.append(precision)
-        recalls.append(recall)
-        thresholds.append(threshold)
-    return (
-        precisions,
-        recalls,
-        thresholds,
-    )
+    arange = torch.arange(num_classes, device=target.device)
+    cmp = target[indices] == arange[:, None]
+    num_tp = cmp.cumsum(1).flip(1)
+    num_fp = (~cmp).cumsum(1).flip(1)
+
+    # The last precision and recall values are 1.0 and 0.0, respectively
+    precision = F.pad(num_tp / (num_tp + num_fp), [0, 1], value=1.0)
+    recall = F.pad((num_tp / num_tp[:, :1]).nan_to_num_(1.0), [0, 1], value=0.0)
+    mask = F.pad(mask, [0, 1], value=1.0)
+    sizes: List[int] = mask.sum(1).tolist()
+
+    precision = precision[mask].split(sizes)
+    recall = recall[mask].split(sizes)
+    return list(precision), list(recall), list(thresholds)
 
 
 def _multiclass_precision_recall_curve_update_input_check(
