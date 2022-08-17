@@ -11,6 +11,7 @@ from typing import Iterable, Optional, TypeVar
 import torch
 
 from torcheval.metrics.functional.classification.f1_score import (
+    _binary_f1_score_update,
     _f1_score_compute,
     _f1_score_param_check,
     _f1_score_update,
@@ -19,6 +20,7 @@ from torcheval.metrics.metric import Metric
 
 
 TF1Score = TypeVar("TF1Score")
+TBinaryF1Score = TypeVar("TBinaryF1Score")
 
 
 class MulticlassF1Score(Metric[torch.Tensor]):
@@ -149,4 +151,68 @@ class MulticlassF1Score(Metric[torch.Tensor]):
             self.num_tp += metric.num_tp.to(self.device)
             self.num_label += metric.num_label.to(self.device)
             self.num_prediction += metric.num_prediction.to(self.device)
+        return self
+
+
+class BinaryF1Score(MulticlassF1Score):
+    """
+    Compute binary f1 score, which is defined as the harmonic mean of precision and recall.
+    We convert NaN to zero when f1 score is NaN. This happens when either precision
+    or recall is NaN or when both precision and recall are zero.
+    Its functional version is :func:``torcheval.metrics.functional.binary_f1_score``.
+
+    Args:
+        threshold (float, optional) : Threshold for converting input into predicted labels for each sample.
+        ``torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
+
+    Example::
+        >>> import torch
+        >>> from torcheval.metrics import BinaryF1Score
+        >>> metric = BinaryF1Score()
+        >>> input = torch.tensor([0, 1, 1, 0])
+        >>> target = torch.tensor([0, 1, 0, 1])
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(0.5000)
+
+        >>> metric = BinaryF1Score(threshold=0.7)
+        >>> input = torch.tensor([.2, .8, .7, .6])
+        >>> target = torch.tensor([0, 1, 0, 1])
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(0.5000)
+        >>> input2 = torch.tensor([.9, .5, .1, .7])
+        >>> target2 = torch.tensor([0, 1, 1, 1])
+        >>> metric.update(input2, target2)
+        >>> metric.compute()
+        tensor(0.4444)
+    """
+
+    def __init__(
+        self: TBinaryF1Score,
+        *,
+        threshold: float = 0.5,
+        device: Optional[torch.device] = None,
+    ) -> None:
+        super().__init__(average="micro", device=device)
+        self.threshold = threshold
+
+    @torch.inference_mode()
+    def update(
+        self: TBinaryF1Score, input: torch.Tensor, target: torch.Tensor
+    ) -> TBinaryF1Score:
+        """
+        Update states with the ground truth labels and predictions.
+
+        Args:
+            input (Tensor): Tensor of label predictions with shape of (n_sample,).
+                ``torch.where(input < threshold, 0, 1)`` will be applied to the input.
+            target (Tensor): Tensor of ground truth labels with shape of (n_sample,).
+        """
+        num_tp, num_label, num_prediction = _binary_f1_score_update(
+            input, target, self.threshold
+        )
+        self.num_tp += num_tp
+        self.num_label += num_label
+        self.num_prediction += num_prediction
         return self

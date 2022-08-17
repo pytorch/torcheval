@@ -11,12 +11,148 @@ import numpy as np
 import torch
 from sklearn.metrics import f1_score
 
-from torcheval.metrics import MulticlassF1Score
+from torcheval.metrics import BinaryF1Score, MulticlassF1Score
 from torcheval.utils.test_utils.metric_class_tester import (
     BATCH_SIZE,
     MetricClassTester,
     NUM_TOTAL_UPDATES,
 )
+
+
+class TestBinaryF1Score(MetricClassTester):
+    def _test_binary_f1_score_with_input(
+        self,
+        input: torch.Tensor,
+        target: torch.Tensor,
+        threshold: float = 0.5,
+    ) -> None:
+        input_tensors = [torch.argmax(t, dim=1) if t.ndim == 2 else t for t in input]
+        target_tensors = list(target)
+        target_np = torch.stack(target_tensors).flatten().numpy()
+        input_np = torch.stack(input_tensors).flatten().numpy()
+        compute_result = torch.tensor(
+            f1_score(target_np, input_np, average="binary"), dtype=torch.float32
+        )
+
+        self.run_class_implementation_tests(
+            metric=BinaryF1Score(threshold=threshold),
+            state_names={"num_tp", "num_label", "num_prediction"},
+            update_kwargs={"input": input, "target": target},
+            compute_result=compute_result,
+        )
+
+    def test_binary_f1_score_base(self) -> None:
+        num_classes = 2
+        input = torch.randint(high=num_classes, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
+        target = torch.randint(high=num_classes, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
+
+        self._test_binary_f1_score_with_input(input, target)
+
+    def test_binary_f1_score_with_0s(self) -> None:
+        num_classes = 2
+        expected_result = torch.Tensor([0.0]).sum()
+
+        # test input all 0s
+        input = torch.zeros(size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
+        target = torch.randint(high=num_classes, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
+
+        self.run_class_implementation_tests(
+            metric=BinaryF1Score(),
+            state_names={"num_tp", "num_label", "num_prediction"},
+            update_kwargs={"input": input, "target": target},
+            compute_result=expected_result,
+        )
+
+        # test target all 0s
+        input = torch.randint(high=num_classes, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
+        target = torch.zeros(size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
+
+        self.run_class_implementation_tests(
+            metric=BinaryF1Score(),
+            state_names={"num_tp", "num_label", "num_prediction"},
+            update_kwargs={"input": input, "target": target},
+            compute_result=expected_result,
+        )
+
+    def test_binary_f1_score_thresholding(self) -> None:
+        num_classes = 2
+        threshold = 2
+
+        # test threshold larger than every prediction gives 0
+        input = torch.randint(high=num_classes, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
+        target = torch.randint(high=num_classes, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
+        expected_result = torch.Tensor([0.0]).sum()
+        self.run_class_implementation_tests(
+            metric=BinaryF1Score(threshold=threshold),
+            state_names={"num_tp", "num_label", "num_prediction"},
+            update_kwargs={"input": input, "target": target},
+            compute_result=expected_result,
+        )
+
+    def test_binary_f1_score_class_update_input_shape_different(self) -> None:
+        num_classes = 2
+        update_input = [
+            torch.randint(high=num_classes, size=(5,)),
+            torch.randint(high=num_classes, size=(8,)),
+            torch.randint(high=num_classes, size=(2,)),
+            torch.randint(high=num_classes, size=(5,)),
+        ]
+
+        update_target = [
+            torch.randint(high=num_classes, size=(5,)),
+            torch.randint(high=num_classes, size=(8,)),
+            torch.randint(high=num_classes, size=(2,)),
+            torch.randint(high=num_classes, size=(5,)),
+        ]
+
+        compute_result = (
+            torch.tensor(
+                f1_score(
+                    torch.cat(update_target, dim=0),
+                    torch.cat(update_input, dim=0),
+                    average="binary",
+                )
+            )
+            .to(torch.float32)
+            .squeeze()
+        )
+        print(f"Expected result {compute_result}")
+
+        self.run_class_implementation_tests(
+            metric=BinaryF1Score(),
+            state_names={"num_tp", "num_label", "num_prediction"},
+            update_kwargs={
+                "input": update_input,
+                "target": update_target,
+            },
+            compute_result=compute_result,
+            num_total_updates=4,
+            num_processes=2,
+        )
+
+    def test_binary_f1_score_invalid_input(self) -> None:
+        metric = BinaryF1Score()
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "input should be a one-dimensional tensor for binary f1 score, "
+            r"got shape torch.Size\(\[4, 2\]\).",
+        ):
+            metric.update(torch.rand(4, 2), torch.rand(3))
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "target should be a one-dimensional tensor for binary f1 score, "
+            r"got shape torch.Size\(\[4, 2\]\).",
+        ):
+            metric.update(torch.rand(3), torch.rand(4, 2))
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "The `input` and `target` should have the same dimensions, "
+            r"got shapes torch.Size\(\[11\]\) and torch.Size\(\[10\]\).",
+        ):
+            metric.update(torch.rand(11), torch.rand(10))
 
 
 class TestMulticlassF1Score(MetricClassTester):
