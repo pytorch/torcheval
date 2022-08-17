@@ -457,6 +457,13 @@ class MetricBaseClassTest(unittest.TestCase):
         assert isinstance(metric.x, deque)
         torch.testing.assert_close(metric.x, deque([torch.tensor(1.0, device="cuda")]))
 
+        metric = DummySumDequeStateMetric().to("cuda")
+        torch.testing.assert_close(metric.x.maxlen, 10)
+        metric.to("cpu")
+        torch.testing.assert_close(metric.x.maxlen, 10)
+        metric.to("cuda")
+        torch.testing.assert_close(metric.x.maxlen, 10)
+
     def test_to_device_invalid_state(self) -> None:
         metric = DummySumMetric()
         metric.sum = 1.0

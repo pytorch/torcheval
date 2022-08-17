@@ -117,7 +117,7 @@ class DummySumDequeStateMetric(Metric[torch.Tensor]):
         self: TDummySumDequeStateMetric, *, device: Optional[torch.device] = None
     ) -> None:
         super().__init__(device=device)
-        self._add_state("x", deque())
+        self._add_state("x", deque(maxlen=10))
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any

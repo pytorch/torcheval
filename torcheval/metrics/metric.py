@@ -257,7 +257,10 @@ class Metric(Generic[TComputeReturn], ABC):
                 setattr(
                     self,
                     state_name,
-                    deque([tensor.to(device, *args, **kwargs) for tensor in value]),
+                    deque(
+                        [tensor.to(device, *args, **kwargs) for tensor in value],
+                        maxlen=value.maxlen,
+                    ),
                 )
         self._device = device
         return self
