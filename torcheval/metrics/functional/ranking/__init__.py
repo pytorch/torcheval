@@ -4,6 +4,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+from torcheval.metrics.functional.ranking.frequency import frequency_at_k
 from torcheval.metrics.functional.ranking.hit_rate import hit_rate
 from torcheval.metrics.functional.ranking.num_collisions import num_collisions
 from torcheval.metrics.functional.ranking.reciprocal_rank import reciprocal_rank
@@ -12,4 +13,5 @@ __all__ = [
     "hit_rate",
     "num_collisions",
     "reciprocal_rank",
+    "frequency_at_k",
 ]
