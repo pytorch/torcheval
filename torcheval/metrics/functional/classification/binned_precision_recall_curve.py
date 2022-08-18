@@ -215,8 +215,8 @@ def _multiclass_binned_precision_recall_curve_compute(
     recall = torch.cat([recall, recall.new_zeros(1, num_classes)], dim=0)
 
     return (
-        list(torch.transpose(precision, 0, 1)),
-        list(torch.transpose(recall, 0, 1)),
+        list(precision.T),
+        list(recall.T),
         threshold,
     )
 
