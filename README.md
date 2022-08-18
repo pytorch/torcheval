@@ -63,7 +63,7 @@ for epoch in range(num_epochs):
         target = torch.randint(high=5, size=(10,), device=device)
 
         # metric.update() updates the metric state with new data
-        metric.update(preds, target)
+        metric.update(input, target)
 
 
         # metric.compute() returns metric value from all seen data on the local process.
