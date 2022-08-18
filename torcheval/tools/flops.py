@@ -14,7 +14,7 @@ from typing import Any, Callable, DefaultDict, Dict, List, Optional, Tuple
 import torch
 from torch.utils._pytree import PyTree, tree_map
 
-aten = torch.ops.aten  # pyre-fixme need to use the correct type (Module) for this one.
+aten: torch._ops._OpNamespace = torch.ops.aten
 
 
 # pyre-ignore [2] we don't care the type in outputs
@@ -251,7 +251,10 @@ def _create_backwards_push(name: str) -> Callable[..., Any]:
             parents.append(name)
             return grad_outs
 
-    # pyre-fixme [16] Not sure why this return error.
+    # Pyre does not support analyzing classes nested in functions.
+    # But this class can't be lifted out of the function as it is a static class
+    # using a function parameter.
+    # pyre-ignore [16]
     return PushState.apply
 
 
@@ -274,7 +277,10 @@ def _create_backwards_pop(name: str) -> Callable[..., Any]:
             parents.pop()
             return grad_outs
 
-    # pyre-fixme [16] Not sure why this return error.
+    # Pyre does not support analyzing classes nested in functions.
+    # But this class can't be lifted out of the function as it is a static class
+    # using a function parameter.
+    # pyre-ignore [16]
     return PopState.apply
 
 
