@@ -94,7 +94,7 @@ class MetricClassTester(unittest.TestCase):
             ),
             "The outer size of each update argument should be equal to number of updates",
         )
-        self.assertGreater(num_total_updates, 2)
+        self.assertGreater(num_total_updates, 1)
         self.assertGreater(num_processes, 1)
         self.assertEqual(num_total_updates % num_processes, 0)
 
