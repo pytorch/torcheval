@@ -31,7 +31,6 @@ TTopKMultilabelAccuracy = TypeVar("TTopKMultilabelAccuracy")
 
 class MulticlassAccuracy(Metric[torch.Tensor]):
     """
-    hhhhhhhhhfd sijfids
     Compute accuracy score, which is the frequency of input matching target.
     Its functional version is :func:`torcheval.metrics.functional.multiclass_accuracy`.
 
