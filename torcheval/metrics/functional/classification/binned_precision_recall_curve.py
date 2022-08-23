@@ -8,6 +8,7 @@ from typing import List, Optional, Tuple, Union
 
 import torch
 from torch.nn import functional as F
+
 from torcheval.metrics.functional.classification.precision_recall_curve import (
     _binary_precision_recall_curve_update_input_check,
     _multiclass_precision_recall_curve_update_input_check,

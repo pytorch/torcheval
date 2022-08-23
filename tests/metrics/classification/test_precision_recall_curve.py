@@ -4,11 +4,10 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import List, Optional
+from typing import Optional
 
 import torch
 
-from sklearn.metrics import precision_recall_curve
 from torch.nn import functional as F
 
 from torcheval.metrics import BinaryPrecisionRecallCurve, MulticlassPrecisionRecallCurve

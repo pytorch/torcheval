@@ -11,10 +11,10 @@ from typing import Any, Dict, Iterable, List, Optional, TypeVar, Union
 import torch
 import torch.distributed as dist
 
-from torcheval.metrics import Metric
-
 from torchtnt.utils import PGWrapper
 from typing_extensions import Literal
+
+from torcheval.metrics import Metric
 
 log: logging.Logger = logging.getLogger(__name__)
 
