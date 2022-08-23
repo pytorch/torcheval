@@ -18,7 +18,7 @@ from torcheval.metrics.functional.classification import (
 from torcheval.utils.test_utils.metric_class_tester import BATCH_SIZE
 
 
-class TestMultiClassRecall(unittest.TestCase):
+class TestMulticlassRecall(unittest.TestCase):
     def _test_recall_with_input(
         self,
         input: torch.Tensor,

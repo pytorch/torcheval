@@ -126,15 +126,12 @@ def _precision_update(
         num_fp = (input != target).sum()
         return num_tp, num_fp, torch.tensor(0.0)
 
-    target_ = target.to(dtype=torch.float32)
-    input_ = input.to(dtype=torch.float32)
-
-    num_label = torch.histc(target_, bins=num_classes, min=0, max=num_classes - 1)
-    num_tp = torch.histc(
-        input_[input == target], bins=num_classes, min=0, max=num_classes - 1
+    num_label = target.new_zeros(num_classes).scatter_(0, target, 1, reduce="add")
+    num_tp = target.new_zeros(num_classes).scatter_(
+        0, target[input == target], 1, reduce="add"
     )
-    num_fp = torch.histc(
-        input_[input != target], bins=num_classes, min=0, max=num_classes - 1
+    num_fp = target.new_zeros(num_classes).scatter_(
+        0, input[input != target], 1, reduce="add"
     )
 
     return num_tp, num_fp, num_label

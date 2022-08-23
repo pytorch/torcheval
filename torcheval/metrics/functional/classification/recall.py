@@ -171,13 +171,11 @@ def _recall_update(
     assert isinstance(
         num_classes, int
     ), f"`num_classes` must be an integer, but received {num_classes}."
-    input = input.to(dtype=torch.float32)
-    target = target.to(dtype=torch.float32)
-    num_tp = torch.histc(
-        input[input == target], bins=num_classes, min=0, max=num_classes - 1
+    num_labels = target.new_zeros(num_classes).scatter_(0, target, 1, reduce="add")
+    num_predictions = target.new_zeros(num_classes).scatter_(0, input, 1, reduce="add")
+    num_tp = target.new_zeros(num_classes).scatter_(
+        0, target[input == target], 1, reduce="add"
     )
-    num_labels = torch.histc(target, bins=num_classes, min=0, max=num_classes - 1)
-    num_predictions = torch.histc(input, bins=num_classes, min=0, max=num_classes - 1)
     return num_tp, num_labels, num_predictions
 
 
