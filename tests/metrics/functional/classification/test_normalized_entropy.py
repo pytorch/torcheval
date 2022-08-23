@@ -45,7 +45,79 @@ class TestBinaryNormalizedEntropy(unittest.TestCase):
             torch.tensor(1.0060274419349144, dtype=torch.float64),
         )
 
+        # multi-task
+        input_multi_task = input.view(2, -1)
+        input_logit_multi_task = torch.logit(input_multi_task)
+        target_multi_task = target.view(2, -1)
+        weight_multi_task = weight.view(2, -1)
+
+        # without weight and input are probability value
+        torch.testing.assert_close(
+            binary_normalized_entropy(
+                input_multi_task,
+                target_multi_task,
+                weight=None,
+                num_tasks=2,
+                from_logits=False,
+            ),
+            torch.tensor([0.6127690164269908, 1.9662867428699988], dtype=torch.float64),
+        )
+
+        # with weight and input are probability value
+        torch.testing.assert_close(
+            binary_normalized_entropy(
+                input_multi_task,
+                target_multi_task,
+                weight=weight_multi_task,
+                num_tasks=2,
+                from_logits=False,
+            ),
+            torch.tensor([0.6087141981256933, 1.3590155586403683], dtype=torch.float64),
+        )
+
+        # without weight and input are logit value
+        torch.testing.assert_close(
+            binary_normalized_entropy(
+                input_logit_multi_task,
+                target_multi_task,
+                weight=None,
+                num_tasks=2,
+                from_logits=True,
+            ),
+            torch.tensor([0.6127690164269908, 1.9662867428699988], dtype=torch.float64),
+        )
+
+        # with weight and input are logit value
+        torch.testing.assert_close(
+            binary_normalized_entropy(
+                input_logit_multi_task,
+                target_multi_task,
+                weight=weight_multi_task,
+                num_tasks=2,
+                from_logits=True,
+            ),
+            torch.tensor([0.6087141981256933, 1.3590155586403683], dtype=torch.float64),
+        )
+
     def test_ne_with_invalid_input(self) -> None:
+        with self.assertRaisesRegex(
+            ValueError, "`num_tasks = 2`, `input`'s shape is expected to be"
+        ):
+            binary_normalized_entropy(
+                torch.rand((5,)),
+                torch.randint(0, 2, (5,)),
+                num_tasks=2,
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "`num_tasks = 1`, `input` is expected to be one-dimensional tensor",
+        ):
+            binary_normalized_entropy(
+                torch.rand((2, 10)),
+                torch.randint(0, 2, (2, 10)),
+            )
+
         with self.assertRaisesRegex(ValueError, "is different from `target` shape"):
             binary_normalized_entropy(torch.rand((5,)), torch.randint(0, 2, (3,)))
 
