@@ -11,6 +11,7 @@ from typing import Iterable, Optional, TypeVar
 import torch
 
 from torcheval.metrics.functional.classification.binary_normalized_entropy import (
+    _baseline_update,
     _binary_normalized_entropy_update,
 )
 from torcheval.metrics.metric import Metric
@@ -29,6 +30,8 @@ class BinaryNormalizedEntropy(Metric[torch.Tensor]):
                     a floating-point logit value (i.e., value in [-inf, inf] when `from_logits=True`)
                     or a probablity value (i.e., value in [0., 1.] when `from_logits=False`)
                     Default value is False.
+        num_tasks (int): Number of tasks that need BinaryNormalizedEntropy calculation. Default value
+                    is 1. BinaryNormalizedEntropy for each task will be calculated independently.
 
     Examples::
 
@@ -38,35 +41,49 @@ class BinaryNormalizedEntropy(Metric[torch.Tensor]):
         >>> metric = BinaryNormalizedEntropy()
         >>> metric.update(torch.tensor([0.2, 0.3]), torch.tensor([1.0, 0.0]))
         >>> metric.compute()
-        tensor(1.4183, dtype=torch.float64)
+        tensor([1.4183], dtype=torch.float64)
 
         >>> metric = BinaryNormalizedEntropy()
         >>> metric.update(torch.tensor([0.2, 0.3]), torch.tensor([1.0, 0.0]), torch.tensor([5.0, 1.0]))
         >>> metric.compute()
-        tensor(3.1087, dtype=torch.float64)
+        tensor([3.1087], dtype=torch.float64)
 
         >>> metric = BinaryNormalizedEntropy(from_logits = True)
         >>> metric.update(tensor([-1.3863, -0.8473]), torch.tensor([1.0, 0.0]))
         >>> metric.compute()
-        tensor(1.4183, dtype=torch.float64)
+        tensor([1.4183], dtype=torch.float64)
+
+        >>> metric = BinaryNormalizedEntropy(num_tasks=2)
+        >>> metric.update(torch.tensor([[0.2, 0.3], [0.5, 0.1]]), torch.tensor([[1.0, 0.0], [0.0, 1.0]]))
+        >>> metric.compute()
+        tensor([1.4183, 2.1610], dtype=torch.float64)
     """
 
     def __init__(
         self: TNormalizedEntropy,
         *,
         from_logits: bool = False,
+        num_tasks: int = 1,
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)
         self.from_logits = from_logits
+        if num_tasks < 1:
+            raise ValueError(
+                "`num_tasks` value should be greater than and equal to 1, but received {num_tasks}. "
+            )
+        self.num_tasks = num_tasks
         self._add_state(
-            "total_entropy", torch.tensor(0.0, dtype=torch.float64, device=self.device)
+            "total_entropy",
+            torch.zeros(self.num_tasks, dtype=torch.float64, device=self.device),
         )
         self._add_state(
-            "num_examples", torch.tensor(0.0, dtype=torch.float64, device=self.device)
+            "num_examples",
+            torch.zeros(self.num_tasks, dtype=torch.float64, device=self.device),
         )
         self._add_state(
-            "num_positive", torch.tensor(0.0, dtype=torch.float64, device=self.device)
+            "num_positive",
+            torch.zeros(self.num_tasks, dtype=torch.float64, device=self.device),
         )
 
     @torch.inference_mode()
@@ -84,13 +101,13 @@ class BinaryNormalizedEntropy(Metric[torch.Tensor]):
 
         Args:
             input (Tensor): Predicted unnormalized scores (often referred to as logits) or
-                binary class probabilities (num_samples, ).
-            target (Tensor): Ground truth binary class indices (num_samples, ).
-            weight (Tensor): Optional. A manual rescaling weight to match input tensor shape (num_samples, ).
+                binary class probabilities (num_tasks, num_samples).
+            target (Tensor): Ground truth binary class indices (num_tasks, num_samples).
+            weight (Tensor, optional): A manual rescaling weight to match input tensor shape (num_tasks, num_samples).
         """
 
         cross_entropy, num_positive, num_examples = _binary_normalized_entropy_update(
-            input, target, self.from_logits, weight
+            input, target, self.from_logits, self.num_tasks, weight
         )
         self.total_entropy += cross_entropy
         self.num_examples += num_examples
@@ -102,20 +119,16 @@ class BinaryNormalizedEntropy(Metric[torch.Tensor]):
         """
         Return the normalized binary cross entropy.  If no ``update()`` calls are made before
         ``compute()`` is called, return an empty tensor.
+
+        Returns:
+            Tensor: The return value of binary normalized entropy for each task (num_tasks,).
         """
-        if self.num_examples == 0.0:
+        if torch.any(self.num_examples == 0.0):
             return torch.empty(0)
 
-        base_pos_rate = torch.clamp(
-            self.num_positive / self.num_examples,
-            min=torch.finfo(torch.float64).eps,
-            max=1 - torch.finfo(torch.float64).eps,
-        )
-        baseline_entropy = -base_pos_rate * torch.log(base_pos_rate) - (
-            1 - base_pos_rate
-        ) * torch.log(1 - base_pos_rate)
-        entropy = self.total_entropy / self.num_examples
-        return entropy / baseline_entropy
+        baseline_entropy = _baseline_update(self.num_positive, self.num_examples)
+        cross_entropy = self.total_entropy / self.num_examples
+        return cross_entropy / baseline_entropy
 
     @torch.inference_mode()
     def merge_state(

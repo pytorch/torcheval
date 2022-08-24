@@ -78,7 +78,7 @@ class TestBinaryPrecision(unittest.TestCase):
             binary_precision(torch.rand(4, 2), torch.rand(3))
 
 
-class TestMultiClassPrecision(unittest.TestCase):
+class TestMulticlassPrecision(unittest.TestCase):
     def _test_precision_with_input(
         self,
         input: torch.Tensor,
