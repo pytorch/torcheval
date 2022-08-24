@@ -53,10 +53,8 @@ class TestThroughput(MetricClassTester):
 
     def test_throughput_class_base(self) -> None:
         num_processed = [random.randint(0, 40) for _ in range(NUM_TOTAL_UPDATES)]
-        eplased_time_sec = [random.uniform(0.1, 5.0) for _ in range(NUM_TOTAL_UPDATES)]
-        # num_processed = [20 for _ in range(NUM_TOTAL_UPDATES)]
-        # eplased_time_sec = [0.3 for _ in range(NUM_TOTAL_UPDATES)]
-        self._test_throughput_class_with_input(num_processed, eplased_time_sec)
+        elapsed_time_sec = [random.uniform(0.1, 5.0) for _ in range(NUM_TOTAL_UPDATES)]
+        self._test_throughput_class_with_input(num_processed, elapsed_time_sec)
 
     def test_throughput_class_update_input_invalid_num_processed(self) -> None:
         metric = Throughput()
