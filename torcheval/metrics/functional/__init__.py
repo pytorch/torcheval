@@ -4,7 +4,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-from torcheval.metrics.functional.aggregation import sum
+from torcheval.metrics.functional.aggregation import mean, sum, throughput
 from torcheval.metrics.functional.classification import (
     binary_accuracy,
     binary_auroc,
@@ -56,4 +56,5 @@ __all__ = [
     "r2_score",
     "reciprocal_rank",
     "sum",
+    "throughput",
 ]
