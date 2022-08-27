@@ -8,7 +8,6 @@ from typing import Optional
 
 import torch
 
-from sklearn.metrics import precision_recall_curve
 from torch.nn import functional as F
 
 from torcheval.metrics import BinaryPrecisionRecallCurve, MulticlassPrecisionRecallCurve
