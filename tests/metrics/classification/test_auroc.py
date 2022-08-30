@@ -4,6 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+
 import torch
 
 from sklearn.metrics import roc_auc_score
@@ -21,13 +23,16 @@ class TestBinaryAUROC(MetricClassTester):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
+        num_tasks: int = 1,
+        compute_result: Optional[torch.Tensor] = None,
     ) -> None:
         input_tensors = input.reshape(-1, 1)
         target_tensors = target.reshape(-1, 1)
-        compute_result = torch.tensor(roc_auc_score(target_tensors, input_tensors))
+        if compute_result is None:
+            compute_result = torch.tensor(roc_auc_score(target_tensors, input_tensors))
 
         self.run_class_implementation_tests(
-            metric=BinaryAUROC(),
+            metric=BinaryAUROC(num_tasks=num_tasks),
             state_names={"inputs", "targets"},
             update_kwargs={
                 "input": input,
@@ -43,7 +48,23 @@ class TestBinaryAUROC(MetricClassTester):
 
         input = torch.randint(high=2, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
         target = torch.randint(high=2, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
-        self._test_auroc_class_with_input(input, target)
+        self._test_auroc_class_with_input(
+            input,
+            target,
+        )
+
+        num_tasks = 2
+        torch.manual_seed(123)
+        input = torch.rand(NUM_TOTAL_UPDATES, num_tasks, BATCH_SIZE)
+        target = torch.randint(high=2, size=(NUM_TOTAL_UPDATES, num_tasks, BATCH_SIZE))
+        self._test_auroc_class_with_input(
+            input,
+            target,
+            num_tasks=2,
+            compute_result=torch.tensor(
+                [0.549048678033111, 0.512218963831867], dtype=torch.float64
+            ),
+        )
 
     def test_auroc_class_update_input_shape_different(self) -> None:
         num_classes = 2
@@ -83,21 +104,23 @@ class TestBinaryAUROC(MetricClassTester):
         metric = BinaryAUROC()
         with self.assertRaisesRegex(
             ValueError,
-            "input should be a one-dimensional tensor, "
-            r"got shape torch.Size\(\[3, 2\]\).",
-        ):
-            metric.update(torch.rand(3, 2), torch.rand(3))
-
-        with self.assertRaisesRegex(
-            ValueError,
-            "target should be a one-dimensional tensor, "
-            r"got shape torch.Size\(\[3, 2\]\).",
-        ):
-            metric.update(torch.rand(3), torch.rand(3, 2))
-
-        with self.assertRaisesRegex(
-            ValueError,
             "The `input` and `target` should have the same shape, "
             r"got shapes torch.Size\(\[4\]\) and torch.Size\(\[3\]\).",
         ):
             metric.update(torch.rand(4), torch.rand(3))
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "`num_tasks = 1`, `input` is expected to be one-dimensional tensor,",
+        ):
+            metric.update(torch.rand(4, 5), torch.rand(4, 5))
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "`num_tasks = 2`, `input`'s shape is expected to be",
+        ):
+            metric = BinaryAUROC(num_tasks=2)
+            metric.update(torch.rand(4, 5), torch.rand(4, 5))
+
+        with self.assertRaisesRegex(ValueError, "`num_tasks` value should be greater"):
+            metric = BinaryAUROC(num_tasks=0)
