@@ -58,6 +58,7 @@ class MetricClassTester(unittest.TestCase):
         merge_and_compute_result: Any = None,
         num_total_updates: int = NUM_TOTAL_UPDATES,
         num_processes: int = NUM_PROCESSES,
+        test_merge_before_after: bool = True,
         atol: float = 1e-8,
         rtol: float = 1e-5,
     ) -> None:
@@ -123,7 +124,7 @@ class MetricClassTester(unittest.TestCase):
             )
             self._test_init()
             self._test_update_and_compute()
-            self._test_merge_state()
+            self._test_merge_state(test_merge_before_after)
             # testing on GPU might cause CUDA oom
             if device == "cpu":
                 self._test_sync_and_compute()
@@ -174,7 +175,7 @@ class MetricClassTester(unittest.TestCase):
         self._test_metric_pickable_hashable(test_metric)
         self._test_state_dict_load_state_dict(test_metric)
 
-    def _test_merge_state(self) -> None:
+    def _test_merge_state(self, test_merge_before_after: bool) -> None:
         num_processes = self._test_case_spec.num_processes
         num_total_updates = self._test_case_spec.num_total_updates
         state_names = self._test_case_spec.state_names
@@ -195,7 +196,8 @@ class MetricClassTester(unittest.TestCase):
             .update(**{k: v[0] for k, v in self._test_case_spec.update_kwargs.items()})
             .compute()
         )
-        assert_result_close(result_before_merge, result_after_merge)
+        if test_merge_before_after:
+            assert_result_close(result_before_merge, result_after_merge)
 
         # call merge_state before update
         # update metric 0 and then metric 0 merges metric 1
