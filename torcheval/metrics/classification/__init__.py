@@ -18,6 +18,10 @@ from torcheval.metrics.classification.binned_precision_recall_curve import (
     BinaryBinnedPrecisionRecallCurve,
     MulticlassBinnedPrecisionRecallCurve,
 )
+from torcheval.metrics.classification.confusion_matrix import (
+    BinaryConfusionMatrix,
+    MulticlassConfusionMatrix,
+)
 from torcheval.metrics.classification.f1_score import BinaryF1Score, MulticlassF1Score
 from torcheval.metrics.classification.precision import (
     BinaryPrecision,
@@ -33,6 +37,7 @@ __all__ = [
     "BinaryAUROC",
     "BinaryAccuracy",
     "BinaryBinnedPrecisionRecallCurve",
+    "BinaryConfusionMatrix",
     "BinaryF1Score",
     "BinaryNormalizedEntropy",
     "BinaryPrecision",
@@ -40,6 +45,7 @@ __all__ = [
     "BinaryRecall",
     "MulticlassAccuracy",
     "MulticlassBinnedPrecisionRecallCurve",
+    "MulticlassConfusionMatrix",
     "MulticlassF1Score",
     "MulticlassPrecision",
     "MulticlassPrecisionRecallCurve",
