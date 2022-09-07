@@ -1,5 +1,14 @@
 # TorchEval
 
+<p align="center">
+<a href="https://github.com/pytorch-labs/torcheval/actions?query=branch%3Amain"><img src="https://img.shields.io/github/workflow/status/pytorch-labs/torcheval/unit%20test/main" alt="build status"></a>
+<a href="https://pypi.org/project/torcheval"><img src="https://img.shields.io/pypi/v/torcheval" alt="pypi version"></a>
+<a href="https://pypi.org/project/torcheval-nightly"><img src="https://img.shields.io/pypi/v/torcheval-nightly?label=nightly" alt="pypi nightly version"></a>
+<a href="https://github.com/pytorch-labs/torcheval/blob/main/LICENSE"><img src="https://img.shields.io/pypi/l/torcheval" alt="bsd license"></a>
+</div>
+<a href="https://pytorch-labs.github.io/torcheval"><img src="https://img.shields.io/badge/docs-main-brightgreen" alt="docs"></a>
+<p>
+
 **This library is currently in Alpha and currently does not have a stable release. The API may change and may not be backward compatible. If you have suggestions for improvements, please open a GitHub issue. We'd love to hear your feedback.**
 
 A library that contains a rich collection of performant PyTorch model metrics, a simple interface to create new metrics, a toolkit to facilitate metric computation in distributed training and tools for PyTorch model evaluations.
@@ -33,6 +42,10 @@ python setup.py install
 cd torcheval
 python examples/simple_example.py
 ```
+
+## Documentation
+
+Documentation can be found at at [pytorch-labs.github.io/torcheval](https://pytorch-labs.github.io/torcheval)
 
 ## Using TorchEval
 
