@@ -10,6 +10,7 @@ import unittest
 import uuid
 from copy import deepcopy
 from dataclasses import dataclass
+from socket import socket
 from typing import Any, Dict, List, Sequence, Set
 
 import torch
@@ -269,6 +270,13 @@ class MetricClassTester(unittest.TestCase):
                 self.assertEqual(test_metrics_copy[i]._device.type, past_device_type)
             self.assertEqual(test_metrics_copy[0]._device.type, new_device_type)
 
+    def _get_free_port(self) -> None:
+        sock = socket()
+        sock.bind(("", 0))
+        port = sock.getsockname()[1]
+        sock.close()
+        return port
+
     def _test_sync_and_compute(self) -> None:
         lc = pet.LaunchConfig(
             min_nodes=1,
@@ -276,7 +284,7 @@ class MetricClassTester(unittest.TestCase):
             nproc_per_node=self._test_case_spec.num_processes,
             run_id=str(uuid.uuid4()),
             rdzv_backend="c10d",
-            rdzv_endpoint="localhost:0",
+            rdzv_endpoint=f"localhost:{self._get_free_port()}",
             max_restarts=0,
             monitor_interval=1,
         )
