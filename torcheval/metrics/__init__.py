@@ -27,7 +27,7 @@ from torcheval.metrics.classification import (
     TopKMultilabelAccuracy,
 )
 from torcheval.metrics.metric import Metric
-from torcheval.metrics.ranking import HitRate, ReciprocalRank
+from torcheval.metrics.ranking import HitRate, ReciprocalRank, WeightedCalibration
 from torcheval.metrics.regression import MeanSquaredError, R2Score
 from torcheval.metrics.window import WindowedBinaryNormalizedEntropy
 
@@ -65,5 +65,6 @@ __all__ = [
     "ReciprocalRank",
     "Sum",
     "Throughput",
+    "WeightedCalibration",
     "WindowedBinaryNormalizedEntropy",
 ]

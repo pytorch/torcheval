@@ -30,6 +30,7 @@ from torcheval.metrics.functional.ranking import (
     hit_rate,
     num_collisions,
     reciprocal_rank,
+    weighted_calibration,
 )
 from torcheval.metrics.functional.regression import mean_squared_error, r2_score
 
@@ -61,4 +62,5 @@ __all__ = [
     "reciprocal_rank",
     "sum",
     "throughput",
+    "weighted_calibration",
 ]

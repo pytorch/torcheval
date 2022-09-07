@@ -6,8 +6,10 @@
 
 from torcheval.metrics.ranking.hit_rate import HitRate
 from torcheval.metrics.ranking.reciprocal_rank import ReciprocalRank
+from torcheval.metrics.ranking.weighted_calibration import WeightedCalibration
 
 __all__ = [
     "HitRate",
     "ReciprocalRank",
+    "WeightedCalibration",
 ]
