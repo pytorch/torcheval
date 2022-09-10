@@ -49,6 +49,8 @@ def prepare_dataloader(device: torch.device) -> torch.utils.data.DataLoader:
 
 
 def train() -> None:
+    # Set directly in case hostname isn't identifiable and routable.
+    os.environ["MASTER_ADDR"] = "localhost"
     if torch.cuda.is_available() and torch.cuda.device_count() >= NUM_PROCESSES:
         dist.init_process_group(backend="nccl")
     else:

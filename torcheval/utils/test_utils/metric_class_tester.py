@@ -296,6 +296,7 @@ class MetricClassTester(unittest.TestCase):
     def _test_per_process_sync_and_compute(
         test_spec: _MetricClassTestCaseSpecs,
     ) -> None:
+        os.environ["MASTER_ADDR"] = "localhost"
         init_from_env(device_type="cpu")
         rank = int(os.environ["RANK"])
 
