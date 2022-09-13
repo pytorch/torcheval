@@ -11,7 +11,7 @@ import uuid
 from copy import deepcopy
 from dataclasses import dataclass
 from socket import socket
-from typing import Any, Dict, List, Sequence, Set
+from typing import Any, Dict, List, Optional, Sequence, Set
 
 import torch
 import torch.distributed.launcher as pet
@@ -61,6 +61,7 @@ class MetricClassTester(unittest.TestCase):
         num_processes: int = NUM_PROCESSES,
         atol: float = 1e-8,
         rtol: float = 1e-5,
+        test_devices: Optional[List[str]] = None,
     ) -> None:
         """
         Run a test case to verify metric class implementations.
@@ -85,6 +86,8 @@ class MetricClassTester(unittest.TestCase):
                 ``num_processes``.
             atol: Absolute tolerance used in ``torch.testing.assert_close``
             rtol: Relative tolerance used in ``torch.testing.assert_close``
+            test_devices: List of test devices. If None, will be determined
+                automatically.
         """
         # update args and state names should not be empty
         self.assertTrue(update_kwargs)
@@ -116,7 +119,9 @@ class MetricClassTester(unittest.TestCase):
             rtol,
         )
 
-        test_devices = ("cpu", "cuda") if torch.cuda.is_available() else ("cpu",)
+        if test_devices is None:
+            test_devices = ("cpu", "cuda") if torch.cuda.is_available() else ("cpu",)
+
         for device in test_devices:
             self._test_case_spec.device = device
             self._test_case_spec = copy_data_to_device(

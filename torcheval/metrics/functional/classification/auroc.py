@@ -4,8 +4,21 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+
 import torch
 from torch.nn import functional as F
+
+# Optionally import fbgemm_gpu to enable use of hand fused kernel
+try:
+    import fbgemm_gpu.metrics
+except ImportError:
+    pass
+
+try:
+    torch.ops.load_library("//deeplearning/fbgemm/fbgemm_gpu:metric_ops")
+except OSError:
+    pass
 
 
 @torch.inference_mode()
@@ -14,6 +27,7 @@ def binary_auroc(
     target: torch.Tensor,
     *,
     num_tasks: int = 1,
+    use_fbgemm: Optional[bool] = False,
 ) -> torch.Tensor:
     """
     Compute AUROC, which is the area under the ROC Curve, for binary classification.
@@ -25,6 +39,11 @@ def binary_auroc(
         target (Tensor): Tensor of ground truth labels with shape of (num_tasks, n_sample) or (n_sample, ).
         num_tasks (int):  Number of tasks that need BinaryAUROC calculation. Default value
                     is 1. BinaryAUROC for each task will be calculated independently.
+        use_fbgemm (bool): If set to True, use ``fbgemm_gpu.metrics.auc`` (a
+            hand fused kernel).  FBGEMM AUC is an approximation of AUC. It does
+            not mask data in case that input values are redundant. For the
+            highly redundant input case, FBGEMM AUC can give a significantly
+            different result.
 
     Examples::
 
@@ -46,7 +65,7 @@ def binary_auroc(
         tensor([0.7500, 0.6667])
     """
     _auroc_update(input, target, num_tasks)
-    return _auroc_compute(input, target)
+    return _auroc_compute(input, target, use_fbgemm)
 
 
 def _auroc_update(
@@ -58,7 +77,7 @@ def _auroc_update(
 
 
 @torch.jit.script
-def _auroc_compute(
+def _auroc_compute_jit(
     input: torch.Tensor,
     target: torch.Tensor,
 ) -> torch.Tensor:
@@ -83,6 +102,28 @@ def _auroc_compute(
         torch.trapz(cum_tp, cum_fp).double() / factor,
     )
     return auroc
+
+
+def _auroc_compute(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    use_fbgemm: Optional[bool] = False,
+) -> torch.Tensor:
+    if use_fbgemm:
+        assert input.is_cuda and target.is_cuda, "Tensors have to be on GPU"
+        # auroc does not have weight
+        weight = torch.ones_like(input, dtype=torch.double)
+        num_tasks = 1 if len(input.shape) == 1 else input.shape[0]
+        # FBGEMM AUC is an approximation of AUC. It does not mask data in case
+        # that input values are redundant. For the highly redundant input case,
+        # FBGEMM AUC can give a significantly different result
+        auroc = fbgemm_gpu.metrics.auc(num_tasks, input, target, weight)
+        if num_tasks == 1:
+            return auroc[0]
+        else:
+            return auroc
+    else:
+        return _auroc_compute_jit(input, target)
 
 
 def _auroc_update_input_check(
