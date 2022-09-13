@@ -4,6 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+# pyre-ignore-all-errors[56]: Pyre was not able to infer the type of argument
+
 import unittest
 from typing import Optional
 
@@ -20,12 +22,16 @@ class TestBinaryAUROC(unittest.TestCase):
         target: torch.Tensor,
         num_tasks: int = 1,
         compute_result: Optional[torch.Tensor] = None,
+        use_fbgemm: Optional[bool] = False,
     ) -> None:
         if compute_result is None:
             compute_result = torch.tensor(roc_auc_score(target, input))
         if torch.cuda.is_available():
             my_compute_result = binary_auroc(
-                input.to(device="cuda"), target.to(device="cuda"), num_tasks=num_tasks
+                input.to(device="cuda"),
+                target.to(device="cuda"),
+                num_tasks=num_tasks,
+                use_fbgemm=use_fbgemm,
             )
             compute_result = compute_result.to(device="cuda")
         else:
@@ -39,14 +45,14 @@ class TestBinaryAUROC(unittest.TestCase):
             rtol=1e-5,
         )
 
-    def test_auroc_base(self) -> None:
+    def _test_auroc_set(self, use_fbgemm: Optional[bool] = False) -> None:
         input = torch.tensor([1, 1, 0, 0])
         target = torch.tensor([1, 0, 1, 0])
-        self._test_auroc_with_input(input, target)
+        self._test_auroc_with_input(input, target, use_fbgemm=use_fbgemm)
 
         input = torch.rand(BATCH_SIZE)
         target = torch.randint(high=2, size=(BATCH_SIZE,))
-        self._test_auroc_with_input(input, target)
+        self._test_auroc_with_input(input, target, use_fbgemm=use_fbgemm)
 
         input = torch.tensor([[1, 1, 1, 0], [0.1, 0.5, 0.7, 0.8]])
         target = torch.tensor([[1, 0, 1, 0], [1, 0, 1, 1]])
@@ -55,7 +61,17 @@ class TestBinaryAUROC(unittest.TestCase):
             target,
             2,
             torch.tensor([0.7500, 0.6666666666666666], dtype=torch.float64),
+            use_fbgemm=use_fbgemm,
         )
+
+    @unittest.skipUnless(
+        condition=torch.cuda.is_available(), reason="This test needs a GPU host to run."
+    )
+    def test_auroc_fbgemm(self) -> None:
+        self._test_auroc_set(use_fbgemm=True)
+
+    def test_auroc_base(self) -> None:
+        self._test_auroc_set(use_fbgemm=False)
 
     def test_auroc_invalid_input(self) -> None:
         with self.assertRaisesRegex(

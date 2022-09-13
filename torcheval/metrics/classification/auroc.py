@@ -16,6 +16,13 @@ from torcheval.metrics.functional.classification.auroc import (
 )
 from torcheval.metrics.metric import Metric
 
+try:
+    import fbgemm_gpu.metrics
+
+    has_fbgemm = True
+except ImportError:
+    has_fbgemm = False
+
 
 TAUROC = TypeVar("TAUROC")
 
@@ -53,15 +60,23 @@ class BinaryAUROC(Metric[torch.Tensor]):
         *,
         num_tasks: int = 1,
         device: Optional[torch.device] = None,
+        use_fbgemm: Optional[bool] = False,
     ) -> None:
         super().__init__(device=device)
         if num_tasks < 1:
             raise ValueError(
                 "`num_tasks` value should be greater than or equal to 1, but received {num_tasks}. "
             )
+        if not has_fbgemm and use_fbgemm:
+            raise ValueError(
+                "`use_fbgemm` is enabled but `fbgemm_gpu` is not found. Please "
+                "install `fbgemm_gpu` to use this option."
+            )
+
         self.num_tasks = num_tasks
         self._add_state("inputs", [])
         self._add_state("targets", [])
+        self.use_fbgemm = use_fbgemm
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
@@ -94,7 +109,9 @@ class BinaryAUROC(Metric[torch.Tensor]):
         Returns:
             Tensor: The return value of AUROC for each task (num_tasks,).
         """
-        return _auroc_compute(torch.cat(self.inputs, -1), torch.cat(self.targets, -1))
+        return _auroc_compute(
+            torch.cat(self.inputs, -1), torch.cat(self.targets, -1), self.use_fbgemm
+        )
 
     @torch.inference_mode()
     def merge_state(self: TAUROC, metrics: Iterable[TAUROC]) -> TAUROC:
