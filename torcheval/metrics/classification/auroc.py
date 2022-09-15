@@ -17,7 +17,7 @@ from torcheval.metrics.functional.classification.auroc import (
 from torcheval.metrics.metric import Metric
 
 try:
-    import fbgemm_gpu.metrics
+    import fbgemm_gpu.metrics  # noqa
 
     has_fbgemm = True
 except ImportError:
