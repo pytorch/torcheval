@@ -29,7 +29,10 @@ from torcheval.metrics.classification import (
 from torcheval.metrics.metric import Metric
 from torcheval.metrics.ranking import HitRate, ReciprocalRank, WeightedCalibration
 from torcheval.metrics.regression import MeanSquaredError, R2Score
-from torcheval.metrics.window import WindowedBinaryNormalizedEntropy
+from torcheval.metrics.window import (
+    WindowedBinaryAUROC,
+    WindowedBinaryNormalizedEntropy,
+)
 
 __all__ = [
     # base interface
@@ -66,5 +69,6 @@ __all__ = [
     "Sum",
     "Throughput",
     "WeightedCalibration",
+    "WindowedBinaryAUROC",
     "WindowedBinaryNormalizedEntropy",
 ]

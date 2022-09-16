@@ -59,6 +59,7 @@ class MetricClassTester(unittest.TestCase):
         merge_and_compute_result: Any = None,
         num_total_updates: int = NUM_TOTAL_UPDATES,
         num_processes: int = NUM_PROCESSES,
+        test_merge_with_one_update: bool = True,
         atol: float = 1e-8,
         rtol: float = 1e-5,
         test_devices: Optional[List[str]] = None,
@@ -84,6 +85,8 @@ class MetricClassTester(unittest.TestCase):
             num_processes: Number of processes for metric computation distributed
                 training. ``num_total_updates`` should be divisible by
                 ``num_processes``.
+            test_merge_with_one_update: Whether to test merge_state when there's only
+                one update call applied to all metric instances.
             atol: Absolute tolerance used in ``torch.testing.assert_close``
             rtol: Relative tolerance used in ``torch.testing.assert_close``
             test_devices: List of test devices. If None, will be determined
@@ -129,7 +132,7 @@ class MetricClassTester(unittest.TestCase):
             )
             self._test_init()
             self._test_update_and_compute()
-            self._test_merge_state()
+            self._test_merge_state(test_merge_with_one_update)
             # testing on GPU might cause CUDA oom
             if device == "cpu":
                 self._test_sync_and_compute()
@@ -180,7 +183,7 @@ class MetricClassTester(unittest.TestCase):
         self._test_metric_pickable_hashable(test_metric)
         self._test_state_dict_load_state_dict(test_metric)
 
-    def _test_merge_state(self) -> None:
+    def _test_merge_state(self, test_merge_with_one_update: bool) -> None:
         num_processes = self._test_case_spec.num_processes
         num_total_updates = self._test_case_spec.num_total_updates
         state_names = self._test_case_spec.state_names
@@ -188,39 +191,37 @@ class MetricClassTester(unittest.TestCase):
             deepcopy(self._test_case_spec.metric) for i in range(num_processes)
         ]
 
-        # no errors when merge before update, compute result should be the same
-        # compared to merge_state is not called
-        test_metric_0_copy = deepcopy(test_metrics[0])
-        result_before_merge = test_metric_0_copy.update(
-            **{k: v[0] for k, v in self._test_case_spec.update_kwargs.items()}
-        ).compute()
-        test_metrics_copy = deepcopy(test_metrics)
-        test_metrics_copy[0].merge_state(test_metrics_copy[1:])
-        result_after_merge = (
-            test_metrics_copy[0]
-            .update(**{k: v[0] for k, v in self._test_case_spec.update_kwargs.items()})
-            .compute()
-        )
-        assert_result_close(result_before_merge, result_after_merge)
+        # test merge when there's only one update happened in one metric instance.
+        if test_merge_with_one_update:
+            test_metric_0_copy = deepcopy(test_metrics[0])
+            first_update_param = {
+                k: v[0] for k, v in self._test_case_spec.update_kwargs.items()
+            }
+            result_before_merge = test_metric_0_copy.update(
+                **first_update_param
+            ).compute()
+            # merge metric before update
+            test_metric_0_copy = deepcopy(test_metrics[0])
+            test_metric_1_copy = deepcopy(test_metrics[1])
+            test_metric_0_copy.merge_state([test_metric_1_copy])
+            result_after_merge = test_metric_0_copy.update(
+                **first_update_param
+            ).compute()
+            assert_result_close(result_before_merge, result_after_merge)
 
-        # call merge_state before update
-        # update metric 0 and then metric 0 merges metric 1
-        test_metric_0_copy = deepcopy(test_metrics[0])
-        test_metric_1_copy = deepcopy(test_metrics[1])
-        test_metric_0_copy.update(
-            **{k: v[0] for k, v in self._test_case_spec.update_kwargs.items()}
-        )
-        test_metric_0_copy.merge_state([test_metric_1_copy])
-        assert_result_close(result_before_merge, test_metric_0_copy.compute())
+            # update metric 0 and then metric 0 merges metric 1
+            test_metric_0_copy = deepcopy(test_metrics[0])
+            test_metric_1_copy = deepcopy(test_metrics[1])
+            test_metric_0_copy.update(**first_update_param)
+            test_metric_0_copy.merge_state([test_metric_1_copy])
+            assert_result_close(result_before_merge, test_metric_0_copy.compute())
 
-        # update metric 1 and then metric 0 merges metric 1
-        test_metric_0_copy = deepcopy(test_metrics[0])
-        test_metric_1_copy = deepcopy(test_metrics[1])
-        test_metric_1_copy.update(
-            **{k: v[0] for k, v in self._test_case_spec.update_kwargs.items()}
-        )
-        test_metric_0_copy.merge_state([test_metric_1_copy])
-        assert_result_close(result_before_merge, test_metric_0_copy.compute())
+            # update metric 1 and then metric 0 merges metric 1
+            test_metric_0_copy = deepcopy(test_metrics[0])
+            test_metric_1_copy = deepcopy(test_metrics[1])
+            test_metric_1_copy.update(**first_update_param)
+            test_metric_0_copy.merge_state([test_metric_1_copy])
+            assert_result_close(result_before_merge, test_metric_0_copy.compute())
 
         # update, merge, compute
         for i in range(num_processes):
