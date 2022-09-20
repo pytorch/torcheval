@@ -84,17 +84,23 @@ def _auroc_compute_jit(
     threshold, indices = input.sort(descending=True)
     mask = F.pad(threshold.diff(dim=-1) != 0, [0, 1], value=1.0)
     sorted_target = torch.gather(target, -1, indices)
-    cum_tp_before_pad = sorted_target.cumsum(-1) * mask
-    cum_fp_before_pad = (1 - sorted_target).cumsum(-1) * mask
+    cum_tp_before_pad = sorted_target.cumsum(-1)
+    cum_fp_before_pad = (1 - sorted_target).cumsum(-1)
+
+    shifted_mask = mask.sum(-1, keepdim=True) >= torch.arange(
+        mask.size(-1), 0, -1, device=target.device
+    )
+
+    cum_tp = torch.zeros_like(cum_tp_before_pad)
+    cum_fp = torch.zeros_like(cum_fp_before_pad)
+
+    cum_tp.masked_scatter_(shifted_mask, cum_tp_before_pad[mask])
+    cum_fp.masked_scatter_(shifted_mask, cum_fp_before_pad[mask])
+
     if len(mask.shape) > 1:
-        cum_tp = F.pad(cum_tp_before_pad, pad=[1, 0], value=0.0)
-        cum_fp = F.pad(cum_fp_before_pad, pad=[1, 0], value=0.0)
         factor = cum_tp[:, -1] * cum_fp[:, -1]
     else:
-        cum_tp = F.pad(cum_tp_before_pad[mask], pad=[1, 0], value=0.0)
-        cum_fp = F.pad(cum_fp_before_pad[mask], pad=[1, 0], value=0.0)
         factor = cum_tp[-1] * cum_fp[-1]
-
     # Set AUROC to 0.5 when the target contains all ones or all zeros.
     auroc = torch.where(
         factor == 0,

@@ -55,12 +55,12 @@ class TestBinaryAUROC(unittest.TestCase):
         self._test_auroc_with_input(input, target, use_fbgemm=use_fbgemm)
 
         input = torch.tensor([[1, 1, 1, 0], [0.1, 0.5, 0.7, 0.8]])
-        target = torch.tensor([[1, 0, 1, 0], [1, 0, 1, 1]])
+        target = torch.tensor([[1, 0, 1, 0], [1, 0, 1, 0]])
         self._test_auroc_with_input(
             input,
             target,
             2,
-            torch.tensor([0.7500, 0.6666666666666666], dtype=torch.float64),
+            torch.tensor([0.7500, 0.2500], dtype=torch.float64),
             use_fbgemm=use_fbgemm,
         )
 
