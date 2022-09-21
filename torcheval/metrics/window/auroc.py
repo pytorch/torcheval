@@ -11,8 +11,8 @@ from typing import Iterable, Optional, TypeVar
 import torch
 
 from torcheval.metrics.functional.classification.auroc import (
-    _auroc_compute,
-    _auroc_update,
+    _binary_auroc_compute,
+    _binary_auroc_update_input_check,
 )
 from torcheval.metrics.metric import Metric
 
@@ -99,7 +99,7 @@ class WindowedBinaryAUROC(Metric[torch.Tensor]):
             target (Tensor): Tensor of ground truth labels with shape of (num_samples, ) or
                 or (num_tasks, num_samples).
         """
-        _auroc_update(input, target, self.num_tasks)
+        _binary_auroc_update_input_check(input, target, self.num_tasks)
         if input.ndim == 1:
             input = input.reshape(1, -1)
             target = target.reshape(1, -1)
@@ -156,12 +156,12 @@ class WindowedBinaryAUROC(Metric[torch.Tensor]):
         """
 
         if torch.all(self.inputs[:, self.next_inserted :] == 0):
-            return _auroc_compute(
+            return _binary_auroc_compute(
                 self.inputs[:, : self.next_inserted].squeeze(),
                 self.targets[:, : self.next_inserted].squeeze(),
             )
         else:
-            return _auroc_compute(self.inputs.squeeze(), self.targets.squeeze())
+            return _binary_auroc_compute(self.inputs.squeeze(), self.targets.squeeze())
 
     @torch.inference_mode()
     def merge_state(self: TAUROC, metrics: Iterable[TAUROC]) -> TAUROC:

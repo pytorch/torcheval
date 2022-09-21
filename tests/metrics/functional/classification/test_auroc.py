@@ -11,7 +11,7 @@ from typing import Optional
 
 import torch
 from sklearn.metrics import roc_auc_score
-from torcheval.metrics.functional import binary_auroc
+from torcheval.metrics.functional import binary_auroc, multiclass_auroc
 from torcheval.utils.test_utils.metric_class_tester import BATCH_SIZE
 
 
@@ -92,3 +92,73 @@ class TestBinaryAUROC(unittest.TestCase):
             "`num_tasks = 2`, `input`'s shape is expected to be",
         ):
             binary_auroc(torch.rand(4, 5), torch.rand(4, 5), num_tasks=2)
+
+
+class TestMulticlassAUROC(unittest.TestCase):
+    def test_auroc_base(self, use_fbgemm: Optional[bool] = False) -> None:
+        num_classes = 4
+        input = 10 * torch.randn(BATCH_SIZE, num_classes)
+        input_prob = input.abs() / input.abs().sum(dim=-1, keepdim=True)
+        target = torch.randint(high=num_classes, size=(BATCH_SIZE,))
+        compute_result = torch.tensor(
+            roc_auc_score(target, input_prob, average="macro", multi_class="ovr"),
+            dtype=torch.float32,
+        )
+        my_compute_result = multiclass_auroc(
+            input_prob, target, num_classes=num_classes
+        )
+        torch.testing.assert_close(
+            my_compute_result,
+            compute_result,
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+        # sklearn.metrics.roc_auc_score does not support average=None
+        input = torch.tensor(
+            [
+                [0.16, 0.04, 0.8],
+                [0.1, 0.7, 0.2],
+                [0.16, 0.8, 0.04],
+                [0.16, 0.04, 0.8],
+            ]
+        )
+        target = torch.tensor([0, 0, 1, 2])
+        my_compute_result = multiclass_auroc(input, target, num_classes=3, average=None)
+        print(my_compute_result)
+        torch.testing.assert_close(
+            my_compute_result, torch.tensor([0.2500, 1.0000, 5 / 6])
+        )
+
+    def test_auroc_invalid_input(self) -> None:
+        with self.assertRaisesRegex(
+            ValueError, "`average` was not in the allowed value of .*, got micro."
+        ):
+            multiclass_auroc(
+                torch.randint(high=4, size=(BATCH_SIZE,)),
+                torch.randint(high=4, size=(BATCH_SIZE,)),
+                num_classes=4,
+                average="micro",
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "The `input` and `target` should have the same first dimension, "
+            r"got shapes torch.Size\(\[4, 2\]\) and torch.Size\(\[3\]\).",
+        ):
+            multiclass_auroc(torch.rand(4, 2), torch.rand(3), num_classes=2)
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "target should be a one-dimensional tensor, "
+            r"got shape torch.Size\(\[3, 2\]\).",
+        ):
+            multiclass_auroc(torch.rand(3, 2), torch.rand(3, 2), num_classes=2)
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"input should have shape of \(num_sample, num_classes\), "
+            r"got torch.Size\(\[3, 4\]\) and num_classes=2.",
+        ):
+            multiclass_auroc(torch.rand(3, 4), torch.rand(3), num_classes=2)

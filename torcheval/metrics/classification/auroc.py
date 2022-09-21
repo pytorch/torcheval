@@ -11,8 +11,8 @@ from typing import Iterable, Optional, TypeVar
 import torch
 
 from torcheval.metrics.functional.classification.auroc import (
-    _auroc_compute,
-    _auroc_update,
+    _binary_auroc_compute,
+    _binary_auroc_update_input_check,
 )
 from torcheval.metrics.metric import Metric
 
@@ -93,7 +93,7 @@ class BinaryAUROC(Metric[torch.Tensor]):
                 It should be predicted label, probabilities or logits with shape of (num_tasks, n_sample) or (n_sample, ).
             target (Tensor): Tensor of ground truth labels with shape of (num_tasks, n_sample) or (n_sample, ).
         """
-        _auroc_update(input, target, self.num_tasks)
+        _binary_auroc_update_input_check(input, target, self.num_tasks)
         self.inputs.append(input)
         self.targets.append(target)
         return self
@@ -109,7 +109,7 @@ class BinaryAUROC(Metric[torch.Tensor]):
         Returns:
             Tensor: The return value of AUROC for each task (num_tasks,).
         """
-        return _auroc_compute(
+        return _binary_auroc_compute(
             torch.cat(self.inputs, -1), torch.cat(self.targets, -1), self.use_fbgemm
         )
 
