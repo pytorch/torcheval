@@ -2,14 +2,46 @@
 We want to make contributing to this project as easy and transparent as
 possible.
 
+## Development Installation
+To get the development installation with all the necessary dependencies for
+linting, testing, and building the documentation, run the following:
+```bash
+git clone https://github.com/pytorch-labs/torcheval
+cd torcheval
+pip install -r requirements.txt
+pip install -r dev-requirements.txt
+pip install -r docs/requirements.txt
+pip install --no-build-isolation -e ".[dev]"
+```
+
 ## Pull Requests
 We actively welcome your pull requests.
 
-1. Fork the repo and create your branch from `main`.
+1. Create your branch from `main`.
 2. If you've added code that should be tested, add tests.
 3. If you've changed APIs, update the documentation.
+    - To build docs
+    ```bash
+    cd docs; make html
+    ```
+    - To view docs
+    ```bash
+    cd build/html; python -m http.server
+    ```
 4. Ensure the test suite passes.
+    - To run all tests
+    ```bash
+    python -m pytest tests/
+    ```
+    - To run a single test
+    ```bash
+    python -m pytest -v tests/metrics/test_metric.py::MetricBaseClassTest::test_add_state_invalid
+    ```
+
 5. Make sure your code lints.
+    ```bash
+    pre-commit run --all-files
+    ```
 6. If you haven't already, complete the Contributor License Agreement ("CLA").
 
 ## Contributor License Agreement ("CLA")
