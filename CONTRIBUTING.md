@@ -3,7 +3,6 @@ We want to make contributing to this project as easy and transparent as
 possible.
 
 ## Development installation
-
 To get the development installation with all the necessary dependencies for
 linting, testing, and building the documentation, run the following:
 ```bash
