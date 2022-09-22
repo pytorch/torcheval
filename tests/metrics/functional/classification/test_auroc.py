@@ -95,7 +95,7 @@ class TestBinaryAUROC(unittest.TestCase):
 
 
 class TestMulticlassAUROC(unittest.TestCase):
-    def test_auroc_macro(self) -> None:
+    def test_auroc_base(self) -> None:
         num_classes = 4
         input = 10 * torch.randn(BATCH_SIZE, num_classes)
         input_prob = input.abs() / input.abs().sum(dim=-1, keepdim=True)
