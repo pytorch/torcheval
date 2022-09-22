@@ -1,0 +1,33 @@
+﻿torcheval.metrics.BinaryAccuracy
+================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: BinaryAccuracy
+
+
+   .. automethod:: __init__
+
+
+   .. rubric:: Methods
+
+   .. autosummary::
+
+      ~BinaryAccuracy.__init__
+      ~BinaryAccuracy.compute
+      ~BinaryAccuracy.load_state_dict
+      ~BinaryAccuracy.merge_state
+      ~BinaryAccuracy.reset
+      ~BinaryAccuracy.state_dict
+      ~BinaryAccuracy.to
+      ~BinaryAccuracy.update
+
+
+
+
+
+   .. rubric:: Attributes
+
+   .. autosummary::
+
+      ~BinaryAccuracy.device
