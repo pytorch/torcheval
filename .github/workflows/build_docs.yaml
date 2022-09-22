@@ -1,8 +1,6 @@
 name: Build and Update Docs
 
-on:
-  push:
-    branches: [ main ]
+on: push
 
 # Allow one concurrent deployment
 concurrency:
