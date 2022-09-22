@@ -95,7 +95,7 @@ class TestBinaryAUROC(unittest.TestCase):
 
 
 class TestMulticlassAUROC(unittest.TestCase):
-    def test_auroc_base(self, use_fbgemm: Optional[bool] = False) -> None:
+    def test_auroc_macro(self) -> None:
         num_classes = 4
         input = 10 * torch.randn(BATCH_SIZE, num_classes)
         input_prob = input.abs() / input.abs().sum(dim=-1, keepdim=True)
@@ -115,7 +115,7 @@ class TestMulticlassAUROC(unittest.TestCase):
             rtol=1e-5,
         )
 
-        # sklearn.metrics.roc_auc_score does not support average=None
+    def test_auroc_average_options(self) -> None:
         input = torch.tensor(
             [
                 [0.16, 0.04, 0.8],
@@ -125,11 +125,27 @@ class TestMulticlassAUROC(unittest.TestCase):
             ]
         )
         target = torch.tensor([0, 0, 1, 2])
-        my_compute_result = multiclass_auroc(input, target, num_classes=3, average=None)
-        print(my_compute_result)
-        torch.testing.assert_close(
-            my_compute_result, torch.tensor([0.2500, 1.0000, 5 / 6])
+        # average = macro
+        compute_result = torch.tensor(
+            roc_auc_score(target, input, average="macro", multi_class="ovr"),
+            dtype=torch.float32,
         )
+        my_compute_result = multiclass_auroc(
+            input, target, num_classes=3, average="macro"
+        )
+        torch.testing.assert_close(
+            my_compute_result,
+            compute_result,
+            equal_nan=True,
+            atol=1e-8,
+            rtol=1e-5,
+        )
+
+        # average = None
+        # sklearn.metrics.roc_auc_score does not support average=None
+        expected_compute_result = torch.tensor([0.2500, 1.0000, 5 / 6])
+        my_compute_result = multiclass_auroc(input, target, num_classes=3, average=None)
+        torch.testing.assert_close(my_compute_result, expected_compute_result)
 
     def test_auroc_invalid_input(self) -> None:
         with self.assertRaisesRegex(
