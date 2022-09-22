@@ -78,6 +78,7 @@ def multiclass_auroc(
 ) -> torch.Tensor:
     """
     Compute AUROC, which is the area under the ROC Curve, for multiclass classification.
+    Its class version is :obj:`torcheval.metrics.MulticlassAUROC`.
 
     Args:
         input (Tensor): Tensor of label predictions
