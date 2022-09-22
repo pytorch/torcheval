@@ -64,20 +64,50 @@ def binary_auroc(
         >>> binary_auroc(input, target, num_tasks=2)
         tensor([0.7500, 0.6667])
     """
-    _auroc_update(input, target, num_tasks)
-    return _auroc_compute(input, target, use_fbgemm)
+    _binary_auroc_update_input_check(input, target, num_tasks)
+    return _binary_auroc_compute(input, target, use_fbgemm)
 
 
-def _auroc_update(
+@torch.inference_mode()
+def multiclass_auroc(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_tasks: int,
-) -> None:
-    _auroc_update_input_check(input, target, num_tasks)
+    *,
+    num_classes: int,
+    average: Optional[str] = "macro",
+) -> torch.Tensor:
+    """
+    Compute AUROC, which is the area under the ROC Curve, for multiclass classification.
+
+    Args:
+        input (Tensor): Tensor of label predictions
+            It should be probabilities or logits with shape of (n_sample, n_class).
+        target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
+        num_classes (int): Number of classes.
+        average (str, optional):
+            - ``'macro'`` [default]:
+                Calculate metrics for each class separately, and return their unweighted mean.
+            - ``None``:
+                Calculate the metric for each class separately, and return
+                the metric for every class.
+
+    Examples::
+
+        >>> import torch
+        >>> from torcheval.metrics.functional import multiclass_auroc
+        >>> input = torch.tensor([[0.1, 0.1, 0.1, 0.1], [0.5, 0.5, 0.5, 0.5], [0.7, 0.7, 0.7, 0.7], [0.8, 0.8, 0.8, 0.8]])
+        >>> target = torch.tensor([0, 1, 2, 3])
+        >>> multiclass_auroc(input, target, num_classes=4)
+        0.5
+        >>> multiclass_auroc(input, target, num_classes=4, average=None)
+        tensor([0.0000, 0.3333, 0.6667, 1.0000])
+    """
+    _multiclass_auroc_update_input_check(input, target, num_classes, average)
+    return _multiclass_auroc_compute(input, target, num_classes, average)
 
 
 @torch.jit.script
-def _auroc_compute_jit(
+def _binary_auroc_compute_jit(
     input: torch.Tensor,
     target: torch.Tensor,
 ) -> torch.Tensor:
@@ -110,7 +140,7 @@ def _auroc_compute_jit(
     return auroc
 
 
-def _auroc_compute(
+def _binary_auroc_compute(
     input: torch.Tensor,
     target: torch.Tensor,
     use_fbgemm: Optional[bool] = False,
@@ -129,10 +159,10 @@ def _auroc_compute(
         else:
             return auroc
     else:
-        return _auroc_compute_jit(input, target)
+        return _binary_auroc_compute_jit(input, target)
 
 
-def _auroc_update_input_check(
+def _binary_auroc_update_input_check(
     input: torch.Tensor,
     target: torch.Tensor,
     num_tasks: int,
@@ -150,4 +180,65 @@ def _auroc_update_input_check(
     elif len(input.shape) == 1 or input.shape[0] != num_tasks:
         raise ValueError(
             f"`num_tasks = {num_tasks}`, `input`'s shape is expected to be ({num_tasks}, num_samples), but got shape ({input.shape})."
+        )
+
+
+@torch.jit.script
+def _multiclass_auroc_compute(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    num_classes: int,
+    average: Optional[str] = "macro",
+) -> torch.Tensor:
+    thresholds, indices = input.T.sort(dim=1, descending=True)
+    mask = F.pad(thresholds.diff(dim=1) != 0, [0, 1], value=1.0)
+    shifted_mask = mask.sum(-1, keepdim=True) >= torch.arange(
+        mask.size(-1), 0, -1, device=target.device
+    )
+
+    arange = torch.arange(num_classes, device=target.device)
+    cmp = target[indices] == arange[:, None]
+    cum_tp_before_pad = cmp.cumsum(1)
+    cum_fp_before_pad = (~cmp).cumsum(1)
+
+    cum_tp = torch.zeros_like(cum_tp_before_pad)
+    cum_fp = torch.zeros_like(cum_fp_before_pad)
+    cum_tp.masked_scatter_(shifted_mask, cum_tp_before_pad[mask])
+    cum_fp.masked_scatter_(shifted_mask, cum_fp_before_pad[mask])
+
+    factor = cum_tp[:, -1] * cum_fp[:, -1]
+    auroc = torch.where(
+        factor == 0, 0.5, torch.trapezoid(cum_tp, cum_fp, dim=1) / factor
+    )
+    if isinstance(average, str) and average == "macro":
+        return auroc.mean()
+    return auroc
+
+
+def _multiclass_auroc_update_input_check(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    num_classes: int,
+    average: Optional[str],
+) -> None:
+    average_options = ("macro", "none", None)
+    if average not in average_options:
+        raise ValueError(
+            f"`average` was not in the allowed value of {average_options}, got {average}."
+        )
+    if input.size(0) != target.size(0):
+        raise ValueError(
+            "The `input` and `target` should have the same first dimension, "
+            f"got shapes {input.shape} and {target.shape}."
+        )
+
+    if target.ndim != 1:
+        raise ValueError(
+            "target should be a one-dimensional tensor, " f"got shape {target.shape}."
+        )
+
+    if not (input.ndim == 2 and input.shape[1] == num_classes):
+        raise ValueError(
+            f"input should have shape of (num_sample, num_classes), "
+            f"got {input.shape} and num_classes={num_classes}."
         )
