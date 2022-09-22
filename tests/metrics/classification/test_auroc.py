@@ -13,7 +13,7 @@ import torch
 
 from sklearn.metrics import roc_auc_score
 
-from torcheval.metrics import BinaryAUROC
+from torcheval.metrics import BinaryAUROC, MulticlassAUROC
 from torcheval.utils.test_utils.metric_class_tester import (
     BATCH_SIZE,
     MetricClassTester,
@@ -144,3 +144,145 @@ class TestBinaryAUROC(MetricClassTester):
 
         with self.assertRaisesRegex(ValueError, "`num_tasks` value should be greater"):
             metric = BinaryAUROC(num_tasks=0)
+
+
+class TestMulticlassAUROC(MetricClassTester):
+    def test_auroc_class_base(self) -> None:
+        num_classes = 4
+        input = 10 * torch.rand(NUM_TOTAL_UPDATES, BATCH_SIZE, num_classes)
+        input = input.abs() / input.abs().sum(dim=-1, keepdim=True)
+        target = torch.randint(high=num_classes, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
+
+        input_tensors = input.reshape(-1, num_classes)
+        target_tensors = target.reshape(-1)
+        compute_result = torch.tensor(
+            roc_auc_score(
+                target_tensors, input_tensors, average="macro", multi_class="ovr"
+            ),
+            dtype=torch.float32,
+        )
+
+        self.run_class_implementation_tests(
+            metric=MulticlassAUROC(num_classes=num_classes),
+            state_names={"inputs", "targets"},
+            update_kwargs={
+                "input": input,
+                "target": target,
+            },
+            compute_result=compute_result,
+        )
+
+    def test_auroc_average_options(self) -> None:
+        input = torch.tensor(
+            [
+                [[0.16, 0.04, 0.8]],
+                [[0.1, 0.7, 0.2]],
+                [[0.16, 0.8, 0.04]],
+                [[0.16, 0.04, 0.8]],
+            ]
+        )
+        target = torch.tensor([[0], [0], [1], [2]])
+
+        input_tensors = input.reshape(-1, 3)
+        target_tensors = target.reshape(-1)
+        compute_result = torch.tensor(
+            roc_auc_score(
+                target_tensors, input_tensors, average="macro", multi_class="ovr"
+            ),
+            dtype=torch.float32,
+        )
+
+        self.run_class_implementation_tests(
+            metric=MulticlassAUROC(num_classes=3, average="macro"),
+            state_names={"inputs", "targets"},
+            update_kwargs={
+                "input": input,
+                "target": target,
+            },
+            num_total_updates=4,
+            num_processes=2,
+            compute_result=compute_result,
+        )
+
+        self.run_class_implementation_tests(
+            metric=MulticlassAUROC(num_classes=3, average=None),
+            state_names={"inputs", "targets"},
+            update_kwargs={
+                "input": input,
+                "target": target,
+            },
+            num_total_updates=4,
+            num_processes=2,
+            compute_result=torch.tensor([0.2500, 1.0000, 5 / 6]),
+        )
+
+    def test_auroc_class_update_input_shape_different(self) -> None:
+        num_classes = 3
+        update_input = [
+            torch.rand(5, num_classes),
+            torch.rand(8, num_classes),
+            torch.rand(2, num_classes),
+            torch.rand(5, num_classes),
+        ]
+        update_input = [
+            input.abs() / input.abs().sum(dim=-1, keepdim=True)
+            for input in update_input
+        ]
+        update_target = [
+            torch.randint(high=num_classes, size=(5,)),
+            torch.randint(high=num_classes, size=(8,)),
+            torch.randint(high=num_classes, size=(2,)),
+            torch.randint(high=num_classes, size=(5,)),
+        ]
+        compute_result = torch.tensor(
+            roc_auc_score(
+                torch.cat(update_target, dim=0),
+                torch.cat(update_input, dim=0),
+                average="macro",
+                multi_class="ovr",
+            ),
+            dtype=torch.float32,
+        )
+
+        self.run_class_implementation_tests(
+            metric=MulticlassAUROC(num_classes=num_classes),
+            state_names={"inputs", "targets"},
+            update_kwargs={
+                "input": update_input,
+                "target": update_target,
+            },
+            compute_result=compute_result,
+            num_total_updates=4,
+            num_processes=2,
+        )
+
+    def test_auroc_class_invalid_input(self) -> None:
+        with self.assertRaisesRegex(
+            ValueError, "`average` was not in the allowed value of .*, got micro."
+        ):
+            MulticlassAUROC(num_classes=4, average="micro")
+
+        with self.assertRaisesRegex(ValueError, "`num_classes` has to be at least 2."):
+            MulticlassAUROC(num_classes=1)
+
+        metric = MulticlassAUROC(num_classes=2)
+        with self.assertRaisesRegex(
+            ValueError,
+            "The `input` and `target` should have the same first dimension, "
+            r"got shapes torch.Size\(\[4, 2\]\) and torch.Size\(\[3\]\).",
+        ):
+            metric.update(torch.rand(4, 2), torch.rand(3))
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "target should be a one-dimensional tensor, "
+            r"got shape torch.Size\(\[3, 2\]\).",
+        ):
+            metric.update(torch.rand(3, 2), torch.rand(3, 2))
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"input should have shape of \(num_sample, num_classes\), "
+            r"got torch.Size\(\[3, 4\]\) and num_classes=2.",
+        ):
+            metric.update(torch.rand(3, 4), torch.rand(3))

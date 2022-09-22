@@ -158,6 +158,9 @@ class TestMulticlassAUROC(unittest.TestCase):
                 average="micro",
             )
 
+        with self.assertRaisesRegex(ValueError, "`num_classes` has to be at least 2."):
+            multiclass_auroc(torch.rand(4, 2), torch.rand(2), num_classes=1)
+
         with self.assertRaisesRegex(
             ValueError,
             "The `input` and `target` should have the same first dimension, "
