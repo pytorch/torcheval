@@ -36,6 +36,7 @@ Classification Metrics
    BinaryPrecisionRecallCurve
    BinaryRecall
    MulticlassAccuracy
+   MulticlassAUROC
    MulticlassBinnedPrecisionRecallCurve
    MulticlassConfusionMatrix
    MulticlassF1Score

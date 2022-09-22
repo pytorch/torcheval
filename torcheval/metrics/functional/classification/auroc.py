@@ -78,6 +78,7 @@ def multiclass_auroc(
 ) -> torch.Tensor:
     """
     Compute AUROC, which is the area under the ROC Curve, for multiclass classification.
+    Its class version is :obj:`torcheval.metrics.MulticlassAUROC`.
 
     Args:
         input (Tensor): Tensor of label predictions
@@ -102,7 +103,8 @@ def multiclass_auroc(
         >>> multiclass_auroc(input, target, num_classes=4, average=None)
         tensor([0.0000, 0.3333, 0.6667, 1.0000])
     """
-    _multiclass_auroc_update_input_check(input, target, num_classes, average)
+    _multiclass_auroc_param_check(num_classes, average)
+    _multiclass_auroc_update_input_check(input, target, num_classes)
     return _multiclass_auroc_compute(input, target, num_classes, average)
 
 
@@ -215,9 +217,7 @@ def _multiclass_auroc_compute(
     return auroc
 
 
-def _multiclass_auroc_update_input_check(
-    input: torch.Tensor,
-    target: torch.Tensor,
+def _multiclass_auroc_param_check(
     num_classes: int,
     average: Optional[str],
 ) -> None:
@@ -226,6 +226,15 @@ def _multiclass_auroc_update_input_check(
         raise ValueError(
             f"`average` was not in the allowed value of {average_options}, got {average}."
         )
+    if num_classes < 2:
+        raise ValueError("`num_classes` has to be at least 2.")
+
+
+def _multiclass_auroc_update_input_check(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    num_classes: int,
+) -> None:
     if input.size(0) != target.size(0):
         raise ValueError(
             "The `input` and `target` should have the same first dimension, "
