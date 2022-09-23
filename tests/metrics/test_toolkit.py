@@ -13,6 +13,7 @@ import torch
 import torch.distributed.launcher as pet
 from torcheval.metrics import Metric
 from torcheval.metrics.toolkit import (
+    classwise_converter,
     clone_metric,
     clone_metrics,
     get_synced_metric,
@@ -194,3 +195,25 @@ class MetricToolkitTest(unittest.TestCase):
             metric1, metric2 = to_device((metric1, metric2), torch.device("cpu"))
             self.assertTrue(metric1.device, torch.device("cpu"))
             self.assertTrue(metric2.device, torch.device("cpu"))
+
+    def test_classwise_converter(self) -> None:
+        metrics = torch.rand(2, 1)
+        name = "SomeMetrics"
+        # No labels
+        classwise = classwise_converter(metrics, name)
+        expected = {f"{name}_{i}": val for i, val in enumerate(metrics)}
+        self.assertEqual(classwise, expected)
+
+        # With labels
+        labels = ["class1", "class2"]
+        classwise = classwise_converter(metrics, name, labels)
+        expected = {f"{name}_{label}": val for label, val in zip(labels, metrics)}
+        self.assertEqual(classwise, expected)
+
+        # Incorrect number of labels
+        labels = ["class1"]
+        with self.assertRaisesRegex(
+            ValueError,
+            "Number of labels [0-9]+ must be equal to the number of classes [0-9]+",
+        ):
+            classwise_converter(metrics, name, labels)

@@ -309,3 +309,29 @@ def to_device(
     for metric in metrics:
         metric.to(device, *args, **kwargs)
     return metrics
+
+
+def classwise_converter(
+    input: torch.Tensor, name: str, labels: Optional[List[str]] = None
+) -> Dict[str, torch.Tensor]:
+    """
+    Converts an unaveraged metric result tensor into a dictionary with
+    each key being 'metricname_classlabel' and value being the data
+    associated with that class.
+
+    Args:
+        input (torch.Tensor): The tensor to be split along its first dimension.
+        name (str): Name of the metric.
+        labels (List[str], Optional): Optional list of strings indicating the different classes.
+
+    Raises:
+        ValueError: When the length of `labels` is not equal to the number of classes.
+    """
+    if labels is None:
+        return {f"{name}_{i}": val for i, val in enumerate(input)}
+
+    if input.size(dim=0) != len(labels):
+        raise ValueError(
+            f"Number of labels {len(labels)} must be equal to the number of classes {input.size(dim=0)}!"
+        )
+    return {f"{name}_{label}": val for label, val in zip(labels, input)}
