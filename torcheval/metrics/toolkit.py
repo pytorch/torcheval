@@ -216,6 +216,8 @@ def get_synced_metric(
 
     gathered_metric_list = _sync_metric_object(
         metric,
+        # pyre-fixme[6]: For 2nd param expected `ProcessGroup` but got `Union[None,
+        #  dist.ProcessGroup, _distributed_c10d.ProcessGroup]`.
         process_group if process_group else dist.group.WORLD,
         # pyre-ignore[6]: expect `Union[int, Literal["all"]`, got `Union[int, str]`.
         recipient_rank,
