@@ -9,6 +9,7 @@ from torcheval.metrics.aggregation import Cat, Max, Mean, Min, Sum, Throughput
 from torcheval.metrics.classification import (
     BinaryAccuracy,
     BinaryAUROC,
+    BinaryBinnedAUROC,
     BinaryBinnedPrecisionRecallCurve,
     BinaryConfusionMatrix,
     BinaryF1Score,
@@ -18,6 +19,7 @@ from torcheval.metrics.classification import (
     BinaryRecall,
     MulticlassAccuracy,
     MulticlassAUROC,
+    MulticlassBinnedAUROC,
     MulticlassBinnedPrecisionRecallCurve,
     MulticlassConfusionMatrix,
     MulticlassF1Score,
@@ -43,6 +45,7 @@ __all__ = [
     # class metrics
     "BinaryAUROC",
     "BinaryAccuracy",
+    "BinaryBinnedAUROC",
     "BinaryBinnedPrecisionRecallCurve",
     "BinaryConfusionMatrix",
     "BinaryF1Score",
@@ -58,6 +61,7 @@ __all__ = [
     "Min",
     "MulticlassAccuracy",
     "MulticlassAUROC",
+    "MulticlassBinnedAUROC",
     "MulticlassBinnedPrecisionRecallCurve",
     "MulticlassConfusionMatrix",
     "MulticlassF1Score",
