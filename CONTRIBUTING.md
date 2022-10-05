@@ -6,7 +6,7 @@ possible.
 To get the development installation with all the necessary dependencies for
 linting, testing, and building the documentation, run the following:
 ```bash
-git clone https://github.com/pytorch-labs/torcheval
+git clone https://github.com/pytorch/torcheval
 cd torcheval
 pip install -r requirements.txt
 pip install -r dev-requirements.txt
