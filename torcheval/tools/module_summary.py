@@ -26,7 +26,7 @@ _ATTRIB_TO_COL_HEADER = {
     "num_parameters": "# Parameters",
     "num_trainable_parameters": "# Trainable Parameters",
     "size_bytes": "Size (bytes)",
-    "has_uninitialized_param": "Contains Uninitialized Parameter?",
+    "has_uninitialized_param": "Contains Uninitialized Parameters?",
     "flops_forward": "Forward FLOPs",
     "flops_backward": "Backward FLOPs",
 }  # Attribute: column header (in table)
@@ -41,12 +41,13 @@ _PARAMETER_FLOPS_UNITS = [" ", "k", "M", "G", "T", "P", "E", "Z", "Y"]
 class ModuleSummary:
     """
     Summary of module and its submodules. It collects the following information:
+
     - Name
     - Type
     - Number of parameters
     - Number of trainable parameters
     - Estimated size in bytes
-    - Contains uninitialized parameter
+    - Contains uninitialized parameters
     - FLOPs for forward (-1 meaning not calculated)
     - FLOPs for backward (-1 meaning not calculated)
     """
@@ -200,19 +201,19 @@ def get_module_summary(
     module_input: Optional[torch.Tensor] = None,
 ) -> ModuleSummary:
     """
-    Generate a ModuleSummary object, then assign its values and generate submodule tree.
+    Generate a :class:`~ModuleSummary` object, then assign its values and generate submodule tree.
 
     Args:
         module: The module to be summarized.
-        Value must be greater than 0. Set to `None` to include
-        all submodules.
-        module_name: The name of the current module.
         module_input: An input for the module to run and calculate FLOPs.
-        Note: if module contains any lazy submodule, we will NOT calculate FLOPs.
-        It should only contain 1 sample (i.e. batch_size=1), otherwise, we will return FLOPs = total FLOPs / len(module_input).
-        Note: currently we only support module that takes a single tensor (i.e. module_input should be a torch.Tensor)
-            and outputs a single tensor. TODO: to support more flexible input and output for module.
 
+            Note:
+              If module contains any lazy submodule, we will NOT calculate FLOPs.
+              It should only contain 1 sample (i.e. batch_size=1), otherwise, we will return FLOPs = total FLOPs / len(module_input).
+
+            Note:
+              Currently only modules that take a single tensor (i.e. module_input should be a torch.Tensor)
+              and outputs a single tensor are supported. TODO: to support more flexible input and output for module.
 
     """
 

@@ -31,6 +31,14 @@ def get_summary_and_prune(
 
 
 class ModuleSummaryTest(unittest.TestCase):
+
+    maxDiff = 10000
+
+    def _test_module_summary_text(self, ms1: str, ms2: str) -> None:
+        # utility method to make testing summary method text more robust to terminal differences
+        for l1, l2 in zip(ms1.strip().split("\n"), ms2.strip().split("\n")):
+            self.assertEqual(l1.strip(), l2.strip())
+
     def test_module_summary_layer(self) -> None:
         """Make sure ModuleSummary works for a single layer."""
         model = torch.nn.Conv2d(3, 8, 3)
@@ -156,12 +164,12 @@ class ModuleSummaryTest(unittest.TestCase):
         model = torch.nn.Conv2d(3, 8, 3)
         ms1 = get_module_summary(model)
 
-        summary_table = (
-            "Name | Type   | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameter?\n"
-            + "--------------------------------------------------------------------------------------------------------\n"
-            + "     | Conv2d | 224          | 224                    | 896          | No                               \n"
-        )
-        self.assertEqual(summary_table, str(ms1))
+        summary_table = """
+Name | Type   | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameters?
+---------------------------------------------------------------------------------------------------------
+     | Conv2d | 224          | 224                    | 896          | No
+"""
+        self._test_module_summary_text(summary_table, str(ms1))
 
     def test_alexnet_print(self) -> None:
         pretrained_model = models.alexnet(pretrained=True)
@@ -170,23 +178,22 @@ class ModuleSummaryTest(unittest.TestCase):
         ms3 = get_summary_and_prune(pretrained_model, max_depth=3)
         ms4 = get_module_summary(pretrained_model)
 
-        summary_table1 = (
-            "Name | Type    | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameter?\n"
-            + "---------------------------------------------------------------------------------------------------------\n"
-            + "     | AlexNet | 61.1 M       | 61.1 M                 | 244 M        | No                               \n"
-        )
+        summary_table1 = """
+Name | Type    | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameters?
+----------------------------------------------------------------------------------------------------------
+     | AlexNet | 61.1 M       | 61.1 M                 | 244 M        | No
+"""
+        summary_table2 = """
+Name       | Type              | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameters?
+--------------------------------------------------------------------------------------------------------------------------
+           | AlexNet           | 61.1 M       | 61.1 M                 | 244 M        | No
+features   | Sequential        | 2.5 M        | 2.5 M                  | 9.9 M        | No
+avgpool    | AdaptiveAvgPool2d | 0            | 0                      | 0            | No
+classifier | Sequential        | 58.6 M       | 58.6 M                 | 234 M        | No
+"""
 
-        summary_table2 = (
-            "Name       | Type              | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameter?\n"
-            + "-------------------------------------------------------------------------------------------------------------------------\n"
-            + "           | AlexNet           | 61.1 M       | 61.1 M                 | 244 M        | No                               \n"
-            + "features   | Sequential        | 2.5 M        | 2.5 M                  | 9.9 M        | No                               \n"
-            + "avgpool    | AdaptiveAvgPool2d | 0            | 0                      | 0            | No                               \n"
-            + "classifier | Sequential        | 58.6 M       | 58.6 M                 | 234 M        | No                               \n"
-        )
-
-        self.assertEqual(summary_table1, str(ms1))
-        self.assertEqual(summary_table2, str(ms2))
+        self._test_module_summary_text(summary_table1, str(ms1))
+        self._test_module_summary_text(summary_table2, str(ms2))
         self.assertEqual(str(ms3), str(ms4))
 
     def test_alexnet_print_flops(self) -> None:
@@ -197,23 +204,22 @@ class ModuleSummaryTest(unittest.TestCase):
         ms3 = get_summary_and_prune(pretrained_model, max_depth=3, module_input=inp)
         ms4 = get_module_summary(pretrained_model, module_input=inp)
 
-        summary_table1 = (
-            "Name | Type    | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameter? | Forward FLOPs | Backward FLOPs\n"
-            + "------------------------------------------------------------------------------------------------------------------------------------------\n"
-            + "     | AlexNet | 61.1 M       | 61.1 M                 | 244 M        | No                                | 714 M         | 1.4 G         "
-        )
+        summary_table1 = """
+Name | Type    | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameters? | Forward FLOPs | Backward FLOPs
+-------------------------------------------------------------------------------------------------------------------------------------------
+     | AlexNet | 61.1 M       | 61.1 M                 | 244 M        | No                                 | 714 M         | 1.4 G
+"""
 
-        summary_table2 = (
-            "Name       | Type              | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameter? | Forward FLOPs | Backward FLOPs\n"
-            + "----------------------------------------------------------------------------------------------------------------------------------------------------------\n"
-            + "           | AlexNet           | 61.1 M       | 61.1 M                 | 244 M        | No                                | 714 M         | 1.4 G         \n"
-            + "features   | Sequential        | 2.5 M        | 2.5 M                  | 9.9 M        | No                                | 655 M         | 1.2 G         \n"
-            + "avgpool    | AdaptiveAvgPool2d | 0            | 0                      | 0            | No                                | 0             | 0             \n"
-            + "classifier | Sequential        | 58.6 M       | 58.6 M                 | 234 M        | No                                | 58.6 M        | 117 M         "
-        )
-
-        self.assertIn(summary_table1, str(ms1))
-        self.assertIn(summary_table2, str(ms2))
+        summary_table2 = """
+Name       | Type              | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameters? | Forward FLOPs | Backward FLOPs
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+           | AlexNet           | 61.1 M       | 61.1 M                 | 244 M        | No                                 | 714 M         | 1.4 G
+features   | Sequential        | 2.5 M        | 2.5 M                  | 9.9 M        | No                                 | 655 M         | 1.2 G
+avgpool    | AdaptiveAvgPool2d | 0            | 0                      | 0            | No                                 | 0             | 0
+classifier | Sequential        | 58.6 M       | 58.6 M                 | 234 M        | No                                 | 58.6 M        | 117 M
+"""
+        self._test_module_summary_text(summary_table1, str(ms1))
+        self._test_module_summary_text(summary_table2, str(ms2))
         self.assertEqual(str(ms3), str(ms4))
 
     def test_get_human_readable_count(self) -> None:
