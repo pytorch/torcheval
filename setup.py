@@ -60,7 +60,7 @@ if __name__ == "__main__":
         description="A library for providing a simple interface to create new metrics and an easy-to-use toolkit for metric computations and checkpointing.",
         long_description=readme,
         long_description_content_type="text/markdown",
-        url="https://github.com/pytorch-labs/torcheval",
+        url="https://github.com/pytorch/torcheval",
         license="BSD-3",
         keywords=["pytorch", "evaluation", "metrics"],
         python_requires=">=3.7",

@@ -1,12 +1,12 @@
 # TorchEval
 
 <p align="center">
-<a href="https://github.com/pytorch-labs/torcheval/actions?query=branch%3Amain"><img src="https://img.shields.io/github/workflow/status/pytorch-labs/torcheval/unit%20test/main" alt="build status"></a>
+<a href="https://github.com/pytorch/torcheval/actions?query=branch%3Amain"><img src="https://img.shields.io/github/workflow/status/pytorch/torcheval/unit%20test/main" alt="build status"></a>
 <a href="https://pypi.org/project/torcheval"><img src="https://img.shields.io/pypi/v/torcheval" alt="pypi version"></a>
 <a href="https://pypi.org/project/torcheval-nightly"><img src="https://img.shields.io/pypi/v/torcheval-nightly?label=nightly" alt="pypi nightly version"></a>
-<a href="https://github.com/pytorch-labs/torcheval/blob/main/LICENSE"><img src="https://img.shields.io/pypi/l/torcheval" alt="bsd license"></a>
+<a href="https://github.com/pytorch/torcheval/blob/main/LICENSE"><img src="https://img.shields.io/pypi/l/torcheval" alt="bsd license"></a>
 </div>
-<a href="https://pytorch-labs.github.io/torcheval"><img src="https://img.shields.io/badge/docs-main-brightgreen" alt="docs"></a>
+<a href="https://pytorch.github.io/torcheval"><img src="https://img.shields.io/badge/docs-main-brightgreen" alt="docs"></a>
 <p>
 
 **This library is currently in Alpha and currently does not have a stable release. The API may change and may not be backward compatible. If you have suggestions for improvements, please open a GitHub issue. We'd love to hear your feedback.**
@@ -30,7 +30,7 @@ pip install --pre torcheval-nightly
 From source:
 
 ```bash
-git clone https://github.com/pytorch-labs/torcheval
+git clone https://github.com/pytorch/torcheval
 cd torcheval
 pip install -r requirements.txt
 python setup.py install
@@ -45,7 +45,7 @@ python examples/simple_example.py
 
 ## Documentation
 
-Documentation can be found at at [pytorch-labs.github.io/torcheval](https://pytorch-labs.github.io/torcheval)
+Documentation can be found at at [pytorch.github.io/torcheval](https://pytorch.github.io/torcheval)
 
 ## Using TorchEval
 
@@ -93,7 +93,7 @@ for epoch in range(num_epochs):
     # metric.reset() cleans up all seen data
     metric.reset()
 ```
-See the [example directory](https://github.com/pytorch-labs/torcheval/tree/main/examples) for more examples.
+See the [example directory](https://github.com/pytorch/torcheval/tree/main/examples) for more examples.
 
 ## Contributing
 We welcome PRs! See the [CONTRIBUTING](CONTRIBUTING.md) file.

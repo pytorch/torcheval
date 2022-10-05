@@ -30,7 +30,7 @@ or from github
 
 .. code-block:: console
 
-   git clone https://github.com/pytorch-labs/torcheval
+   git clone https://github.com/pytorch/torcheval
    cd torcheval
    pip install -r requirements.txt
    python setup.py install
