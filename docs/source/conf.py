@@ -22,6 +22,11 @@ import sys
 
 import pytorch_sphinx_theme
 from torcheval import __version__
+import torcheval
+
+from pathlib import Path
+import inspect
+from types import FunctionType
 
 current_dir = os.path.dirname(__file__)
 target_dir = os.path.abspath(os.path.join(current_dir, "../.."))
@@ -38,6 +43,66 @@ author = "Meta"
 release = __version__
 
 
+# -- Link to GitHub Repo -------------------------------------------------
+# def linkcode_resolve(domain, info):
+#     if domain != 'py':
+#         return None
+#     if not info['module']:
+#         return None
+#     filename = info['module'].replace('.', '/')
+#     return "https://github.com/pytorch/torcheval/tree/main/torcheval/%s-----%s" % (repr(info), repr(domain))
+
+line_numbers = {}
+file_root = Path(inspect.getsourcefile(torcheval)).parent.parent.resolve()
+
+
+def extract_wrapped(decorated):
+    closure = (c.cell_contents for c in decorated.__closure__)
+    return next((c for c in closure if isinstance(c, FunctionType)), None)
+
+def autodoc_process_docstring(app, what, name, obj, options, lines):
+    """We misuse this autodoc hook to get the file names & line numbers because we have access
+    to the actual object here.
+    """
+
+    try:
+        source_lines, start_line = inspect.getsourcelines(obj)
+        end_line = start_line + len(source_lines)
+        if "functional" in name:
+            file = str(Path(inspect.getfile(extract_wrapped(obj))).relative_to(file_root))
+        else:
+            file = str(Path(inspect.getsourcefile(obj)).relative_to(file_root))
+        line_numbers[name] = (file, start_line, end_line)
+    except Exception:
+        pass
+
+
+def build_url(file_line_info):
+    filepath, line_start, line_end = file_line_info
+    return f"https://github.com/pytorch/torcheval/blob/main/{filepath}#L{line_start}-L{line_end}"
+
+
+def linkcode_resolve(_, info):
+    """See www.sphinx-doc.org/en/master/usage/extensions/linkcode.html"""
+    combined = '.'.join((info['module'], info['fullname']))
+    line_info = line_numbers.get(combined)
+    
+    if not line_info:
+        # Try the __init__
+        line_info = line_numbers.get(f"{combined.rsplit('.', 1)[0]}.__init__")
+    if not line_info:
+        # Try the class
+        line_info = line_numbers.get(f"{combined.rsplit('.', 1)[0]}")
+    if not line_info:
+        # Try the module
+        line_info = line_numbers.get(info['module'])
+
+    if not line_info:
+        return
+    
+    return build_url(line_info)
+
+
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -48,6 +113,8 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
     "sphinx.ext.autosummary",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.linkcode",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -76,3 +143,6 @@ html_static_path = ["_static"]
 intersphinx_mapping = {
     "torch": ("https://pytorch.org/docs/stable/", None),
 }
+
+def setup(app):
+    app.connect("autodoc-process-docstring", autodoc_process_docstring)
