@@ -57,12 +57,15 @@ file_root = Path(inspect.getsourcefile(torcheval)).parent.parent.resolve()
 
 
 def extract_wrapped(decorated):
+    """stolen from here: https://varunver.wordpress.com/2019/03/11/get-source-code-of-a-function-wrapped-by-a-decorator/"""
     closure = (c.cell_contents for c in decorated.__closure__)
     return next((c for c in closure if isinstance(c, FunctionType)), None)
 
 def autodoc_process_docstring(app, what, name, obj, options, lines):
     """We misuse this autodoc hook to get the file names & line numbers because we have access
     to the actual object here.
+    
+    Stolen from: https://github.com/sphinx-doc/sphinx/issues/1556
     """
 
     try:
@@ -83,7 +86,9 @@ def build_url(file_line_info):
 
 
 def linkcode_resolve(_, info):
-    """See www.sphinx-doc.org/en/master/usage/extensions/linkcode.html"""
+    """See www.sphinx-doc.org/en/master/usage/extensions/linkcode.html
+    
+    Stolen from: https://github.com/sphinx-doc/sphinx/issues/1556"""
     combined = '.'.join((info['module'], info['fullname']))
     line_info = line_numbers.get(combined)
     
