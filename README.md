@@ -49,14 +49,91 @@ Documentation can be found at at [pytorch.github.io/torcheval](https://pytorch.g
 
 ## Using TorchEval
 
-TorchEval can be run on CPU, GPU, and Multi-GPUs/Muti-Nodes.
+TorchEval can be run on CPU, GPU, and in a multi-process or multi-GPU setting. Metrics are provided in two interfaces, functional and class based. The functional interfaces can be found in `torcheval.metrics.functional` and are useful when your program runs in a single process setting. To use multi-process or multi-gpu configurations, the class-based interfaces, found in `torcheval.metrics` provide a much simpler experience. The class based interfaces also allow you to defer some of the computation of the metric by calling `update()` multiple times before `compute()`. This can be advantageous even in a single process setting due to saved computate overhead.
 
-For the multiple devices usage:
+### Single Process
+For use in a single process program, the simplest use case utilizes a functional metric. We simply import the metric function and feed in our inputs and outputs. The example below shows a minimal pytorch training loop that evaluates the multiclass accuracy of every fourth batch of data.
+
+#### Functional Version (immediate computation of metric)
+```python
+import torch
+from torcheval.metrics.functional import multiclass_accuracy
+
+NUM_BATCHES = 16
+BATCH_SIZE = 8
+INPUT_SIZE = 10
+NUM_CLASSES = 6
+eval_frequency = 4
+
+model = torch.nn.Sequential(torch.nn.Linear(INPUT_SIZE, NUM_CLASSES), torch.nn.ReLU())
+optim = torch.optim.Adagrad(model.parameters(), lr=0.001)
+loss_fn = torch.nn.CrossEntropyLoss()
+
+metric_history = []
+for batch in range(NUM_BATCHES):
+    input = torch.rand(size=(BATCH_SIZE, INPUT_SIZE))
+    target = torch.randint(size=(BATCH_SIZE,), high=NUM_CLASSES)
+    outputs = model(input)
+
+    loss = loss_fn(outputs, target)
+    optim.zero_grad()
+    loss.backward()
+    optim.step()
+
+    # metric only computed every 4 batches,
+    # data from previous three batches is lost
+    if (batch + 1) % eval_frequency == 0:
+        metric_history.append(multiclass_accuracy(outputs, target))
+```
+### Single Process with Deferred Computation
+
+#### Class Version (enables deferred computation of metric)
+```python
+import torch
+from torcheval.metrics import MulticlassAccuracy
+
+NUM_BATCHES = 16
+BATCH_SIZE = 8
+INPUT_SIZE = 10
+NUM_CLASSES = 6
+eval_frequency = 4
+
+model = torch.nn.Sequential(torch.nn.Linear(INPUT_SIZE, NUM_CLASSES), torch.nn.ReLU())
+optim = torch.optim.Adagrad(model.parameters(), lr=0.001)
+loss_fn = torch.nn.CrossEntropyLoss()
+metric = MulticlassAccuracy()
+
+metric_history = []
+for batch in range(NUM_BATCHES):
+    input = torch.rand(size=(BATCH_SIZE, INPUT_SIZE))
+    target = torch.randint(size=(BATCH_SIZE,), high=NUM_CLASSES)
+    outputs = model(input)
+
+    loss = loss_fn(outputs, target)
+    optim.zero_grad()
+    loss.backward()
+    optim.step()
+
+    # metric only computed every 4 batches,
+    # data from previous three batches is included
+    metric.update(input, target)
+    if (batch + 1) % eval_frequency == 0:
+        metric_history.append(metric.compute())
+        # remove old data so that the next call
+        # to compute is only based off next 4 batches
+        metric.reset()
+```
+
+### Multi-Process or Multi-GPU
+For usage on multiple devices a minimal example is given below:
+
+#### Class Version (enables deferred computation and multi-processing)
 ```python
 import torch
 from torcheval.metrics.toolkit import sync_and_compute
 from torcheval.metrics import MulticlassAccuracy
 
+# Using torch.distributed...
 local_rank = int(os.environ["LOCAL_RANK"])
 global_rank = int(os.environ["RANK"])
 world_size  = int(os.environ["WORLD_SIZE"])
@@ -75,22 +152,19 @@ for epoch in range(num_epochs):
         input = torch.randint(high=5, size=(10,), device=device)
         target = torch.randint(high=5, size=(10,), device=device)
 
-        # metric.update() updates the metric state with new data
+        # Add data to metric locally
         metric.update(input, target)
 
-
-        # metric.compute() returns metric value from all seen data on the local process.
+        # metric.compute() will returns metric value from
+        # all seen data on the local process since last reset()
         local_compute_result = metric.compute()
 
-        # sync_and_compute(metric) returns metric value from all seen data on all processes.
-        # It gives the same result as ``metric.compute()`` if it's run on single process.
+        # sync_and_compute(metric) consilidates all metric data across ranks,
+        # each rank returns the result for the full dataset
         global_compute_result = sync_and_compute(metric)
 
-        # The final result is collected by rank 0
-        if global_rank == 0:
-            print(global_compute_result)
-
-    # metric.reset() cleans up all seen data
+    # metric.reset() clears the data on each rank so that subsequent
+    # calls to compute() only act on new data
     metric.reset()
 ```
 See the [example directory](https://github.com/pytorch/torcheval/tree/main/examples) for more examples.
