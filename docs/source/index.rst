@@ -12,7 +12,9 @@ TorchEval Tutorials
 -------------------
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Examples:
+
+   metric_example.rst
 
 QuickStart
 ===========================================
