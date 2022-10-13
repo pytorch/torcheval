@@ -27,6 +27,7 @@ from torcheval.metrics.functional.classification import (
     topk_multilabel_accuracy,
 )
 from torcheval.metrics.functional.ranking import (
+    click_through_rate,
     frequency_at_k,
     hit_rate,
     num_collisions,
@@ -45,6 +46,7 @@ __all__ = [
     "binary_binned_precision_recall_curve",
     "binary_recall",
     "binary_f1_score",
+    "click_through_rate",
     "frequency_at_k",
     "hit_rate",
     "mean",

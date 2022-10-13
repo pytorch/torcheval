@@ -30,7 +30,12 @@ from torcheval.metrics.classification import (
     TopKMultilabelAccuracy,
 )
 from torcheval.metrics.metric import Metric
-from torcheval.metrics.ranking import HitRate, ReciprocalRank, WeightedCalibration
+from torcheval.metrics.ranking import (
+    ClickThroughRate,
+    HitRate,
+    ReciprocalRank,
+    WeightedCalibration,
+)
 from torcheval.metrics.regression import MeanSquaredError, R2Score
 from torcheval.metrics.window import (
     WindowedBinaryAUROC,
@@ -54,6 +59,7 @@ __all__ = [
     "BinaryPrecisionRecallCurve",
     "BinaryRecall",
     "Cat",
+    "ClickThroughRate",
     "HitRate",
     "Max",
     "Mean",
