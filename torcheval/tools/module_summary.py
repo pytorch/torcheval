@@ -7,11 +7,12 @@
 import copy
 import math
 import warnings
-from collections import defaultdict
-from typing import DefaultDict, Dict, List, Optional, Tuple
+from collections import defaultdict, deque
+from typing import Any, Callable, DefaultDict, Deque, Dict, List, Optional, Tuple, Union
 
 import torch
 from torch.nn.parameter import UninitializedParameter
+from torch.utils.hooks import RemovableHandle
 
 from torcheval.tools.flops import (
     flop_mapping,
@@ -19,6 +20,7 @@ from torcheval.tools.flops import (
     instrument_module,
     start_counting,
 )
+from typing_extensions import Literal
 
 _ATTRIB_TO_COL_HEADER = {
     "module_name": "Name",
@@ -29,6 +31,8 @@ _ATTRIB_TO_COL_HEADER = {
     "has_uninitialized_param": "Contains Uninitialized Parameters?",
     "flops_forward": "Forward FLOPs",
     "flops_backward": "Backward FLOPs",
+    "in_size": "In size",
+    "out_size": "Out size",
 }  # Attribute: column header (in table)
 _ATTRIBS: List[str] = list(_ATTRIB_TO_COL_HEADER.keys())
 _FLOP_ATTRIBS: List[str] = ["flops_forward", "flops_backward"]
@@ -36,6 +40,9 @@ _FLOP_ATTRIBS: List[str] = ["flops_forward", "flops_backward"]
 
 _PARAMETER_NUM_UNITS = [" ", "K", "M", "B", "T"]
 _PARAMETER_FLOPS_UNITS = [" ", "k", "M", "G", "T", "P", "E", "Z", "Y"]
+
+TUnknown = Literal["?"]
+_UNKNOWN_SIZE: TUnknown = "?"
 
 
 class ModuleSummary:
@@ -50,6 +57,8 @@ class ModuleSummary:
     - Contains uninitialized parameters
     - FLOPs for forward (-1 meaning not calculated)
     - FLOPs for backward (-1 meaning not calculated)
+    - Input shape ("?" meaning not calculated)
+    - Output shape ("?" meaning not calculated)
     """
 
     def __init__(self) -> None:
@@ -64,6 +73,9 @@ class ModuleSummary:
         self._flops_backward: int = -1
         self._flops_forward_detail: Dict[str, int] = {}
         self._flops_backward_detail: Dict[str, int] = {}
+
+        self._in_size: Union[TUnknown, List[int]] = _UNKNOWN_SIZE
+        self._out_size: Union[TUnknown, List[int]] = _UNKNOWN_SIZE
 
     @property
     def submodule_summaries(self) -> Dict[str, "ModuleSummary"]:
@@ -127,6 +139,14 @@ class ModuleSummary:
         return self._flops_backward
 
     @property
+    def in_size(self) -> Union[TUnknown, List[int]]:
+        return self._in_size
+
+    @property
+    def out_size(self) -> Union[TUnknown, List[int]]:
+        return self._out_size
+
+    @property
     def size_bytes(self) -> int:
         """Returns the total estimated size in bytes of a module."""
         if self.has_uninitialized_param:
@@ -154,11 +174,50 @@ def _clean_flops(flop: DefaultDict[str, DefaultDict[str, int]], N: int) -> None:
             sub_flop[opr] = sub_flop[opr] // N
 
 
-def _get_module_flops(
+def _get_module_flops_and_activation_sizes(
     module: torch.nn.Module, module_input: torch.Tensor
 ) -> Tuple[
-    DefaultDict[str, DefaultDict[str, int]], DefaultDict[str, DefaultDict[str, int]]
+    DefaultDict[str, DefaultDict[str, int]],  # mapping to store forward flops
+    DefaultDict[str, DefaultDict[str, int]],  # mapping to store backward flops
+    Dict[
+        str, Tuple[Union[TUnknown, List[int]], Union[TUnknown, List[int]]]
+    ],  # mapping from module name to activation size tuple (in_size, out_size)
 ]:
+    # a mapping from module name to activation size tuple (in_size, out_size)
+    activation_sizes: Dict[
+        str, Tuple[Union[TUnknown, List[int]], Union[TUnknown, List[int]]]
+    ] = {}
+    handles: List[RemovableHandle] = []
+
+    # pyre-ignore: Missing return annotation [3]
+    def activation_size_hook(
+        module_name: str,
+    ) -> Callable[[torch.nn.Module, Any, Any], None]:
+        # pyre-ignore: Missing parameter annotation [2]
+        def hook(_: torch.nn.Module, inp: Any, out: Any) -> None:
+            if len(inp) == 1:
+                inp = inp[0]
+            in_size = _parse_batch_shape(inp)
+            out_size = _parse_batch_shape(out)
+            activation_sizes[module_name] = (in_size, out_size)
+
+        return hook
+
+    # place forward hooks on all modules + submodules
+    if not isinstance(module, torch.jit.ScriptModule):
+        queue: Deque[Tuple[str, torch.nn.Module]] = deque([("", module)])
+        while len(queue) > 0:
+            module_name, mod = queue.pop()
+            hook = activation_size_hook(module_name)
+            handle = mod.register_forward_hook(hook)
+            handles.append(handle)
+
+            for name, submodule in mod.named_children():
+                formatted_name = f"{module_name}.{name}" if module_name != "" else name
+                queue.append((formatted_name, submodule))
+    else:
+        warnings.warn("Registering hooks on torch.jit.ScriptModule is not supported.")
+
     # TODO: here we assume module_input should be a single tensor and module's output should be a single tensor.
     #   Need to provide more flexible implementation that support other type of input/output.
     all_hooks: List[torch.utils.hooks.RemovableHandle] = []
@@ -167,9 +226,14 @@ def _get_module_flops(
     N = len(module_input)
     module.zero_grad()
 
-    # Count for forward flops
+    # Count for forward flops + compute activation sizes
     start_counting()
     res = module(module_input).mean()
+
+    # detach activation size hook handles
+    for hook_handle in handles:
+        hook_handle.remove()
+
     flops_forward = copy.deepcopy(FlopTensor.flop_counts)
     # Count for backward flops
     start_counting()
@@ -186,7 +250,7 @@ def _get_module_flops(
     # TODO: Reverting BN: We also need to save status of BN running mean/var before running and revert those.
     for hood_handle in all_hooks:
         hood_handle.remove()
-    return flops_forward, flops_backward
+    return flops_forward, flops_backward, activation_sizes
 
 
 def _has_uninitialized_param(module: torch.nn.Module) -> bool:
@@ -219,20 +283,31 @@ def get_module_summary(
 
     flops_forward = None
     flops_backward = None
+    activation_sizes: Dict[
+        str, Tuple[Union[TUnknown, List[int]], Union[TUnknown, List[int]]]
+    ] = {}
     has_uninitialized_param = _has_uninitialized_param(module)
     if module_input is not None and not has_uninitialized_param:
-        flops_forward, flops_backward = _get_module_flops(module, module_input)
+        (
+            flops_forward,
+            flops_backward,
+            activation_sizes,
+        ) = _get_module_flops_and_activation_sizes(module, module_input)
     return _generate_module_summary(
         module,
         "",
         flops_forward=flops_forward,
         flops_backward=flops_backward,
+        activation_sizes=activation_sizes,
     )
 
 
 def _generate_module_summary(
     module: torch.nn.Module,
     module_name: str,
+    activation_sizes: Dict[
+        str, Tuple[Union[TUnknown, List[int]], Union[TUnknown, List[int]]]
+    ],
     flops_forward: Optional[DefaultDict[str, DefaultDict[str, int]]] = None,
     flops_backward: Optional[DefaultDict[str, DefaultDict[str, int]]] = None,
 ) -> ModuleSummary:
@@ -252,6 +327,7 @@ def _generate_module_summary(
             formatted_name,
             flops_forward=flops_forward,
             flops_backward=flops_backward,
+            activation_sizes=activation_sizes,
         )
 
         # Add results from submodule summary
@@ -291,6 +367,12 @@ def _generate_module_summary(
             [v for k, v in flops_backward[module_name].items()]
         )
 
+    # set activation sizes
+    if module_name in activation_sizes:
+        in_size, out_size = activation_sizes[module_name]
+        module_summary._in_size = in_size
+        module_summary._out_size = out_size
+
     return module_summary
 
 
@@ -310,6 +392,10 @@ def get_summary_table(
         stop_attr.append("flops_forward")
     if module_summary.flops_backward == -1:
         stop_attr.append("flops_backward")
+    if module_summary.in_size == _UNKNOWN_SIZE:
+        stop_attr.append("in_size")
+    if module_summary.out_size == _UNKNOWN_SIZE:
+        stop_attr.append("out_size")
     unpacked_attribs, col_widths = defaultdict(list), defaultdict(int)
     _unpack_attributes(
         {"root": module_summary},
@@ -433,6 +519,8 @@ def _unpack_attributes(
                     if human_readable_nums
                     else str(attrib_val)
                 )
+            elif isinstance(attrib_val, list):
+                attrib_val = str(attrib_val)
             elif attrib_val is None:
                 attrib_val = ""
 
@@ -502,3 +590,14 @@ def _get_human_readable_count(number: int, labels: Optional[List[str]] = None) -
         return f"{int(number):,d} {labels[index]}"
 
     return f"{number:,.1f} {labels[index]}"
+
+
+def _parse_batch_shape(batch: torch.Tensor) -> Union[TUnknown, List[int]]:
+    if hasattr(batch, "shape"):
+        return list(batch.shape)
+
+    if isinstance(batch, (list, tuple)):
+        shape = [_parse_batch_shape(el) for el in batch]
+        return shape
+
+    return _UNKNOWN_SIZE

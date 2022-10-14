@@ -63,6 +63,11 @@ class ModuleSummaryTest(unittest.TestCase):
         self.assertEqual(ms2.flops_forward, 7776)
         self.assertEqual(ms2.flops_backward, 7776)
 
+        self.assertEqual(ms1.in_size, "?")
+        self.assertEqual(ms1.out_size, "?")
+        self.assertEqual(ms2.in_size, [1, 3, 8, 8])
+        self.assertEqual(ms2.out_size, [1, 8, 6, 6])
+
     def test_flops_with_Batch(self) -> None:
         """Make sure FLOPs calculate are the same when input data has different batch size."""
         model = torch.nn.Sequential(torch.nn.Conv2d(3, 8, 3), torch.nn.Conv2d(8, 5, 3))
@@ -80,6 +85,55 @@ class ModuleSummaryTest(unittest.TestCase):
         self.assertEqual(ms3.submodule_summaries["1"].flops_backward, 11520)
         self.assertEqual(ms1.submodule_summaries["1"].flops_forward, 5760)
         self.assertEqual(ms1.submodule_summaries["1"].flops_backward, 11520)
+
+    def test_activation_size(self) -> None:
+        """Make sure activation size is correct for more complex module"""
+
+        class TestModule(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.hidden = torch.nn.Linear(10, 5)
+                self.relu = torch.nn.ReLU()
+                self.out = torch.nn.Linear(5, 3)
+                self.softmax = torch.nn.Softmax(dim=3)
+
+            def forward(self, x):
+                x = self.hidden(x)
+                x = self.relu(x)
+                x = self.out(x)
+                x = self.softmax(x)
+                return x
+
+        model = TestModule()
+        ms = get_module_summary(model, torch.randn(1, 3, 10, 10))
+        self.assertEqual(ms.module_name, "")
+        self.assertEqual(ms.in_size, [1, 3, 10, 10])
+        self.assertEqual(ms.out_size, [1, 3, 10, 3])
+        self.assertEqual(ms.module_type, "TestModule")
+
+        ms_hidden = ms.submodule_summaries["hidden"]
+        self.assertEqual(ms_hidden.module_name, "hidden")
+        self.assertEqual(ms_hidden.in_size, [1, 3, 10, 10])
+        self.assertEqual(ms_hidden.out_size, [1, 3, 10, 5])
+        self.assertEqual(ms_hidden.module_type, "Linear")
+
+        ms_relu = ms.submodule_summaries["relu"]
+        self.assertEqual(ms_relu.module_name, "relu")
+        self.assertEqual(ms_relu.in_size, [1, 3, 10, 5])
+        self.assertEqual(ms_relu.out_size, [1, 3, 10, 5])
+        self.assertEqual(ms_relu.module_type, "ReLU")
+
+        ms_out = ms.submodule_summaries["out"]
+        self.assertEqual(ms_out.module_name, "out")
+        self.assertEqual(ms_out.in_size, [1, 3, 10, 5])
+        self.assertEqual(ms_out.out_size, [1, 3, 10, 3])
+        self.assertEqual(ms_out.module_type, "Linear")
+
+        ms_softmax = ms.submodule_summaries["softmax"]
+        self.assertEqual(ms_softmax.module_name, "softmax")
+        self.assertEqual(ms_softmax.in_size, [1, 3, 10, 3])
+        self.assertEqual(ms_softmax.out_size, [1, 3, 10, 3])
+        self.assertEqual(ms_softmax.module_type, "Softmax")
 
     def test_invalid_max_depth(self) -> None:
         """Test for ValueError when providing bad max_depth"""
@@ -205,18 +259,18 @@ classifier | Sequential        | 58.6 M       | 58.6 M                 | 234 M  
         ms4 = get_module_summary(pretrained_model, module_input=inp)
 
         summary_table1 = """
-Name | Type    | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameters? | Forward FLOPs | Backward FLOPs
--------------------------------------------------------------------------------------------------------------------------------------------
-     | AlexNet | 61.1 M       | 61.1 M                 | 244 M        | No                                 | 714 M         | 1.4 G
+Name | Type    | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameters? | Forward FLOPs | Backward FLOPs | In size          | Out size
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     | AlexNet | 61.1 M       | 61.1 M                 | 244 M        | No                                 | 714 M         | 1.4 G          | [1, 3, 224, 224] | [1, 1000]
 """
 
         summary_table2 = """
-Name       | Type              | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameters? | Forward FLOPs | Backward FLOPs
------------------------------------------------------------------------------------------------------------------------------------------------------------
-           | AlexNet           | 61.1 M       | 61.1 M                 | 244 M        | No                                 | 714 M         | 1.4 G
-features   | Sequential        | 2.5 M        | 2.5 M                  | 9.9 M        | No                                 | 655 M         | 1.2 G
-avgpool    | AdaptiveAvgPool2d | 0            | 0                      | 0            | No                                 | 0             | 0
-classifier | Sequential        | 58.6 M       | 58.6 M                 | 234 M        | No                                 | 58.6 M        | 117 M
+Name       | Type              | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameters? | Forward FLOPs | Backward FLOPs | In size          | Out size
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+           | AlexNet           | 61.1 M       | 61.1 M                 | 244 M        | No                                 | 714 M         | 1.4 G          | [1, 3, 224, 224] | [1, 1000]
+features   | Sequential        | 2.5 M        | 2.5 M                  | 9.9 M        | No                                 | 655 M         | 1.2 G          | [1, 3, 224, 224] | [1, 256, 6, 6]
+avgpool    | AdaptiveAvgPool2d | 0            | 0                      | 0            | No                                 | 0             | 0              | [1, 256, 6, 6]   | [1, 256, 6, 6]
+classifier | Sequential        | 58.6 M       | 58.6 M                 | 234 M        | No                                 | 58.6 M        | 117 M          | [1, 9216]        | [1, 1000]
 """
         self._test_module_summary_text(summary_table1, str(ms1))
         self._test_module_summary_text(summary_table2, str(ms2))
