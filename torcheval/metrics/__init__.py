@@ -40,6 +40,7 @@ from torcheval.metrics.regression import MeanSquaredError, R2Score
 from torcheval.metrics.window import (
     WindowedBinaryAUROC,
     WindowedBinaryNormalizedEntropy,
+    WindowedWeightedCalibration,
 )
 
 __all__ = [
@@ -83,4 +84,5 @@ __all__ = [
     "WeightedCalibration",
     "WindowedBinaryAUROC",
     "WindowedBinaryNormalizedEntropy",
+    "WindowedWeightedCalibration",
 ]

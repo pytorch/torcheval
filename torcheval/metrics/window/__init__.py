@@ -6,5 +6,10 @@
 
 from torcheval.metrics.window.auroc import WindowedBinaryAUROC
 from torcheval.metrics.window.normalized_entropy import WindowedBinaryNormalizedEntropy
+from torcheval.metrics.window.weighted_calibration import WindowedWeightedCalibration
 
-__all__ = ["WindowedBinaryAUROC", "WindowedBinaryNormalizedEntropy"]
+__all__ = [
+    "WindowedBinaryAUROC",
+    "WindowedBinaryNormalizedEntropy",
+    "WindowedWeightedCalibration",
+]
