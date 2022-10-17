@@ -21,9 +21,12 @@ class TestClickThroughRate(unittest.TestCase):
 
         input = torch.tensor([[0, 1, 0, 1], [1, 0, 0, 1]])
         weights = torch.tensor([[1.0, 2.0, 1.0, 2.0], [1.0, 2.0, 1.0, 1.0]])
-        torch.testing.assert_close(click_through_rate(input), torch.tensor([0.5, 0.5]))
         torch.testing.assert_close(
-            click_through_rate(input, weights), torch.tensor([0.66666667, 0.4])
+            click_through_rate(input, num_tasks=2), torch.tensor([0.5, 0.5])
+        )
+        torch.testing.assert_close(
+            click_through_rate(input, weights, num_tasks=2),
+            torch.tensor([0.66666667, 0.4]),
         )
 
     def test_click_through_rate_with_invalid_input(self) -> None:
@@ -37,3 +40,18 @@ class TestClickThroughRate(unittest.TestCase):
             "^tensor `weights` should have the same shape as tensor `input`",
         ):
             click_through_rate(torch.rand(4, 2), torch.rand(3))
+        with self.assertRaisesRegex(
+            ValueError,
+            r"`num_tasks = 1`, `input` is expected to be one-dimensional tensor,",
+        ):
+            click_through_rate(
+                torch.tensor([[1, 1], [0, 1]]),
+            )
+        with self.assertRaisesRegex(
+            ValueError,
+            r"`num_tasks = 2`, `input`'s shape is expected to be",
+        ):
+            click_through_rate(
+                torch.tensor([1, 0, 0, 1]),
+                num_tasks=2,
+            )

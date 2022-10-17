@@ -11,7 +11,10 @@ import torch
 
 @torch.inference_mode()
 def click_through_rate(
-    input: torch.Tensor, weights: Optional[torch.Tensor] = None
+    input: torch.Tensor,
+    weights: Optional[torch.Tensor] = None,
+    *,
+    num_tasks: int = 1,
 ) -> torch.Tensor:
     """
     Compute the click through rate given a click events.
@@ -21,6 +24,8 @@ def click_through_rate(
         input (Tensor): Series of values representing user click (1) or skip (0)
                         of shape (num_events) or (num_objectives, num_events).
         weights (Tensor, Optional): Weights for each event, tensor with the same shape as input.
+        num_tasks (int): Number of tasks that need weighted_calibration calculation. Default value
+                    is 1.
 
     Examples::
 
@@ -34,20 +39,24 @@ def click_through_rate(
         tensor(0.58333)
         >>> input = torch.tensor([[0, 1, 0, 1], [1, 0, 0, 1]])
         >>> weights = torch.tensor([[1.0, 2.0, 1.0, 2.0],[1.0, 2.0, 1.0, 1.0]])
-        >>> click_through_rate(input, weights)
+        >>> click_through_rate(input, weights, num_tasks=2)
         tensor([0.6667, 0.4])
     """
     if weights is None:
         weights = 1.0
-    click_total, weight_total = _click_through_rate_update(input, weights)
+    click_total, weight_total = _click_through_rate_update(
+        input, weights, num_tasks=num_tasks
+    )
     return _click_through_rate_compute(click_total, weight_total)
 
 
 def _click_through_rate_update(
     input: torch.Tensor,
     weights: Union[torch.Tensor, float, int] = 1.0,
+    *,
+    num_tasks: int,
 ) -> Tuple[torch.Tensor, torch.Tensor]:
-    _click_through_rate_input_check(input, weights)
+    _click_through_rate_input_check(input, weights, num_tasks=num_tasks)
     if isinstance(weights, torch.Tensor):
         weights = weights.type(torch.float)
         click_total = (input * weights).sum(-1)
@@ -70,7 +79,10 @@ def _click_through_rate_compute(
 
 
 def _click_through_rate_input_check(
-    input: torch.Tensor, weights: Union[torch.Tensor, float, int]
+    input: torch.Tensor,
+    weights: Union[torch.Tensor, float, int],
+    *,
+    num_tasks: int,
 ) -> None:
     if input.ndim != 1 and input.ndim != 2:
         raise ValueError(
@@ -79,4 +91,13 @@ def _click_through_rate_input_check(
     if isinstance(weights, torch.Tensor) and weights.shape != input.shape:
         raise ValueError(
             f"tensor `weights` should have the same shape as tensor `input`, got shapes {weights.shape} and {input.shape}, respectively."
+        )
+    if num_tasks == 1:
+        if len(input.shape) > 1:
+            raise ValueError(
+                f"`num_tasks = 1`, `input` is expected to be one-dimensional tensor, but got shape ({input.shape})."
+            )
+    elif len(input.shape) == 1 or input.shape[0] != num_tasks:
+        raise ValueError(
+            f"`num_tasks = {num_tasks}`, `input`'s shape is expected to be ({num_tasks}, num_samples), but got shape ({input.shape})."
         )

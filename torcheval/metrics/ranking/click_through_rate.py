@@ -25,6 +25,10 @@ class ClickThroughRate(Metric[torch.Tensor]):
     Compute the click through rate given click events.
     Its functional version is ``torcheval.metrics.functional.click_through_rate``.
 
+    Args:
+        num_tasks (int): Number of tasks that need weighted_calibration calculation. Default value
+                    is 1.
+
     Examples::
 
         >>> import torch
@@ -33,13 +37,13 @@ class ClickThroughRate(Metric[torch.Tensor]):
         >>> input = torch.tensor([0, 1, 0, 1, 1, 0, 0, 1])
         >>> metric.update(input)
         >>> metric.compute()
-        tensor(0.5)
+        tensor([0.5])
         >>> metric = ClickThroughRate()
         >>> weights = torch.tensor([1.0, 2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 2.0])
         >>> metric.update(input, weights)
         >>> metric.compute()
-        tensor(0.58333)
-        >>> metric = ClickThroughRate()
+        tensor([0.58333])
+        >>> metric = ClickThroughRate(num_tasks=2)
         >>> input = torch.tensor([[0, 1, 0, 1], [1, 0, 0, 1]])
         >>> weights = torch.tensor([[1.0, 2.0, 1.0, 2.0],[1.0, 2.0, 1.0, 1.0]])
         >>> metric.update(input, weights)
@@ -51,11 +55,23 @@ class ClickThroughRate(Metric[torch.Tensor]):
     def __init__(
         self: TClickThroughRate,
         *,
+        num_tasks: int = 1,
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)
-        self._add_state("click_total", torch.tensor(0.0, device=self.device))
-        self._add_state("weight_total", torch.tensor(0.0, device=self.device))
+        if num_tasks < 1:
+            raise ValueError(
+                "`num_tasks` value should be greater than and equal to 1, but received {num_tasks}. "
+            )
+        self.num_tasks = num_tasks
+        self._add_state(
+            "click_total",
+            torch.zeros(self.num_tasks, dtype=torch.float64, device=self.device),
+        )
+        self._add_state(
+            "weight_total",
+            torch.zeros(self.num_tasks, dtype=torch.float64, device=self.device),
+        )
 
     @torch.inference_mode()
     # pyre-ignore[14]: `update` overrides method defined in `Metric` inconsistently.
@@ -72,7 +88,9 @@ class ClickThroughRate(Metric[torch.Tensor]):
                             of shape (num_events) or (num_objectives, num_events).
             weights (Tensor, float, int): Weights for each event, single weight or tensor with the same shape as input.
         """
-        click_total, weight_total = _click_through_rate_update(input, weights)
+        click_total, weight_total = _click_through_rate_update(
+            input, weights, num_tasks=self.num_tasks
+        )
         self.click_total = self.click_total + click_total
         self.weight_total = self.weight_total + weight_total
         return self
