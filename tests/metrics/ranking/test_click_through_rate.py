@@ -17,7 +17,7 @@ class TestClickThroughRate(MetricClassTester):
             metric=ClickThroughRate(),
             state_names={"click_total", "weight_total"},
             update_kwargs={"input": input},
-            compute_result=torch.tensor(0.5625),
+            compute_result=torch.tensor([0.5625], dtype=torch.float64),
             num_total_updates=4,
             num_processes=2,
         )
@@ -40,10 +40,10 @@ class TestClickThroughRate(MetricClassTester):
         )
 
         self.run_class_implementation_tests(
-            metric=ClickThroughRate(),
+            metric=ClickThroughRate(num_tasks=2),
             state_names={"click_total", "weight_total"},
             update_kwargs={"input": input, "weights": weights},
-            compute_result=torch.tensor([0.4583333, 0.6875]),
+            compute_result=torch.tensor([0.4583333, 0.6875], dtype=torch.float64),
             num_total_updates=4,
             num_processes=2,
         )
@@ -51,10 +51,10 @@ class TestClickThroughRate(MetricClassTester):
         weights = [4.0, 1, torch.tensor([[1, 2, 3, 4], [1, 2, 3, 4]]), 0.0]
 
         self.run_class_implementation_tests(
-            metric=ClickThroughRate(),
+            metric=ClickThroughRate(num_tasks=2),
             state_names={"click_total", "weight_total"},
             update_kwargs={"input": input, "weights": weights},
-            compute_result=torch.tensor([0.46666667, 0.86666667]),
+            compute_result=torch.tensor([0.46666667, 0.86666667], dtype=torch.float64),
             num_total_updates=4,
             num_processes=2,
         )
@@ -73,3 +73,25 @@ class TestClickThroughRate(MetricClassTester):
             "^tensor `weights` should have the same shape as tensor `input`",
         ):
             metric.update(torch.rand(4, 2), torch.rand(3))
+        with self.assertRaisesRegex(
+            ValueError,
+            r"`num_tasks = 1`, `input` is expected to be one-dimensional tensor,",
+        ):
+            metric.update(
+                torch.tensor([[1, 1], [0, 1]]),
+            )
+
+        metric = ClickThroughRate(num_tasks=2)
+        with self.assertRaisesRegex(
+            ValueError,
+            r"`num_tasks = 2`, `input`'s shape is expected to be",
+        ):
+            metric.update(
+                torch.tensor([1, 0, 0, 1]),
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"`num_tasks` value should be greater than and equal to 1,",
+        ):
+            metric = ClickThroughRate(num_tasks=0)
