@@ -35,7 +35,12 @@ copyright = "2022, Meta"
 author = "Meta"
 
 # The full version, including alpha/beta/rc tags
-release = __version__
+if os.environ.get("RELEASE_BUILD", None):
+    version = __version__
+    release = __version__
+else:
+    version = "main (unstable)"
+    release = "main"
 
 
 # -- General configuration ---------------------------------------------------
@@ -66,6 +71,9 @@ exclude_patterns = []
 #
 html_theme = "pytorch_sphinx_theme"
 html_theme_path = [pytorch_sphinx_theme.get_html_theme_path()]
+html_theme_options = {
+    "display_version": True,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
