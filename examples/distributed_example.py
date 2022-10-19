@@ -57,11 +57,12 @@ def train() -> None:
         dist.init_process_group(backend="gloo")
     local_rank = int(os.environ["LOCAL_RANK"])
     global_rank = int(os.environ["RANK"])
-    device = torch.device(
-        f"cuda:{local_rank}"
-        if torch.cuda.is_available() and torch.cuda.device_count() >= NUM_PROCESSES
-        else "cpu"
-    )
+    if torch.cuda.is_available() and torch.cuda.device_count() >= NUM_PROCESSES:
+        device = torch.device(f"cuda:{local_rank}")
+        # Need specifically set current device
+        torch.cuda.set_device(device)
+    else:
+        device = torch.device("cpu")
 
     torch.manual_seed(42)
 
