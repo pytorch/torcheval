@@ -1,0 +1,35 @@
+﻿torcheval.metrics.Min
+=====================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: Min
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Min.__init__
+      ~Min.compute
+      ~Min.load_state_dict
+      ~Min.merge_state
+      ~Min.reset
+      ~Min.state_dict
+      ~Min.to
+      ~Min.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Min.device
+   
+   

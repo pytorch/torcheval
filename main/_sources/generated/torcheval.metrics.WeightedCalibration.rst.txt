@@ -1,0 +1,35 @@
+﻿torcheval.metrics.WeightedCalibration
+=====================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: WeightedCalibration
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~WeightedCalibration.__init__
+      ~WeightedCalibration.compute
+      ~WeightedCalibration.load_state_dict
+      ~WeightedCalibration.merge_state
+      ~WeightedCalibration.reset
+      ~WeightedCalibration.state_dict
+      ~WeightedCalibration.to
+      ~WeightedCalibration.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~WeightedCalibration.device
+   
+   

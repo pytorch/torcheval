@@ -1,0 +1,35 @@
+﻿torcheval.metrics.MulticlassPrecisionRecallCurve
+================================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: MulticlassPrecisionRecallCurve
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MulticlassPrecisionRecallCurve.__init__
+      ~MulticlassPrecisionRecallCurve.compute
+      ~MulticlassPrecisionRecallCurve.load_state_dict
+      ~MulticlassPrecisionRecallCurve.merge_state
+      ~MulticlassPrecisionRecallCurve.reset
+      ~MulticlassPrecisionRecallCurve.state_dict
+      ~MulticlassPrecisionRecallCurve.to
+      ~MulticlassPrecisionRecallCurve.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MulticlassPrecisionRecallCurve.device
+   
+   

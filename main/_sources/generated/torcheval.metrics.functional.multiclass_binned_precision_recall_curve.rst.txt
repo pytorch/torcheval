@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.multiclass\_binned\_precision\_recall\_curve
+=========================================================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: multiclass_binned_precision_recall_curve

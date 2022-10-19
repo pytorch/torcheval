@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.multiclass\_f1\_score
+==================================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: multiclass_f1_score

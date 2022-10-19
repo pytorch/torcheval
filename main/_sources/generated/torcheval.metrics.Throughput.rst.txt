@@ -1,0 +1,35 @@
+﻿torcheval.metrics.Throughput
+============================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: Throughput
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Throughput.__init__
+      ~Throughput.compute
+      ~Throughput.load_state_dict
+      ~Throughput.merge_state
+      ~Throughput.reset
+      ~Throughput.state_dict
+      ~Throughput.to
+      ~Throughput.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Throughput.device
+   
+   

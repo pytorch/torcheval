@@ -1,0 +1,35 @@
+﻿torcheval.metrics.BinaryF1Score
+===============================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: BinaryF1Score
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BinaryF1Score.__init__
+      ~BinaryF1Score.compute
+      ~BinaryF1Score.load_state_dict
+      ~BinaryF1Score.merge_state
+      ~BinaryF1Score.reset
+      ~BinaryF1Score.state_dict
+      ~BinaryF1Score.to
+      ~BinaryF1Score.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BinaryF1Score.device
+   
+   

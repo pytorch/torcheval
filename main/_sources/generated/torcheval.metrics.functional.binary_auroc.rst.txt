@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.binary\_auroc
+==========================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: binary_auroc

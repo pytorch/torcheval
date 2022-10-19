@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.frequency\_at\_k
+=============================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: frequency_at_k

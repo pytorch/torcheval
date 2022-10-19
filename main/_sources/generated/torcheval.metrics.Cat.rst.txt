@@ -1,0 +1,35 @@
+﻿torcheval.metrics.Cat
+=====================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: Cat
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Cat.__init__
+      ~Cat.compute
+      ~Cat.load_state_dict
+      ~Cat.merge_state
+      ~Cat.reset
+      ~Cat.state_dict
+      ~Cat.to
+      ~Cat.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Cat.device
+   
+   
