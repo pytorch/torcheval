@@ -6,7 +6,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -508,7 +508,26 @@ summary tree. The ModuleSummary object is prunned inplace.</p>
           <div class="pytorch-right-menu" id="pytorch-right-menu">
             <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
               <ul>
-<li><a class="reference internal" href="#">tools</a></li>
+<li><a class="reference internal" href="#">tools</a><ul>
+<li><a class="reference internal" href="#torcheval.tools.ModuleSummary"><code class="docutils literal notranslate"><span class="pre">ModuleSummary</span></code></a><ul>
+<li><a class="reference internal" href="#torcheval.tools.ModuleSummary.flops_backward"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.flops_backward</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.tools.ModuleSummary.flops_forward"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.flops_forward</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.tools.ModuleSummary.has_uninitialized_param"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.has_uninitialized_param</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.tools.ModuleSummary.in_size"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.in_size</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.tools.ModuleSummary.module_name"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.module_name</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.tools.ModuleSummary.module_type"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.module_type</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.tools.ModuleSummary.num_parameters"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.num_parameters</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.tools.ModuleSummary.num_trainable_parameters"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.num_trainable_parameters</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.tools.ModuleSummary.out_size"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.out_size</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.tools.ModuleSummary.size_bytes"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.size_bytes</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.tools.ModuleSummary.submodule_summaries"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.submodule_summaries</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#torcheval.tools.get_module_summary"><code class="docutils literal notranslate"><span class="pre">get_module_summary()</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.tools.get_summary_table"><code class="docutils literal notranslate"><span class="pre">get_summary_table()</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.tools.prune_module_summary"><code class="docutils literal notranslate"><span class="pre">prune_module_summary()</span></code></a></li>
+</ul>
+</li>
 </ul>
 
             </div>
@@ -529,6 +548,7 @@ summary tree. The ModuleSummary object is prunned inplace.</p>
          <script src="_static/underscore.js"></script>
          <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
          <script src="_static/doctools.js"></script>
+         <script src="_static/sphinx_highlight.js"></script>
      
 
   
