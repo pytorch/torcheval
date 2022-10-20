@@ -49,10 +49,10 @@ Documentation can be found at at [pytorch.github.io/torcheval](https://pytorch.g
 
 ## Using TorchEval
 
-TorchEval can be run on CPU, GPU, and in a multi-process or multi-GPU setting. Metrics are provided in two interfaces, functional and class based. The functional interfaces can be found in `torcheval.metrics.functional` and are useful when your program runs in a single process setting. To use multi-process or multi-gpu configurations, the class-based interfaces, found in `torcheval.metrics` provide a much simpler experience. The class based interfaces also allow you to defer some of the computation of the metric by calling `update()` multiple times before `compute()`. This can be advantageous even in a single process setting due to saved computate overhead.
+TorchEval can be run on CPU, GPU, and in a multi-process or multi-GPU setting. Metrics are provided in two interfaces, functional and class based. The functional interfaces can be found in `torcheval.metrics.functional` and are useful when your program runs in a single process setting. To use multi-process or multi-gpu configurations, the class-based interfaces, found in `torcheval.metrics` provide a much simpler experience. The class based interfaces also allow you to defer some of the computation of the metric by calling `update()` multiple times before `compute()`. This can be advantageous even in a single process setting due to saved computation overhead.
 
 ### Single Process
-For use in a single process program, the simplest use case utilizes a functional metric. We simply import the metric function and feed in our inputs and outputs. The example below shows a minimal pytorch training loop that evaluates the multiclass accuracy of every fourth batch of data.
+For use in a single process program, the simplest use case utilizes a functional metric. We simply import the metric function and feed in our outputs and targets. The example below shows a minimal PyTorch training loop that evaluates the multiclass accuracy of every fourth batch of data.
 
 #### Functional Version (immediate computation of metric)
 ```python
@@ -125,7 +125,7 @@ for batch in range(NUM_BATCHES):
 ```
 
 ### Multi-Process or Multi-GPU
-For usage on multiple devices a minimal example is given below:
+For usage on multiple devices a minimal example is given below. In the normal `torch.distributed` paradigm, each device is allocated its own process gets a unique numerical ID called a "global rank", counting up from 0.
 
 #### Class Version (enables deferred computation and multi-processing)
 ```python
@@ -133,10 +133,10 @@ import torch
 from torcheval.metrics.toolkit import sync_and_compute
 from torcheval.metrics import MulticlassAccuracy
 
-# Using torch.distributed...
-local_rank = int(os.environ["LOCAL_RANK"])
-global_rank = int(os.environ["RANK"])
-world_size  = int(os.environ["WORLD_SIZE"])
+# Using torch.distributed
+local_rank = int(os.environ["LOCAL_RANK"]) #rank on local machine, i.e. unique ID within a machine
+global_rank = int(os.environ["RANK"]) #rank in global pool, i.e. unique ID within the entire process group
+world_size  = int(os.environ["WORLD_SIZE"]) #total number of processes or "ranks" in the entire process group
 
 device = torch.device(
     f"cuda:{local_rank}"
@@ -159,11 +159,15 @@ for epoch in range(num_epochs):
         # all seen data on the local process since last reset()
         local_compute_result = metric.compute()
 
-        # sync_and_compute(metric) consilidates all metric data across ranks,
-        # each rank returns the result for the full dataset
+        # sync_and_compute(metric) sends metric data across all processes to the process with rank 0,
+        # the output on rank 0 is the computed metric for the entire process group, on other ranks None is returned.
         global_compute_result = sync_and_compute(metric)
+        if global_rank == 0:
+            print(global_compute_result)
+        # if sync_and_compute(metric, "all") is called, the computation is done on rank 0, and the output is synced
+        # across processes so that each rank returns the computed metric.
 
-    # metric.reset() clears the data on each rank so that subsequent
+    # metric.reset() clears the data on each process so that subsequent
     # calls to compute() only act on new data
     metric.reset()
 ```
