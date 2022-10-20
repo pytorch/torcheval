@@ -5,11 +5,13 @@
 # LICENSE file in the root directory of this source tree.
 
 from torcheval.metrics.window.auroc import WindowedBinaryAUROC
+from torcheval.metrics.window.click_through_rate import WindowedClickThroughRate
 from torcheval.metrics.window.normalized_entropy import WindowedBinaryNormalizedEntropy
 from torcheval.metrics.window.weighted_calibration import WindowedWeightedCalibration
 
 __all__ = [
     "WindowedBinaryAUROC",
     "WindowedBinaryNormalizedEntropy",
+    "WindowedClickThroughRate",
     "WindowedWeightedCalibration",
 ]
