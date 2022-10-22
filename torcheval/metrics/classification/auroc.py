@@ -34,6 +34,11 @@ TMulticlasslAUROC = TypeVar("TMulticlassAUROC")
 class BinaryAUROC(Metric[torch.Tensor]):
     """
     Compute AUROC, which is the area under the ROC Curve, for binary classification.
+    AUROC is defined as the area under the Receiver Operating Curve, a plot with x=false positive rate y=true positive rate.
+    The points on the curve are sampled from the data given and the area is computed using the trapezoid method.
+
+    Multiple tasks are supported for Binary AUROC. A two-dimensional vector can given for the predicted values (inputs) and targets. This gives equivalent results to having one BinaryAUROC object for each row.
+
     Its functional version is :func:`torcheval.metrics.functional.binary_auroc`.
 
     Examples::
@@ -136,8 +141,14 @@ class BinaryAUROC(Metric[torch.Tensor]):
 
 class MulticlassAUROC(Metric[torch.Tensor]):
     """
-    Compute AUROC, which is the area under the ROC Curve, for multiclass classification.
-    Its functional version is :func:`torcheval.metrics.functional.multiclass_auroc`.
+    Compute AUROC, which is the area under the ROC Curve, for multiclass classification in a one vs rest fashion.
+    One vs. rest Multiclass AUROC is equivalent to running a BinaryAUROC with `num_classes` tasks where
+    1. The `input` is transposed
+    2. The `target` is translated from a 1 dimensional tensor of the correct classes to a 2 dimensional tensor where each row is a list containing which examples belong to that class.
+
+    See examples below for more details on the connection between Multiclass and Binary AUROC.
+
+    The functional version of this metric is :func:`torcheval.metrics.functional.multiclass_auroc`.
 
      Args:
         num_classes (int): Number of classes.
@@ -159,10 +170,21 @@ class MulticlassAUROC(Metric[torch.Tensor]):
         >>> metric.compute()
         tensor(0.5000)
 
-        >>> metric = MulticlassAUROC(num_classes=4, average=None)
+        >>> metric = MulticlassAUROC(num_classes=3, average=None)
+        >>> input = torch.tensor([[0.1, 0, 0], [0, 1, 0], [0.1, 0.2, 0.7], [0, 0, 1]])
+        >>> target = torch.tensor([0, 1, 2, 2])
         >>> metric.update(input, target)
         >>> metric.compute()
-        tensor([0.0000, 0.3333, 0.6667, 1.0000])
+        tensor([0.8333, 1.0000, 1.0000])
+
+        the above is equivalent to
+        >>> from torcheval.metrics import BinaryAUROC
+        >>> metric = BinaryAUROC(num_tasks=3)
+        >>> input = torch.tensor([[0.1, 0, 0.1, 0], [0, 1, 0.2, 0], [0, 0, 0.7, 1]])
+        >>> target = torch.tensor([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 1]])
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor([0.8333, 1.0000, 1.0000])
     """
 
     def __init__(
