@@ -164,7 +164,7 @@ for epoch in range(num_epochs):
         global_compute_result = sync_and_compute(metric)
         if global_rank == 0:
             print(global_compute_result)
-        # if sync_and_compute(metric, "all") is called, the computation is done on rank 0, and the output is synced
+        # if sync_and_compute(metric, recipient_rank="all") is called, the computation is done on rank 0, and the output is synced
         # across processes so that each rank returns the computed metric.
 
     # metric.reset() clears the data on each process so that subsequent
