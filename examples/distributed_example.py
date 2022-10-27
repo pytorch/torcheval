@@ -28,8 +28,8 @@ from torcheval.metrics import MulticlassAccuracy, Throughput
 from torcheval.metrics.toolkit import sync_and_compute
 
 #####################################################################
-# Then prepare the gloabl variables. For this tutorial, we plan to use 4 processes (`NUM_PROCESSES` = 4),
-# but you can change it based on your computing resouce setup.
+# Then prepare the global variables. For this tutorial, we plan to use 4 processes (`NUM_PROCESSES` = 4),
+# but you can change it based on your computing resource setup.
 
 NUM_PROCESSES = 4
 NUM_EPOCHS = 4
