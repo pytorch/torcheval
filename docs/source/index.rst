@@ -14,6 +14,7 @@ TorchEval Tutorials
    :maxdepth: 2
    :caption: Examples:
 
+   QuickStart Notebook <https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb>
    metric_example.rst
 
 QuickStart
