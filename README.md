@@ -38,7 +38,7 @@ python setup.py install
 
 ## Quick Start
 
-Take a look at the [quickstart notebook](https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb), or fork it on [Colab](https://colab.research.google.com/drive/1bRmaUvoCeK3O0OBsTWx_NuHskH2DZCpl?usp=sharing).
+Take a look at the [quickstart notebook](https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb), or fork it on [Colab](https://colab.research.google.com/github/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb).
 
 There are more examples in the [examples](https://github.com/pytorch/torcheval/blob/main/examples) directory:
 
