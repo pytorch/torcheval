@@ -150,12 +150,13 @@ class MulticlassAUROC(Metric[torch.Tensor]):
 
     The functional version of this metric is :func:`torcheval.metrics.functional.multiclass_auroc`.
 
-     Args:
+    Args:
         num_classes (int): Number of classes.
         average (str, optional):
-            - ``'macro'`` [default]:
+
+          - ``'macro'`` [default]:
                 Calculate metrics for each class separately, and return their unweighted mean.
-            - ``None``:
+          - ``None``:
                 Calculate the metric for each class separately, and return
                 the metric for every class.
 
