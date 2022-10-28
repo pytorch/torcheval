@@ -49,7 +49,7 @@ python examples/simple_example.py
 
 ## Documentation
 
-Documentation can be found at at [pytorch.github.io/torcheval](https://pytorch.github.io/torcheval)
+Documentation can be found at at [pytorch.org/torcheval](https://pytorch.org/torcheval)
 
 ## Using TorchEval
 
