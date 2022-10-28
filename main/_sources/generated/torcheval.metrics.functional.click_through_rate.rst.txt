@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.click\_through\_rate
+=================================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: click_through_rate

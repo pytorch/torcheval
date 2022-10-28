@@ -28,6 +28,7 @@ Classification Metrics
 
    BinaryAccuracy
    BinaryAUROC
+   BinaryBinnedAUROC
    BinaryBinnedPrecisionRecallCurve
    BinaryConfusionMatrix
    BinaryF1Score
@@ -37,6 +38,7 @@ Classification Metrics
    BinaryRecall
    MulticlassAccuracy
    MulticlassAUROC
+   MulticlassBinnedAUROC
    MulticlassBinnedPrecisionRecallCurve
    MulticlassConfusionMatrix
    MulticlassF1Score
@@ -53,6 +55,7 @@ Ranking Metrics
    :toctree: generated
    :nosignatures:
 
+   ClickThroughRate
    HitRate
    ReciprocalRank
    WeightedCalibration
@@ -74,5 +77,7 @@ Windowed Metrics
    :toctree: generated
    :nosignatures:
 
-    WindowedBinaryAUROC
-    WindowedBinaryNormalizedEntropy
+   WindowedBinaryAUROC
+   WindowedBinaryNormalizedEntropy
+   WindowedClickThroughRate
+   WindowedWeightedCalibration

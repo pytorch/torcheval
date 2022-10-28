@@ -1,0 +1,35 @@
+﻿torcheval.metrics.BinaryBinnedAUROC
+===================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: BinaryBinnedAUROC
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BinaryBinnedAUROC.__init__
+      ~BinaryBinnedAUROC.compute
+      ~BinaryBinnedAUROC.load_state_dict
+      ~BinaryBinnedAUROC.merge_state
+      ~BinaryBinnedAUROC.reset
+      ~BinaryBinnedAUROC.state_dict
+      ~BinaryBinnedAUROC.to
+      ~BinaryBinnedAUROC.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BinaryBinnedAUROC.device
+   
+   
