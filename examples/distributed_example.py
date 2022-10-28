@@ -4,6 +4,16 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+"""
+Torcheval Distributed Example Overview
+============================
+This tutorial will demonstrate how to use Torcheval metrics in distributed computing environment.
+
+Take metric ``MulticlassAccuracy`` as an example.
+First, let's import all necessary imports.
+
+"""
+
 import os
 import time
 import uuid
@@ -17,11 +27,18 @@ from torch.utils.data.dataset import TensorDataset
 from torcheval.metrics import MulticlassAccuracy, Throughput
 from torcheval.metrics.toolkit import sync_and_compute
 
+#####################################################################
+# Then prepare the global variables. For this tutorial, we plan to use 4 processes (`NUM_PROCESSES` = 4),
+# but you can change it based on your computing resource setup.
+
 NUM_PROCESSES = 4
 NUM_EPOCHS = 4
 NUM_BATCHES = 16
 BATCH_SIZE = 8
 COMPUTE_FREQUENCY = 4
+
+#####################################################################
+# Next, prepare a toy model and dataloader.
 
 
 class Model(torch.nn.Module):
@@ -46,6 +63,12 @@ def prepare_dataloader(device: torch.device) -> torch.utils.data.DataLoader:
     return torch.utils.data.DataLoader(
         TensorDataset(data, labels), batch_size=BATCH_SIZE
     )
+
+
+######################################################################
+# Define the training step for each batch of input data.
+# Before the training loop starts, let's initialize metric ``MulticlassAccuracy``
+# and move it to the corresponding device.
 
 
 def train() -> None:
@@ -149,3 +172,13 @@ if __name__ == "__main__":
     )
 
     pet.elastic_launch(lc, entrypoint=train)()
+
+
+######################################################################
+# ``TorchEval`` provided two functions for compute: ``metric.compute()`` and ``sync_and_compute(metric)``.
+# -  ``metric.compute()`` returns the compute result for the local process.
+# -  ``sync_and_compute(metric)`` syncs the metric objects from all processes, and return the compute result based on all data. When the training script is running on a single process (``world_size = 1``), ``sync_and_compute(metric)`` returns exact same result as `metric.compute()`
+
+
+# The Class version of metrics provides a function ` ``merge_state()``, which is used to update the current metric's state variables to be the merged states of the current metric and input metrics.
+# This method can be used as a building block for syncing metric states in distributed training. For example, ``sync_and_compute`` in the metric toolkit will use this method to merge metric objects gathered from the process group.
