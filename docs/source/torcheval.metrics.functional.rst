@@ -50,6 +50,7 @@ Ranking Metrics
    :toctree: generated
    :nosignatures:
 
+   click_through_rate
    frequency_at_k
    hit_rate
    num_collisions
