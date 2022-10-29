@@ -140,10 +140,12 @@ class ModuleSummary:
 
     @property
     def in_size(self) -> Union[TUnknown, List[int]]:
+        """Returns the input size of the module"""
         return self._in_size
 
     @property
     def out_size(self) -> Union[TUnknown, List[int]]:
+        """Returns the output size of the module"""
         return self._out_size
 
     @property
