@@ -1,0 +1,6 @@
+torcheval.metrics.functional.ranking.weighted\_calibration
+==========================================================
+
+.. currentmodule:: torcheval.metrics.functional.ranking
+
+.. autofunction:: weighted_calibration

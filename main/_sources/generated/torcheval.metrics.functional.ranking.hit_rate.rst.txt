@@ -1,0 +1,6 @@
+torcheval.metrics.functional.ranking.hit\_rate
+==============================================
+
+.. currentmodule:: torcheval.metrics.functional.ranking
+
+.. autofunction:: hit_rate

@@ -1,0 +1,6 @@
+torcheval.metrics.functional.aggregation.throughput
+===================================================
+
+.. currentmodule:: torcheval.metrics.functional.aggregation
+
+.. autofunction:: throughput

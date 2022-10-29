@@ -1,0 +1,6 @@
+torcheval.metrics.functional.ranking.num\_collisions
+====================================================
+
+.. currentmodule:: torcheval.metrics.functional.ranking
+
+.. autofunction:: num_collisions

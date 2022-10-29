@@ -1,0 +1,29 @@
+torcheval.metrics.window.auroc
+==============================
+
+.. automodule:: torcheval.metrics.window.auroc
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      WindowedBinaryAUROC
+   
+   
+
+   
+   
+   
+
+
+

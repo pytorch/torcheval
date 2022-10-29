@@ -1,0 +1,6 @@
+torcheval.metrics.functional.aggregation.sum
+============================================
+
+.. currentmodule:: torcheval.metrics.functional.aggregation
+
+.. autofunction:: sum

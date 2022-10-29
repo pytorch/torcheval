@@ -1,0 +1,38 @@
+﻿torcheval.metrics
+=================
+
+.. automodule:: torcheval.metrics
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   torcheval.metrics.aggregation
+   torcheval.metrics.classification
+   torcheval.metrics.functional
+   torcheval.metrics.metric
+   torcheval.metrics.ranking
+   torcheval.metrics.regression
+   torcheval.metrics.toolkit
+   torcheval.metrics.window
+

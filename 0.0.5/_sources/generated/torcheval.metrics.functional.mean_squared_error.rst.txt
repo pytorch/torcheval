@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.mean\_squared\_error
+=================================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: mean_squared_error

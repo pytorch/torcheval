@@ -1,0 +1,36 @@
+torcheval.metrics.aggregation
+=============================
+
+.. automodule:: torcheval.metrics.aggregation
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   torcheval.metrics.aggregation.cat
+   torcheval.metrics.aggregation.max
+   torcheval.metrics.aggregation.mean
+   torcheval.metrics.aggregation.min
+   torcheval.metrics.aggregation.sum
+   torcheval.metrics.aggregation.throughput
+

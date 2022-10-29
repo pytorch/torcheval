@@ -1,0 +1,29 @@
+torcheval.metrics.aggregation.mean
+==================================
+
+.. automodule:: torcheval.metrics.aggregation.mean
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Mean
+   
+   
+
+   
+   
+   
+
+
+

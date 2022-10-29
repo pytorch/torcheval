@@ -1,0 +1,29 @@
+torcheval.metrics.classification.auroc
+======================================
+
+.. automodule:: torcheval.metrics.classification.auroc
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      BinaryAUROC
+   
+   
+
+   
+   
+   
+
+
+

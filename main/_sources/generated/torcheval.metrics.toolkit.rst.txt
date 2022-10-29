@@ -1,0 +1,35 @@
+torcheval.metrics.toolkit
+=========================
+
+.. automodule:: torcheval.metrics.toolkit
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      clone_metric
+      clone_metrics
+      get_synced_metric
+      get_synced_state_dict
+      reset_metrics
+      sync_and_compute
+      to_device
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

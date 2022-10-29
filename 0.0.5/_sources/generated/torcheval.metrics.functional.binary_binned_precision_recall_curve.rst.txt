@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.binary\_binned\_precision\_recall\_curve
+=====================================================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: binary_binned_precision_recall_curve

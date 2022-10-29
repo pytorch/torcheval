@@ -1,0 +1,29 @@
+torcheval.metrics.aggregation.min
+=================================
+
+.. automodule:: torcheval.metrics.aggregation.min
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Min
+   
+   
+
+   
+   
+   
+
+
+

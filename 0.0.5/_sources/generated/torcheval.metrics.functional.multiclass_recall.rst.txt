@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.multiclass\_recall
+===============================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: multiclass_recall

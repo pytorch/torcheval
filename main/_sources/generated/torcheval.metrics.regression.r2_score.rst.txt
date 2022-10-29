@@ -1,0 +1,29 @@
+torcheval.metrics.regression.r2\_score
+======================================
+
+.. automodule:: torcheval.metrics.regression.r2_score
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      R2Score
+   
+   
+
+   
+   
+   
+
+
+

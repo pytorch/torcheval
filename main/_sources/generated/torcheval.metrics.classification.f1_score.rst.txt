@@ -1,0 +1,30 @@
+torcheval.metrics.classification.f1\_score
+==========================================
+
+.. automodule:: torcheval.metrics.classification.f1_score
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      BinaryF1Score
+      MulticlassF1Score
+   
+   
+
+   
+   
+   
+
+
+

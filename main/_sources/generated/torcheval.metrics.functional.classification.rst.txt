@@ -1,0 +1,39 @@
+torcheval.metrics.functional.classification
+===========================================
+
+.. automodule:: torcheval.metrics.functional.classification
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   torcheval.metrics.functional.classification.accuracy
+   torcheval.metrics.functional.classification.auroc
+   torcheval.metrics.functional.classification.binary_normalized_entropy
+   torcheval.metrics.functional.classification.binned_precision_recall_curve
+   torcheval.metrics.functional.classification.confusion_matrix
+   torcheval.metrics.functional.classification.f1_score
+   torcheval.metrics.functional.classification.precision
+   torcheval.metrics.functional.classification.precision_recall_curve
+   torcheval.metrics.functional.classification.recall
+

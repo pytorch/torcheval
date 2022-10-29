@@ -1,0 +1,6 @@
+torcheval.metrics.functional.classification.binary\_normalized\_entropy
+=======================================================================
+
+.. currentmodule:: torcheval.metrics.functional.classification
+
+.. autofunction:: binary_normalized_entropy

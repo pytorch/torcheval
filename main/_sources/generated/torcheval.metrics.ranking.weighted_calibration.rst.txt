@@ -1,0 +1,29 @@
+torcheval.metrics.ranking.weighted\_calibration
+===============================================
+
+.. automodule:: torcheval.metrics.ranking.weighted_calibration
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      WeightedCalibration
+   
+   
+
+   
+   
+   
+
+
+

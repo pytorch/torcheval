@@ -1,0 +1,30 @@
+torcheval.metrics.classification.binned\_precision\_recall\_curve
+=================================================================
+
+.. automodule:: torcheval.metrics.classification.binned_precision_recall_curve
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      BinaryBinnedPrecisionRecallCurve
+      MulticlassBinnedPrecisionRecallCurve
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,35 @@
+﻿torcheval.metrics.MulticlassRecall
+==================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: MulticlassRecall
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MulticlassRecall.__init__
+      ~MulticlassRecall.compute
+      ~MulticlassRecall.load_state_dict
+      ~MulticlassRecall.merge_state
+      ~MulticlassRecall.reset
+      ~MulticlassRecall.state_dict
+      ~MulticlassRecall.to
+      ~MulticlassRecall.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MulticlassRecall.device
+   
+   

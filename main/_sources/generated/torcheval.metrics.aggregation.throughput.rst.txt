@@ -1,0 +1,29 @@
+torcheval.metrics.aggregation.throughput
+========================================
+
+.. automodule:: torcheval.metrics.aggregation.throughput
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Throughput
+   
+   
+
+   
+   
+   
+
+
+

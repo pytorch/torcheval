@@ -1,0 +1,29 @@
+torcheval.metrics.metric
+========================
+
+.. automodule:: torcheval.metrics.metric
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Metric
+   
+   
+
+   
+   
+   
+
+
+

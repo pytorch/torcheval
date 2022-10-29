@@ -1,0 +1,29 @@
+torcheval.metrics.aggregation.cat
+=================================
+
+.. automodule:: torcheval.metrics.aggregation.cat
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Cat
+   
+   
+
+   
+   
+   
+
+
+

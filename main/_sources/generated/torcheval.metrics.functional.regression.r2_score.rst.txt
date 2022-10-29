@@ -1,0 +1,6 @@
+torcheval.metrics.functional.regression.r2\_score
+=================================================
+
+.. currentmodule:: torcheval.metrics.functional.regression
+
+.. autofunction:: r2_score

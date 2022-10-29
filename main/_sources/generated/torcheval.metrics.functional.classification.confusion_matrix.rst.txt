@@ -1,0 +1,30 @@
+torcheval.metrics.functional.classification.confusion\_matrix
+=============================================================
+
+.. automodule:: torcheval.metrics.functional.classification.confusion_matrix
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      binary_confusion_matrix
+      multiclass_confusion_matrix
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

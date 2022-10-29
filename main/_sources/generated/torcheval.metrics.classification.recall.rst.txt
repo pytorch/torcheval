@@ -1,0 +1,30 @@
+torcheval.metrics.classification.recall
+=======================================
+
+.. automodule:: torcheval.metrics.classification.recall
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      BinaryRecall
+      MulticlassRecall
+   
+   
+
+   
+   
+   
+
+
+

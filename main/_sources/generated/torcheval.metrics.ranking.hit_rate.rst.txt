@@ -1,0 +1,29 @@
+torcheval.metrics.ranking.hit\_rate
+===================================
+
+.. automodule:: torcheval.metrics.ranking.hit_rate
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      HitRate
+   
+   
+
+   
+   
+   
+
+
+

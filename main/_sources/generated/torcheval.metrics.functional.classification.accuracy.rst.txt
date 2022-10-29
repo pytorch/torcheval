@@ -1,0 +1,32 @@
+torcheval.metrics.functional.classification.accuracy
+====================================================
+
+.. automodule:: torcheval.metrics.functional.classification.accuracy
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      binary_accuracy
+      multiclass_accuracy
+      multilabel_accuracy
+      topk_multilabel_accuracy
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

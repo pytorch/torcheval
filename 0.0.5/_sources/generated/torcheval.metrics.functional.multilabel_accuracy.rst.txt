@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.multilabel\_accuracy
+=================================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: multilabel_accuracy

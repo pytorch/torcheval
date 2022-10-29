@@ -1,0 +1,30 @@
+torcheval.metrics.functional.classification.auroc
+=================================================
+
+.. automodule:: torcheval.metrics.functional.classification.auroc
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      binary_auroc
+      multiclass_auroc
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

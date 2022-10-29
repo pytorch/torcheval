@@ -1,0 +1,29 @@
+torcheval.metrics.aggregation.sum
+=================================
+
+.. automodule:: torcheval.metrics.aggregation.sum
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Sum
+   
+   
+
+   
+   
+   
+
+
+

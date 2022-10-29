@@ -1,0 +1,30 @@
+torcheval.metrics.functional.classification.precision\_recall\_curve
+====================================================================
+
+.. automodule:: torcheval.metrics.functional.classification.precision_recall_curve
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      binary_precision_recall_curve
+      multiclass_precision_recall_curve
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

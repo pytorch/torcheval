@@ -1,0 +1,29 @@
+torcheval.metrics.ranking.reciprocal\_rank
+==========================================
+
+.. automodule:: torcheval.metrics.ranking.reciprocal_rank
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      ReciprocalRank
+   
+   
+
+   
+   
+   
+
+
+

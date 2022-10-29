@@ -1,0 +1,29 @@
+torcheval.metrics.aggregation.max
+=================================
+
+.. automodule:: torcheval.metrics.aggregation.max
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Max
+   
+   
+
+   
+   
+   
+
+
+

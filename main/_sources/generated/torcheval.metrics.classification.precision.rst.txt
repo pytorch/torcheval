@@ -1,0 +1,30 @@
+torcheval.metrics.classification.precision
+==========================================
+
+.. automodule:: torcheval.metrics.classification.precision
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      BinaryPrecision
+      MulticlassPrecision
+   
+   
+
+   
+   
+   
+
+
+

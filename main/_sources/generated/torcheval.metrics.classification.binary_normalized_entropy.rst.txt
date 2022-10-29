@@ -1,0 +1,29 @@
+torcheval.metrics.classification.binary\_normalized\_entropy
+============================================================
+
+.. automodule:: torcheval.metrics.classification.binary_normalized_entropy
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      BinaryNormalizedEntropy
+   
+   
+
+   
+   
+   
+
+
+
