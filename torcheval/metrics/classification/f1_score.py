@@ -163,9 +163,10 @@ class BinaryF1Score(MulticlassF1Score):
 
     Args:
         threshold (float, optional) : Threshold for converting input into predicted labels for each sample.
-        ``torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
+          ``torch.where(input < threshold, 0, 1)`` will be applied to the ``input``.
 
     Example::
+
         >>> import torch
         >>> from torcheval.metrics import BinaryF1Score
         >>> metric = BinaryF1Score()
