@@ -1,6 +1,0 @@
-torcheval.metrics.functional.ranking.reciprocal\_rank
-=====================================================
-
-.. currentmodule:: torcheval.metrics.functional.ranking
-
-.. autofunction:: reciprocal_rank

@@ -325,9 +325,9 @@
               
   <section id="torcheval">
 <h1>TorchEval<a class="headerlink" href="#torcheval" title="Permalink to this heading">¶</a></h1>
-<p>A library with simple and straightforward tooling for model evalutations and a delightful user experience. At a high level TorchEval:</p>
+<p>A library with simple and straightforward tooling for model evaluations and a delightful user experience. At a high level TorchEval:</p>
 <ol class="arabic simple">
-<li><p>Contains a rich collection of high performance metric calulcations out of the box. We utilize vectorization and GPU acceleration where possible via PyTorch.</p></li>
+<li><p>Contains a rich collection of high performance metric calculations out of the box. We utilize vectorization and GPU acceleration where possible via PyTorch.</p></li>
 <li><p>Integrates seemlessly with distributed training and tools using <a class="reference external" href="https://pytorch.org/tutorials/beginner/dist_overview.html">torch.distributed</a></p></li>
 <li><p>Is designed with extensibility in mind: you have the freedom to easily create your own metrics and leverage our toolkit.</p></li>
 <li><p>Provides tools for profiling memory and compute requirements for PyTorch based models.</p></li>
@@ -371,7 +371,7 @@
 <span class="n">f1_score</span> <span class="o">=</span> <span class="n">binary_f1_score</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We can use the same metric in the class based route, which provides tools that make computation simple in a multi-process settings. On a single device, you can use the class based metrics as follows:</p>
+<p>We can use the same metric in the class based route, which provides tools that make computation simple in a multi-process setting. On a single device, you can use the class based metrics as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torcheval.metrics</span> <span class="kn">import</span> <span class="n">BinaryF1Score</span>
 <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
 <span class="n">metric</span> <span class="o">=</span> <span class="n">BinaryF1Score</span><span class="p">()</span>
@@ -393,7 +393,7 @@
 <section id="further-reading">
 <h2>Further Reading<a class="headerlink" href="#further-reading" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Check out the guides exaplaining the compute example</p></li>
+<li><p>Check out the guides explaining the compute example</p></li>
 <li><p>Check out the distributed example</p></li>
 <li><p>Check out how to make your own metric</p></li>
 </ul>

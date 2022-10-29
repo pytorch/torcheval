@@ -1,9 +1,9 @@
 TorchEval
 ===========================================
 
-A library with simple and straightforward tooling for model evalutations and a delightful user experience. At a high level TorchEval:
+A library with simple and straightforward tooling for model evaluations and a delightful user experience. At a high level TorchEval:
 
-1. Contains a rich collection of high performance metric calulcations out of the box. We utilize vectorization and GPU acceleration where possible via PyTorch.
+1. Contains a rich collection of high performance metric calculations out of the box. We utilize vectorization and GPU acceleration where possible via PyTorch.
 2. Integrates seemlessly with distributed training and tools using `torch.distributed <https://pytorch.org/tutorials/beginner/dist_overview.html>`_
 3. Is designed with extensibility in mind: you have the freedom to easily create your own metrics and leverage our toolkit.
 4. Provides tools for profiling memory and compute requirements for PyTorch based models.
@@ -49,7 +49,7 @@ TorchEval provides two interfaces to each metric. If you are working in a single
    predictions = model(inputs)
    f1_score = binary_f1_score(predictions, targets)
 
-We can use the same metric in the class based route, which provides tools that make computation simple in a multi-process settings. On a single device, you can use the class based metrics as follows:
+We can use the same metric in the class based route, which provides tools that make computation simple in a multi-process setting. On a single device, you can use the class based metrics as follows:
 
 .. code-block:: python
 
@@ -74,7 +74,7 @@ Read more about the class based method in the distributed example.
 
 Further Reading
 -----------------
-* Check out the guides exaplaining the compute example
+* Check out the guides explaining the compute example
 * Check out the distributed example
 * Check out how to make your own metric
 
