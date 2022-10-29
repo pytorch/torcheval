@@ -4,7 +4,7 @@ TorchEval
 A library with simple and straightforward tooling for model evaluations and a delightful user experience. At a high level TorchEval:
 
 1. Contains a rich collection of high performance metric calculations out of the box. We utilize vectorization and GPU acceleration where possible via PyTorch.
-2. Integrates seemlessly with distributed training and tools using `torch.distributed <https://pytorch.org/tutorials/beginner/dist_overview.html>`_
+2. Integrates seamlessly with distributed training and tools using `torch.distributed <https://pytorch.org/tutorials/beginner/dist_overview.html>`_
 3. Is designed with extensibility in mind: you have the freedom to easily create your own metrics and leverage our toolkit.
 4. Provides tools for profiling memory and compute requirements for PyTorch based models.
 

@@ -337,12 +337,11 @@ One vs. rest Multiclass AUROC is equivalent to running a BinaryAUROC with <cite>
 2. The <cite>target</cite> is translated from a 1 dimensional tensor of the correct classes to a 2 dimensional tensor where each row is a list containing which examples belong to that class.</p>
 <p>See examples below for more details on the connection between Multiclass and Binary AUROC.</p>
 <p>The functional version of this metric is <a class="reference internal" href="torcheval.metrics.functional.multiclass_auroc.html#torcheval.metrics.functional.multiclass_auroc" title="torcheval.metrics.functional.multiclass_auroc"><code class="xref py py-func docutils literal notranslate"><span class="pre">torcheval.metrics.functional.multiclass_auroc()</span></code></a>.</p>
-<blockquote>
-<div><dl>
-<dt>Args:</dt><dd><p>num_classes (int): Number of classes.
-average (str, optional):</p>
-<blockquote>
-<div><ul class="simple">
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_classes</strong> (<em>int</em>) – Number of classes.</p></li>
+<li><p><strong>average</strong> (<em>str</em><em>, </em><em>optional</em>) – <ul>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">'macro'</span></code> [default]:</dt><dd><p>Calculate metrics for each class separately, and return their unweighted mean.</p>
 </dd>
@@ -355,10 +354,10 @@ the metric for every class.</p>
 </dl>
 </li>
 </ul>
-</div></blockquote>
+</p></li>
+</ul>
 </dd>
 </dl>
-</div></blockquote>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torcheval.metrics</span> <span class="kn">import</span> <span class="n">MulticlassAUROC</span>
