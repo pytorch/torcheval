@@ -83,11 +83,11 @@ class MetricToolkitTest(unittest.TestCase):
         metric.update(torch.tensor(2.0))
         self.assertDictEqual(clone_metric(metric).state_dict(), metric.state_dict())
         if torch.cuda.is_available():
-            metric.to("cuda")
+            metric.to("cuda:0")
             cloned_metric = clone_metric(metric)
-            self.assertEqual(cloned_metric.device, torch.device("cuda"))
+            self.assertEqual(cloned_metric.device, torch.device("cuda:0"))
             # pyre-ignore[16]: Undefined attribute [16]: `Metric` has no attribute `sum`.
-            self.assertEqual(cloned_metric.sum.device, "cuda")
+            self.assertEqual(cloned_metric.sum.device, torch.device("cuda:0"))
 
     def test_clone_metrics(self) -> None:
         metrics = [DummySumMetric(), DummySumMetric()]
@@ -96,12 +96,12 @@ class MetricToolkitTest(unittest.TestCase):
             self.assertDictEqual(original.state_dict(), clone.state_dict())
 
         if torch.cuda.is_available():
-            metrics = to_device(metrics, torch.device("cuda"))
+            metrics = to_device(metrics, torch.device("cuda:0"))
             cloned = clone_metrics(metrics)
             for original, clone in zip(metrics, cloned):
                 self.assertEqual(original.device, clone.device)
-                self.assertEqual(clone.device, torch.device("cuda"))
-                self.assertEqual(clone.sum.device, torch.device("cuda"))
+                self.assertEqual(clone.device, torch.device("cuda:0"))
+                self.assertEqual(clone.sum.device, torch.device("cuda:0"))
 
     @staticmethod
     def _test_per_process_metric_sync(
