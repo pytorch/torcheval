@@ -14,12 +14,7 @@ import torch
 from torch.nn.parameter import UninitializedParameter
 from torch.utils.hooks import RemovableHandle
 
-from torcheval.tools.flops import (
-    flop_mapping,
-    FlopTensor,
-    instrument_module,
-    start_counting,
-)
+from torcheval.tools.flops import flop_mapping, FlopTensorDispatchMode
 from typing_extensions import Literal
 
 _ATTRIB_TO_COL_HEADER = {
@@ -222,25 +217,21 @@ def _get_module_flops_and_activation_sizes(
 
     # TODO: here we assume module_input should be a single tensor and module's output should be a single tensor.
     #   Need to provide more flexible implementation that support other type of input/output.
-    all_hooks: List[torch.utils.hooks.RemovableHandle] = []
-    instrument_module(module, all_hooks, "")
-    module_input = FlopTensor(module_input)
-    N = len(module_input)
     module.zero_grad()
+    N = len(module_input)
+    with FlopTensorDispatchMode(module) as ftdm:
+        # Count for forward flops (+ compute activation sizes)
+        res = module(module_input).mean()
 
-    # Count for forward flops + compute activation sizes
-    start_counting()
-    res = module(module_input).mean()
+        # detach activation size hook handles
+        for hook_handle in handles:
+            hook_handle.remove()
 
-    # detach activation size hook handles
-    for hook_handle in handles:
-        hook_handle.remove()
-
-    flops_forward = copy.deepcopy(FlopTensor.flop_counts)
-    # Count for backward flops
-    start_counting()
-    res.backward()
-    flops_backward = copy.deepcopy(FlopTensor.flop_counts)
+        flops_forward = copy.deepcopy(ftdm.flop_counts)
+        # Count for backward flops
+        ftdm.reset()
+        res.backward()
+        flops_backward = copy.deepcopy(ftdm.flop_counts)
 
     # Norm FLOPs if N>1
     if N > 1:
@@ -250,8 +241,6 @@ def _get_module_flops_and_activation_sizes(
     # Reverting all the changes:
     module.zero_grad()
     # TODO: Reverting BN: We also need to save status of BN running mean/var before running and revert those.
-    for hood_handle in all_hooks:
-        hood_handle.remove()
     return flops_forward, flops_backward, activation_sizes
 
 

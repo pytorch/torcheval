@@ -9,9 +9,10 @@ import operator
 from collections import defaultdict
 from functools import reduce
 from numbers import Number
-from typing import Any, Callable, DefaultDict, Dict, List, Optional, Tuple
+from typing import Any, Callable, DefaultDict, Dict, List, Tuple
 
 import torch
+from torch.utils._python_dispatch import TorchDispatchMode
 from torch.utils._pytree import PyTree, tree_map
 
 aten: torch._ops._OpNamespace = torch.ops.aten
@@ -166,166 +167,165 @@ def _normalize_tuple(x: Any) -> Tuple[Any]:
     return x
 
 
-# pyre-fixme [13] elem is in __slots__ but obtain an error if initialize it.
-class FlopTensor(torch.Tensor):
-    elem: torch.Tensor
-    flop_counts: DefaultDict[str, DefaultDict[str, int]] = defaultdict(
-        lambda: defaultdict(int)
-    )
-    parents: List[str] = [""]
+class FlopTensorDispatchMode(TorchDispatchMode):
+    """
+    A context manager to measure flops of a module.
 
-    __slots__ = ["elem"]
+    Examples::
 
-    @staticmethod
-    def __new__(cls, elem: torch.Tensor) -> torch.Tensor:
-        # The wrapping tensor (FlopTensor) shouldn't hold any
-        # memory for the class in question, but it should still
-        # advertise the same device as before
-        r = torch.Tensor._make_wrapper_subclass(  # type: ignore[attr-defined]
-            cls,
-            elem.size(),
-            strides=elem.stride(),
-            storage_offset=elem.storage_offset(),
-            # TODO: clone storage aliasing
-            dtype=elem.dtype,
-            layout=elem.layout,
-            device=elem.device,
-            requires_grad=elem.requires_grad,
+        >>> import copy
+        >>> import torch
+        >>> import torchvision.models as models
+        >>> from torcheval.tools.flops import FlopTensorDispatchMode
+
+        >>> module = models.resnet18()
+        >>> inp = torch.randn(1, 3, 224, 224)
+        >>> with FlopTensorDispatchMode(module) as ftdm:
+        >>>     # count forward flops
+        >>>     res = module(module_input).mean()
+        >>>     flops_forward = copy.deepcopy(ftdm.flop_counts)
+
+        >>>     # reset count before counting backward flops
+        >>>     ftdm.reset()
+        >>>     res.backward()
+        >>>     flops_backward = copy.deepcopy(ftdm.flop_counts)
+
+    """
+
+    def __init__(self, module: torch.nn.Module) -> None:
+        """
+        Initializes a FlopTensorDispatchMode context manager object.
+
+        Args:
+            module: The module to count flops on.
+        """
+        self._all_hooks: List[torch.utils.hooks.RemovableHandle] = []
+        self._instrument_module(module, "")
+
+        self.flop_counts: DefaultDict[str, DefaultDict[str, int]] = defaultdict(
+            lambda: defaultdict(int)
         )
-        # ...the real tensor is held as an element on the tensor.
-        r.elem = elem
-        return r
+        self._parents: List[str] = [""]
 
-    def __repr__(self, tensor_contents: Optional[None] = None) -> str:
-        if self.grad_fn:
-            return f"FlopTensor({self.elem}, grad_fn={self.grad_fn})"
-        return f"FlopTensor({self.elem})"
+    # pyre-ignore
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        for hook_handle in self._all_hooks:
+            hook_handle.remove()
+        super().__exit__(exc_type, exc_val, exc_tb)
 
-    @classmethod
     def __torch_dispatch__(
-        cls,
+        self,
         func: Callable[..., Any],  # pyre-ignore [2] func can be any func
         types: Tuple[Any],  # pyre-ignore [2]
         args=(),  # pyre-ignore [2]
         kwargs=None,  # pyre-ignore [2]
     ) -> PyTree:
-        def unwrap(e: torch.Tensor) -> torch.Tensor:
-            return e.elem if isinstance(e, FlopTensor) else e
-
-        # no_dispatch is only needed if you use enable_python_mode.
-        # It prevents infinite recursion.
-        rs = func(*tree_map(unwrap, args), **tree_map(unwrap, kwargs))
+        rs = func(*args, **kwargs)
         outs = _normalize_tuple(rs)
 
         if func in flop_mapping:
-            flop_counts = FlopTensor.flop_counts
             flop_count = flop_mapping[func](args, outs)
-            for par in FlopTensor.parents:
+            for par in self._parents:
                 # pyre-ignore [58]
-                FlopTensor.flop_counts[par][func.__name__] += flop_count
+                self.flop_counts[par][func.__name__] += flop_count
         else:
             logging.debug(f"{func} is not yet supported in FLOPs calculation.")
 
-        def wrap(e: Optional[torch.Tensor]) -> Optional[torch.Tensor]:
-            return FlopTensor(e) if isinstance(e, torch.Tensor) else e
-
-        rs = tree_map(wrap, rs)
         return rs
 
+    # pyre-ignore [3]
+    def _create_backwards_push(self, name: str) -> Callable[..., Any]:
+        class PushState(torch.autograd.Function):
+            @staticmethod
+            def forward(ctx, *args):
+                args = tree_map(
+                    lambda x: x.clone() if isinstance(x, torch.Tensor) else x, args
+                )
+                if len(args) == 1:
+                    return args[0]
+                return args
 
-# pyre-ignore [3]
-def _create_backwards_push(name: str) -> Callable[..., Any]:
-    class PushState(torch.autograd.Function):
-        @staticmethod
-        def forward(ctx, *args):
-            args = tree_map(
-                lambda x: x.clone() if isinstance(x, torch.Tensor) else x, args
-            )
-            if len(args) == 1:
-                return args[0]
-            return args
+            @staticmethod
+            def backward(ctx, *grad_outs):
+                parents = self._parents
+                parents.append(name)
+                return grad_outs
 
-        @staticmethod
-        def backward(ctx, *grad_outs):
-            parents = FlopTensor.parents
+        # Pyre does not support analyzing classes nested in functions.
+        # But this class can't be lifted out of the function as it is a static class
+        # using a function parameter.
+        # pyre-ignore [16]
+        return PushState.apply
+
+    # pyre-ignore [3]
+    def _create_backwards_pop(self, name: str) -> Callable[..., Any]:
+        class PopState(torch.autograd.Function):
+            @staticmethod
+            def forward(ctx, *args):
+                args = tree_map(
+                    lambda x: x.clone() if isinstance(x, torch.Tensor) else x, args
+                )
+                if len(args) == 1:
+                    return args[0]
+                return args
+
+            @staticmethod
+            def backward(ctx, *grad_outs):
+                parents = self._parents
+                assert parents[-1] == name
+                parents.pop()
+                return grad_outs
+
+        # Pyre does not support analyzing classes nested in functions.
+        # But this class can't be lifted out of the function as it is a static class
+        # using a function parameter.
+        # pyre-ignore [16]
+        return PopState.apply
+
+    # pyre-ignore [3] Return a callable function
+    def _enter_module(self, name: str) -> Callable[..., Any]:
+        # pyre-ignore [2, 3]
+        def f(module: torch.nn.Module, inputs: Tuple[Any]):
+            parents = self._parents
             parents.append(name)
-            return grad_outs
+            inputs = _normalize_tuple(inputs)
+            out = self._create_backwards_pop(name)(*inputs)
+            return out
 
-    # Pyre does not support analyzing classes nested in functions.
-    # But this class can't be lifted out of the function as it is a static class
-    # using a function parameter.
-    # pyre-ignore [16]
-    return PushState.apply
+        return f
 
-
-# pyre-ignore [3]
-def _create_backwards_pop(name: str) -> Callable[..., Any]:
-    class PopState(torch.autograd.Function):
-        @staticmethod
-        def forward(ctx, *args):
-            args = tree_map(
-                lambda x: x.clone() if isinstance(x, torch.Tensor) else x, args
-            )
-            if len(args) == 1:
-                return args[0]
-            return args
-
-        @staticmethod
-        def backward(ctx, *grad_outs):
-            parents = FlopTensor.parents
+    # pyre-ignore [3] Return a callable function
+    def _exit_module(self, name: str) -> Callable[..., Any]:
+        # pyre-ignore [2, 3]
+        def f(module: torch.nn.Module, inputs: Tuple[Any], outputs: Tuple[Any]):
+            parents = self._parents
             assert parents[-1] == name
             parents.pop()
-            return grad_outs
+            outputs = _normalize_tuple(outputs)
+            return self._create_backwards_push(name)(*outputs)
 
-    # Pyre does not support analyzing classes nested in functions.
-    # But this class can't be lifted out of the function as it is a static class
-    # using a function parameter.
-    # pyre-ignore [16]
-    return PopState.apply
+        return f
 
+    def _instrument_module(
+        self,
+        mod: torch.nn.Module,
+        par_name: str,
+    ) -> None:
+        for name, module in dict(mod.named_children()).items():
+            formatted_name = name
+            if par_name != "":
+                formatted_name = f"{par_name}.{name}"
+            self._all_hooks.append(
+                module.register_forward_pre_hook(self._enter_module(formatted_name))
+            )
+            self._all_hooks.append(
+                module.register_forward_hook(self._exit_module(formatted_name))
+            )
+            self._instrument_module(module, formatted_name)
 
-# pyre-ignore [3] Return a callable function
-def _enter_module(name: str) -> Callable[..., Any]:
-    # pyre-ignore [2, 3]
-    def f(module: torch.nn.Module, inputs: Tuple[Any]):
-        parents = FlopTensor.parents
-        parents.append(name)
-        inputs = _normalize_tuple(inputs)
-        out = _create_backwards_pop(name)(*inputs)
-        return out
-
-    return f
-
-
-# pyre-ignore [3] Return a callable function
-def _exit_module(name: str) -> Callable[..., Any]:
-    # pyre-ignore [2, 3]
-    def f(module: torch.nn.Module, inputs: Tuple[Any], outputs: Tuple[Any]):
-        parents = FlopTensor.parents
-        assert parents[-1] == name
-        parents.pop()
-        outputs = _normalize_tuple(outputs)
-        return _create_backwards_push(name)(*outputs)
-
-    return f
-
-
-def instrument_module(
-    mod: torch.nn.Module,
-    all_hooks: List[torch.utils.hooks.RemovableHandle],
-    par_name: str,
-) -> None:
-    for name, module in dict(mod.named_children()).items():
-        formatted_name = name
-        if par_name != "":
-            formatted_name = f"{par_name}.{name}"
-        all_hooks.append(
-            module.register_forward_pre_hook(_enter_module(formatted_name))
-        )
-        all_hooks.append(module.register_forward_hook(_exit_module(formatted_name)))
-        instrument_module(module, all_hooks, formatted_name)
-
-
-def start_counting() -> None:
-    FlopTensor.parents = [""]
-    FlopTensor.flop_counts.clear()
+    def reset(self) -> None:
+        """
+        Resets current flop count.
+        """
+        self._parents = [""]
+        self.flop_counts.clear()
