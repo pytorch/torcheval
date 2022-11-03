@@ -248,7 +248,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="torcheval.metrics.html">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torcheval.metrics.functional.html">Functional Metrics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="torcheval.tools.html">tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="torcheval.metrics.toolkit.html">Metric Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="torcheval.tools.html">Module Tools</a></li>
 </ul>
 
             
@@ -473,11 +474,17 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/torcheval.metrics.Cat.html#torcheval.metrics.Cat">Cat (class in torcheval.metrics)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.classwise_converter">classwise_converter() (in module torcheval.metrics.toolkit)</a>
+</li>
       <li><a href="generated/torcheval.metrics.functional.click_through_rate.html#torcheval.metrics.functional.click_through_rate">click_through_rate() (in module torcheval.metrics.functional)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/torcheval.metrics.ClickThroughRate.html#torcheval.metrics.ClickThroughRate">ClickThroughRate (class in torcheval.metrics)</a>
+</li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.clone_metric">clone_metric() (in module torcheval.metrics.toolkit)</a>
+</li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.clone_metrics">clone_metrics() (in module torcheval.metrics.toolkit)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -501,9 +508,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="torcheval.tools.html#torcheval.tools.get_module_summary">get_module_summary() (in module torcheval.tools)</a>
 </li>
+      <li><a href="torcheval.tools.html#torcheval.tools.get_summary_table">get_summary_table() (in module torcheval.tools)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="torcheval.tools.html#torcheval.tools.get_summary_table">get_summary_table() (in module torcheval.tools)</a>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.get_synced_metric">get_synced_metric() (in module torcheval.metrics.toolkit)</a>
+</li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.get_synced_state_dict">get_synced_state_dict() (in module torcheval.metrics.toolkit)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -553,6 +564,8 @@
 </li>
         <li><a href="torcheval.metrics.functional.html#module-torcheval.metrics.functional">torcheval.metrics.functional</a>
 </li>
+        <li><a href="torcheval.metrics.toolkit.html#module-torcheval.metrics.toolkit">torcheval.metrics.toolkit</a>
+</li>
         <li><a href="torcheval.tools.html#module-torcheval.tools">torcheval.tools</a>
 </li>
       </ul></li>
@@ -566,10 +579,10 @@
 </li>
       <li><a href="generated/torcheval.metrics.functional.multiclass_auroc.html#torcheval.metrics.functional.multiclass_auroc">multiclass_auroc() (in module torcheval.metrics.functional)</a>
 </li>
-      <li><a href="generated/torcheval.metrics.functional.multiclass_binned_precision_recall_curve.html#torcheval.metrics.functional.multiclass_binned_precision_recall_curve">multiclass_binned_precision_recall_curve() (in module torcheval.metrics.functional)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.functional.multiclass_binned_precision_recall_curve.html#torcheval.metrics.functional.multiclass_binned_precision_recall_curve">multiclass_binned_precision_recall_curve() (in module torcheval.metrics.functional)</a>
+</li>
       <li><a href="generated/torcheval.metrics.functional.multiclass_confusion_matrix.html#torcheval.metrics.functional.multiclass_confusion_matrix">multiclass_confusion_matrix() (in module torcheval.metrics.functional)</a>
 </li>
       <li><a href="generated/torcheval.metrics.functional.multiclass_f1_score.html#torcheval.metrics.functional.multiclass_f1_score">multiclass_f1_score() (in module torcheval.metrics.functional)</a>
@@ -648,6 +661,8 @@
 </li>
       <li><a href="generated/torcheval.metrics.ReciprocalRank.html#torcheval.metrics.ReciprocalRank">ReciprocalRank (class in torcheval.metrics)</a>
 </li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.reset_metrics">reset_metrics() (in module torcheval.metrics.toolkit)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -664,6 +679,8 @@
 </li>
       <li><a href="generated/torcheval.metrics.functional.sum.html#torcheval.metrics.functional.sum">sum() (in module torcheval.metrics.functional)</a>
 </li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.sync_and_compute">sync_and_compute() (in module torcheval.metrics.toolkit)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -673,6 +690,8 @@
       <li><a href="generated/torcheval.metrics.Throughput.html#torcheval.metrics.Throughput">Throughput (class in torcheval.metrics)</a>
 </li>
       <li><a href="generated/torcheval.metrics.functional.throughput.html#torcheval.metrics.functional.throughput">throughput() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.to_device">to_device() (in module torcheval.metrics.toolkit)</a>
 </li>
       <li><a href="generated/torcheval.metrics.functional.topk_multilabel_accuracy.html#torcheval.metrics.functional.topk_multilabel_accuracy">topk_multilabel_accuracy() (in module torcheval.metrics.functional)</a>
 </li>
@@ -692,6 +711,13 @@
 
       <ul>
         <li><a href="torcheval.metrics.functional.html#module-torcheval.metrics.functional">module</a>
+</li>
+      </ul></li>
+      <li>
+    torcheval.metrics.toolkit
+
+      <ul>
+        <li><a href="torcheval.metrics.toolkit.html#module-torcheval.metrics.toolkit">module</a>
 </li>
       </ul></li>
       <li>

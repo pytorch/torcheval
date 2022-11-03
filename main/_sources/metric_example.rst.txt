@@ -1,3 +1,5 @@
+.. currentmodule:: torcheval
+
 Use Metrics in TorchEval
 ========================
 
