@@ -1,4 +1,6 @@
-tools
+.. currentmodule:: torcheval
+
+Module Tools
 =============
 
 .. automodule:: torcheval.tools

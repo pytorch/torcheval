@@ -1,8 +1,9 @@
+.. currentmodule:: torcheval.metrics
+
 Metrics
 =============
 
 .. automodule:: torcheval.metrics
-.. currentmodule:: torcheval.metrics
 
 
 Aggregation Metrics
