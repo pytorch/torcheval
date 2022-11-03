@@ -6,7 +6,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-from typing import Optional
+from typing import Any, Dict, Optional, Tuple
 
 import torch
 import torchvision.models as models
@@ -22,10 +22,14 @@ def get_summary_and_prune(
     model: torch.nn.Module,
     *,
     max_depth: int,
-    module_input: Optional[torch.Tensor] = None,
+    # pyre-ignore
+    module_args: Optional[Tuple[Any, ...]] = None,
+    module_kwargs: Optional[Dict[str, Any]] = None,
 ) -> ModuleSummary:
     """Utility function to get module summary and then prune it"""
-    module_summary = get_module_summary(model, module_input=module_input)
+    module_summary = get_module_summary(
+        model, module_args=module_args, module_kwargs=module_kwargs
+    )
     prune_module_summary(module_summary, max_depth=max_depth)
     return module_summary
 
@@ -43,7 +47,7 @@ class ModuleSummaryTest(unittest.TestCase):
         """Make sure ModuleSummary works for a single layer."""
         model = torch.nn.Conv2d(3, 8, 3)
         ms1 = get_module_summary(model)
-        ms2 = get_module_summary(model, module_input=torch.randn(1, 3, 8, 8))
+        ms2 = get_module_summary(model, module_args=(torch.randn(1, 3, 8, 8),))
 
         self.assertEqual(ms1.module_name, "")
         self.assertEqual(ms1.module_type, "Conv2d")
@@ -68,24 +72,6 @@ class ModuleSummaryTest(unittest.TestCase):
         self.assertEqual(ms2.in_size, [1, 3, 8, 8])
         self.assertEqual(ms2.out_size, [1, 8, 6, 6])
 
-    def test_flops_with_Batch(self) -> None:
-        """Make sure FLOPs calculate are the same when input data has different batch size."""
-        model = torch.nn.Sequential(torch.nn.Conv2d(3, 8, 3), torch.nn.Conv2d(8, 5, 3))
-        ms1 = get_module_summary(model, module_input=torch.randn(1, 3, 8, 8))
-        ms3 = get_module_summary(model, module_input=torch.randn(3, 3, 8, 8))
-        self.assertEqual(ms3.flops_forward, 13536)
-        self.assertEqual(ms3.flops_backward, 19296)
-        self.assertEqual(ms1.flops_forward, 13536)
-        self.assertEqual(ms1.flops_backward, 19296)
-        self.assertEqual(ms3.submodule_summaries["0"].flops_forward, 7776)
-        self.assertEqual(ms3.submodule_summaries["0"].flops_backward, 7776)
-        self.assertEqual(ms1.submodule_summaries["0"].flops_forward, 7776)
-        self.assertEqual(ms1.submodule_summaries["0"].flops_backward, 7776)
-        self.assertEqual(ms3.submodule_summaries["1"].flops_forward, 5760)
-        self.assertEqual(ms3.submodule_summaries["1"].flops_backward, 11520)
-        self.assertEqual(ms1.submodule_summaries["1"].flops_forward, 5760)
-        self.assertEqual(ms1.submodule_summaries["1"].flops_backward, 11520)
-
     def test_activation_size(self) -> None:
         """Make sure activation size is correct for more complex module"""
 
@@ -105,7 +91,7 @@ class ModuleSummaryTest(unittest.TestCase):
                 return x
 
         model = TestModule()
-        ms = get_module_summary(model, torch.randn(1, 3, 10, 10))
+        ms = get_module_summary(model, (torch.randn(1, 3, 10, 10),))
         self.assertEqual(ms.module_name, "")
         self.assertEqual(ms.in_size, [1, 3, 10, 10])
         self.assertEqual(ms.out_size, [1, 3, 10, 3])
@@ -158,7 +144,7 @@ class ModuleSummaryTest(unittest.TestCase):
         """Check for warnings when passing in a lazy weight Tensor
         Even when asking for flops calculation."""
         model = torch.nn.LazyLinear(10)
-        ms = get_module_summary(model, module_input=torch.randn(1, 10))
+        ms = get_module_summary(model, module_args=(torch.randn(1, 10),))
         with self.assertWarns(Warning):
             ms.num_parameters
         with self.assertWarns(Warning):
@@ -197,7 +183,7 @@ class ModuleSummaryTest(unittest.TestCase):
             "layer2.0", ms3.submodule_summaries["layer2"].submodule_summaries
         )
         inp = torch.randn(1, 3, 224, 224)
-        ms4 = get_summary_and_prune(pretrained_model, max_depth=2, module_input=inp)
+        ms4 = get_summary_and_prune(pretrained_model, max_depth=2, module_args=(inp,))
 
         self.assertEqual(len(ms4.submodule_summaries), 10)
         self.assertEqual(ms4.flops_forward, 1814073344)
@@ -253,10 +239,10 @@ classifier | Sequential        | 58.6 M       | 58.6 M                 | 234 M  
     def test_alexnet_print_flops(self) -> None:
         pretrained_model = models.alexnet(pretrained=True)
         inp = torch.randn(1, 3, 224, 224)
-        ms1 = get_summary_and_prune(pretrained_model, max_depth=1, module_input=inp)
-        ms2 = get_summary_and_prune(pretrained_model, max_depth=2, module_input=inp)
-        ms3 = get_summary_and_prune(pretrained_model, max_depth=3, module_input=inp)
-        ms4 = get_module_summary(pretrained_model, module_input=inp)
+        ms1 = get_summary_and_prune(pretrained_model, max_depth=1, module_args=(inp,))
+        ms2 = get_summary_and_prune(pretrained_model, max_depth=2, module_args=(inp,))
+        ms3 = get_summary_and_prune(pretrained_model, max_depth=3, module_args=(inp,))
+        ms4 = get_module_summary(pretrained_model, module_args=(inp,))
 
         summary_table1 = """
 Name | Type    | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameters? | Forward FLOPs | Backward FLOPs | In size          | Out size
@@ -292,3 +278,42 @@ classifier | Sequential        | 58.6 M       | 58.6 M                 | 234 M  
         self.assertEqual(_get_human_readable_count(int(1e9)), "1.0 B")
         self.assertEqual(_get_human_readable_count(int(1e12)), "1.0 T")
         self.assertEqual(_get_human_readable_count(int(1e15)), "1,000 T")
+
+    def test_module_summary_multiple_inputs(self) -> None:
+        class SimpleConv(torch.nn.Module):
+            def __init__(self):
+                super(SimpleConv, self).__init__()
+                self.features = torch.nn.Sequential(
+                    torch.nn.Conv2d(1, 1, kernel_size=3, stride=1, padding=1),
+                    torch.nn.ReLU(inplace=True),
+                )
+                self.offset = 1
+
+            def forward(self, x, y, offset=1):
+                self.offset = offset
+                x1 = self.features(x)
+                x2 = self.features(y)
+                x = torch.cat((x1, x2), 1)
+                return x
+
+        summary_table = """
+Name       | Type       | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameters? | Forward FLOPs | Backward FLOPs | In size                              | Out size
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+           | SimpleConv | 10           | 10                     | 40           | No                                 | 903 k         | 903 k          | [[1, 1, 224, 224], [1, 1, 224, 224]] | [1, 2, 224, 224]
+features   | Sequential | 10           | 10                     | 40           | No                                 | 903 k         | 1.4 M          | [1, 1, 224, 224]                     | [1, 1, 224, 224]
+features.0 | Conv2d     | 10           | 10                     | 40           | No                                 | 903 k         | 1.4 M          | [1, 1, 224, 224]                     | [1, 1, 224, 224]
+features.1 | ReLU       | 0            | 0                      | 0            | No                                 | 0             | 0              | [1, 1, 224, 224]                     | [1, 1, 224, 224]
+"""
+
+        model = SimpleConv()
+        x = torch.randn(1, 1, 224, 224)
+        y = torch.randn(1, 1, 224, 224)
+
+        ms1 = get_summary_and_prune(model, max_depth=3, module_args=(x, y))
+        self.assertEqual(1, model.offset)
+        ms2 = get_summary_and_prune(
+            model, max_depth=3, module_args=(x, y), module_kwargs={"offset": 3}
+        )
+        self._test_module_summary_text(summary_table, str(ms1))
+        self._test_module_summary_text(summary_table, str(ms2))
+        self.assertEqual(3, model.offset)

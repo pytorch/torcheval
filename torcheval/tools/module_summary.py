@@ -12,6 +12,7 @@ from typing import Any, Callable, DefaultDict, Deque, Dict, List, Optional, Tupl
 
 import torch
 from torch.nn.parameter import UninitializedParameter
+from torch.utils._pytree import PyTree, tree_flatten
 from torch.utils.hooks import RemovableHandle
 
 from torcheval.tools.flops import flop_mapping, FlopTensorDispatchMode
@@ -172,7 +173,10 @@ def _clean_flops(flop: DefaultDict[str, DefaultDict[str, int]], N: int) -> None:
 
 
 def _get_module_flops_and_activation_sizes(
-    module: torch.nn.Module, module_input: torch.Tensor
+    module: torch.nn.Module,
+    # pyre-ignore
+    module_args: Optional[Tuple[Any, ...]] = None,
+    module_kwargs: Optional[Dict[str, Any]] = None,
 ) -> Tuple[
     DefaultDict[str, DefaultDict[str, int]],  # mapping to store forward flops
     DefaultDict[str, DefaultDict[str, int]],  # mapping to store backward flops
@@ -215,28 +219,26 @@ def _get_module_flops_and_activation_sizes(
     else:
         warnings.warn("Registering hooks on torch.jit.ScriptModule is not supported.")
 
-    # TODO: here we assume module_input should be a single tensor and module's output should be a single tensor.
-    #   Need to provide more flexible implementation that support other type of input/output.
+    # TODO: here we assume module's output should be a single tensor.
+    #   Need to provide more flexible implementation that support other types of output.
     module.zero_grad()
-    N = len(module_input)
     with FlopTensorDispatchMode(module) as ftdm:
         # Count for forward flops (+ compute activation sizes)
-        res = module(module_input).mean()
+        module_args = module_args or ()
+        module_kwargs = module_kwargs or {}
+        res = module(*module_args, **module_kwargs)
 
         # detach activation size hook handles
         for hook_handle in handles:
             hook_handle.remove()
 
         flops_forward = copy.deepcopy(ftdm.flop_counts)
-        # Count for backward flops
-        ftdm.reset()
-        res.backward()
-        flops_backward = copy.deepcopy(ftdm.flop_counts)
-
-    # Norm FLOPs if N>1
-    if N > 1:
-        _clean_flops(flops_forward, N)
-        _clean_flops(flops_backward, N)
+        flops_backward = None
+        if isinstance(res, torch.Tensor):
+            # Count for backward flops
+            ftdm.reset()
+            res.mean().backward()
+            flops_backward = copy.deepcopy(ftdm.flop_counts)
 
     # Reverting all the changes:
     module.zero_grad()
@@ -251,24 +253,34 @@ def _has_uninitialized_param(module: torch.nn.Module) -> bool:
     return False
 
 
+def _has_tensor(item: Optional[PyTree]) -> bool:
+    flattened_list, _ = tree_flatten(item)
+    for ele in flattened_list:
+        if isinstance(ele, torch.Tensor):
+            return True
+    return False
+
+
 def get_module_summary(
     module: torch.nn.Module,
-    module_input: Optional[torch.Tensor] = None,
+    # pyre-ignore
+    module_args: Optional[Tuple[Any, ...]] = None,
+    module_kwargs: Optional[Dict[str, Any]] = None,
 ) -> ModuleSummary:
     """
     Generate a :class:`~ModuleSummary` object, then assign its values and generate submodule tree.
 
     Args:
         module: The module to be summarized.
-        module_input: An input for the module to run and calculate FLOPs.
+        module_args: A tuple of arguments for the module to run and calculate FLOPs and activation sizes.
+        module_kwargs: Any kwarg arguments to be passed into the module's forward function.
 
             Note:
               If module contains any lazy submodule, we will NOT calculate FLOPs.
-              It should only contain 1 sample (i.e. batch_size=1), otherwise, we will return FLOPs = total FLOPs / len(module_input).
 
             Note:
-              Currently only modules that take a single tensor (i.e. module_input should be a torch.Tensor)
-              and outputs a single tensor are supported. TODO: to support more flexible input and output for module.
+              Currently only modules that output a single tensor are supported.
+              TODO: to support more flexible output for module.
 
     """
 
@@ -278,12 +290,23 @@ def get_module_summary(
         str, Tuple[Union[TUnknown, List[int]], Union[TUnknown, List[int]]]
     ] = {}
     has_uninitialized_param = _has_uninitialized_param(module)
-    if module_input is not None and not has_uninitialized_param:
-        (
-            flops_forward,
-            flops_backward,
-            activation_sizes,
-        ) = _get_module_flops_and_activation_sizes(module, module_input)
+    if not has_uninitialized_param:
+        has_tensor_in_args = _has_tensor(module_args)
+        has_tensor_in_kwargs = _has_tensor(module_kwargs)
+        if has_tensor_in_kwargs:
+            warnings.warn(
+                "A tensor in kwargs was found. This may lead to an inaccurately computed activation size, as keyword arguments are not passed into forward hooks for modules. "
+                "For best results, please input tensors though args."
+            )
+        if has_tensor_in_args or has_tensor_in_kwargs:
+            (
+                flops_forward,
+                flops_backward,
+                activation_sizes,
+            ) = _get_module_flops_and_activation_sizes(
+                module, module_args, module_kwargs
+            )
+
     return _generate_module_summary(
         module,
         "",
