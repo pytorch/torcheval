@@ -12,6 +12,7 @@ import torch
 import torch.distributed as dist
 
 from torcheval.metrics import Metric
+from torcheval.metrics.metric import TComputeReturn
 
 from torchtnt.utils import PGWrapper
 from typing_extensions import Literal
@@ -20,12 +21,12 @@ log: logging.Logger = logging.getLogger(__name__)
 
 _TMetrics = TypeVar("_TMetrics", bound=Iterable[Metric])
 
-# pyre-ignore[3]: compute result can be type Any.
+
 def sync_and_compute(
-    metric: Metric,
+    metric: Metric[TComputeReturn],
     process_group: Optional[dist.ProcessGroup] = None,
     recipient_rank: Union[int, Literal["all"]] = 0,
-) -> Optional[Any]:
+) -> Optional[TComputeReturn]:
     """
     Sync metric states and returns the ``metric.compute()`` result of
     synced metric on recipient rank. Return ``None`` on other ranks.
