@@ -97,13 +97,14 @@ def _update(
     return sum_squared_error, sum_weight
 
 
-@torch.jit.script
 def _mean_squared_error_compute(
     sum_squared_error: torch.Tensor,
     multioutput: str,
     sum_weight: torch.Tensor,
 ) -> torch.Tensor:
-    raw_values = sum_squared_error / sum_weight
+    eps = torch.finfo(torch.float64).eps
+    sign = sum_weight.sign()
+    raw_values = sum_squared_error / (sum_weight.abs().clamp(min=eps) * sign)
     if multioutput == "raw_values":
         return raw_values
     else:
