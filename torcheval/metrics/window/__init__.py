@@ -6,6 +6,7 @@
 
 from torcheval.metrics.window.auroc import WindowedBinaryAUROC
 from torcheval.metrics.window.click_through_rate import WindowedClickThroughRate
+from torcheval.metrics.window.mean_squared_error import WindowedMeanSquaredError
 from torcheval.metrics.window.normalized_entropy import WindowedBinaryNormalizedEntropy
 from torcheval.metrics.window.weighted_calibration import WindowedWeightedCalibration
 
@@ -13,5 +14,6 @@ __all__ = [
     "WindowedBinaryAUROC",
     "WindowedBinaryNormalizedEntropy",
     "WindowedClickThroughRate",
+    "WindowedMeanSquaredError",
     "WindowedWeightedCalibration",
 ]
