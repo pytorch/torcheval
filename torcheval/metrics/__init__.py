@@ -41,6 +41,7 @@ from torcheval.metrics.window import (
     WindowedBinaryAUROC,
     WindowedBinaryNormalizedEntropy,
     WindowedClickThroughRate,
+    WindowedMeanSquaredError,
     WindowedWeightedCalibration,
 )
 
@@ -87,5 +88,6 @@ __all__ = [
     "WindowedBinaryAUROC",
     "WindowedBinaryNormalizedEntropy",
     "WindowedClickThroughRate",
+    "WindowedMeanSquaredError",
     "WindowedWeightedCalibration",
 ]
