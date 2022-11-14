@@ -15,18 +15,23 @@ from torcheval.metrics.functional.classification.precision_recall_curve import (
     _binary_precision_recall_curve_update,
     _multiclass_precision_recall_curve_compute,
     _multiclass_precision_recall_curve_update,
+    _multilabel_precision_recall_curve_compute,
+    _multilabel_precision_recall_curve_update,
 )
 from torcheval.metrics.metric import Metric
 
 """
-This file contains BinaryPrecisionRecallCurve and MulticlassPrecisionRecallCurve classes.
+This file contains BinaryPrecisionRecallCurve, MulticlassPrecisionRecallCurve and MultilabelPrecisionRecallCurve classes.
 """
 
 TBinaryPrecisionRecallCurve = TypeVar("TBinaryPrecisionRecallCurve")
 TMulticlassPrecisionRecallCurve = TypeVar("TMulticlassPrecisionRecallCurve")
+TMultilabelPrecisionRecallCurve = TypeVar("TMultilabelPrecisionRecallCurve")
 
 
-class BinaryPrecisionRecallCurve(Metric[torch.Tensor]):
+class BinaryPrecisionRecallCurve(
+    Metric[Tuple[torch.Tensor, torch.Tensor, torch.Tensor]]
+):
     """
     Returns precision-recall pairs and their corresponding thresholds for
     binary classification tasks. If a class is missing from the target tensor,
@@ -79,7 +84,6 @@ class BinaryPrecisionRecallCurve(Metric[torch.Tensor]):
         return self
 
     @torch.inference_mode()
-    # pyre-ignore[15]: compute() return tuple of precision, recall and thresholds
     def compute(
         self: TBinaryPrecisionRecallCurve,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
@@ -114,7 +118,9 @@ class BinaryPrecisionRecallCurve(Metric[torch.Tensor]):
             self.targets = [torch.cat(self.targets)]
 
 
-class MulticlassPrecisionRecallCurve(Metric[torch.Tensor]):
+class MulticlassPrecisionRecallCurve(
+    Metric[Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]]
+):
     """
     Returns precision-recall pairs and their corresponding thresholds for
     multi-class classification tasks. If a class is missing from the target
@@ -185,7 +191,6 @@ class MulticlassPrecisionRecallCurve(Metric[torch.Tensor]):
         return self
 
     @torch.inference_mode()
-    # pyre-ignore[15]: compute() return tuple of precision, recall and thresholds
     def compute(
         self: TMulticlassPrecisionRecallCurve,
     ) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]:
@@ -206,6 +211,109 @@ class MulticlassPrecisionRecallCurve(Metric[torch.Tensor]):
         self: TMulticlassPrecisionRecallCurve,
         metrics: Iterable[TMulticlassPrecisionRecallCurve],
     ) -> TMulticlassPrecisionRecallCurve:
+        for metric in metrics:
+            if metric.inputs:
+                metric_inputs = torch.cat(metric.inputs).to(self.device)
+                metric_targets = torch.cat(metric.targets).to(self.device)
+                self.inputs.append(metric_inputs)
+                self.targets.append(metric_targets)
+        return self
+
+    @torch.inference_mode()
+    def _prepare_for_merge_state(self: TMulticlassPrecisionRecallCurve) -> None:
+        if self.inputs and self.targets:
+            self.inputs = [torch.cat(self.inputs)]
+            self.targets = [torch.cat(self.targets)]
+
+
+class MultilabelPrecisionRecallCurve(
+    Metric[Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]]
+):
+    """
+    Returns precision-recall pairs and their corresponding thresholds for
+    multi-label classification tasks. If there are no samples for a label
+    in the target tensor, its recall values are set to 1.0.
+
+    Its class version is :func:`torcheval.metrics.functional.multilabel_precision_recall_curve`.
+
+    Args:
+        num_labels (int): Number of labels.
+
+    Examples::
+
+        >>> import torch
+        >>> from torcheval.metrics import MultilabelPrecisionRecallCurve
+        >>> metric = MultilabelPrecisionRecallCurve(num_labels=3)
+        >>> input = torch.tensor([[0.75, 0.05, 0.35], [0.45, 0.75, 0.05], [0.05, 0.55, 0.75], [0.05, 0.65, 0.05]])
+        >>> target = torch.tensor([[1, 0, 1], [0, 0, 0], [0, 1, 1], [1, 1, 1]])
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        ([tensor([0.5, 0.5, 1.0, 1.0]),
+        tensor([0.5, 0.66666667, 0.5, 0.0, 1.0]),
+        tensor([0.75, 1.0, 1.0, 1.0])],
+        [tensor([1.0, 0.5, 0.5, 0.0]),
+        tensor([1.0, 1.0, 0.5, 0.0, 0.0]),
+        tensor([1.0, 0.66666667, 0.33333333, 0.0])],
+        [tensor([0.05, 0.45, 0.75]),
+        tensor([0.05, 0.55, 0.65, 0.75]),
+        tensor([0.05, 0.35, 0.75])])
+    """
+
+    def __init__(
+        self: TMultilabelPrecisionRecallCurve,
+        *,
+        num_labels: int,
+        device: Optional[torch.device] = None,
+    ) -> None:
+        super().__init__(device=device)
+        self.num_labels = num_labels
+        self._add_state("inputs", [])
+        self._add_state("targets", [])
+
+    @torch.inference_mode()
+    # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
+    def update(
+        self: TMultilabelPrecisionRecallCurve,
+        input: torch.Tensor,
+        target: torch.Tensor,
+    ) -> TMultilabelPrecisionRecallCurve:
+        """
+        Update states with the ground truth labels and predictions.
+
+        Args:
+            input (Tensor): Tensor of label predictions
+                It should be the probabilites with shape of (n_samples, n_labels).
+            target (Tensor):Tensor of ground truth labels with shape of (n_samples, n_labels).
+        """
+        _multilabel_precision_recall_curve_update(
+            input,
+            target,
+            self.num_labels,
+        )
+        self.inputs.append(input)
+        self.targets.append(target)
+        return self
+
+    @torch.inference_mode()
+    def compute(
+        self: TMultilabelPrecisionRecallCurve,
+    ) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]:
+        """
+        Returns:
+
+            - precision: List of precision result. Each index indicates the result of a label.
+            - recall: List of recall result. Each index indicates the result of a label.
+            - thresholds: List of threshold. Each index indicates the result of a label.
+        """
+        return _multilabel_precision_recall_curve_compute(
+            torch.cat(self.inputs), torch.cat(self.targets), self.num_labels
+        )
+
+    @torch.inference_mode()
+    def merge_state(
+        self: TMultilabelPrecisionRecallCurve,
+        metrics: Iterable[TMultilabelPrecisionRecallCurve],
+    ) -> TMultilabelPrecisionRecallCurve:
         for metric in metrics:
             if metric.inputs:
                 metric_inputs = torch.cat(metric.inputs).to(self.device)

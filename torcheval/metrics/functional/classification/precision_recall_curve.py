@@ -11,7 +11,7 @@ import torch
 import torch.nn.functional as F
 
 """
-This file contains binary_precision_recall_curve and multiclass_precision_recall_curve functions.
+This file contains binary_precision_recall_curve, multiclass_precision_recall_curve and multilabel_precision_recall_curve functions.
 """
 
 
@@ -227,3 +227,95 @@ def _compute_for_each_class(
         recall = torch.nan_to_num(recall, 1.0)
 
     return precision, recall, threshold
+
+
+@torch.inference_mode()
+def multilabel_precision_recall_curve(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    *,
+    num_labels: int,
+) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]:
+    """
+    Returns precision-recall pairs and their corresponding thresholds for
+    multi-label classification tasks. If there are no samples for a label
+    in the target tensor, its recall values are set to 1.0.
+
+    Its class version is ``torcheval.metrics.MultilabelPrecisionRecallCurve``.
+
+    Args:
+        input (Tensor): Tensor of label predictions
+            It should be probabilities or logits with shape of (n_sample, n_label).
+        target (Tensor): Tensor of ground truth labels with shape of (n_samples, n_label).
+        num_labels (int): Number of labels.
+
+    Return:
+        a tuple of (precision: List[torch.Tensor], recall: List[torch.Tensor], thresholds: List[torch.Tensor])
+            precision: List of precision result. Each index indicates the result of a label.
+            recall: List of recall result. Each index indicates the result of a label.
+            thresholds: List of threshold. Each index indicates the result of a label.
+
+    Examples::
+
+        >>> import torch
+        >>> from torcheval.metrics.functional import multilabel_precision_recall_curve
+        >>> input = torch.tensor([[0.75, 0.05, 0.35], [0.45, 0.75, 0.05], [0.05, 0.55, 0.75], [0.05, 0.65, 0.05]])
+        >>> target = torch.tensor([[1, 0, 1], [0, 0, 0], [0, 1, 1], [1, 1, 1]])
+        >>> multilabel_precision_recall_curve(input, target, num_labels=3)
+        ([tensor([0.5, 0.5, 1.0, 1.0]),
+        tensor([0.5, 0.66666667, 0.5, 0.0, 1.0]),
+        tensor([0.75, 1.0, 1.0, 1.0])],
+        [tensor([1.0, 0.5, 0.5, 0.0]),
+        tensor([1.0, 1.0, 0.5, 0.0, 0.0]),
+        tensor([1.0, 0.66666667, 0.33333333, 0.0])],
+        [tensor([0.05, 0.45, 0.75]),
+        tensor([0.05, 0.55, 0.65, 0.75]),
+        tensor([0.05, 0.35, 0.75])])
+    """
+    if num_labels is None and input.ndim == 2:
+        num_labels = input.shape[1]
+    _multilabel_precision_recall_curve_update(input, target, num_labels)
+    return _multilabel_precision_recall_curve_compute(input, target, num_labels)
+
+
+def _multilabel_precision_recall_curve_update(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    num_labels: int,
+) -> None:
+    _multilabel_precision_recall_curve_update_input_check(input, target, num_labels)
+
+
+@torch.jit.script
+def _multilabel_precision_recall_curve_compute(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    num_labels: int,
+) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]:
+    precisions, recalls, thresholds = [], [], []
+    for i in range(num_labels):
+        precision, recall, threshold = _compute_for_each_class(
+            input[:, i], target[:, i], 1
+        )
+        precisions.append(precision)
+        recalls.append(recall)
+        thresholds.append(threshold)
+    return precisions, recalls, thresholds
+
+
+def _multilabel_precision_recall_curve_update_input_check(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    num_labels: int,
+) -> None:
+    if input.shape != target.shape:
+        raise ValueError(
+            "Expected both input.shape and target.shape to have the same shape"
+            f" but got {input.shape} and {target.shape}."
+        )
+
+    if input.shape[1] != num_labels:
+        raise ValueError(
+            f"input should have shape of (num_sample, num_labels), "
+            f"got {input.shape} and num_labels={num_labels}."
+        )

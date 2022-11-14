@@ -27,6 +27,7 @@ from torcheval.metrics.classification import (
     MulticlassPrecisionRecallCurve,
     MulticlassRecall,
     MultilabelAccuracy,
+    MultilabelPrecisionRecallCurve,
     TopKMultilabelAccuracy,
 )
 from torcheval.metrics.metric import Metric
@@ -79,6 +80,7 @@ __all__ = [
     "MulticlassPrecisionRecallCurve",
     "MulticlassRecall",
     "MultilabelAccuracy",
+    "MultilabelPrecisionRecallCurve",
     "TopKMultilabelAccuracy",
     "R2Score",
     "ReciprocalRank",
