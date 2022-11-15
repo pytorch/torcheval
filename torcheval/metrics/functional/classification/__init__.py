@@ -41,6 +41,7 @@ from torcheval.metrics.functional.classification.precision import (
 from torcheval.metrics.functional.classification.precision_recall_curve import (
     binary_precision_recall_curve,
     multiclass_precision_recall_curve,
+    multilabel_precision_recall_curve,
 )
 from torcheval.metrics.functional.classification.recall import (
     binary_recall,
@@ -68,5 +69,6 @@ __all__ = [
     "multiclass_precision_recall_curve",
     "multiclass_recall",
     "multilabel_accuracy",
+    "multilabel_precision_recall_curve",
     "topk_multilabel_accuracy",
 ]

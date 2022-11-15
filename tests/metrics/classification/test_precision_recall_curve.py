@@ -10,7 +10,11 @@ import torch
 
 from torch.nn import functional as F
 
-from torcheval.metrics import BinaryPrecisionRecallCurve, MulticlassPrecisionRecallCurve
+from torcheval.metrics import (
+    BinaryPrecisionRecallCurve,
+    MulticlassPrecisionRecallCurve,
+    MultilabelPrecisionRecallCurve,
+)
 from torcheval.metrics.functional.classification.precision_recall_curve import (
     binary_precision_recall_curve,
 )
@@ -245,3 +249,125 @@ class TestMulticlassPrecisionRecallCurve(MetricClassTester):
         ):
             metric = MulticlassPrecisionRecallCurve(num_classes=2)
             metric.update(torch.rand(3, 4), torch.rand(3))
+
+
+class TestMultilabelPrecisionRecallCurve(MetricClassTester):
+    def _test_multilabel_precision_recall_curve_class_with_input(
+        self,
+        input: torch.Tensor,
+        target: torch.Tensor,
+        num_labels: Optional[int] = None,
+    ) -> None:
+        input_tensors = input.reshape(-1, 1)
+        target_tensors = target.reshape(-1, 1)
+        assert isinstance(num_labels, int)
+        input_tensors = input.reshape(-1, num_labels)
+        target_tensors = target.reshape(-1, num_labels)
+        precision, recall, thresholds = [], [], []
+        for idx in range(num_labels):
+            p, r, t = binary_precision_recall_curve(
+                input_tensors[:, idx],
+                target_tensors[:, idx],
+            )
+            precision.append(p)
+            recall.append(r)
+            thresholds.append(t)
+
+        compute_result = (precision, recall, thresholds)
+        self.run_class_implementation_tests(
+            metric=MultilabelPrecisionRecallCurve(num_labels=num_labels),
+            state_names={"inputs", "targets"},
+            update_kwargs={
+                "input": input,
+                "target": target,
+            },
+            compute_result=compute_result,
+        )
+
+    def test_multilabel_precision_recall_curve_class_base(self) -> None:
+        num_labels = 4
+        input = torch.rand(NUM_TOTAL_UPDATES, BATCH_SIZE, num_labels)
+        target = torch.randint(high=2, size=(NUM_TOTAL_UPDATES, BATCH_SIZE, num_labels))
+        self._test_multilabel_precision_recall_curve_class_with_input(
+            input, target, num_labels=num_labels
+        )
+
+    def test_multilabel_precision_recall_curve_label_not_exist(self) -> None:
+        num_labels = 4
+        input = torch.rand(NUM_TOTAL_UPDATES, BATCH_SIZE, num_labels)
+        target = torch.randint(high=2, size=(NUM_TOTAL_UPDATES, BATCH_SIZE, num_labels))
+        # change last entries in target to 0
+        target[:, :, -1] = 0
+        self._test_multilabel_precision_recall_curve_class_with_input(
+            input, target, num_labels=num_labels
+        )
+
+        num_labels = 8
+        input = torch.rand(NUM_TOTAL_UPDATES, BATCH_SIZE, num_labels)
+        target = torch.randint(high=2, size=(NUM_TOTAL_UPDATES, BATCH_SIZE, num_labels))
+        target[:, :, 0] = 0
+        self._test_multilabel_precision_recall_curve_class_with_input(
+            input, target, num_labels=num_labels
+        )
+
+    def test_multilabel_precision_recall_curve_update_input_shape_different(
+        self,
+    ) -> None:
+        num_labels = 3
+        update_input = [
+            torch.rand(5, num_labels),
+            torch.rand(8, num_labels),
+            torch.rand(2, num_labels),
+            torch.rand(5, num_labels),
+        ]
+
+        update_target = [
+            torch.randint(high=2, size=(5, num_labels)),
+            torch.randint(high=2, size=(8, num_labels)),
+            torch.randint(high=2, size=(2, num_labels)),
+            torch.randint(high=2, size=(5, num_labels)),
+        ]
+
+        input_tensors = torch.cat(update_input, dim=0)
+        target_tensors = torch.cat(update_target, dim=0)
+
+        precision, recall, thresholds = [], [], []
+        for idx in range(num_labels):
+            p, r, t = binary_precision_recall_curve(
+                input_tensors[:, idx],
+                target_tensors[:, idx],
+            )
+            precision.append(p)
+            recall.append(r)
+            thresholds.append(t)
+
+        compute_result = (precision, recall, thresholds)
+
+        self.run_class_implementation_tests(
+            metric=MultilabelPrecisionRecallCurve(num_labels=3),
+            state_names={"inputs", "targets"},
+            update_kwargs={
+                "input": update_input,
+                "target": update_target,
+            },
+            compute_result=tuple(compute_result),
+            num_total_updates=4,
+            num_processes=2,
+        )
+
+    def test_multilabel_precision_recall_curve_class_invalid_input(self) -> None:
+        metric = MultilabelPrecisionRecallCurve(num_labels=4)
+        with self.assertRaisesRegex(
+            ValueError,
+            "Expected both input.shape and target.shape to have the same shape"
+            r" but got torch.Size\(\[4, 2\]\) and torch.Size\(\[4, 3\]\).",
+        ):
+            metric.update(torch.rand(4, 2), torch.randint(high=2, size=(4, 3)))
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"input should have shape of \(num_sample, num_labels\), "
+            r"got torch.Size\(\[4, 2\]\) and num_labels=3.",
+        ):
+            metric = MultilabelPrecisionRecallCurve(num_labels=3)
+            metric.update(torch.rand(4, 2), torch.randint(high=2, size=(4, 2)))
