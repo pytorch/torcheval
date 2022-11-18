@@ -15,6 +15,7 @@ from torcheval.metrics.functional.classification import (
     binary_precision,
     binary_precision_recall_curve,
     binary_recall,
+    binary_recall_at_fixed_precision,
     multiclass_accuracy,
     multiclass_auroc,
     multiclass_binned_precision_recall_curve,
@@ -25,6 +26,7 @@ from torcheval.metrics.functional.classification import (
     multiclass_recall,
     multilabel_accuracy,
     multilabel_precision_recall_curve,
+    multilabel_recall_at_fixed_precision,
     topk_multilabel_accuracy,
 )
 from torcheval.metrics.functional.ranking import (
@@ -47,6 +49,7 @@ __all__ = [
     "binary_precision_recall_curve",
     "binary_binned_precision_recall_curve",
     "binary_recall",
+    "binary_recall_at_fixed_precision",
     "binary_f1_score",
     "click_through_rate",
     "frequency_at_k",
@@ -63,6 +66,7 @@ __all__ = [
     "multiclass_recall",
     "multilabel_accuracy",
     "multilabel_precision_recall_curve",
+    "multilabel_recall_at_fixed_precision",
     "num_collisions",
     "topk_multilabel_accuracy",
     "r2_score",

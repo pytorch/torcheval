@@ -17,6 +17,7 @@ from torcheval.metrics.classification import (
     BinaryPrecision,
     BinaryPrecisionRecallCurve,
     BinaryRecall,
+    BinaryRecallAtFixedPrecision,
     MulticlassAccuracy,
     MulticlassAUROC,
     MulticlassBinnedAUROC,
@@ -28,6 +29,7 @@ from torcheval.metrics.classification import (
     MulticlassRecall,
     MultilabelAccuracy,
     MultilabelPrecisionRecallCurve,
+    MultilabelRecallAtFixedPrecision,
     TopKMultilabelAccuracy,
 )
 from torcheval.metrics.metric import Metric
@@ -63,6 +65,7 @@ __all__ = [
     "BinaryPrecision",
     "BinaryPrecisionRecallCurve",
     "BinaryRecall",
+    "BinaryRecallAtFixedPrecision",
     "Cat",
     "ClickThroughRate",
     "HitRate",
@@ -81,6 +84,7 @@ __all__ = [
     "MulticlassRecall",
     "MultilabelAccuracy",
     "MultilabelPrecisionRecallCurve",
+    "MultilabelRecallAtFixedPrecision",
     "TopKMultilabelAccuracy",
     "R2Score",
     "ReciprocalRank",
