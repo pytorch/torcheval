@@ -133,31 +133,10 @@ def _recall_at_precision(
     thresholds: torch.Tensor,
     min_precision: float,
 ) -> Tuple[torch.Tensor, torch.Tensor]:
-    recall_at_precision, threshold_at_precision = [], []
-    # check if there are more than 1 precision >= min_precision
-    valid_indices = (precision >= min_precision).nonzero().flatten()
-    if valid_indices.shape[0] <= 1:
-        return torch.tensor(0.0, device=recall.device), torch.tensor(
-            1.0, device=thresholds.device
-        )
-    for i in range(precision.shape[0]):
-        p, r = precision[i], recall[i]
-        if p >= min_precision:
-            t = (
-                thresholds[i]
-                if i < thresholds.shape[0]
-                else torch.tensor(1.0, device=thresholds.device)
-            )
-            recall_at_precision.append(r)
-            threshold_at_precision.append(t)
-    recall_at_precision = torch.stack(recall_at_precision)
-    threshold_at_precision = torch.stack(threshold_at_precision)
-    max_recall = torch.max(recall_at_precision)
-    max_indices = (recall_at_precision == max_recall).nonzero().flatten()
-    best_threshold = torch.max(
-        torch.index_select(threshold_at_precision, 0, max_indices)
-    )
-    return max_recall, best_threshold
+    max_recall = torch.max(recall[precision >= min_precision])
+    thresholds = torch.cat((thresholds, torch.tensor([-1.0], device=thresholds.device)))
+    best_threshold = torch.max(thresholds[recall == max_recall])
+    return max_recall, torch.abs(best_threshold)
 
 
 @torch.jit.script
