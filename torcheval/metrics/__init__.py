@@ -33,6 +33,7 @@ from torcheval.metrics.classification import (
     TopKMultilabelAccuracy,
 )
 from torcheval.metrics.metric import Metric
+
 from torcheval.metrics.ranking import (
     ClickThroughRate,
     HitRate,
@@ -40,6 +41,8 @@ from torcheval.metrics.ranking import (
     WeightedCalibration,
 )
 from torcheval.metrics.regression import MeanSquaredError, R2Score
+
+from torcheval.metrics.text import Perplexity
 from torcheval.metrics.window import (
     WindowedBinaryAUROC,
     WindowedBinaryNormalizedEntropy,
@@ -85,6 +88,7 @@ __all__ = [
     "MultilabelAccuracy",
     "MultilabelPrecisionRecallCurve",
     "MultilabelRecallAtFixedPrecision",
+    "Perplexity",
     "TopKMultilabelAccuracy",
     "R2Score",
     "ReciprocalRank",

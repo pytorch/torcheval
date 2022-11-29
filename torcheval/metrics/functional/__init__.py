@@ -39,6 +39,8 @@ from torcheval.metrics.functional.ranking import (
 )
 from torcheval.metrics.functional.regression import mean_squared_error, r2_score
 
+from torcheval.metrics.functional.text import perplexity
+
 __all__ = [
     "auc",
     "binary_auroc",
@@ -68,6 +70,7 @@ __all__ = [
     "multilabel_precision_recall_curve",
     "multilabel_recall_at_fixed_precision",
     "num_collisions",
+    "perplexity",
     "topk_multilabel_accuracy",
     "r2_score",
     "reciprocal_rank",
