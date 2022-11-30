@@ -7,6 +7,7 @@
 from torcheval.metrics.functional.aggregation import auc, mean, sum, throughput
 from torcheval.metrics.functional.classification import (
     binary_accuracy,
+    binary_auprc,
     binary_auroc,
     binary_binned_precision_recall_curve,
     binary_confusion_matrix,
@@ -41,6 +42,7 @@ from torcheval.metrics.functional.regression import mean_squared_error, r2_score
 
 __all__ = [
     "auc",
+    "binary_auprc",
     "binary_auroc",
     "binary_accuracy",
     "binary_confusion_matrix",
