@@ -8,6 +8,7 @@ from torcheval.metrics import functional
 from torcheval.metrics.aggregation import AUC, Cat, Max, Mean, Min, Sum, Throughput
 from torcheval.metrics.classification import (
     BinaryAccuracy,
+    BinaryAUPRC,
     BinaryAUROC,
     BinaryBinnedAUROC,
     BinaryBinnedPrecisionRecallCurve,
@@ -56,6 +57,7 @@ __all__ = [
     "functional",
     # class metrics
     "AUC",
+    "BinaryAUPRC",
     "BinaryAUROC",
     "BinaryAccuracy",
     "BinaryBinnedAUROC",
