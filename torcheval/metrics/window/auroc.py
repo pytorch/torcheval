@@ -81,6 +81,10 @@ class WindowedBinaryAUROC(Metric[torch.Tensor]):
             "targets",
             torch.zeros(self.num_tasks, self.max_num_samples, device=self.device),
         )
+        self._add_state(
+            "weights",
+            torch.zeros(self.num_tasks, self.max_num_samples, device=self.device),
+        )
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
@@ -88,6 +92,7 @@ class WindowedBinaryAUROC(Metric[torch.Tensor]):
         self: TAUROC,
         input: torch.Tensor,
         target: torch.Tensor,
+        weight: Optional[torch.Tensor] = None,
     ) -> TAUROC:
         """
         Update states with the ground truth labels and predictions.
@@ -99,14 +104,18 @@ class WindowedBinaryAUROC(Metric[torch.Tensor]):
             target (Tensor): Tensor of ground truth labels with shape of (num_samples, ) or
                 or (num_tasks, num_samples).
         """
-        _binary_auroc_update_input_check(input, target, self.num_tasks)
+        if weight is None:
+            weight = torch.ones_like(input, dtype=torch.double)
+        _binary_auroc_update_input_check(input, target, self.num_tasks, weight)
         if input.ndim == 1:
             input = input.reshape(1, -1)
             target = target.reshape(1, -1)
+            weight = weight.reshape(1, -1)
         # If input size is greater than or equal to window size, replace it with the last max_num_samples size of input.
         if input.shape[1] >= self.max_num_samples:
             self.inputs.copy_(input[:, -self.max_num_samples :].detach())
             self.targets.copy_(target[:, -self.max_num_samples :].detach())
+            self.weights.copy_(weight[:, -self.max_num_samples :].detach())
             self.next_inserted = 0
         else:
             rest_window_size = self.max_num_samples - self.next_inserted
@@ -118,6 +127,9 @@ class WindowedBinaryAUROC(Metric[torch.Tensor]):
                 self.targets[
                     :, self.next_inserted : self.next_inserted + input.shape[1]
                 ] = target.detach()
+                self.weights[
+                    :, self.next_inserted : self.next_inserted + input.shape[1]
+                ] = weight.detach()
                 self.next_inserted += input.shape[1]
             else:
                 # Otherwise, replace with the first half and the second half of input respectively.
@@ -128,6 +140,9 @@ class WindowedBinaryAUROC(Metric[torch.Tensor]):
                 self.targets[
                     :, self.next_inserted : self.next_inserted + rest_window_size
                 ] = target[:, :rest_window_size].detach()
+                self.weights[
+                    :, self.next_inserted : self.next_inserted + rest_window_size
+                ] = weight[:, :rest_window_size].detach()
 
                 # Put the second half of input to the front
                 rest_window_size = input.shape[1] - rest_window_size
@@ -135,6 +150,9 @@ class WindowedBinaryAUROC(Metric[torch.Tensor]):
                     :, -rest_window_size:
                 ].detach()
                 self.targets[:, :rest_window_size] = target[
+                    :, -rest_window_size:
+                ].detach()
+                self.weights[:, :rest_window_size] = weight[
                     :, -rest_window_size:
                 ].detach()
                 self.next_inserted = rest_window_size
@@ -159,9 +177,12 @@ class WindowedBinaryAUROC(Metric[torch.Tensor]):
             return _binary_auroc_compute(
                 self.inputs[:, : self.next_inserted].squeeze(),
                 self.targets[:, : self.next_inserted].squeeze(),
+                self.weights[:, : self.next_inserted].squeeze(),
             )
         else:
-            return _binary_auroc_compute(self.inputs.squeeze(), self.targets.squeeze())
+            return _binary_auroc_compute(
+                self.inputs.squeeze(), self.targets.squeeze(), self.weights.squeeze()
+            )
 
     @torch.inference_mode()
     def merge_state(self: TAUROC, metrics: Iterable[TAUROC]) -> TAUROC:
@@ -179,6 +200,7 @@ class WindowedBinaryAUROC(Metric[torch.Tensor]):
             merge_max_num_samples += metric.max_num_samples
         cur_inputs = self.inputs
         cur_targets = self.targets
+        cur_weights = self.weights
         self.inputs = torch.zeros(
             self.num_tasks,
             merge_max_num_samples,
@@ -189,15 +211,22 @@ class WindowedBinaryAUROC(Metric[torch.Tensor]):
             merge_max_num_samples,
             device=self.device,
         )
+        self.weights = torch.zeros(
+            self.num_tasks,
+            merge_max_num_samples,
+            device=self.device,
+        )
 
         cur_size = min(self.total_samples, self.max_num_samples)
         self.inputs[:, :cur_size] = cur_inputs[:, :cur_size]
         self.targets[:, :cur_size] = cur_targets[:, :cur_size]
+        self.weights[:, :cur_size] = cur_weights[:, :cur_size]
         idx = cur_size
         for metric in metrics:
             cur_size = min(metric.total_samples, metric.max_num_samples)
             self.inputs[:, idx : idx + cur_size] = metric.inputs[:, :cur_size]
             self.targets[:, idx : idx + cur_size] = metric.targets[:, :cur_size]
+            self.weights[:, idx : idx + cur_size] = metric.weights[:, :cur_size]
             self.total_samples += metric.total_samples
             idx += cur_size
 

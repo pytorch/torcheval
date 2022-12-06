@@ -27,29 +27,58 @@ class TestBinaryAUROC(MetricClassTester):
         input: torch.Tensor,
         target: torch.Tensor,
         num_tasks: int = 1,
+        weight: Optional[torch.Tensor] = None,
         compute_result: Optional[torch.Tensor] = None,
         use_fbgemm: Optional[bool] = False,
     ) -> None:
         input_tensors = input.reshape(-1, 1)
         target_tensors = target.reshape(-1, 1)
-        if compute_result is None:
-            compute_result = torch.tensor(roc_auc_score(target_tensors, input_tensors))
+        weight_tensors = weight.reshape(-1, 1) if weight is not None else None
 
-        self.run_class_implementation_tests(
-            metric=BinaryAUROC(num_tasks=num_tasks, use_fbgemm=use_fbgemm),
-            state_names={"inputs", "targets"},
-            update_kwargs={
-                "input": input,
-                "target": target,
-            },
-            compute_result=compute_result,
-            test_devices=["cuda"] if use_fbgemm else None,
-        )
+        if compute_result is None:
+            compute_result = (
+                torch.tensor(
+                    roc_auc_score(
+                        target_tensors, input_tensors, sample_weight=weight_tensors
+                    )
+                )
+                if weight_tensors is not None
+                else torch.tensor(roc_auc_score(target_tensors, input_tensors))
+            )
+        if weight is not None:
+            self.run_class_implementation_tests(
+                metric=BinaryAUROC(num_tasks=num_tasks, use_fbgemm=use_fbgemm),
+                state_names={"inputs", "targets", "weights"},
+                update_kwargs={
+                    "input": input,
+                    "target": target,
+                    "weight": weight,
+                },
+                compute_result=compute_result,
+                test_devices=["cuda"] if use_fbgemm else None,
+            )
+        else:
+            self.run_class_implementation_tests(
+                metric=BinaryAUROC(num_tasks=num_tasks, use_fbgemm=use_fbgemm),
+                state_names={"inputs", "targets", "weights"},
+                update_kwargs={
+                    "input": input,
+                    "target": target,
+                },
+                compute_result=compute_result,
+                test_devices=["cuda"] if use_fbgemm else None,
+            )
 
     def _test_auroc_class_set(self, use_fbgemm: Optional[bool] = False) -> None:
         input = torch.rand(NUM_TOTAL_UPDATES, BATCH_SIZE)
         target = torch.randint(high=2, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
-        self._test_auroc_class_with_input(input, target, use_fbgemm=use_fbgemm)
+        # fbgemm version does not support weight in AUROC calculation
+        weight = (
+            torch.rand(NUM_TOTAL_UPDATES, BATCH_SIZE) if use_fbgemm is False else None
+        )
+        self._test_auroc_class_with_input(
+            input, target, num_tasks=1, weight=weight, use_fbgemm=use_fbgemm
+        )
 
         if not use_fbgemm:
             # Skip this test for use_fbgemm because FBGEMM AUC is an
@@ -57,9 +86,12 @@ class TestBinaryAUROC(MetricClassTester):
             # result if input data is highly redundant
             input = torch.randint(high=2, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
             target = torch.randint(high=2, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
+            weight = torch.rand(NUM_TOTAL_UPDATES, BATCH_SIZE)
             self._test_auroc_class_with_input(
                 input,
                 target,
+                num_tasks=1,
+                weight=weight,
                 use_fbgemm=use_fbgemm,
             )
 
@@ -101,26 +133,36 @@ class TestBinaryAUROC(MetricClassTester):
             torch.randint(high=num_classes, size=(2,)),
             torch.randint(high=num_classes, size=(5,)),
         ]
+
+        update_weight = [
+            torch.rand(5),
+            torch.rand(8),
+            torch.rand(2),
+            torch.rand(5),
+        ]
+
         compute_result = torch.tensor(
             roc_auc_score(
                 torch.cat(update_target, dim=0),
                 torch.cat(update_input, dim=0),
+                sample_weight=torch.cat(update_weight, dim=0),
             ),
         )
 
         self.run_class_implementation_tests(
             metric=BinaryAUROC(),
-            state_names={"inputs", "targets"},
+            state_names={"inputs", "targets", "weights"},
             update_kwargs={
                 "input": update_input,
                 "target": update_target,
+                "weight": update_weight,
             },
             compute_result=compute_result,
             num_total_updates=4,
             num_processes=2,
         )
 
-    def test_auroc_class_invalid_input(self) -> None:
+    def test_binary_auroc_class_invalid_input(self) -> None:
         metric = BinaryAUROC()
         with self.assertRaisesRegex(
             ValueError,
@@ -128,6 +170,13 @@ class TestBinaryAUROC(MetricClassTester):
             r"got shapes torch.Size\(\[4\]\) and torch.Size\(\[3\]\).",
         ):
             metric.update(torch.rand(4), torch.rand(3))
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "The `weight` and `target` should have the same shape, "
+            r"got shapes torch.Size\(\[3\]\) and torch.Size\(\[4\]\).",
+        ):
+            metric.update(torch.rand(4), torch.rand(4), weight=torch.rand(3))
 
         with self.assertRaisesRegex(
             ValueError,
@@ -256,7 +305,7 @@ class TestMulticlassAUROC(MetricClassTester):
             num_processes=2,
         )
 
-    def test_auroc_class_invalid_input(self) -> None:
+    def test_multiclass_auroc_class_invalid_input(self) -> None:
         with self.assertRaisesRegex(
             ValueError, "`average` was not in the allowed value of .*, got micro."
         ):

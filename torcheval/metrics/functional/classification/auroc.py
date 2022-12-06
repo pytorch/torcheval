@@ -27,6 +27,7 @@ def binary_auroc(
     target: torch.Tensor,
     *,
     num_tasks: int = 1,
+    weight: Optional[torch.Tensor] = None,
     use_fbgemm: Optional[bool] = False,
 ) -> torch.Tensor:
     """
@@ -39,7 +40,8 @@ def binary_auroc(
         target (Tensor): Tensor of ground truth labels with shape of (num_tasks, n_sample) or (n_sample, ).
         num_tasks (int):  Number of tasks that need BinaryAUROC calculation. Default value
                     is 1. BinaryAUROC for each task will be calculated independently.
-        use_fbgemm (bool): If set to True, use ``fbgemm_gpu.metrics.auc`` (a
+        weight (Tensor): Optional. A manual rescaling weight to match input tensor shape (num_tasks, num_samples) or (n_sample, ).
+        use_fbgemm (bool): Optional. If set to True, use ``fbgemm_gpu.metrics.auc`` (a
             hand fused kernel).  FBGEMM AUC is an approximation of AUC. It does
             not mask data in case that input values are redundant. For the
             highly redundant input case, FBGEMM AUC can give a significantly
@@ -64,8 +66,8 @@ def binary_auroc(
         >>> binary_auroc(input, target, num_tasks=2)
         tensor([0.7500, 0.6667])
     """
-    _binary_auroc_update_input_check(input, target, num_tasks)
-    return _binary_auroc_compute(input, target, use_fbgemm)
+    _binary_auroc_update_input_check(input, target, num_tasks, weight)
+    return _binary_auroc_compute(input, target, weight, use_fbgemm)
 
 
 @torch.inference_mode()
@@ -112,12 +114,18 @@ def multiclass_auroc(
 def _binary_auroc_compute_jit(
     input: torch.Tensor,
     target: torch.Tensor,
+    weight: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     threshold, indices = input.sort(descending=True)
     mask = F.pad(threshold.diff(dim=-1) != 0, [0, 1], value=1.0)
     sorted_target = torch.gather(target, -1, indices)
-    cum_tp_before_pad = sorted_target.cumsum(-1)
-    cum_fp_before_pad = (1 - sorted_target).cumsum(-1)
+    sorted_weight = (
+        torch.tensor(1.0, device=target.device)
+        if weight is None
+        else torch.gather(weight, -1, indices)
+    )
+    cum_tp_before_pad = (sorted_weight * sorted_target).cumsum(-1)
+    cum_fp_before_pad = (sorted_weight * (1 - sorted_target)).cumsum(-1)
 
     shifted_mask = mask.sum(-1, keepdim=True) >= torch.arange(
         mask.size(-1), 0, -1, device=target.device
@@ -145,6 +153,7 @@ def _binary_auroc_compute_jit(
 def _binary_auroc_compute(
     input: torch.Tensor,
     target: torch.Tensor,
+    weight: Optional[torch.Tensor] = None,
     use_fbgemm: Optional[bool] = False,
 ) -> torch.Tensor:
     if use_fbgemm:
@@ -161,19 +170,26 @@ def _binary_auroc_compute(
         else:
             return auroc
     else:
-        return _binary_auroc_compute_jit(input, target)
+        return _binary_auroc_compute_jit(input, target, weight)
 
 
 def _binary_auroc_update_input_check(
     input: torch.Tensor,
     target: torch.Tensor,
     num_tasks: int,
+    weight: Optional[torch.Tensor] = None,
 ) -> None:
     if input.shape != target.shape:
         raise ValueError(
             "The `input` and `target` should have the same shape, "
             f"got shapes {input.shape} and {target.shape}."
         )
+    if weight is not None and weight.shape != target.shape:
+        raise ValueError(
+            "The `weight` and `target` should have the same shape, "
+            f"got shapes {weight.shape} and {target.shape}."
+        )
+
     if num_tasks == 1:
         if len(input.shape) > 1:
             raise ValueError(
