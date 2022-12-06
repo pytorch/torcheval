@@ -37,7 +37,7 @@ class TestBinaryAUPRC(MetricClassTester):
         for i in range(skinputs.shape[0]):
             skinput = skinputs[i, :]
             sktarget = sktargets[i, :]
-            auprcs.append(sk_ap(sktarget, skinput))
+            auprcs.append(np.nan_to_num(sk_ap(sktarget, skinput)))
         return torch.tensor(auprcs, device=device).to(torch.float32)
 
     def _get_rand_inputs_binary(
@@ -202,7 +202,7 @@ class TestMulticlassAUPRC(MetricClassTester):
         for i in range(skinputs.shape[1]):
             skinput = skinputs[:, i]
             sktarget = np.where(sktargets == i, 1, 0)
-            auprcs.append(sk_ap(sktarget, skinput))
+            auprcs.append(np.nan_to_num(sk_ap(sktarget, skinput)))
         return torch.tensor(auprcs, device=device).to(torch.float32)
 
     def _get_rand_inputs_multiclass(
