@@ -21,15 +21,21 @@ class TestBinaryAUROC(unittest.TestCase):
         input: torch.Tensor,
         target: torch.Tensor,
         num_tasks: int = 1,
+        weight: Optional[torch.Tensor] = None,
         compute_result: Optional[torch.Tensor] = None,
         use_fbgemm: Optional[bool] = False,
     ) -> None:
         if compute_result is None:
-            compute_result = torch.tensor(roc_auc_score(target, input))
+            compute_result = (
+                torch.tensor(roc_auc_score(target, input))
+                if weight is None
+                else torch.tensor(roc_auc_score(target, input, sample_weight=weight))
+            )
         if torch.cuda.is_available():
             my_compute_result = binary_auroc(
                 input.to(device="cuda"),
                 target.to(device="cuda"),
+                weight=weight if weight is None else weight.to(device="cuda"),
                 num_tasks=num_tasks,
                 use_fbgemm=use_fbgemm,
             )
@@ -48,7 +54,13 @@ class TestBinaryAUROC(unittest.TestCase):
     def _test_auroc_set(self, use_fbgemm: Optional[bool] = False) -> None:
         input = torch.tensor([1, 1, 0, 0])
         target = torch.tensor([1, 0, 1, 0])
+        weight = torch.tensor([0.2, 0.2, 1.0, 1.0], dtype=torch.float64)
         self._test_auroc_with_input(input, target, use_fbgemm=use_fbgemm)
+        if use_fbgemm is False:
+            # TODO: use_fbgemm = True will fail the situation with weight input
+            self._test_auroc_with_input(
+                input, target, weight=weight, use_fbgemm=use_fbgemm
+            )
 
         input = torch.rand(BATCH_SIZE)
         target = torch.randint(high=2, size=(BATCH_SIZE,))
@@ -59,8 +71,8 @@ class TestBinaryAUROC(unittest.TestCase):
         self._test_auroc_with_input(
             input,
             target,
-            2,
-            torch.tensor([0.7500, 0.2500], dtype=torch.float64),
+            num_tasks=2,
+            compute_result=torch.tensor([0.7500, 0.2500], dtype=torch.float64),
             use_fbgemm=use_fbgemm,
         )
 
@@ -73,13 +85,20 @@ class TestBinaryAUROC(unittest.TestCase):
     def test_auroc_base(self) -> None:
         self._test_auroc_set(use_fbgemm=False)
 
-    def test_auroc_invalid_input(self) -> None:
+    def test_binary_auroc_invalid_input(self) -> None:
         with self.assertRaisesRegex(
             ValueError,
             "The `input` and `target` should have the same shape, "
             r"got shapes torch.Size\(\[4\]\) and torch.Size\(\[3\]\).",
         ):
             binary_auroc(torch.rand(4), torch.rand(3))
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "The `weight` and `target` should have the same shape, "
+            r"got shapes torch.Size\(\[3\]\) and torch.Size\(\[4\]\).",
+        ):
+            binary_auroc(torch.rand(4), torch.rand(4), weight=torch.rand(3))
 
         with self.assertRaisesRegex(
             ValueError,
@@ -147,7 +166,7 @@ class TestMulticlassAUROC(unittest.TestCase):
         my_compute_result = multiclass_auroc(input, target, num_classes=3, average=None)
         torch.testing.assert_close(my_compute_result, expected_compute_result)
 
-    def test_auroc_invalid_input(self) -> None:
+    def test_multiclass_auroc_invalid_input(self) -> None:
         with self.assertRaisesRegex(
             ValueError, "`average` was not in the allowed value of .*, got micro."
         ):

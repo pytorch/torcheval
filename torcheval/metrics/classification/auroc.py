@@ -85,6 +85,7 @@ class BinaryAUROC(Metric[torch.Tensor]):
         self.num_tasks = num_tasks
         self._add_state("inputs", [])
         self._add_state("targets", [])
+        self._add_state("weights", [])
         self.use_fbgemm = use_fbgemm
 
     @torch.inference_mode()
@@ -93,6 +94,7 @@ class BinaryAUROC(Metric[torch.Tensor]):
         self: TAUROC,
         input: torch.Tensor,
         target: torch.Tensor,
+        weight: Optional[torch.Tensor] = None,
     ) -> TAUROC:
         """
         Update states with the ground truth labels and predictions.
@@ -101,10 +103,14 @@ class BinaryAUROC(Metric[torch.Tensor]):
             input (Tensor): Tensor of label predictions
                 It should be predicted label, probabilities or logits with shape of (num_tasks, n_sample) or (n_sample, ).
             target (Tensor): Tensor of ground truth labels with shape of (num_tasks, n_sample) or (n_sample, ).
+            weight (Tensor): Optional. A manual rescaling weight to match input tensor shape (num_tasks, num_samples) or (n_sample, ).
         """
-        _binary_auroc_update_input_check(input, target, self.num_tasks)
+        if weight is None:
+            weight = torch.ones_like(input, dtype=torch.double)
+        _binary_auroc_update_input_check(input, target, self.num_tasks, weight)
         self.inputs.append(input)
         self.targets.append(target)
+        self.weights.append(weight)
         return self
 
     @torch.inference_mode()
@@ -119,7 +125,10 @@ class BinaryAUROC(Metric[torch.Tensor]):
             Tensor: The return value of AUROC for each task (num_tasks,).
         """
         return _binary_auroc_compute(
-            torch.cat(self.inputs, -1), torch.cat(self.targets, -1), self.use_fbgemm
+            torch.cat(self.inputs, -1),
+            torch.cat(self.targets, -1),
+            torch.cat(self.weights, -1),
+            self.use_fbgemm,
         )
 
     @torch.inference_mode()
@@ -128,8 +137,10 @@ class BinaryAUROC(Metric[torch.Tensor]):
             if metric.inputs:
                 metric_inputs = torch.cat(metric.inputs, -1).to(self.device)
                 metric_targets = torch.cat(metric.targets, -1).to(self.device)
+                metric_weights = torch.cat(metric.weights, -1).to(self.device)
                 self.inputs.append(metric_inputs)
                 self.targets.append(metric_targets)
+                self.weights.append(metric_weights)
         return self
 
     @torch.inference_mode()
@@ -137,6 +148,7 @@ class BinaryAUROC(Metric[torch.Tensor]):
         if self.inputs and self.targets:
             self.inputs = [torch.cat(self.inputs, -1)]
             self.targets = [torch.cat(self.targets, -1)]
+            self.weights = [torch.cat(self.weights, -1)]
 
 
 class MulticlassAUROC(Metric[torch.Tensor]):
