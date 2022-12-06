@@ -30,7 +30,7 @@ class TestBinaryAUPRC(unittest.TestCase):
         for i in range(skinputs.shape[0]):
             skinput = skinputs[i, :]
             sktarget = sktargets[i, :]
-            sk_auprcs.append(sk_ap(sktarget, skinput))
+            sk_auprcs.append(np.nan_to_num(sk_ap(sktarget, skinput)))
         return torch.tensor(sk_auprcs, device=device).to(torch.float32)
 
     def _test_binary_auprc_with_input(
@@ -162,7 +162,7 @@ class TestMulticlassAUPRC(unittest.TestCase):
         for i in range(input.shape[1]):
             skinput = skinputs[:, i]
             sktarget = np.where(sktargets == i, 1, 0)
-            auprcs.append(sk_ap(sktarget, skinput))
+            auprcs.append(np.nan_to_num(sk_ap(sktarget, skinput)))
         return torch.tensor(auprcs, device=device).to(torch.float32)
 
     def _test_multiclass_auprc_with_input(
@@ -223,7 +223,7 @@ class TestMulticlassAUPRC(unittest.TestCase):
         self._test_multiclass_auprc_with_input(input, target, num_classes)
 
     def test_multiclass_auprc_options(self) -> None:
-        ### average = macro, num_classes not given
+        # average = macro, num_classes not given
         input, target = self._get_rand_inputs_multiclass(5, BATCH_SIZE)
         compute_result = torch.mean(self._get_sklearn_equivalent(input, target))
         te_compute_result = multiclass_auprc(input, target, average="macro")
@@ -235,7 +235,7 @@ class TestMulticlassAUPRC(unittest.TestCase):
             rtol=1e-5,
         )
 
-        ### average = macro (not given), num_classes given
+        # average = macro (not given), num_classes given
         input, target = self._get_rand_inputs_multiclass(5, BATCH_SIZE)
         compute_result = torch.mean(self._get_sklearn_equivalent(input, target))
         te_compute_result = multiclass_auprc(input, target)
@@ -248,7 +248,7 @@ class TestMulticlassAUPRC(unittest.TestCase):
             rtol=1e-5,
         )
 
-        ### average = none
+        # average = none
         input, target = self._get_rand_inputs_multiclass(5, BATCH_SIZE)
         compute_result = self._get_sklearn_equivalent(input, target)
         te_compute_result = multiclass_auprc(input, target, average="none")
