@@ -32,7 +32,7 @@ from typing_extensions import Literal
 
 class MetricToolkitTest(unittest.TestCase):
     def test_metric_sync(self) -> None:
-        num_processes = 4
+        num_processes = torch.cuda.device_count() if torch.cuda.is_available() else 4
         input_tensor = torch.rand(num_processes * 2)
         # recipient_rank = 0
         self._launch_metric_sync_test(num_processes, input_tensor, DummySumMetric)
