@@ -40,8 +40,7 @@ from torcheval.metrics.functional.ranking import (
     weighted_calibration,
 )
 from torcheval.metrics.functional.regression import mean_squared_error, r2_score
-
-from torcheval.metrics.functional.text import perplexity
+from torcheval.metrics.functional.text import perplexity, word_error_rate
 
 __all__ = [
     "auc",
@@ -81,4 +80,5 @@ __all__ = [
     "sum",
     "throughput",
     "weighted_calibration",
+    "word_error_rate",
 ]
