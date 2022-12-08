@@ -14,8 +14,9 @@ import torch
 from torch.nn.parameter import UninitializedParameter
 from torch.utils._pytree import PyTree, tree_flatten
 from torch.utils.hooks import RemovableHandle
-
 from torcheval.tools.flops import flop_mapping, FlopTensorDispatchMode
+
+from torchtnt.utils.version import is_torch_version_geq_1_13
 from typing_extensions import Literal
 
 _ATTRIB_TO_COL_HEADER = {
@@ -184,6 +185,11 @@ def _get_module_flops_and_activation_sizes(
         str, Tuple[Union[TUnknown, List[int]], Union[TUnknown, List[int]]]
     ],  # mapping from module name to activation size tuple (in_size, out_size)
 ]:
+    if not is_torch_version_geq_1_13():
+        raise RuntimeError(
+            "Computing FLOPS requires PyTorch 1.13 or higher. "
+            "Please install PyTorch 1.13 or higher to continue: https://pytorch.org/get-started/locally/"
+        )
     # a mapping from module name to activation size tuple (in_size, out_size)
     activation_sizes: Dict[
         str, Tuple[Union[TUnknown, List[int]], Union[TUnknown, List[int]]]
@@ -274,6 +280,9 @@ def get_module_summary(
         module: The module to be summarized.
         module_args: A tuple of arguments for the module to run and calculate FLOPs and activation sizes.
         module_kwargs: Any kwarg arguments to be passed into the module's forward function.
+
+            Note:
+              If passing module_args/module_kwargs for FLOPs and activation sizes, must be using PyTorch 1.13+.
 
             Note:
               If module contains any lazy submodule, we will NOT calculate FLOPs.
