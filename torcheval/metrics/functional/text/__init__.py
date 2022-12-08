@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 from torcheval.metrics.functional.text.perplexity import perplexity
+from torcheval.metrics.functional.text.word_error_rate import word_error_rate
 
-__all__ = [
-    "perplexity",
-]
+__all__ = ["perplexity", "word_error_rate"]
