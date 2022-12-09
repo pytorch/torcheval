@@ -424,6 +424,10 @@ objects as values. These can be traversed for visualization.</p>
 <li><p><strong>module_kwargs</strong> – <p>Any kwarg arguments to be passed into the module’s forward function.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
+<p>To calculate FLOPs, you must use PyTorch 1.13 or greater.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>If module contains any lazy submodule, we will NOT calculate FLOPs.</p>
 </div>
 <div class="admonition note">
