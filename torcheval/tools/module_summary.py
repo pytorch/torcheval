@@ -14,8 +14,9 @@ import torch
 from torch.nn.parameter import UninitializedParameter
 from torch.utils._pytree import PyTree, tree_flatten
 from torch.utils.hooks import RemovableHandle
-
 from torcheval.tools.flops import flop_mapping, FlopTensorDispatchMode
+
+from torchtnt.utils.version import is_torch_version_geq_1_13
 from typing_extensions import Literal
 
 _ATTRIB_TO_COL_HEADER = {
@@ -219,26 +220,39 @@ def _get_module_flops_and_activation_sizes(
     else:
         warnings.warn("Registering hooks on torch.jit.ScriptModule is not supported.")
 
-    # TODO: here we assume module's output should be a single tensor.
-    #   Need to provide more flexible implementation that support other types of output.
     module.zero_grad()
-    with FlopTensorDispatchMode(module) as ftdm:
-        # Count for forward flops (+ compute activation sizes)
-        module_args = module_args or ()
-        module_kwargs = module_kwargs or {}
-        res = module(*module_args, **module_kwargs)
 
+    module_args = module_args or ()
+    module_kwargs = module_kwargs or {}
+    flops_forward = None
+    flops_backward = None
+    if not is_torch_version_geq_1_13():
+        warnings.warn(
+            "Please install PyTorch 1.13 or higher to compute FLOPs: https://pytorch.org/get-started/locally/"
+        )
+        module(*module_args, **module_kwargs)
         # detach activation size hook handles
         for hook_handle in handles:
             hook_handle.remove()
+    else:
+        with FlopTensorDispatchMode(module) as ftdm:
+            # Count for forward flops (+ compute activation sizes)
+            res = module(*module_args, **module_kwargs)
 
-        flops_forward = copy.deepcopy(ftdm.flop_counts)
-        flops_backward = None
-        if isinstance(res, torch.Tensor):
-            # Count for backward flops
-            ftdm.reset()
-            res.mean().backward()
-            flops_backward = copy.deepcopy(ftdm.flop_counts)
+            # detach activation size hook handles
+            for hook_handle in handles:
+                hook_handle.remove()
+
+            flops_forward = copy.deepcopy(ftdm.flop_counts)
+            if isinstance(res, torch.Tensor):
+                # Count for backward flops
+                ftdm.reset()
+                res.mean().backward()
+                flops_backward = copy.deepcopy(ftdm.flop_counts)
+            else:
+                warnings.warn(
+                    "Backward FLOPs are only computed if module foward returns a tensor."
+                )
 
     # Reverting all the changes:
     module.zero_grad()
@@ -274,6 +288,9 @@ def get_module_summary(
         module: The module to be summarized.
         module_args: A tuple of arguments for the module to run and calculate FLOPs and activation sizes.
         module_kwargs: Any kwarg arguments to be passed into the module's forward function.
+
+            Note:
+              To calculate FLOPs, you must use PyTorch 1.13 or greater.
 
             Note:
               If module contains any lazy submodule, we will NOT calculate FLOPs.
@@ -428,7 +445,7 @@ def get_summary_table(
     header = [
         s.format(col_header, col_width)
         for col_header, col_width in zip(
-            _ATTRIB_TO_COL_HEADER.values(), col_widths.values()
+            [_ATTRIB_TO_COL_HEADER[attr] for attr in use_attribs], col_widths.values()
         )
     ]
     summary_table = " | ".join(header) + "\n" + "-" * total_width + "\n"
