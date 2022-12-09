@@ -8,6 +8,7 @@ import copy
 import math
 import warnings
 from collections import defaultdict, deque
+from enum import Enum
 from typing import Any, Callable, DefaultDict, Deque, Dict, List, Optional, Tuple, Union
 
 import torch
@@ -189,36 +190,10 @@ def _get_module_flops_and_activation_sizes(
     activation_sizes: Dict[
         str, Tuple[Union[TUnknown, List[int]], Union[TUnknown, List[int]]]
     ] = {}
-    handles: List[RemovableHandle] = []
-
-    # pyre-ignore: Missing return annotation [3]
-    def activation_size_hook(
-        module_name: str,
-    ) -> Callable[[torch.nn.Module, Any, Any], None]:
-        # pyre-ignore: Missing parameter annotation [2]
-        def hook(_: torch.nn.Module, inp: Any, out: Any) -> None:
-            if len(inp) == 1:
-                inp = inp[0]
-            in_size = _parse_batch_shape(inp)
-            out_size = _parse_batch_shape(out)
-            activation_sizes[module_name] = (in_size, out_size)
-
-        return hook
-
-    # place forward hooks on all modules + submodules
-    if not isinstance(module, torch.jit.ScriptModule):
-        queue: Deque[Tuple[str, torch.nn.Module]] = deque([("", module)])
-        while len(queue) > 0:
-            module_name, mod = queue.pop()
-            hook = activation_size_hook(module_name)
-            handle = mod.register_forward_hook(hook)
-            handles.append(handle)
-
-            for name, submodule in mod.named_children():
-                formatted_name = f"{module_name}.{name}" if module_name != "" else name
-                queue.append((formatted_name, submodule))
-    else:
-        warnings.warn("Registering hooks on torch.jit.ScriptModule is not supported.")
+    # place activation size hooks on all modules + submodules
+    activation_size_handles = _register_hooks(
+        module, [(_activation_size_hook(activation_sizes), _HookType.FORWARD_HOOK)]
+    )
 
     module.zero_grad()
 
@@ -232,7 +207,7 @@ def _get_module_flops_and_activation_sizes(
         )
         module(*module_args, **module_kwargs)
         # detach activation size hook handles
-        for hook_handle in handles:
+        for hook_handle in activation_size_handles:
             hook_handle.remove()
     else:
         with FlopTensorDispatchMode(module) as ftdm:
@@ -240,7 +215,7 @@ def _get_module_flops_and_activation_sizes(
             res = module(*module_args, **module_kwargs)
 
             # detach activation size hook handles
-            for hook_handle in handles:
+            for hook_handle in activation_size_handles:
                 hook_handle.remove()
 
             flops_forward = copy.deepcopy(ftdm.flop_counts)
@@ -632,3 +607,67 @@ def _parse_batch_shape(batch: torch.Tensor) -> Union[TUnknown, List[int]]:
         return shape
 
     return _UNKNOWN_SIZE
+
+
+class _HookType(Enum):
+    FORWARD_PRE_HOOK = 1
+    FORWARD_HOOK = 2
+    BACKWARD_PRE_HOOK = 3
+    BACKWARD_HOOK = 4
+
+
+def _activation_size_hook(
+    activation_sizes: Dict[
+        str, Tuple[Union[TUnknown, List[int]], Union[TUnknown, List[int]]]
+    ],
+    # pyre-ignore: Invalid type parameters [24]
+) -> Callable[[str], Callable]:
+    # pyre-ignore: Missing parameter annotation [2]
+    def intermediate_hook(
+        module_name: str,
+    ) -> Callable[[torch.nn.Module, Any, Any], None]:
+        # pyre-ignore
+        def hook(_: torch.nn.Module, inp: Any, out: Any) -> None:
+            if len(inp) == 1:
+                inp = inp[0]
+            in_size = _parse_batch_shape(inp)
+            out_size = _parse_batch_shape(out)
+            activation_sizes[module_name] = (in_size, out_size)
+
+        return hook
+
+    return intermediate_hook
+
+
+def _register_hooks(
+    module: torch.nn.Module,
+    # pyre-ignore: Invalid type parameters [24]
+    hooks: List[Tuple[Callable, _HookType]],
+) -> List[RemovableHandle]:
+    """
+    Handles recursive hook attachment to module and its submodules, and passes the module name to each hook function.
+    """
+    removable_handle_list: List[RemovableHandle] = []
+    if not isinstance(module, torch.jit.ScriptModule):
+        queue: Deque[Tuple[str, torch.nn.Module]] = deque([("", module)])
+        while len(queue) > 0:
+            module_name, mod = queue.pop()
+
+            # register hook
+            for hook, hook_type in hooks:
+                if hook_type == _HookType.FORWARD_PRE_HOOK:
+                    handle = mod.register_forward_pre_hook(hook(module_name))
+                elif hook_type == _HookType.FORWARD_HOOK:
+                    handle = mod.register_forward_hook(hook(module_name))
+                elif hook_type == _HookType.BACKWARD_PRE_HOOK:
+                    handle = mod.register_full_backward_pre_hook(hook(module_name))
+                else:
+                    handle = mod.register_full_backward_hook(hook(module_name))
+                removable_handle_list.append(handle)
+
+            for name, submodule in mod.named_children():
+                formatted_name = f"{module_name}.{name}" if module_name != "" else name
+                queue.append((formatted_name, submodule))
+    else:
+        warnings.warn("Registering hooks on torch.jit.ScriptModule is not supported.")
+    return removable_handle_list
