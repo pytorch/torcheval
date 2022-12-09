@@ -341,6 +341,7 @@
 <li><p>FLOPs for backward (-1 meaning not calculated)</p></li>
 <li><p>Input shape (“?” meaning not calculated)</p></li>
 <li><p>Output shape (“?” meaning not calculated)</p></li>
+<li><p>Forward elapsed time in ms (“?” meaning not calculated)</p></li>
 </ul>
 <dl class="py property">
 <dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.flops_backward">
@@ -352,6 +353,12 @@
 <dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.flops_forward">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flops_forward</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.flops_forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the total FLOPs for forward calculation using this module.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.forward_elapsed_time_ms">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward_elapsed_time_ms</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'?'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.forward_elapsed_time_ms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the forward time of the module in ms.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -520,6 +527,7 @@ summary tree. The ModuleSummary object is prunned inplace.</p>
 <li><a class="reference internal" href="#torcheval.tools.ModuleSummary"><code class="docutils literal notranslate"><span class="pre">ModuleSummary</span></code></a><ul>
 <li><a class="reference internal" href="#torcheval.tools.ModuleSummary.flops_backward"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.flops_backward</span></code></a></li>
 <li><a class="reference internal" href="#torcheval.tools.ModuleSummary.flops_forward"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.flops_forward</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.tools.ModuleSummary.forward_elapsed_time_ms"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.forward_elapsed_time_ms</span></code></a></li>
 <li><a class="reference internal" href="#torcheval.tools.ModuleSummary.has_uninitialized_param"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.has_uninitialized_param</span></code></a></li>
 <li><a class="reference internal" href="#torcheval.tools.ModuleSummary.in_size"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.in_size</span></code></a></li>
 <li><a class="reference internal" href="#torcheval.tools.ModuleSummary.module_name"><code class="docutils literal notranslate"><span class="pre">ModuleSummary.module_name</span></code></a></li>
