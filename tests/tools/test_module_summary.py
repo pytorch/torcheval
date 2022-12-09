@@ -236,31 +236,43 @@ classifier | Sequential        | 58.6 M       | 58.6 M                 | 234 M  
         self._test_module_summary_text(summary_table2, str(ms2))
         self.assertEqual(str(ms3), str(ms4))
 
-    def test_alexnet_print_flops(self) -> None:
+    def test_alexnet_with_input_tensor(self) -> None:
         pretrained_model = models.alexnet(pretrained=True)
         inp = torch.randn(1, 3, 224, 224)
         ms1 = get_summary_and_prune(pretrained_model, max_depth=1, module_args=(inp,))
         ms2 = get_summary_and_prune(pretrained_model, max_depth=2, module_args=(inp,))
-        ms3 = get_summary_and_prune(pretrained_model, max_depth=3, module_args=(inp,))
-        ms4 = get_module_summary(pretrained_model, module_args=(inp,))
 
-        summary_table1 = """
-Name | Type    | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameters? | Forward FLOPs | Backward FLOPs | In size          | Out size
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-     | AlexNet | 61.1 M       | 61.1 M                 | 244 M        | No                                 | 714 M         | 1.4 G          | [1, 3, 224, 224] | [1, 1000]
-"""
+        self.assertEqual(ms1.module_type, "AlexNet")
+        self.assertEqual(ms1.num_parameters, 61100840)
+        self.assertFalse(ms1.has_uninitialized_param)
+        self.assertEqual(ms1.flops_forward, 714188480)
+        self.assertEqual(ms1.flops_backward, 1358100160)
+        self.assertEqual(ms1.in_size, [1, 3, 224, 224])
+        self.assertEqual(ms1.out_size, [1, 1000])
 
-        summary_table2 = """
-Name       | Type              | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameters? | Forward FLOPs | Backward FLOPs | In size          | Out size
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-           | AlexNet           | 61.1 M       | 61.1 M                 | 244 M        | No                                 | 714 M         | 1.4 G          | [1, 3, 224, 224] | [1, 1000]
-features   | Sequential        | 2.5 M        | 2.5 M                  | 9.9 M        | No                                 | 655 M         | 1.2 G          | [1, 3, 224, 224] | [1, 256, 6, 6]
-avgpool    | AdaptiveAvgPool2d | 0            | 0                      | 0            | No                                 | 0             | 0              | [1, 256, 6, 6]   | [1, 256, 6, 6]
-classifier | Sequential        | 58.6 M       | 58.6 M                 | 234 M        | No                                 | 58.6 M        | 117 M          | [1, 9216]        | [1, 1000]
-"""
-        self._test_module_summary_text(summary_table1, str(ms1))
-        self._test_module_summary_text(summary_table2, str(ms2))
-        self.assertEqual(str(ms3), str(ms4))
+        ms_features = ms2.submodule_summaries["features"]
+        self.assertEqual(ms_features.module_type, "Sequential")
+        self.assertFalse(ms_features.has_uninitialized_param)
+        self.assertEqual(ms_features.flops_forward, 655566528)
+        self.assertEqual(ms_features.flops_backward, 1240856256)
+        self.assertEqual(ms_features.in_size, [1, 3, 224, 224])
+        self.assertEqual(ms_features.out_size, [1, 256, 6, 6])
+
+        ms_avgpool = ms2.submodule_summaries["avgpool"]
+        self.assertEqual(ms_avgpool.module_type, "AdaptiveAvgPool2d")
+        self.assertFalse(ms_avgpool.has_uninitialized_param)
+        self.assertEqual(ms_avgpool.flops_forward, 0)
+        self.assertEqual(ms_avgpool.flops_backward, 0)
+        self.assertEqual(ms_avgpool.in_size, [1, 256, 6, 6])
+        self.assertEqual(ms_avgpool.out_size, [1, 256, 6, 6])
+
+        ms_classifier = ms2.submodule_summaries["classifier"]
+        self.assertEqual(ms_classifier.module_type, "Sequential")
+        self.assertFalse(ms_classifier.has_uninitialized_param)
+        self.assertEqual(ms_classifier.flops_forward, 58621952)
+        self.assertEqual(ms_classifier.flops_backward, 117243904)
+        self.assertEqual(ms_classifier.in_size, [1, 9216])
+        self.assertEqual(ms_classifier.out_size, [1, 1000])
 
     def test_get_human_readable_count(self) -> None:
         with self.assertRaisesRegex(ValueError, "received -1"):
@@ -296,24 +308,38 @@ classifier | Sequential        | 58.6 M       | 58.6 M                 | 234 M  
                 x = torch.cat((x1, x2), 1)
                 return x
 
-        summary_table = """
-Name       | Type       | # Parameters | # Trainable Parameters | Size (bytes) | Contains Uninitialized Parameters? | Forward FLOPs | Backward FLOPs | In size                              | Out size
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-           | SimpleConv | 10           | 10                     | 40           | No                                 | 903 k         | 903 k          | [[1, 1, 224, 224], [1, 1, 224, 224]] | [1, 2, 224, 224]
-features   | Sequential | 10           | 10                     | 40           | No                                 | 903 k         | 1.4 M          | [1, 1, 224, 224]                     | [1, 1, 224, 224]
-features.0 | Conv2d     | 10           | 10                     | 40           | No                                 | 903 k         | 1.4 M          | [1, 1, 224, 224]                     | [1, 1, 224, 224]
-features.1 | ReLU       | 0            | 0                      | 0            | No                                 | 0             | 0              | [1, 1, 224, 224]                     | [1, 1, 224, 224]
-"""
-
         model = SimpleConv()
         x = torch.randn(1, 1, 224, 224)
         y = torch.randn(1, 1, 224, 224)
 
         ms1 = get_summary_and_prune(model, max_depth=3, module_args=(x, y))
-        self.assertEqual(1, model.offset)
-        ms2 = get_summary_and_prune(
-            model, max_depth=3, module_args=(x, y), module_kwargs={"offset": 3}
-        )
-        self._test_module_summary_text(summary_table, str(ms1))
-        self._test_module_summary_text(summary_table, str(ms2))
-        self.assertEqual(3, model.offset)
+
+        self.assertEqual(ms1.module_type, "SimpleConv")
+        self.assertEqual(ms1.num_parameters, 10)
+        self.assertFalse(ms1.has_uninitialized_param)
+        self.assertEqual(ms1.in_size, [[1, 1, 224, 224], [1, 1, 224, 224]])
+        self.assertEqual(ms1.out_size, [1, 2, 224, 224])
+
+        ms_features = ms1.submodule_summaries["features"]
+        self.assertEqual(ms_features.module_type, "Sequential")
+        self.assertFalse(ms_features.has_uninitialized_param)
+        self.assertEqual(ms_features.in_size, [1, 1, 224, 224])
+        self.assertEqual(ms_features.out_size, [1, 1, 224, 224])
+
+        ms_avgpool = ms1.submodule_summaries["features"].submodule_summaries[
+            "features.0"
+        ]
+        self.assertEqual(ms_avgpool.module_type, "Conv2d")
+        self.assertFalse(ms_avgpool.has_uninitialized_param)
+        self.assertEqual(ms_avgpool.in_size, [1, 1, 224, 224])
+        self.assertEqual(ms_avgpool.out_size, [1, 1, 224, 224])
+
+        ms_classifier = ms1.submodule_summaries["features"].submodule_summaries[
+            "features.1"
+        ]
+        self.assertEqual(ms_classifier.module_type, "ReLU")
+        self.assertFalse(ms_classifier.has_uninitialized_param)
+        self.assertEqual(ms_classifier.flops_forward, 0)
+        self.assertEqual(ms_classifier.flops_backward, 0)
+        self.assertEqual(ms_classifier.in_size, [1, 1, 224, 224])
+        self.assertEqual(ms_classifier.out_size, [1, 1, 224, 224])
