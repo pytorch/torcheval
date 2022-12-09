@@ -343,3 +343,18 @@ classifier | Sequential        | 58.6 M       | 58.6 M                 | 234 M  
         self.assertEqual(ms_classifier.flops_backward, 0)
         self.assertEqual(ms_classifier.in_size, [1, 1, 224, 224])
         self.assertEqual(ms_classifier.out_size, [1, 1, 224, 224])
+
+    def test_forward_elapsed_time(self) -> None:
+        pretrained_model = models.alexnet(pretrained=True)
+        inp = torch.randn(1, 3, 224, 224)
+        ms1 = get_summary_and_prune(pretrained_model, module_args=(inp,), max_depth=4)
+        stack = [ms1] + [
+            ms1.submodule_summaries[key] for key in ms1.submodule_summaries
+        ]
+        # check all submodule summaries have been timed
+        for ms in stack:
+            self.assertNotEqual(ms.forward_elapsed_time_ms, "?")
+            self.assertGreater(float(ms.forward_elapsed_time_ms), 0)
+            stack.extend(
+                [ms.submodule_summaries[key] for key in ms.submodule_summaries]
+            )

@@ -18,6 +18,7 @@ from torch.utils._pytree import PyTree, tree_flatten
 from torch.utils.hooks import RemovableHandle
 from torcheval.tools.flops import flop_mapping, FlopTensorDispatchMode
 
+from torchtnt.utils import Timer
 from torchtnt.utils.version import is_torch_version_geq_1_13
 from typing_extensions import Literal
 
@@ -32,6 +33,7 @@ _ATTRIB_TO_COL_HEADER = {
     "flops_backward": "Backward FLOPs",
     "in_size": "In size",
     "out_size": "Out size",
+    "forward_elapsed_time_ms": "Forward Elapsed Times (ms)",
 }  # Attribute: column header (in table)
 _ATTRIBS: List[str] = list(_ATTRIB_TO_COL_HEADER.keys())
 _FLOP_ATTRIBS: List[str] = ["flops_forward", "flops_backward"]
@@ -54,6 +56,8 @@ class _ModuleSummaryData:
     activation_sizes: Dict[
         str, Tuple[Union[TUnknown, List[int]], Union[TUnknown, List[int]]]
     ] = field(default_factory=dict)
+    # mapping from module name to elapsed time in ms
+    forward_elapsed_times_ms: Dict[str, float] = field(default_factory=dict)
 
 
 class ModuleSummary:
@@ -70,6 +74,7 @@ class ModuleSummary:
     - FLOPs for backward (-1 meaning not calculated)
     - Input shape ("?" meaning not calculated)
     - Output shape ("?" meaning not calculated)
+    - Forward elapsed time in ms ("?" meaning not calculated)
     """
 
     def __init__(self) -> None:
@@ -84,9 +89,9 @@ class ModuleSummary:
         self._flops_backward: int = -1
         self._flops_forward_detail: Dict[str, int] = {}
         self._flops_backward_detail: Dict[str, int] = {}
-
         self._in_size: Union[TUnknown, List[int]] = _UNKNOWN_SIZE
         self._out_size: Union[TUnknown, List[int]] = _UNKNOWN_SIZE
+        self._forward_time_elapsed_ms: Union[TUnknown, float] = _UNKNOWN_SIZE
 
     @property
     def submodule_summaries(self) -> Dict[str, "ModuleSummary"]:
@@ -160,6 +165,11 @@ class ModuleSummary:
         return self._out_size
 
     @property
+    def forward_elapsed_time_ms(self) -> Union[TUnknown, float]:
+        """Returns the forward time of the module in ms."""
+        return self._forward_time_elapsed_ms
+
+    @property
     def size_bytes(self) -> int:
         """Returns the total estimated size in bytes of a module."""
         if self.has_uninitialized_param:
@@ -202,6 +212,19 @@ def _get_module_flops_and_activation_sizes(
         module, [(_activation_size_hook(activation_sizes), _HookType.FORWARD_HOOK)]
     )
 
+    forward_timer_mapping: Dict[str, Timer] = {}
+    forward_elapsed_times_sec: Dict[str, float] = {}
+    forward_elapsed_time_handles = _register_hooks(
+        module,
+        [
+            (_forward_time_pre_hook(forward_timer_mapping), _HookType.FORWARD_PRE_HOOK),
+            (
+                _forward_time_hook(forward_timer_mapping, forward_elapsed_times_sec),
+                _HookType.FORWARD_HOOK,
+            ),
+        ],
+    )
+
     module.zero_grad()
 
     module_args = module_args or ()
@@ -236,12 +259,21 @@ def _get_module_flops_and_activation_sizes(
                     "Backward FLOPs are only computed if module foward returns a tensor."
                 )
 
+    # remove forward time elapsed handles
+    for hook_handle in forward_elapsed_time_handles:
+        hook_handle.remove()
+
+    # convert module timings to ms
+    forward_time_elapsed_ms = {}
+    for module_name in forward_elapsed_times_sec:
+        forward_time_elapsed_ms[module_name] = (
+            forward_elapsed_times_sec[module_name] / 1000
+        )
+
     # Reverting all the changes:
     module.zero_grad()
     module_summary_data = _ModuleSummaryData(
-        flops_forward,
-        flops_backward,
-        activation_sizes,
+        flops_forward, flops_backward, activation_sizes, forward_time_elapsed_ms
     )
     # TODO: Reverting BN: We also need to save status of BN running mean/var before running and revert those.
     return module_summary_data
@@ -352,6 +384,7 @@ def _generate_module_summary(
     flops_forward = module_summary_data.flops_forward
     flops_backward = module_summary_data.flops_backward
     activation_sizes = module_summary_data.activation_sizes
+    forward_elapsed_times_ms = module_summary_data.forward_elapsed_times_ms
 
     # Calculate flops forward/backward.
     if flops_forward is not None:
@@ -370,6 +403,10 @@ def _generate_module_summary(
         in_size, out_size = activation_sizes[module_name]
         module_summary._in_size = in_size
         module_summary._out_size = out_size
+
+    # set forward elasped times
+    if module_name in forward_elapsed_times_ms:
+        module_summary._forward_time_elapsed_ms = forward_elapsed_times_ms[module_name]
 
     return module_summary
 
@@ -394,6 +431,8 @@ def get_summary_table(
         stop_attr.append("in_size")
     if module_summary.out_size == _UNKNOWN_SIZE:
         stop_attr.append("out_size")
+    if module_summary.forward_elapsed_time_ms == _UNKNOWN_SIZE:
+        stop_attr.append("forward_elapsed_time_ms")
     unpacked_attribs, col_widths = defaultdict(list), defaultdict(int)
     _unpack_attributes(
         {"root": module_summary},
@@ -517,6 +556,8 @@ def _unpack_attributes(
                     if human_readable_nums
                     else str(attrib_val)
                 )
+            elif isinstance(attrib_val, float):
+                attrib_val = f"{attrib_val:.10f}"
             elif isinstance(attrib_val, list):
                 attrib_val = str(attrib_val)
             elif attrib_val is None:
@@ -625,6 +666,43 @@ def _activation_size_hook(
             in_size = _parse_batch_shape(inp)
             out_size = _parse_batch_shape(out)
             activation_sizes[module_name] = (in_size, out_size)
+
+        return hook
+
+    return intermediate_hook
+
+
+def _forward_time_pre_hook(
+    timer_mapping: Dict[str, Timer]
+    # pyre-ignore: Invalid type parameters [24]
+) -> Callable[[str], Callable]:
+    # pyre-ignore: Missing parameter annotation [2]
+    def intermediate_hook(
+        module_name: str,
+    ) -> Callable[[torch.nn.Module, Any], None]:
+        def hook(_module: torch.nn.Module, _inp: Any) -> None:
+            timer_mapping[module_name] = Timer()
+            timer_mapping[module_name].start()
+
+        return hook
+
+    return intermediate_hook
+
+
+def _forward_time_hook(
+    timer_mapping: Dict[str, Timer],
+    elapsed_times: Dict[str, float],
+    # pyre-ignore: Invalid type parameters [24]
+) -> Callable[[str], Callable]:
+    # pyre-ignore: Missing parameter annotation [2]
+    def intermediate_hook(
+        module_name: str,
+    ) -> Callable[[torch.nn.Module, Any, Any], None]:
+        def hook(_module: torch.nn.Module, _inp: Any, _out: Any) -> None:
+            timer_mapping[module_name].stop()
+            elapsed_times[module_name] = timer_mapping[
+                module_name
+            ].interval_time_seconds
 
         return hook
 
