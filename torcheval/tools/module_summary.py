@@ -8,6 +8,7 @@ import copy
 import math
 import warnings
 from collections import defaultdict, deque
+from dataclasses import dataclass, field
 from typing import Any, Callable, DefaultDict, Deque, Dict, List, Optional, Tuple, Union
 
 import torch
@@ -40,6 +41,18 @@ _PARAMETER_FLOPS_UNITS = [" ", "k", "M", "G", "T", "P", "E", "Z", "Y"]
 
 TUnknown = Literal["?"]
 _UNKNOWN_SIZE: TUnknown = "?"
+
+
+@dataclass
+class _ModuleSummaryData:
+    # mapping to store forward flops
+    flops_forward: Optional[DefaultDict[str, DefaultDict[str, int]]] = None
+    # mapping to store backward flops
+    flops_backward: Optional[DefaultDict[str, DefaultDict[str, int]]] = None
+    # mapping from module name to activation size tuple (in_size, out_size)
+    activation_sizes: Dict[
+        str, Tuple[Union[TUnknown, List[int]], Union[TUnknown, List[int]]]
+    ] = field(default_factory=dict)
 
 
 class ModuleSummary:
@@ -178,13 +191,7 @@ def _get_module_flops_and_activation_sizes(
     # pyre-ignore
     module_args: Optional[Tuple[Any, ...]] = None,
     module_kwargs: Optional[Dict[str, Any]] = None,
-) -> Tuple[
-    DefaultDict[str, DefaultDict[str, int]],  # mapping to store forward flops
-    DefaultDict[str, DefaultDict[str, int]],  # mapping to store backward flops
-    Dict[
-        str, Tuple[Union[TUnknown, List[int]], Union[TUnknown, List[int]]]
-    ],  # mapping from module name to activation size tuple (in_size, out_size)
-]:
+) -> _ModuleSummaryData:
     # a mapping from module name to activation size tuple (in_size, out_size)
     activation_sizes: Dict[
         str, Tuple[Union[TUnknown, List[int]], Union[TUnknown, List[int]]]
@@ -256,8 +263,13 @@ def _get_module_flops_and_activation_sizes(
 
     # Reverting all the changes:
     module.zero_grad()
+    module_summary_data = _ModuleSummaryData(
+        flops_forward,
+        flops_backward,
+        activation_sizes,
+    )
     # TODO: Reverting BN: We also need to save status of BN running mean/var before running and revert those.
-    return flops_forward, flops_backward, activation_sizes
+    return module_summary_data
 
 
 def _has_uninitialized_param(module: torch.nn.Module) -> bool:
@@ -301,11 +313,7 @@ def get_module_summary(
 
     """
 
-    flops_forward = None
-    flops_backward = None
-    activation_sizes: Dict[
-        str, Tuple[Union[TUnknown, List[int]], Union[TUnknown, List[int]]]
-    ] = {}
+    module_summary_data = _ModuleSummaryData()
     has_uninitialized_param = _has_uninitialized_param(module)
     if not has_uninitialized_param:
         has_tensor_in_args = _has_tensor(module_args)
@@ -316,31 +324,15 @@ def get_module_summary(
                 "For best results, please input tensors though args."
             )
         if has_tensor_in_args or has_tensor_in_kwargs:
-            (
-                flops_forward,
-                flops_backward,
-                activation_sizes,
-            ) = _get_module_flops_and_activation_sizes(
+            module_summary_data = _get_module_flops_and_activation_sizes(
                 module, module_args, module_kwargs
             )
 
-    return _generate_module_summary(
-        module,
-        "",
-        flops_forward=flops_forward,
-        flops_backward=flops_backward,
-        activation_sizes=activation_sizes,
-    )
+    return _generate_module_summary(module, "", module_summary_data)
 
 
 def _generate_module_summary(
-    module: torch.nn.Module,
-    module_name: str,
-    activation_sizes: Dict[
-        str, Tuple[Union[TUnknown, List[int]], Union[TUnknown, List[int]]]
-    ],
-    flops_forward: Optional[DefaultDict[str, DefaultDict[str, int]]] = None,
-    flops_backward: Optional[DefaultDict[str, DefaultDict[str, int]]] = None,
+    module: torch.nn.Module, module_name: str, module_summary_data: _ModuleSummaryData
 ) -> ModuleSummary:
     """
     Recursively generate and populate metrics for ModelSummary.
@@ -354,11 +346,7 @@ def _generate_module_summary(
         formatted_name = f"{module_name}.{name}" if module_name != "" else name
 
         submodule_summary = _generate_module_summary(
-            submodule,
-            formatted_name,
-            flops_forward=flops_forward,
-            flops_backward=flops_backward,
-            activation_sizes=activation_sizes,
+            submodule, formatted_name, module_summary_data
         )
 
         # Add results from submodule summary
@@ -385,6 +373,10 @@ def _generate_module_summary(
 
     for buf in module.buffers(recurse=False):
         module_summary._size_bytes += buf.numel() * buf.element_size()
+
+    flops_forward = module_summary_data.flops_forward
+    flops_backward = module_summary_data.flops_backward
+    activation_sizes = module_summary_data.activation_sizes
 
     # Calculate flops forward/backward.
     if flops_forward is not None:
