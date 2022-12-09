@@ -37,3 +37,55 @@ jobs:
           pytest --cov=. --cov-report xml tests -vv
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v2
+
+  gpu_unit_tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [linux.8xlarge.nvidia.gpu]
+        python-version: [3.8]
+        cuda-tag: ["cu11"]
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+      - name: Setup conda env
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniconda-version: "latest"
+          activate-environment: test
+          python-version: ${{ matrix.python-version }}
+      - name: Install nvidia driver, nvidia-docker runtime, set GPU_FLAG
+        uses: pytorch/test-infra/.github/actions/setup-nvidia@main
+      - name: Display EC2 information
+        shell: bash
+        run: |
+          set -euo pipefail
+          function get_ec2_metadata() {
+            # Pulled from instance metadata endpoint for EC2
+            # see https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
+            category=$1
+            curl -fsSL "http://169.254.169.254/latest/meta-data/${category}"
+          }
+          echo "ami-id: $(get_ec2_metadata ami-id)"
+          echo "instance-id: $(get_ec2_metadata instance-id)"
+          echo "instance-type: $(get_ec2_metadata instance-type)"
+      - name: Install dependencies
+        shell: bash -l {0}
+        run: |
+          set -eux
+          conda activate test
+          pip install torch --extra-index-url https://download.pytorch.org/whl/cu117
+          # Use stable fbgemm-gpu
+          pip uninstall -y fbgemm-gpu-nightly
+          pip install fbgemm-gpu==0.2.0
+          pip install -r requirements.txt
+          pip install -r dev-requirements.txt
+          pip install --no-build-isolation -e ".[dev]"
+      - name: Run unit tests with coverage
+        shell: bash -l {0}
+        run: |
+          set -eux
+          conda activate test
+          pytest --timeout=60 --cov=. --cov-report xml -vv -rA -m "gpu_only or cpu_and_gpu" tests
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v2

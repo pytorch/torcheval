@@ -9,6 +9,8 @@ import unittest
 import uuid
 from typing import Callable, Type, Union
 
+import pytest
+
 import torch
 import torch.distributed.launcher as pet
 from torcheval.metrics import Metric
@@ -77,6 +79,8 @@ class MetricToolkitTest(unittest.TestCase):
             # pyre-ignore[6]: It's intended to test the behaviour when recipient_rank's value is not correct.
             get_synced_metric(metric, recipient_rank="ALL")
 
+    # pyre-fixmeI[56]: Pyre was not able to infer the type of the decorator `pytest.mark.cpu_and_gpu`.
+    @pytest.mark.cpu_and_gpu
     def test_clone_metric(self) -> None:
         metric = DummySumMetric()
         self.assertDictEqual(clone_metric(metric).state_dict(), metric.state_dict())
@@ -90,6 +94,8 @@ class MetricToolkitTest(unittest.TestCase):
             # pyre-ignore[16]: Undefined attribute [16]: `Metric` has no attribute `sum`.
             self.assertEqual(cloned_metric.sum.device, device)
 
+    # pyre-fixmeI[56]: Pyre was not able to infer the type of the decorator `pytest.mark.cpu_and_gpu`.
+    @pytest.mark.cpu_and_gpu
     def test_clone_metrics(self) -> None:
         metrics = [DummySumMetric(), DummySumMetric()]
         cloned = clone_metrics(metrics)
@@ -185,6 +191,8 @@ class MetricToolkitTest(unittest.TestCase):
         torch.testing.assert_close(metric1.compute(), torch.tensor(0.0))
         torch.testing.assert_close(metric2.compute(), torch.tensor(0.0))
 
+    # pyre-fixmeI[56]: Pyre was not able to infer the type of the decorator `pytest.mark.cpu_and_gpu`.
+    @pytest.mark.cpu_and_gpu
     def test_to_device(self) -> None:
         metric1, metric2 = DummySumMetric(), DummySumMetric()
         self.assertEqual(metric1.device.type, "cpu")
