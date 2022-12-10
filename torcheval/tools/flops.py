@@ -260,7 +260,6 @@ class FlopTensorDispatchMode(TorchDispatchMode):
         # Pyre does not support analyzing classes nested in functions.
         # But this class can't be lifted out of the function as it is a static class
         # using a function parameter.
-        # pyre-ignore [16]
         return PushState.apply
 
     # pyre-ignore [3]
@@ -285,7 +284,6 @@ class FlopTensorDispatchMode(TorchDispatchMode):
         # Pyre does not support analyzing classes nested in functions.
         # But this class can't be lifted out of the function as it is a static class
         # using a function parameter.
-        # pyre-ignore [16]
         return PopState.apply
 
     # pyre-ignore [3] Return a callable function
