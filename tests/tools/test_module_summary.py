@@ -155,8 +155,7 @@ class ModuleSummaryTest(unittest.TestCase):
 
     def test_resnet_max_depth(self) -> None:
         """Test the behavior of max_depth on a layered model like ResNet"""
-        # pyre-fixme[16]: Module `models` has no attribute `resnet18`.
-        pretrained_model = models.resnet18(pretrained=True)
+        pretrained_model = models.resnet.resnet18(pretrained=True)
 
         # max_depth = None
         ms1 = get_module_summary(pretrained_model)
