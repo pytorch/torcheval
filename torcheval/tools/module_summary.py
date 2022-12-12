@@ -327,8 +327,8 @@ def get_module_summary(
         has_tensor_in_kwargs = _has_tensor(module_kwargs)
         if has_tensor_in_kwargs:
             warnings.warn(
-                "A tensor in kwargs was found. This may lead to an inaccurately computed activation size, as keyword arguments are not passed into forward hooks for modules. "
-                "For best results, please input tensors though args."
+                "A tensor in module_kwargs was found. This may lead to an inaccurately computed activation size, as keyword arguments are not passed into forward hooks for modules. "
+                "For best results, please input tensors though module_args."
             )
         if has_tensor_in_args or has_tensor_in_kwargs:
             module_summary_data = _get_module_flops_and_activation_sizes(
