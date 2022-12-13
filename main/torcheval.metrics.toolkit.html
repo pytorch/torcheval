@@ -409,18 +409,79 @@ then all ranks are the destination ranks.</p></li>
 <span class="go">tensor(0.) # Rank 0</span>
 <span class="go">tensor(1.) # Rank 1</span>
 <span class="go">tensor(2.) # Rank 2</span>
-<span class="gp">&gt;&gt;&gt; </span> <span class="n">get_synced_metric</span><span class="p">(</span><span class="nb">max</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="go">tensor(2.) # Rank 0</span>
-<span class="go">None # Rank 1</span>
-<span class="go">None # Rank 2</span>
-<span class="go"> &gt;&gt;&gt;  get_synced_metric(max, recipient_rank=1).compute()</span>
-<span class="go">None # Rank 0</span>
-<span class="go">tensor(2.) # Rank 1</span>
-<span class="go">None # Rank 2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">synced_metric</span> <span class="o">=</span> <span class="n">get_synced_metric</span><span class="p">(</span><span class="nb">max</span><span class="p">)</span>  <span class="c1"># by default sync metric states to Rank 0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">synced_metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span> <span class="k">if</span> <span class="n">synced_metric</span> <span class="k">else</span> <span class="kc">None</span>
+<span class="go">tensor(2.)     # Rank 0</span>
+<span class="go">None # Rank 1 -- synced_metric is None</span>
+<span class="go">None # Rank 2 -- synced_metric is None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">synced_metric</span> <span class="o">=</span> <span class="n">get_synced_metric</span><span class="p">(</span><span class="nb">max</span><span class="p">,</span> <span class="n">recipient_rank</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">synced_metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span> <span class="k">if</span> <span class="n">synced_metric</span> <span class="k">else</span> <span class="kc">None</span>
+<span class="go">None # Rank 0 -- synced_metric is None</span>
+<span class="go">tensor(2.)     # Rank 1</span>
+<span class="go">None # Rank 2 -- synced_metric is None</span>
 <span class="gp">&gt;&gt;&gt; </span> <span class="n">get_synced_metric</span><span class="p">(</span><span class="nb">max</span><span class="p">,</span> <span class="n">recipient_rank</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 <span class="go">tensor(2.) # Rank 0</span>
 <span class="go">tensor(2.) # Rank 1</span>
 <span class="go">tensor(2.) # Rank 2</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torcheval.metrics.toolkit.get_synced_metric_collection">
+<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></span><span class="sig-name descname"><span class="pre">get_synced_metric_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_collection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MutableMapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ProcessGroup</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recipient_rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MutableMapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.get_synced_metric_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dict of metric objects to the recipient_rank whose
+internal state variables are synced across processes in the process_group.
+Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> on non-recipient rank.</p>
+<p>The data transfer is batched to maximize efficiency.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">all</span></code> is passed as recipient_rank, all ranks in the
+<code class="docutils literal notranslate"><span class="pre">process_group</span></code> are considered as recipient ranks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metric_collection</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Metric</em><em>]</em>) – The dict of metric objects to sync.</p></li>
+<li><p><strong>process_group</strong> (<em>int</em>) – The process group on which the metric states are
+gathered. default: <code class="docutils literal notranslate"><span class="pre">None</span></code> (the entire world)</p></li>
+<li><p><strong>recipient_rank</strong> – The destination rank. If string “all” is passed in,
+then all ranks are the destination ranks.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – when <code class="docutils literal notranslate"><span class="pre">recipient_rank</span></code> is not an integer or string
+    “all”.</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Assumes world_size of 3.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Process group initialization omitted on each rank.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch.distributed</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torcheval.metrics</span> <span class="kn">import</span> <span class="n">Max</span><span class="p">,</span> <span class="n">Min</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max&quot;</span> <span class="p">:</span> <span class="n">Max</span><span class="p">(),</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="n">Min</span><span class="p">()}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">synced_metrics</span> <span class="o">=</span> <span class="n">get_synced_metric_collection</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+
+<span class="go">by default metrics sync to Rank 0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">synced_metrics</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span> <span class="k">if</span> <span class="n">synced_metrics</span> <span class="k">else</span> <span class="kc">None</span>
+<span class="go">tensor(2.) # Rank 0</span>
+<span class="go">None       # Rank 1 -- synced_metrics is None</span>
+<span class="go">None       # Rank 2 -- synced_metrics is None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">synced_metrics</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span> <span class="k">if</span> <span class="n">synced_metrics</span> <span class="k">else</span> <span class="kc">None</span>
+<span class="go">tensor(0.) # Rank 0</span>
+<span class="go">None       # Rank 1 -- synced_metrics is None</span>
+<span class="go">None       # Rank 2 -- synced_metrics is None</span>
+
+<span class="go">you can also sync to all ranks or choose a specific rank</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">synced_metrics</span> <span class="o">=</span> <span class="n">get_synced_metric_collection</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">recipient_rank</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">synced_metrics</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="go">tensor(2.) # Rank 0</span>
+<span class="go">tensor(2.) # Rank 1</span>
+<span class="go">tensor(2.) # Rank 2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">synced_metrics</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="go">tensor(0.) # Rank 0</span>
+<span class="go">tensor(0.) # Rank 1</span>
+<span class="go">tensor(0.) # Rank 2</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -460,6 +521,47 @@ then all ranks are the destination ranks.</p></li>
 <span class="go">{&quot;max&quot;, tensor(2.)} # Rank 0</span>
 <span class="go">{&quot;max&quot;, tensor(2.)} # Rank 1</span>
 <span class="go">{&quot;max&quot;, tensor(2.)} # Rank 2</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torcheval.metrics.toolkit.get_synced_state_dict_collection">
+<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></span><span class="sig-name descname"><span class="pre">get_synced_state_dict_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_collection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MutableMapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ProcessGroup</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recipient_rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.get_synced_state_dict_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the state dict of a collection of metrics after syncing on recipient_rank.
+Return an None on other ranks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metric_collection</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Metric</em><em>]</em>) – The metric objects to sync and get <code class="docutils literal notranslate"><span class="pre">state_dict()</span></code></p></li>
+<li><p><strong>process_group</strong> – The process group on which the metric states are
+gathered. default: <code class="docutils literal notranslate"><span class="pre">None</span></code> (the entire world)</p></li>
+<li><p><strong>recipient_rank</strong> – The destination rank. If string “all” is passed in,
+then all ranks are the destination ranks.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Bundle of state dicts of for the synced metrics</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Assumes world_size of 3.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Process group initialization omitted on each rank.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch.distributed</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torcheval</span> <span class="kn">import</span> <span class="n">Max</span><span class="p">,</span> <span class="n">Min</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">maximum</span> <span class="o">=</span> <span class="n">Max</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">maximum</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">minimum</span> <span class="o">=</span> <span class="n">Min</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">minimum</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_synced_state_dict</span><span class="p">({</span><span class="s2">&quot;max rank&quot;</span><span class="p">:</span> <span class="n">maximum</span><span class="p">,</span> <span class="s2">&quot;min rank&quot;</span><span class="p">:</span> <span class="n">minimum</span><span class="p">})</span>
+<span class="go">{&quot;max rank&quot;: {&quot;max&quot;, tensor(2.)}, &quot;min rank&quot;: {&quot;min&quot;, tensor(0.)}} # Rank 0</span>
+<span class="go">None # Rank 1</span>
+<span class="go">None # Rank 2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_synced_state_dict</span><span class="p">({</span><span class="s2">&quot;max rank&quot;</span><span class="p">:</span> <span class="n">maximum</span><span class="p">,</span> <span class="s2">&quot;min rank&quot;</span><span class="p">:</span> <span class="n">minimum</span><span class="p">},</span> <span class="n">recipient_rank</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+<span class="go">{&quot;max rank&quot;: {&quot;max&quot;, tensor(2.)}, &quot;min rank&quot;: {&quot;min&quot;, tensor(0.)}} # Rank 0</span>
+<span class="go">{&quot;max rank&quot;: {&quot;max&quot;, tensor(2.)}, &quot;min rank&quot;: {&quot;min&quot;, tensor(0.)}} # Rank 1</span>
+<span class="go">{&quot;max rank&quot;: {&quot;max&quot;, tensor(2.)}, &quot;min rank&quot;: {&quot;min&quot;, tensor(0.)}} # Rank 2</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -523,6 +625,50 @@ then all ranks are the destination ranks.</p></li>
 <span class="go">tensor(2.) # Rank 0</span>
 <span class="go">tensor(2.) # Rank 1</span>
 <span class="go">tensor(2.) # Rank 2</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="torcheval.metrics.toolkit.sync_and_compute_collection">
+<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></span><span class="sig-name descname"><span class="pre">sync_and_compute_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MutableMapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ProcessGroup</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recipient_rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.sync_and_compute_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sync metric states across a list of dict of metrics and returns the
+<code class="docutils literal notranslate"><span class="pre">metric.compute()</span></code> result of synced metrics on recipient rank.
+Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> on other ranks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metrics</strong> – The dict of metric objects to be synced and computed.</p></li>
+<li><p><strong>process_group</strong> – The process group on which the metric states are
+gathered. default: <code class="docutils literal notranslate"><span class="pre">None</span></code> (the entire world)</p></li>
+<li><p><strong>recipient_rank</strong> – The destination rank. If string “all” is passed in,
+then all ranks are the destination ranks.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Assumes world_size of 3.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Process group initialization omitted on each rank.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch.distributed</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torcheval.metrics</span> <span class="kn">import</span> <span class="n">Max</span><span class="p">,</span> <span class="n">Min</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;max&quot;</span> <span class="p">:</span> <span class="n">Max</span><span class="p">(),</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="n">Min</span><span class="p">()}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()))</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="go">tensor(0.) # Rank 0</span>
+<span class="go">tensor(1.) # Rank 1</span>
+<span class="go">tensor(2.) # Rank 2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()))</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="go">tensor(0.) # Rank 0</span>
+<span class="go">tensor(1.) # Rank 1</span>
+<span class="go">tensor(2.) # Rank 2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sync_and_compute_collection</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+<span class="go">{&quot;max&quot; : tensor(2.), &quot;min&quot;: tensor(0.)} # Rank 0</span>
+<span class="go">None # Rank 1</span>
+<span class="go">None # Rank 2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sync_and_compute_collection</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">recipient_rank</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
+<span class="go">{&quot;max&quot; : tensor(2.), &quot;min&quot;: tensor(0.)} # Rank 0</span>
+<span class="go">{&quot;max&quot; : tensor(2.), &quot;min&quot;: tensor(0.)} # Rank 1</span>
+<span class="go">{&quot;max&quot; : tensor(2.), &quot;min&quot;: tensor(0.)} # Rank 2</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -604,9 +750,12 @@ then all ranks are the destination ranks.</p></li>
 <li><a class="reference internal" href="#torcheval.metrics.toolkit.clone_metric"><code class="docutils literal notranslate"><span class="pre">clone_metric()</span></code></a></li>
 <li><a class="reference internal" href="#torcheval.metrics.toolkit.clone_metrics"><code class="docutils literal notranslate"><span class="pre">clone_metrics()</span></code></a></li>
 <li><a class="reference internal" href="#torcheval.metrics.toolkit.get_synced_metric"><code class="docutils literal notranslate"><span class="pre">get_synced_metric()</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.metrics.toolkit.get_synced_metric_collection"><code class="docutils literal notranslate"><span class="pre">get_synced_metric_collection()</span></code></a></li>
 <li><a class="reference internal" href="#torcheval.metrics.toolkit.get_synced_state_dict"><code class="docutils literal notranslate"><span class="pre">get_synced_state_dict()</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.metrics.toolkit.get_synced_state_dict_collection"><code class="docutils literal notranslate"><span class="pre">get_synced_state_dict_collection()</span></code></a></li>
 <li><a class="reference internal" href="#torcheval.metrics.toolkit.reset_metrics"><code class="docutils literal notranslate"><span class="pre">reset_metrics()</span></code></a></li>
 <li><a class="reference internal" href="#torcheval.metrics.toolkit.sync_and_compute"><code class="docutils literal notranslate"><span class="pre">sync_and_compute()</span></code></a></li>
+<li><a class="reference internal" href="#torcheval.metrics.toolkit.sync_and_compute_collection"><code class="docutils literal notranslate"><span class="pre">sync_and_compute_collection()</span></code></a></li>
 <li><a class="reference internal" href="#torcheval.metrics.toolkit.to_device"><code class="docutils literal notranslate"><span class="pre">to_device()</span></code></a></li>
 </ul>
 </li>
