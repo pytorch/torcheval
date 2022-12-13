@@ -178,14 +178,16 @@ def get_synced_metric(
         tensor(0.) # Rank 0
         tensor(1.) # Rank 1
         tensor(2.) # Rank 2
-        >>>  get_synced_metric(max).compute()
-        tensor(2.) # Rank 0
-        None # Rank 1
-        None # Rank 2
-         >>>  get_synced_metric(max, recipient_rank=1).compute()
-        None # Rank 0
-        tensor(2.) # Rank 1
-        None # Rank 2
+        >>> synced_metric = get_synced_metric(max)  # by default sync metric states to Rank 0
+        >>> synced_metric.compute() if synced_metric else None
+        tensor(2.)     # Rank 0
+        None # Rank 1 -- synced_metric is None
+        None # Rank 2 -- synced_metric is None
+        >>> synced_metric = get_synced_metric(max, recipient_rank=1)
+        >>> synced_metric.compute() if synced_metric else None
+        None # Rank 0 -- synced_metric is None
+        tensor(2.)     # Rank 1
+        None # Rank 2 -- synced_metric is None
         >>>  get_synced_metric(max, recipient_rank="all").compute()
         tensor(2.) # Rank 0
         tensor(2.) # Rank 1
