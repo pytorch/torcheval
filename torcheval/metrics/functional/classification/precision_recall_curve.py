@@ -234,7 +234,7 @@ def multilabel_precision_recall_curve(
     input: torch.Tensor,
     target: torch.Tensor,
     *,
-    num_labels: int,
+    num_labels: Optional[int] = None,
 ) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]:
     """
     Returns precision-recall pairs and their corresponding thresholds for
@@ -247,7 +247,7 @@ def multilabel_precision_recall_curve(
         input (Tensor): Tensor of label predictions
             It should be probabilities or logits with shape of (n_sample, n_label).
         target (Tensor): Tensor of ground truth labels with shape of (n_samples, n_label).
-        num_labels (int): Number of labels.
+        num_labels (Optional): Number of labels.
 
     Return:
         a tuple of (precision: List[torch.Tensor], recall: List[torch.Tensor], thresholds: List[torch.Tensor])
@@ -272,7 +272,11 @@ def multilabel_precision_recall_curve(
         tensor([0.05, 0.55, 0.65, 0.75]),
         tensor([0.05, 0.35, 0.75])])
     """
-    if num_labels is None and input.ndim == 2:
+    if input.ndim != 2:
+        raise ValueError(
+            f"input should be a one-dimensional tensor, got shape {input.shape}."
+        )
+    if num_labels is None:
         num_labels = input.shape[1]
     _multilabel_precision_recall_curve_update(input, target, num_labels)
     return _multilabel_precision_recall_curve_compute(input, target, num_labels)
@@ -312,6 +316,11 @@ def _multilabel_precision_recall_curve_update_input_check(
         raise ValueError(
             "Expected both input.shape and target.shape to have the same shape"
             f" but got {input.shape} and {target.shape}."
+        )
+
+    if input.ndim != 2:
+        raise ValueError(
+            f"input should be a one-dimensional tensor, got shape {input.shape}."
         )
 
     if input.shape[1] != num_labels:
