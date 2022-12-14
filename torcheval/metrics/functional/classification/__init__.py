@@ -13,6 +13,7 @@ from torcheval.metrics.functional.classification.accuracy import (
 from torcheval.metrics.functional.classification.auprc import (
     binary_auprc,
     multiclass_auprc,
+    multilabel_auprc,
 )
 
 from torcheval.metrics.functional.classification.auroc import (
@@ -80,6 +81,7 @@ __all__ = [
     "multiclass_precision_recall_curve",
     "multiclass_recall",
     "multilabel_accuracy",
+    "multilabel_auprc",
     "multilabel_precision_recall_curve",
     "multilabel_recall_at_fixed_precision",
     "topk_multilabel_accuracy",

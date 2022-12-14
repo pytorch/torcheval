@@ -10,11 +10,12 @@ import torch
 from torcheval.metrics.functional.classification.precision_recall_curve import (
     _compute_for_each_class,
     multiclass_precision_recall_curve,
+    multilabel_precision_recall_curve,
 )
 
 
-def _reimann_integral(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
-    """Reimann integral approximates the area of each cell with a rectangle positioned at the egde.
+def _riemann_integral(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
+    """Riemann integral approximates the area of each cell with a rectangle positioned at the egde.
     It is conventionally used rather than trapezoid approximation, which uses a rectangle positioned in the
     center, for PRAUC"""
     return -torch.sum((x[1:] - x[:-1]) * y[:-1])
@@ -91,7 +92,7 @@ def multiclass_auprc(
     a high percentage of true positives while also rejecting enough false examples so that most of the true predictions are true positives.
 
     In the multiclass version of auprc, the target tensor is a 1 dimensional and contains an integer entry representing the class for each example
-    in the input tensor. Each class is considered inpendantly in a one-vs-all fashion, examples for that class are labeled condition true and all other
+    in the input tensor. Each class is considered independently in a one-vs-all fashion, examples for that class are labeled condition true and all other
     classes are considered condition false.
 
     The results of N class multiclass auprc without an average is equivalent to binary auprc with N tasks if:
@@ -148,18 +149,104 @@ def multiclass_auprc(
     return _multiclass_auprc_compute(input, target, average)
 
 
+@torch.inference_mode()
+def multilabel_auprc(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    num_labels: Optional[int] = None,
+    *,
+    average: Optional[str] = "macro",
+) -> torch.Tensor:
+    """
+    Compute AUPRC, also called Average Precision, which is the area under the Precision-Recall Curve, for multilabel classification.
+    Its class version is ``torcheval.metrics.MultilabelAUPRC``.
+
+    Precision is defined as :math:`\frac{T_p}{T_p+F_p}`, it is the probability that a positive prediction from the model is a true positive.
+    Recall is defined as :math:`\frac{T_p}{T_p+F_n}`, it is the probability that a true positive is predicted to be positive by the model.
+
+    The precision-recall curve plots the recall on the x axis and the precision on the y axis, both of which are bounded between 0 and 1.
+    This function returns the area under that graph. If the area is near one, the model supports a threshold which correctly identifies
+    a high percentage of true positives while also rejecting enough false examples so that most of the true predictions are true positives.
+
+    In the multilabel version of AUPRC, the input and target tensors are 2-dimensional. The rows of each tensor are associated with a particular example and the columns are associated with a particular class.
+
+    For the target tensor, the entry of the r'th row and c'th column (r and c are 0-indexed) is 1 if the r'th example belongs to the c'th class, and 0 if not. For the input tensor, the entry in the same position is the output of the classification model prediciting the inclusion of the r'th example in the c'th class.
+    Note that in the multilabel setting, multiple labels are allowed to apply to a single sample. This stands in contrast to the multiclass
+    sample, in which there may be more than 2 distinct classes but each sample must have exactly one class.
+
+    The results of N label multilabel auprc without an average is equivalent to binary auprc with N tasks if:
+    1. the `input` is transposed, in binary labelification examples are associated with columns, whereas they are associated with rows in multilabel classification.
+    2. the `target` is transposed for the same reason
+
+    See examples below for more details on the connection between Multilabel and Binary AUPRC.
+
+    Args:
+        input (Tensor): Tensor of label predictions
+            It should be probabilities or logits with shape of (n_sample, n_label).
+        target (Tensor): Tensor of ground truth labels with shape of (n_samples, n_label).
+        num_labels (int): Number of labels.
+        average (str, optional):
+            - ``'macro'`` [default]:
+                Calculate metrics for each class separately, and return their unweighted mean.
+            - ``None`` or ``'none'``:
+                Calculate the metric for each class separately, and return
+                the metric for every class.
+
+    Examples::
+        >>> import torch
+        >>> from torcheval.metrics.functional import multilabel_auprc
+        >>> input = torch.tensor([[0.75, 0.05, 0.35], [0.45, 0.75, 0.05], [0.05, 0.55, 0.75], [0.05, 0.65, 0.05]])
+        >>> target = torch.tensor([[1, 0, 1], [0, 0, 0], [0, 1, 1], [1, 1, 1]])
+        >>> multilabel_auprc(input, target, num_labels=3, average=None)
+        tensor([0.7500, 0.5833, 0.9167])
+        >>> multilabel_auprc(input, target, average=None)
+        tensor([0.7500, 0.5833, 0.9167])
+        >>> multilabel_auprc(input, target, num_labels=3, average='macro')
+        tensor(0.7500)
+        >>> multilabel_auprc(input, target, num_labels=3)
+        tensor(0.7500)
+        >>> multilabel_auprc(input, target, average='macro')
+        tensor(0.7500)
+        >>> multilabel_auprc(input, target)
+        tensor(0.7500)
+
+        Connection to BinaryAUPRC
+        >>> input = torch.tensor([[0.1, 0, 0], [0, 1, 0], [0.1, 0.2, 0.7], [0, 0, 1]])
+        >>> target = torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1], [0, 0, 1]])
+        >>> multilabel_auprc(input, target)
+        tensor([0.5000, 1.0000, 1.0000])
+
+        the above is equivalent to
+        >>> from torcheval.metrics import BinaryAUPRC
+        >>> input = torch.tensor([[0.1, 0, 0.1, 0], [0, 1, 0.2, 0], [0, 0, 0.7, 1]])
+        >>> target = torch.tensor([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 1]])
+        >>> binary_auprc(input, target, num_tasks=3)
+        tensor([0.5000, 1.0000, 1.0000])
+    """
+    if input.ndim != 2:
+        raise ValueError(
+            f"input should be a one-dimensional tensor, got shape {input.shape}."
+        )
+    if num_labels is None:
+        num_labels = input.shape[1]
+
+    _multilabel_auprc_param_check(num_labels, average)
+    _multilabel_auprc_update_input_check(input, target, num_labels)
+    return _multilabel_auprc_compute(input, target, num_labels, average)
+
+
 def _binary_auprc_compute(
     input: torch.Tensor, target: torch.Tensor, num_tasks: int = 1
 ) -> torch.Tensor:
     # for one task preserve the ndim of the input and target tensor
     if num_tasks == 1 and input.ndim == 1:
         p, r, t = _compute_for_each_class(input, target, 1)
-        return _reimann_integral(r, p)
+        return _riemann_integral(r, p)
     else:
         auprcs = []
         for i in range(num_tasks):
             p, r, t = _compute_for_each_class(input[i, :], target[i, :], 1)
-            auprcs.append(_reimann_integral(r, p))
+            auprcs.append(_riemann_integral(r, p))
         return torch.tensor(auprcs, device=input.device)
 
 
@@ -189,12 +276,12 @@ def _binary_auprc_update_input_check(
 
 
 def _multiclass_auprc_compute(
-    input: torch.Tensor, target: torch.Tensor, average: Optional[str] = None
+    input: torch.Tensor, target: torch.Tensor, average: Optional[str] = "macro"
 ) -> torch.Tensor:
     prec, recall, thresh = multiclass_precision_recall_curve(input, target)
     auprcs = []
     for p, r in zip(prec, recall):
-        auprcs.append(_reimann_integral(r, p))
+        auprcs.append(_riemann_integral(r, p))
     auprcs = torch.tensor(auprcs).to(input.device)
 
     if average == "macro":
@@ -236,4 +323,60 @@ def _multiclass_auprc_update_input_check(
         raise ValueError(
             f"input should have shape of (num_sample, num_classes), "
             f"got {input.shape} and num_classes={num_classes}."
+        )
+
+
+def _multilabel_auprc_compute(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    num_labels: int,
+    average: Optional[str] = "macro",
+) -> torch.Tensor:
+    prec, recall, thresh = multilabel_precision_recall_curve(
+        input, target, num_labels=num_labels
+    )
+    auprcs = []
+    for p, r in zip(prec, recall):
+        auprcs.append(_riemann_integral(r, p))
+    auprcs = torch.tensor(auprcs).to(input.device)
+
+    if average == "macro":
+        return torch.mean(auprcs)
+    else:
+        return auprcs
+
+
+def _multilabel_auprc_param_check(
+    num_labels: int,
+    average: Optional[str],
+) -> None:
+    average_options = ("macro", "none", None)
+    if average not in average_options:
+        raise ValueError(
+            f"`average` was not in the allowed value of {average_options}, got {average}."
+        )
+    if num_labels < 2:
+        raise ValueError("`num_labels` has to be at least 2.")
+
+
+def _multilabel_auprc_update_input_check(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    num_labels: int,
+) -> None:
+    if input.shape != target.shape:
+        raise ValueError(
+            "Expected both input.shape and target.shape to have the same shape"
+            f" but got {input.shape} and {target.shape}."
+        )
+
+    if input.ndim != 2:
+        raise ValueError(
+            f"input should be a one-dimensional tensor, got shape {input.shape}."
+        )
+
+    if input.shape[1] != num_labels:
+        raise ValueError(
+            f"input should have shape of (num_sample, num_labels), "
+            f"got {input.shape} and num_labels={num_labels}."
         )
