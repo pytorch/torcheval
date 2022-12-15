@@ -293,7 +293,48 @@ class TestMultilabelPrecisionRecallCurve(unittest.TestCase):
             my_compute_result, expected_result, equal_nan=True, atol=1e-8, rtol=1e-5
         )
 
+    def test_multilabel_precision_recall_curve_num_labels_None(self) -> None:
+        input = torch.tensor(
+            [
+                [0.75, 0.05, 0.35],
+                [0.45, 0.75, 0.05],
+                [0.05, 0.55, 0.75],
+                [0.05, 0.65, 0.05],
+            ]
+        )
+        target = torch.tensor([[1, 0, 0], [0, 0, 0], [0, 1, 0], [1, 1, 0]])
+        my_compute_result = multilabel_precision_recall_curve(input, target)
+        expected_result = (
+            [
+                torch.tensor([0.5, 0.5, 1.0, 1.0]),
+                torch.tensor([0.5, 0.66666667, 0.5, 0.0, 1.0]),
+                torch.tensor([0.0, 0.0, 0.0, 1.0]),
+            ],
+            [
+                torch.tensor([1.0, 0.5, 0.5, 0.0]),
+                torch.tensor([1.0, 1.0, 0.5, 0.0, 0.0]),
+                torch.tensor([1.0, 1.0, 1.0, 0.0]),
+            ],
+            [
+                torch.tensor([0.05, 0.45, 0.75]),
+                torch.tensor([0.05, 0.55, 0.65, 0.75]),
+                torch.tensor([0.05, 0.35, 0.75]),
+            ],
+        )
+        print(my_compute_result)
+        torch.testing.assert_close(
+            my_compute_result, expected_result, equal_nan=True, atol=1e-8, rtol=1e-5
+        )
+
     def test_multilabel_precision_recall_curve_invalid_input(self) -> None:
+        with self.assertRaisesRegex(
+            ValueError,
+            r"input should be a two-dimensional tensor, got shape torch.Size\(\[4\]\).",
+        ):
+            multilabel_precision_recall_curve(
+                torch.rand(4), torch.randint(high=2, size=(4,)), num_labels=4
+            )
+
         with self.assertRaisesRegex(
             ValueError,
             "Expected both input.shape and target.shape to have the same shape"
@@ -301,6 +342,14 @@ class TestMultilabelPrecisionRecallCurve(unittest.TestCase):
         ):
             multilabel_precision_recall_curve(
                 torch.rand(4, 2), torch.randint(high=2, size=(4, 3)), num_labels=3
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"input should be a two-dimensional tensor, got shape torch.Size\(\[4, 3, 2\]\).",
+        ):
+            multilabel_precision_recall_curve(
+                torch.rand(4, 3, 2), torch.randint(high=2, size=(4, 3, 2)), num_labels=4
             )
 
         with self.assertRaisesRegex(
