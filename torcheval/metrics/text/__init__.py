@@ -6,5 +6,6 @@
 
 from torcheval.metrics.text.perplexity import Perplexity
 from torcheval.metrics.text.word_error_rate import WordErrorRate
+from torcheval.metrics.text.word_information_preserved import WordInformationPreserved
 
-__all__ = ["Perplexity", "WordErrorRate"]
+__all__ = ["Perplexity", "WordErrorRate", "WordInformationPreserved"]
