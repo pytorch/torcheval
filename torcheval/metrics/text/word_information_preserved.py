@@ -75,9 +75,9 @@ class WordInformationPreserved(Metric[torch.Tensor]):
         correct_total, target_total, input_total = _word_information_preserved_update(
             input, target
         )
-        self.correct_total += correct_total
-        self.target_total += target_total
-        self.input_total += input_total
+        self.correct_total += correct_total.to(self.device)
+        self.target_total += target_total.to(self.device)
+        self.input_total += input_total.to(self.device)
         return self
 
     @torch.inference_mode()

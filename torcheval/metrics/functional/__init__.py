@@ -44,9 +44,9 @@ from torcheval.metrics.functional.regression import mean_squared_error, r2_score
 from torcheval.metrics.functional.text import (
     perplexity,
     word_error_rate,
+    word_information_lost,
     word_information_preserved,
 )
-
 
 __all__ = [
     "auc",
@@ -89,4 +89,5 @@ __all__ = [
     "weighted_calibration",
     "word_error_rate",
     "word_information_preserved",
+    "word_information_lost",
 ]
