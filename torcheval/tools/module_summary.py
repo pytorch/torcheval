@@ -10,7 +10,18 @@ import warnings
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable, DefaultDict, Deque, Dict, List, Optional, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    DefaultDict,
+    Deque,
+    Dict,
+    List,
+    MutableMapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import torch
 from torch.nn.parameter import UninitializedParameter
@@ -201,7 +212,8 @@ def _get_module_flops_and_activation_sizes(
     module: torch.nn.Module,
     # pyre-ignore
     module_args: Optional[Tuple[Any, ...]] = None,
-    module_kwargs: Optional[Dict[str, Any]] = None,
+    # pyre-ignore
+    module_kwargs: Optional[MutableMapping[str, Any]] = None,
 ) -> _ModuleSummaryData:
     # a mapping from module name to activation size tuple (in_size, out_size)
     activation_sizes: Dict[
@@ -298,7 +310,8 @@ def get_module_summary(
     module: torch.nn.Module,
     # pyre-ignore
     module_args: Optional[Tuple[Any, ...]] = None,
-    module_kwargs: Optional[Dict[str, Any]] = None,
+    # pyre-ignore
+    module_kwargs: Optional[MutableMapping[str, Any]] = None,
 ) -> ModuleSummary:
     """
     Generate a :class:`~ModuleSummary` object, then assign its values and generate submodule tree.
