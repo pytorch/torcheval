@@ -45,7 +45,12 @@ from torcheval.metrics.ranking import (
 )
 from torcheval.metrics.regression import MeanSquaredError, R2Score
 
-from torcheval.metrics.text import Perplexity, WordErrorRate, WordInformationPreserved
+from torcheval.metrics.text import (
+    Perplexity,
+    WordErrorRate,
+    WordInformationLost,
+    WordInformationPreserved,
+)
 from torcheval.metrics.window import (
     WindowedBinaryAUROC,
     WindowedBinaryNormalizedEntropy,
@@ -108,4 +113,5 @@ __all__ = [
     "WindowedWeightedCalibration",
     "WordErrorRate",
     "WordInformationPreserved",
+    "WordInformationLost",
 ]

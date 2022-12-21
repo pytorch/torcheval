@@ -6,8 +6,16 @@
 
 from torcheval.metrics.functional.text.perplexity import perplexity
 from torcheval.metrics.functional.text.word_error_rate import word_error_rate
+from torcheval.metrics.functional.text.word_information_lost import (
+    word_information_lost,
+)
 from torcheval.metrics.functional.text.word_information_preserved import (
     word_information_preserved,
 )
 
-__all__ = ["perplexity", "word_error_rate", "word_information_preserved"]
+__all__ = [
+    "perplexity",
+    "word_error_rate",
+    "word_information_preserved",
+    "word_information_lost",
+]
