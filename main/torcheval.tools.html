@@ -336,22 +336,22 @@
 <li><p>Number of parameters</p></li>
 <li><p>Number of trainable parameters</p></li>
 <li><p>Estimated size in bytes</p></li>
-<li><p>Contains uninitialized parameters</p></li>
-<li><p>FLOPs for forward (-1 meaning not calculated)</p></li>
-<li><p>FLOPs for backward (-1 meaning not calculated)</p></li>
+<li><p>Whether this module contains uninitialized parameters</p></li>
+<li><p>FLOPs for forward (“?” meaning not calculated)</p></li>
+<li><p>FLOPs for backward (“?” meaning not calculated)</p></li>
 <li><p>Input shape (“?” meaning not calculated)</p></li>
 <li><p>Output shape (“?” meaning not calculated)</p></li>
 <li><p>Forward elapsed time in ms (“?” meaning not calculated)</p></li>
 </ul>
 <dl class="py property">
 <dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.flops_backward">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flops_backward</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.flops_backward" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flops_backward</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'?'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.flops_backward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the total FLOPs for backward calculation using this module.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.flops_forward">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flops_forward</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.flops_forward" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flops_forward</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'?'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.flops_forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the total FLOPs for forward calculation using this module.</p>
 </dd></dl>
 
@@ -413,7 +413,7 @@ in this module.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.submodule_summaries">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">submodule_summaries</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#torcheval.tools.ModuleSummary" title="torcheval.tools.module_summary.ModuleSummary"><span class="pre">ModuleSummary</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.submodule_summaries" title="Permalink to this definition">¶</a></dt>
-<dd><p>A Dict with the names of submodules as keys and corresponding ModuleSummary
+<dd><p>A Dict with the names of submodules as keys and corresponding <a class="reference internal" href="#torcheval.tools.ModuleSummary" title="torcheval.tools.ModuleSummary"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleSummary</span></code></a>
 objects as values. These can be traversed for visualization.</p>
 </dd></dl>
 
