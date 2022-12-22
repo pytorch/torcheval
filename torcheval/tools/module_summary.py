@@ -80,9 +80,9 @@ class ModuleSummary:
     - Number of parameters
     - Number of trainable parameters
     - Estimated size in bytes
-    - Contains uninitialized parameters
-    - FLOPs for forward (-1 meaning not calculated)
-    - FLOPs for backward (-1 meaning not calculated)
+    - Whether this module contains uninitialized parameters
+    - FLOPs for forward ("?" meaning not calculated)
+    - FLOPs for backward ("?" meaning not calculated)
     - Input shape ("?" meaning not calculated)
     - Output shape ("?" meaning not calculated)
     - Forward elapsed time in ms ("?" meaning not calculated)
@@ -96,8 +96,8 @@ class ModuleSummary:
         self._size_bytes: int = 0
         self._submodule_summaries: Dict[str, "ModuleSummary"] = {}
         self._has_uninitialized_param: bool = False
-        self._flops_forward: int = -1
-        self._flops_backward: int = -1
+        self._flops_forward: Union[TUnknown, int] = _UNKNOWN_SIZE
+        self._flops_backward: Union[TUnknown, int] = _UNKNOWN_SIZE
         self._flops_forward_detail: Dict[str, int] = {}
         self._flops_backward_detail: Dict[str, int] = {}
         self._in_size: Union[TUnknown, List[int]] = _UNKNOWN_SIZE
@@ -107,7 +107,7 @@ class ModuleSummary:
     @property
     def submodule_summaries(self) -> Dict[str, "ModuleSummary"]:
         """
-        A Dict with the names of submodules as keys and corresponding ModuleSummary
+        A Dict with the names of submodules as keys and corresponding :class:`~ModuleSummary`
         objects as values. These can be traversed for visualization.
         """
         return self._submodule_summaries
@@ -146,7 +146,7 @@ class ModuleSummary:
         return self._num_trainable_parameters
 
     @property
-    def flops_forward(self) -> int:
+    def flops_forward(self) -> Union[int, TUnknown]:
         """Returns the total FLOPs for forward calculation using this module."""
         if self.has_uninitialized_param:
             warnings.warn(
@@ -156,7 +156,7 @@ class ModuleSummary:
         return self._flops_forward
 
     @property
-    def flops_backward(self) -> int:
+    def flops_backward(self) -> Union[int, TUnknown]:
         """Returns the total FLOPs for backward calculation using this module."""
         if self.has_uninitialized_param:
             warnings.warn(
@@ -279,7 +279,7 @@ def _get_module_flops_and_activation_sizes(
     forward_time_elapsed_ms = {}
     for module_name in forward_elapsed_times_sec:
         forward_time_elapsed_ms[module_name] = (
-            forward_elapsed_times_sec[module_name] / 1000
+            forward_elapsed_times_sec[module_name] / 1000.0
         )
 
     # Reverting all the changes:
@@ -436,9 +436,9 @@ def get_summary_table(
     """
     stop_attr: List[str] = []
     # Unpack attributes
-    if module_summary.flops_forward == -1:
+    if module_summary.flops_forward == _UNKNOWN_SIZE:
         stop_attr.append("flops_forward")
-    if module_summary.flops_backward == -1:
+    if module_summary.flops_backward == _UNKNOWN_SIZE:
         stop_attr.append("flops_backward")
     if module_summary.in_size == _UNKNOWN_SIZE:
         stop_attr.append("in_size")

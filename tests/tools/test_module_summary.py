@@ -150,8 +150,8 @@ class ModuleSummaryTest(unittest.TestCase):
         with self.assertWarns(Warning):
             ms.num_trainable_parameters
         self.assertTrue(ms.has_uninitialized_param)
-        self.assertEqual(ms.flops_backward, -1)
-        self.assertEqual(ms.flops_forward, -1)
+        self.assertEqual(ms.flops_backward, "?")
+        self.assertEqual(ms.flops_forward, "?")
 
     def test_resnet_max_depth(self) -> None:
         """Test the behavior of max_depth on a layered model like ResNet"""
