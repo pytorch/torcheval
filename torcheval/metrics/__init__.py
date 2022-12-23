@@ -46,6 +46,7 @@ from torcheval.metrics.ranking import (
 from torcheval.metrics.regression import MeanSquaredError, R2Score
 
 from torcheval.metrics.text import (
+    BLEUScore,
     Perplexity,
     WordErrorRate,
     WordInformationLost,
@@ -78,6 +79,7 @@ __all__ = [
     "BinaryPrecisionRecallCurve",
     "BinaryRecall",
     "BinaryRecallAtFixedPrecision",
+    "BLEUScore",
     "Cat",
     "ClickThroughRate",
     "HitRate",
