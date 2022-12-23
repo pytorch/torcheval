@@ -4,6 +4,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+from torcheval.metrics.functional.text.bleu import bleu_score
 from torcheval.metrics.functional.text.perplexity import perplexity
 from torcheval.metrics.functional.text.word_error_rate import word_error_rate
 from torcheval.metrics.functional.text.word_information_lost import (
@@ -14,6 +15,7 @@ from torcheval.metrics.functional.text.word_information_preserved import (
 )
 
 __all__ = [
+    "bleu_score",
     "perplexity",
     "word_error_rate",
     "word_information_preserved",
