@@ -42,6 +42,7 @@ from torcheval.metrics.functional.ranking import (
 )
 from torcheval.metrics.functional.regression import mean_squared_error, r2_score
 from torcheval.metrics.functional.text import (
+    bleu,
     perplexity,
     word_error_rate,
     word_information_lost,
@@ -61,6 +62,7 @@ __all__ = [
     "binary_recall",
     "binary_recall_at_fixed_precision",
     "binary_f1_score",
+    "bleu",
     "click_through_rate",
     "frequency_at_k",
     "hit_rate",
