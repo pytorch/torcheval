@@ -41,7 +41,7 @@ class BLEUScore(Metric[torch.Tensor]):
         >>> references = [["i like apple pie with ice cream on top", "i like ice cream with my apple pie", "i enjoy my apple pie with ice cream"]]
         >>> metric.update(candidates, references)
         >>> metric.compute()
-        tensor([0.56377503])
+        tensor(0.56377503)
     """
 
     def __init__(
