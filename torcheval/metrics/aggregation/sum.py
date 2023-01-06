@@ -52,7 +52,9 @@ class Sum(Metric[torch.Tensor]):
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)
-        self._add_state("weighted_sum", torch.tensor(0.0, device=self.device))
+        self._add_state(
+            "weighted_sum", torch.tensor(0.0, device=self.device, dtype=torch.float64)
+        )
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
