@@ -21,7 +21,7 @@ class TestSum(MetricClassTester):
             metric=Sum(),
             state_names={"weighted_sum"},
             update_kwargs={"input": input_val_tensor},
-            compute_result=torch.sum(input_val_tensor),
+            compute_result=torch.sum(input_val_tensor).to(torch.float64),
         )
 
     def test_sum_class_base(self) -> None:
@@ -44,7 +44,7 @@ class TestSum(MetricClassTester):
                     torch.tensor([[1.0, 6.0], [2.0, -4.0]]),
                 ]
             },
-            compute_result=torch.tensor(17.0),
+            compute_result=torch.tensor(17.0, dtype=torch.float64),
             num_total_updates=4,
             num_processes=2,
         )
@@ -69,7 +69,7 @@ class TestSum(MetricClassTester):
             update_inputs: List[torch.Tensor],
             update_weights: List[Union[float, torch.Tensor]],
         ) -> torch.Tensor:
-            weighted_sum = torch.tensor(0.0)
+            weighted_sum = torch.tensor(0.0, dtype=torch.float64)
             for v, w in zip(update_inputs, update_weights):
                 if isinstance(w, torch.Tensor):
                     w = w.numpy().flatten()
@@ -98,4 +98,4 @@ class TestSum(MetricClassTester):
 
     def test_sum_class_compute_without_update(self) -> None:
         metric = Sum()
-        self.assertEqual(metric.compute(), torch.tensor(0.0))
+        self.assertEqual(metric.compute(), torch.tensor(0.0, dtype=torch.float64))
