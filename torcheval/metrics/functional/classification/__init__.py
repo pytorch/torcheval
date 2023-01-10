@@ -58,16 +58,16 @@ from torcheval.metrics.functional.classification.recall_at_fixed_precision impor
 )
 
 __all__ = [
+    "binary_accuracy",
     "binary_auprc",
     "binary_auroc",
-    "binary_accuracy",
-    "binary_confusion_matrix",
-    "binary_normalized_entropy",
-    "binary_f1_score",
-    "binary_precision",
-    "binary_precision_recall_curve",
     "binary_binned_auroc",
     "binary_binned_precision_recall_curve",
+    "binary_confusion_matrix",
+    "binary_f1_score",
+    "binary_normalized_entropy",
+    "binary_precision",
+    "binary_precision_recall_curve",
     "binary_recall",
     "binary_recall_at_fixed_precision",
     "multiclass_accuracy",
@@ -86,3 +86,4 @@ __all__ = [
     "multilabel_recall_at_fixed_precision",
     "topk_multilabel_accuracy",
 ]
+__doc_name__ = "Classification Metrics"

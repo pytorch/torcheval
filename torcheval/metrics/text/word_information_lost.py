@@ -21,12 +21,13 @@ TWordInformationLost = TypeVar("TWordInformationLost")
 
 
 class WordInformationLost(Metric[torch.Tensor]):
-    """Word Information Lost (WIL_) is a metric of the performance of an automatic speech recognition system. This
+    r"""Word Information Lost (WIL) is a metric of the performance of an automatic speech recognition system. This
     value indicates the percentage of words that were incorrectly predicted between a set of ground-truth sentences
     and a set of hypothesis sentences. The lower the value, the better the performance of the ASR system with a
     WordInformationLost of 0 being a perfect score. Word Information Lost rate can then be computed as:
-    .. math::
-        wil = 1 - \frac{C}{N} * \frac{C}{P}
+
+    .. math:: wil = 1 - \frac{C}{N} * \frac{C}{P}
+
     where:
         - :math:`C` is the number of correct words,
         - :math:`N` is the number of words in the reference

@@ -1,30 +1,31 @@
-.. currentmodule:: torcheval.metrics.functional
-
 Functional Metrics
 ==================
 
 .. automodule:: torcheval.metrics.functional
 
 Aggregation Metrics
--------------------
+-------------------------------------------------------------------
 
 .. autosummary::
    :toctree: generated
    :nosignatures:
 
+   auc
    mean
    sum
    throughput
 
 Classification Metrics
-----------------------
+-------------------------------------------------------------------
 
 .. autosummary::
    :toctree: generated
    :nosignatures:
 
    binary_accuracy
+   binary_auprc
    binary_auroc
+   binary_binned_auroc
    binary_binned_precision_recall_curve
    binary_confusion_matrix
    binary_f1_score
@@ -32,8 +33,11 @@ Classification Metrics
    binary_precision
    binary_precision_recall_curve
    binary_recall
+   binary_recall_at_fixed_precision
    multiclass_accuracy
+   multiclass_auprc
    multiclass_auroc
+   multiclass_binned_auroc
    multiclass_binned_precision_recall_curve
    multiclass_confusion_matrix
    multiclass_f1_score
@@ -41,11 +45,13 @@ Classification Metrics
    multiclass_precision_recall_curve
    multiclass_recall
    multilabel_accuracy
+   multilabel_auprc
+   multilabel_precision_recall_curve
+   multilabel_recall_at_fixed_precision
    topk_multilabel_accuracy
 
-
 Ranking Metrics
----------------
+-------------------------------------------------------------------
 
 .. autosummary::
    :toctree: generated
@@ -59,7 +65,7 @@ Ranking Metrics
    weighted_calibration
 
 Regression Metrics
-------------------
+-------------------------------------------------------------------
 
 .. autosummary::
    :toctree: generated
@@ -67,3 +73,17 @@ Regression Metrics
 
    mean_squared_error
    r2_score
+
+Text Metrics
+-------------------------------------------------------------------
+
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+
+   bleu_score
+   perplexity
+   word_error_rate
+   word_information_preserved
+   word_information_lost
+

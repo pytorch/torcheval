@@ -151,9 +151,10 @@ class MulticlassBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
     Compute AUROC, which is the area under the ROC Curve, for multiclass classification.
     Its functional version is :func:`torcheval.metrics.functional.multiclass_binned_auroc`.
 
-     Args:
+    Args:
         num_classes (int): Number of classes.
         average (str, optional):
+
             - ``'macro'`` [default]:
                 Calculate metrics for each class separately, and return their unweighted mean.
             - ``None``:

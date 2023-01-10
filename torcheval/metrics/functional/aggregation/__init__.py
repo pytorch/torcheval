@@ -10,4 +10,5 @@ from torcheval.metrics.functional.aggregation.sum import sum
 from torcheval.metrics.functional.aggregation.throughput import throughput
 
 
-__all__ = ["mean", "auc", "sum", "throughput"]
+__all__ = ["auc", "mean", "sum", "throughput"]
+__doc_name__ = "Aggregation Metrics"

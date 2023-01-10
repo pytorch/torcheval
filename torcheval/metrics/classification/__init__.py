@@ -49,9 +49,9 @@ from torcheval.metrics.classification.recall_at_fixed_precision import (
 )
 
 __all__ = [
+    "BinaryAccuracy",
     "BinaryAUPRC",
     "BinaryAUROC",
-    "BinaryAccuracy",
     "BinaryBinnedAUROC",
     "BinaryBinnedPrecisionRecallCurve",
     "BinaryConfusionMatrix",
@@ -77,3 +77,5 @@ __all__ = [
     "MultilabelRecallAtFixedPrecision",
     "TopKMultilabelAccuracy",
 ]
+
+__doc_name__ = "Classification Metrics"

@@ -17,3 +17,4 @@ __all__ = [
     "WindowedMeanSquaredError",
     "WindowedWeightedCalibration",
 ]
+__doc_name__ = "Windowed Metrics"

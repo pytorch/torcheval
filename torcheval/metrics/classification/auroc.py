@@ -155,6 +155,7 @@ class MulticlassAUROC(Metric[torch.Tensor]):
     """
     Compute AUROC, which is the area under the ROC Curve, for multiclass classification in a one vs rest fashion.
     One vs. rest Multiclass AUROC is equivalent to running a BinaryAUROC with `num_classes` tasks where
+
     1. The `input` is transposed
     2. The `target` is translated from a 1 dimensional tensor of the correct classes to a 2 dimensional tensor where each row is a list containing which examples belong to that class.
 
