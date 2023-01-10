@@ -67,9 +67,9 @@ __all__ = [
     "functional",
     # class metrics
     "AUC",
+    "BinaryAccuracy",
     "BinaryAUPRC",
     "BinaryAUROC",
-    "BinaryAccuracy",
     "BinaryBinnedAUROC",
     "BinaryBinnedPrecisionRecallCurve",
     "BinaryConfusionMatrix",

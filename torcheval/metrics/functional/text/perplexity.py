@@ -44,17 +44,17 @@ def perplexity(
         >>> input = torch.tensor([[[0.3659, 0.7025, 0.3104], [0.0097, 0.6577, 0.1947]]])
         >>> target = torch.tensor([[2, 1]])
         >>> perplexity(input, target)
-       tensor(2.7593, dtype=torch.float64)
+        tensor(2.7593, dtype=torch.float64)
 
         >>> input = torch.tensor([[[0.3, 0.7, 0.3, 0.1], [0.5, 0.4, 0.1, 0.4],[0.1, 0.1, 0.2, 0.5]], [[0.1, 0.6, 0.1, 0.5], [0.3, 0.7, 0.3, 0.4], [0.3, 0.7, 0.3, 0.4]]])
         >>> target = torch.tensor([[2, 1, 3],  [1, 0, 1]])
         >>> perplexity(input, target)
-       tensor(3.6216, dtype=torch.float64)
+        tensor(3.6216, dtype=torch.float64)
 
         >>> input = torch.tensor([[[0.3659, 0.7025, 0.3104], [0.0097, 0.6577, 0.1947]]])
         >>> target = torch.tensor([[2, 1]])
         >>> perplexity(input, target, ignore_index = 1)
-       tensor(3.5372, dtype=torch.float64)
+        tensor(3.5372, dtype=torch.float64)
 
     """
 

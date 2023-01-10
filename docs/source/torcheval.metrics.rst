@@ -1,5 +1,3 @@
-.. currentmodule:: torcheval.metrics
-
 Metrics
 =============
 
@@ -7,12 +5,13 @@ Metrics
 
 
 Aggregation Metrics
-----------------------------------
+-------------------------------------------------------------------
 
 .. autosummary::
    :toctree: generated
    :nosignatures:
 
+   AUC
    Cat
    Max
    Mean
@@ -21,13 +20,14 @@ Aggregation Metrics
    Throughput
 
 Classification Metrics
-----------------------------------
+-------------------------------------------------------------------
 
 .. autosummary::
    :toctree: generated
    :nosignatures:
 
    BinaryAccuracy
+   BinaryAUPRC
    BinaryAUROC
    BinaryBinnedAUROC
    BinaryBinnedPrecisionRecallCurve
@@ -37,7 +37,9 @@ Classification Metrics
    BinaryPrecision
    BinaryPrecisionRecallCurve
    BinaryRecall
+   BinaryRecallAtFixedPrecision
    MulticlassAccuracy
+   MulticlassAUPRC
    MulticlassAUROC
    MulticlassBinnedAUROC
    MulticlassBinnedPrecisionRecallCurve
@@ -47,10 +49,13 @@ Classification Metrics
    MulticlassPrecisionRecallCurve
    MulticlassRecall
    MultilabelAccuracy
+   MultilabelAUPRC
+   MultilabelPrecisionRecallCurve
+   MultilabelRecallAtFixedPrecision
    TopKMultilabelAccuracy
 
 Ranking Metrics
-----------------------------------
+-------------------------------------------------------------------
 
 .. autosummary::
    :toctree: generated
@@ -62,7 +67,7 @@ Ranking Metrics
    WeightedCalibration
 
 Regression Metrics
-----------------------------------
+-------------------------------------------------------------------
 
 .. autosummary::
    :toctree: generated
@@ -71,8 +76,21 @@ Regression Metrics
    MeanSquaredError
    R2Score
 
+Text Metrics
+-------------------------------------------------------------------
+
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+
+   BLEUScore
+   Perplexity
+   WordErrorRate
+   WordInformationLost
+   WordInformationPreserved
+
 Windowed Metrics
-----------------------------------
+-------------------------------------------------------------------
 
 .. autosummary::
    :toctree: generated
@@ -81,4 +99,6 @@ Windowed Metrics
    WindowedBinaryAUROC
    WindowedBinaryNormalizedEntropy
    WindowedClickThroughRate
+   WindowedMeanSquaredError
    WindowedWeightedCalibration
+

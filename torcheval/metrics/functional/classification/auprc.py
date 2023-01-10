@@ -28,7 +28,7 @@ def binary_auprc(
     *,
     num_tasks: int = 1,
 ) -> torch.Tensor:
-    """
+    r"""
     Compute AUPRC, also called Average Precision, which is the area under the Precision-Recall Curve, for binary classification.
     Its class version is ``torcheval.metrics.BinaryAUPRC``.
 
@@ -80,7 +80,7 @@ def multiclass_auprc(
     *,
     average: Optional[str] = "macro",
 ) -> torch.Tensor:
-    """
+    r"""
     Compute AUPRC, also called Average Precision, which is the area under the Precision-Recall Curve, for multiclass classification.
     Its class version is ``torcheval.metrics.MulticlassAUPRC``.
 
@@ -96,6 +96,7 @@ def multiclass_auprc(
     classes are considered condition false.
 
     The results of N class multiclass auprc without an average is equivalent to binary auprc with N tasks if:
+
     1. the input is transposed, in binary classification examples are associated with columns, whereas they are associated with rows in multiclass classification.
     2. the `target` is translated from the form [1,0,1] to the form [[0,1,0], [1,0,1]]
 
@@ -157,7 +158,7 @@ def multilabel_auprc(
     *,
     average: Optional[str] = "macro",
 ) -> torch.Tensor:
-    """
+    r"""
     Compute AUPRC, also called Average Precision, which is the area under the Precision-Recall Curve, for multilabel classification.
     Its class version is ``torcheval.metrics.MultilabelAUPRC``.
 
@@ -175,6 +176,7 @@ def multilabel_auprc(
     sample, in which there may be more than 2 distinct classes but each sample must have exactly one class.
 
     The results of N label multilabel auprc without an average is equivalent to binary auprc with N tasks if:
+
     1. the `input` is transposed, in binary labelification examples are associated with columns, whereas they are associated with rows in multilabel classification.
     2. the `target` is transposed for the same reason
 

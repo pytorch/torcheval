@@ -17,3 +17,4 @@ __all__ = [
     "WordInformationLost",
     "WordInformationPreserved",
 ]
+__doc_name__ = "Text Metrics"

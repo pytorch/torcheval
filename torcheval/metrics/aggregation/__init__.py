@@ -13,3 +13,4 @@ from torcheval.metrics.aggregation.sum import Sum
 from torcheval.metrics.aggregation.throughput import Throughput
 
 __all__ = ["AUC", "Cat", "Max", "Mean", "Min", "Sum", "Throughput"]
+__doc_name__ = "Aggregation Metrics"

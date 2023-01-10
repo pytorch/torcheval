@@ -29,6 +29,7 @@ class WindowedMeanSquaredError(
     Lifetime value is calculated from all past input and target of `update()` calls.
 
     .. math:: \text{MSE} = \frac{1}{N}\sum_i^N(y_i - \hat{y_i})^2
+
     Where :math:`y` is a tensor of target values, and :math:`\hat{y}` is a tensor of input values.
 
     Args:

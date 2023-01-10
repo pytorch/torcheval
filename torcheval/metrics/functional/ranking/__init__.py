@@ -15,9 +15,10 @@ from torcheval.metrics.functional.ranking.weighted_calibration import (
 
 __all__ = [
     "click_through_rate",
+    "frequency_at_k",
     "hit_rate",
     "num_collisions",
     "reciprocal_rank",
-    "frequency_at_k",
     "weighted_calibration",
 ]
+__doc_name__ = "Ranking Metrics"

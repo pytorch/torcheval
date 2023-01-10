@@ -15,3 +15,4 @@ __all__ = [
     "ReciprocalRank",
     "WeightedCalibration",
 ]
+__doc_name__ = "Ranking Metrics"

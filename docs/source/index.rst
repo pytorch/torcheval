@@ -8,15 +8,6 @@ A library with simple and straightforward tooling for model evaluations and a de
 3. Is designed with extensibility in mind: you have the freedom to easily create your own metrics and leverage our toolkit.
 4. Provides tools for profiling memory and compute requirements for PyTorch based models.
 
-TorchEval Tutorials
--------------------
-.. toctree::
-   :maxdepth: 2
-   :caption: Examples:
-
-   QuickStart Notebook <https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb>
-   metric_example.rst
-
 QuickStart
 ===========================================
 
@@ -78,6 +69,22 @@ Further Reading
 * Check out the distributed example
 * Check out how to make your own metric
 
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
+TorchEval Tutorials
+-------------------
+.. toctree::
+   :maxdepth: 2
+   :caption: Examples:
+
+   QuickStart Notebook <https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb>
+   metric_example.rst
+
 TorchEval API
 -----------------
 
@@ -89,10 +96,3 @@ TorchEval API
    torcheval.metrics.functional.rst
    torcheval.metrics.toolkit.rst
    torcheval.tools.rst
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

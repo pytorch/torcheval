@@ -32,8 +32,8 @@ class BinaryAUPRC(Metric[torch.Tensor]):
     """
     Compute AUPRC, also called Average Precision, which is the area under the Precision-Recall Curve, for binary classification.
 
-    Precision is defined as :math:`\frac{T_p}{T_p+F_p}`, it is the probability that a positive prediction from the model is a true positive.
-    Recall is defined as :math:`\frac{T_p}{T_p+F_n}`, it is the probability that a true positive is predicted to be positive by the model.
+    Precision is defined as :math:`\\frac{T_p}{T_p+F_p}`, it is the probability that a positive prediction from the model is a true positive.
+    Recall is defined as :math:`\\frac{T_p}{T_p+F_n}`, it is the probability that a true positive is predicted to be positive by the model.
 
     The precision-recall curve plots the recall on the x axis and the precision on the y axis, both of which are bounded between 0 and 1.
     This function returns the area under that graph. If the area is near one, the model supports a threshold which correctly identifies
@@ -151,8 +151,8 @@ class MulticlassAUPRC(Metric[torch.Tensor]):
     """
     Compute AUPRC, also called Average Precision, which is the area under the Precision-Recall Curve, for multiclass classification.
 
-    Precision is defined as :math:`\frac{T_p}{T_p+F_p}`, it is the probability that a positive prediction from the model is a true positive.
-    Recall is defined as :math:`\frac{T_p}{T_p+F_n}`, it is the probability that a true positive is predicted to be positive by the model.
+    Precision is defined as :math:`\\frac{T_p}{T_p+F_p}`, it is the probability that a positive prediction from the model is a true positive.
+    Recall is defined as :math:`\\frac{T_p}{T_p+F_n}`, it is the probability that a true positive is predicted to be positive by the model.
 
     The precision-recall curve plots the recall on the x axis and the precision on the y axis, both of which are bounded between 0 and 1.
     This function returns the area under that graph. If the area is near one, the model supports a threshold which correctly identifies
@@ -163,6 +163,7 @@ class MulticlassAUPRC(Metric[torch.Tensor]):
     classes are considered condition false.
 
     The results of N class multiclass auprc without an average is equivalent to binary auprc with N tasks if:
+
     1. the input is transposed, in binary classification examples are associated with columns, whereas they are associated with rows in multiclass classification.
     2. the `target` is translated from the form [1,0,1] to the form [[0,1,0], [1,0,1]]
 
@@ -288,8 +289,8 @@ class MultilabelAUPRC(Metric[torch.Tensor]):
     """
     Compute AUPRC, also called Average Precision, which is the area under the Precision-Recall Curve, for multilabel classification.
 
-    Precision is defined as :math:`\frac{T_p}{T_p+F_p}`, it is the probability that a positive prediction from the model is a true positive.
-    Recall is defined as :math:`\frac{T_p}{T_p+F_n}`, it is the probability that a true positive is predicted to be positive by the model.
+    Precision is defined as :math:`\\frac{T_p}{T_p+F_p}`, it is the probability that a positive prediction from the model is a true positive.
+    Recall is defined as :math:`\\frac{T_p}{T_p+F_n}`, it is the probability that a true positive is predicted to be positive by the model.
 
     The precision-recall curve plots the recall on the x axis and the precision on the y axis, both of which are bounded between 0 and 1.
     This function returns the area under that graph. If the area is near one, the model supports a threshold which correctly identifies
@@ -302,6 +303,7 @@ class MultilabelAUPRC(Metric[torch.Tensor]):
     sample, in which there may be more than 2 distinct classes but each sample must have exactly one class.
 
     The results of N label multilabel auprc without an average is equivalent to binary auprc with N tasks if:
+
     1. the `input` is transposed, in binary labelification examples are associated with columns, whereas they are associated with rows in multilabel classification.
     2. the `target` is transposed for the same reason
 
