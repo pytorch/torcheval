@@ -120,7 +120,7 @@ def main() -> None:
     """This code reads through the code tree and automatically populates the torcheval API docs for the
     functional and class based metrics."""
     doc_dir = Path(os.path.abspath(__file__)).parent / "source"
-    eval_dir = Path(os.path.abspath(__file__)).parent.parent.parent
+    eval_dir = Path(os.path.abspath(__file__)).parent.parent / "torcheval"
 
     # ======================
     # torcheval.metrics.rst
