@@ -1,0 +1,35 @@
+﻿torcheval.metrics.BinaryAUPRC
+=============================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: BinaryAUPRC
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BinaryAUPRC.__init__
+      ~BinaryAUPRC.compute
+      ~BinaryAUPRC.load_state_dict
+      ~BinaryAUPRC.merge_state
+      ~BinaryAUPRC.reset
+      ~BinaryAUPRC.state_dict
+      ~BinaryAUPRC.to
+      ~BinaryAUPRC.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BinaryAUPRC.device
+   
+   

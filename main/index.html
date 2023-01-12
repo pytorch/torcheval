@@ -333,20 +333,6 @@
 <li><p>Is designed with extensibility in mind: you have the freedom to easily create your own metrics and leverage our toolkit.</p></li>
 <li><p>Provides tools for profiling memory and compute requirements for PyTorch based models.</p></li>
 </ol>
-<section id="torcheval-tutorials">
-<h2>TorchEval Tutorials<a class="headerlink" href="#torcheval-tutorials" title="Permalink to this heading">¶</a></h2>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb">QuickStart Notebook</a></li>
-<li class="toctree-l1"><a class="reference internal" href="metric_example.html">Use Metrics in TorchEval</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="metric_example.html#class-metrics">Class Metrics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="metric_example.html#functional-metrics">Functional Metrics</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</section>
 </section>
 <section id="quickstart">
 <h1>QuickStart<a class="headerlink" href="#quickstart" title="Permalink to this heading">¶</a></h1>
@@ -399,6 +385,28 @@
 <li><p>Check out how to make your own metric</p></li>
 </ul>
 </section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+<section id="torcheval-tutorials">
+<h2>TorchEval Tutorials<a class="headerlink" href="#torcheval-tutorials" title="Permalink to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb">QuickStart Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metric_example.html">Use Metrics in TorchEval</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="metric_example.html#class-metrics">Class Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="metric_example.html#functional-metrics">Functional Metrics</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 <section id="torcheval-api">
 <h2>TorchEval API<a class="headerlink" href="#torcheval-api" title="Permalink to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
@@ -409,6 +417,7 @@
 <li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.html#classification-metrics">Classification Metrics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.html#ranking-metrics">Ranking Metrics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.html#regression-metrics">Regression Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.html#text-metrics">Text Metrics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.html#windowed-metrics">Windowed Metrics</a></li>
 </ul>
 </li>
@@ -417,6 +426,7 @@
 <li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.functional.html#classification-metrics">Classification Metrics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.functional.html#ranking-metrics">Ranking Metrics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.functional.html#regression-metrics">Regression Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.functional.html#text-metrics">Text Metrics</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="torcheval.metrics.toolkit.html">Metric Toolkit</a><ul>
@@ -443,14 +453,6 @@
 </ul>
 </div>
 </section>
-</section>
-<section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
 </section>
 
 
@@ -494,18 +496,18 @@
           <div class="pytorch-right-menu" id="pytorch-right-menu">
             <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
               <ul>
-<li><a class="reference internal" href="#">TorchEval</a><ul>
-<li><a class="reference internal" href="#torcheval-tutorials">TorchEval Tutorials</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#">TorchEval</a></li>
 <li><a class="reference internal" href="#quickstart">QuickStart</a><ul>
 <li><a class="reference internal" href="#installing">Installing</a></li>
 <li><a class="reference internal" href="#usage">Usage</a></li>
 <li><a class="reference internal" href="#further-reading">Further Reading</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a><ul>
+<li><a class="reference internal" href="#torcheval-tutorials">TorchEval Tutorials</a></li>
 <li><a class="reference internal" href="#torcheval-api">TorchEval API</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
             </div>

@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.binary\_recall\_at\_fixed\_precision
+=================================================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: binary_recall_at_fixed_precision

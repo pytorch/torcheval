@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.bleu\_score
+========================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: bleu_score

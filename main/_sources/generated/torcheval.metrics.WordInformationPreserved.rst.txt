@@ -1,0 +1,35 @@
+﻿torcheval.metrics.WordInformationPreserved
+==========================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: WordInformationPreserved
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~WordInformationPreserved.__init__
+      ~WordInformationPreserved.compute
+      ~WordInformationPreserved.load_state_dict
+      ~WordInformationPreserved.merge_state
+      ~WordInformationPreserved.reset
+      ~WordInformationPreserved.state_dict
+      ~WordInformationPreserved.to
+      ~WordInformationPreserved.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~WordInformationPreserved.device
+   
+   

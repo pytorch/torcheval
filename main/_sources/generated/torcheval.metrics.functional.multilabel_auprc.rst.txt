@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.multilabel\_auprc
+==============================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: multilabel_auprc

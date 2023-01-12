@@ -1,0 +1,35 @@
+﻿torcheval.metrics.WordErrorRate
+===============================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: WordErrorRate
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~WordErrorRate.__init__
+      ~WordErrorRate.compute
+      ~WordErrorRate.load_state_dict
+      ~WordErrorRate.merge_state
+      ~WordErrorRate.reset
+      ~WordErrorRate.state_dict
+      ~WordErrorRate.to
+      ~WordErrorRate.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~WordErrorRate.device
+   
+   

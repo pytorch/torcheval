@@ -32,7 +32,7 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="torcheval.metrics.functional.mean" href="generated/torcheval.metrics.functional.mean.html" />
+    <link rel="next" title="torcheval.metrics.functional.auc" href="generated/torcheval.metrics.functional.auc.html" />
     <link rel="prev" title="torcheval.metrics.WindowedWeightedCalibration" href="generated/torcheval.metrics.WindowedWeightedCalibration.html" />
   <!-- Google Analytics -->
   
@@ -331,13 +331,16 @@
 <h2>Aggregation Metrics<a class="headerlink" href="#aggregation-metrics" title="Permalink to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.mean.html#torcheval.metrics.functional.mean" title="torcheval.metrics.functional.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.auc.html#torcheval.metrics.functional.auc" title="torcheval.metrics.functional.auc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auc</span></code></a></p></td>
+<td><p>Computes Area Under the Curve (AUC) using the trapezoidal rule.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.mean.html#torcheval.metrics.functional.mean" title="torcheval.metrics.functional.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a></p></td>
 <td><p>Compute weighted mean.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.sum.html#torcheval.metrics.functional.sum" title="torcheval.metrics.functional.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.sum.html#torcheval.metrics.functional.sum" title="torcheval.metrics.functional.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a></p></td>
 <td><p>Compute weighted sum.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.throughput.html#torcheval.metrics.functional.throughput" title="torcheval.metrics.functional.throughput"><code class="xref py py-obj docutils literal notranslate"><span class="pre">throughput</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.throughput.html#torcheval.metrics.functional.throughput" title="torcheval.metrics.functional.throughput"><code class="xref py py-obj docutils literal notranslate"><span class="pre">throughput</span></code></a></p></td>
 <td><p>Calculate the throughput value which is the number of elements processed per second.</p></td>
 </tr>
 </tbody>
@@ -350,7 +353,13 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.binary_accuracy.html#torcheval.metrics.functional.binary_accuracy" title="torcheval.metrics.functional.binary_accuracy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_accuracy</span></code></a></p></td>
 <td><p>Compute binary accuracy score, which is the frequency of input matching target.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.binary_auroc.html#torcheval.metrics.functional.binary_auroc" title="torcheval.metrics.functional.binary_auroc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_auroc</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.binary_auprc.html#torcheval.metrics.functional.binary_auprc" title="torcheval.metrics.functional.binary_auprc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_auprc</span></code></a></p></td>
+<td><p>Compute AUPRC, also called Average Precision, which is the area under the Precision-Recall Curve, for binary classification.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.binary_auroc.html#torcheval.metrics.functional.binary_auroc" title="torcheval.metrics.functional.binary_auroc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_auroc</span></code></a></p></td>
+<td><p>Compute AUROC, which is the area under the ROC Curve, for binary classification.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.binary_binned_auroc.html#torcheval.metrics.functional.binary_binned_auroc" title="torcheval.metrics.functional.binary_binned_auroc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_binned_auroc</span></code></a></p></td>
 <td><p>Compute AUROC, which is the area under the ROC Curve, for binary classification.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.binary_binned_precision_recall_curve.html#torcheval.metrics.functional.binary_binned_precision_recall_curve" title="torcheval.metrics.functional.binary_binned_precision_recall_curve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_binned_precision_recall_curve</span></code></a></p></td>
@@ -374,32 +383,50 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.binary_recall.html#torcheval.metrics.functional.binary_recall" title="torcheval.metrics.functional.binary_recall"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_recall</span></code></a></p></td>
 <td><p>Compute recall score for binary classification class, which is calculated as the ratio between the number of true positives (TP) and the total number of actual positives (TP + FN).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_accuracy.html#torcheval.metrics.functional.multiclass_accuracy" title="torcheval.metrics.functional.multiclass_accuracy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_accuracy</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.binary_recall_at_fixed_precision.html#torcheval.metrics.functional.binary_recall_at_fixed_precision" title="torcheval.metrics.functional.binary_recall_at_fixed_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_recall_at_fixed_precision</span></code></a></p></td>
+<td><p>Returns the highest possible recall value given the minimum precision for binary classification tasks.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_accuracy.html#torcheval.metrics.functional.multiclass_accuracy" title="torcheval.metrics.functional.multiclass_accuracy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_accuracy</span></code></a></p></td>
 <td><p>Compute accuracy score, which is the frequency of input matching target.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_auprc.html#torcheval.metrics.functional.multiclass_auprc" title="torcheval.metrics.functional.multiclass_auprc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_auprc</span></code></a></p></td>
+<td><p>Compute AUPRC, also called Average Precision, which is the area under the Precision-Recall Curve, for multiclass classification.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_auroc.html#torcheval.metrics.functional.multiclass_auroc" title="torcheval.metrics.functional.multiclass_auroc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_auroc</span></code></a></p></td>
 <td><p>Compute AUROC, which is the area under the ROC Curve, for multiclass classification.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_binned_precision_recall_curve.html#torcheval.metrics.functional.multiclass_binned_precision_recall_curve" title="torcheval.metrics.functional.multiclass_binned_precision_recall_curve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_binned_precision_recall_curve</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_binned_auroc.html#torcheval.metrics.functional.multiclass_binned_auroc" title="torcheval.metrics.functional.multiclass_binned_auroc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_binned_auroc</span></code></a></p></td>
+<td><p>Compute AUROC, which is the area under the ROC Curve, for multiclass classification.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_binned_precision_recall_curve.html#torcheval.metrics.functional.multiclass_binned_precision_recall_curve" title="torcheval.metrics.functional.multiclass_binned_precision_recall_curve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_binned_precision_recall_curve</span></code></a></p></td>
 <td><p>Compute precision recall curve with given thresholds.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_confusion_matrix.html#torcheval.metrics.functional.multiclass_confusion_matrix" title="torcheval.metrics.functional.multiclass_confusion_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_confusion_matrix</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_confusion_matrix.html#torcheval.metrics.functional.multiclass_confusion_matrix" title="torcheval.metrics.functional.multiclass_confusion_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_confusion_matrix</span></code></a></p></td>
 <td><p>Compute multi-class confusion matrix, a matrix of dimension num_classes x num_classes where each element at position <cite>(i,j)</cite> is the number of examples with true class <cite>i</cite> that were predicted to be class <cite>j</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_f1_score.html#torcheval.metrics.functional.multiclass_f1_score" title="torcheval.metrics.functional.multiclass_f1_score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_f1_score</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_f1_score.html#torcheval.metrics.functional.multiclass_f1_score" title="torcheval.metrics.functional.multiclass_f1_score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_f1_score</span></code></a></p></td>
 <td><p>Compute f1 score, which is defined as the harmonic mean of precision and recall.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_precision.html#torcheval.metrics.functional.multiclass_precision" title="torcheval.metrics.functional.multiclass_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_precision</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_precision.html#torcheval.metrics.functional.multiclass_precision" title="torcheval.metrics.functional.multiclass_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_precision</span></code></a></p></td>
 <td><p>Compute precision score, which is the ratio of the true positives (TP) and the total number of points classified as positives (TP + FP).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_precision_recall_curve.html#torcheval.metrics.functional.multiclass_precision_recall_curve" title="torcheval.metrics.functional.multiclass_precision_recall_curve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_precision_recall_curve</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_precision_recall_curve.html#torcheval.metrics.functional.multiclass_precision_recall_curve" title="torcheval.metrics.functional.multiclass_precision_recall_curve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_precision_recall_curve</span></code></a></p></td>
 <td><p>Returns precision-recall pairs and their corresponding thresholds for multi-class classification tasks.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_recall.html#torcheval.metrics.functional.multiclass_recall" title="torcheval.metrics.functional.multiclass_recall"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_recall</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multiclass_recall.html#torcheval.metrics.functional.multiclass_recall" title="torcheval.metrics.functional.multiclass_recall"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multiclass_recall</span></code></a></p></td>
 <td><p>Compute recall score, which is calculated as the ratio between the number of true positives (TP) and the total number of actual positives (TP + FN).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multilabel_accuracy.html#torcheval.metrics.functional.multilabel_accuracy" title="torcheval.metrics.functional.multilabel_accuracy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multilabel_accuracy</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multilabel_accuracy.html#torcheval.metrics.functional.multilabel_accuracy" title="torcheval.metrics.functional.multilabel_accuracy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multilabel_accuracy</span></code></a></p></td>
 <td><p>Compute multilabel accuracy score, which is the frequency of input matching target.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multilabel_auprc.html#torcheval.metrics.functional.multilabel_auprc" title="torcheval.metrics.functional.multilabel_auprc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multilabel_auprc</span></code></a></p></td>
+<td><p>Compute AUPRC, also called Average Precision, which is the area under the Precision-Recall Curve, for multilabel classification.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multilabel_precision_recall_curve.html#torcheval.metrics.functional.multilabel_precision_recall_curve" title="torcheval.metrics.functional.multilabel_precision_recall_curve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multilabel_precision_recall_curve</span></code></a></p></td>
+<td><p>Returns precision-recall pairs and their corresponding thresholds for multi-label classification tasks.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.multilabel_recall_at_fixed_precision.html#torcheval.metrics.functional.multilabel_recall_at_fixed_precision" title="torcheval.metrics.functional.multilabel_recall_at_fixed_precision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">multilabel_recall_at_fixed_precision</span></code></a></p></td>
+<td><p>Returns the highest possible recall value give the minimum precision for each label and their corresponding thresholds for multi-label classification tasks.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.topk_multilabel_accuracy.html#torcheval.metrics.functional.topk_multilabel_accuracy" title="torcheval.metrics.functional.topk_multilabel_accuracy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">topk_multilabel_accuracy</span></code></a></p></td>
 <td><p>Compute multilabel accuracy score, which is the frequency of the top k label predicted matching target.</p></td>
@@ -445,6 +472,28 @@
 </tbody>
 </table>
 </section>
+<section id="text-metrics">
+<h2>Text Metrics<a class="headerlink" href="#text-metrics" title="Permalink to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.bleu_score.html#torcheval.metrics.functional.bleu_score" title="torcheval.metrics.functional.bleu_score"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bleu_score</span></code></a></p></td>
+<td><p>Compute BLEU score given translations and references for each translation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.perplexity.html#torcheval.metrics.functional.perplexity" title="torcheval.metrics.functional.perplexity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">perplexity</span></code></a></p></td>
+<td><p>Perplexity measures how well a model predicts sample data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.word_error_rate.html#torcheval.metrics.functional.word_error_rate" title="torcheval.metrics.functional.word_error_rate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">word_error_rate</span></code></a></p></td>
+<td><p>Compute the word error rate of the predicted word sequence(s) with the reference word sequence(s).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.word_information_preserved.html#torcheval.metrics.functional.word_information_preserved" title="torcheval.metrics.functional.word_information_preserved"><code class="xref py py-obj docutils literal notranslate"><span class="pre">word_information_preserved</span></code></a></p></td>
+<td><p>Compute the word information preserved score of the predicted word sequence(s) against the reference word sequence(s).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/torcheval.metrics.functional.word_information_lost.html#torcheval.metrics.functional.word_information_lost" title="torcheval.metrics.functional.word_information_lost"><code class="xref py py-obj docutils literal notranslate"><span class="pre">word_information_lost</span></code></a></p></td>
+<td><p>Word Information Lost rate is a metric of the performance of an automatic speech recognition system.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 
 
@@ -455,7 +504,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="generated/torcheval.metrics.functional.mean.html" class="btn btn-neutral float-right" title="torcheval.metrics.functional.mean" accesskey="n" rel="next">Next <img src="_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="generated/torcheval.metrics.functional.auc.html" class="btn btn-neutral float-right" title="torcheval.metrics.functional.auc" accesskey="n" rel="next">Next <img src="_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
         <a href="generated/torcheval.metrics.WindowedWeightedCalibration.html" class="btn btn-neutral" title="torcheval.metrics.WindowedWeightedCalibration" accesskey="p" rel="prev"><img src="_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
@@ -495,6 +544,7 @@
 <li><a class="reference internal" href="#classification-metrics">Classification Metrics</a></li>
 <li><a class="reference internal" href="#ranking-metrics">Ranking Metrics</a></li>
 <li><a class="reference internal" href="#regression-metrics">Regression Metrics</a></li>
+<li><a class="reference internal" href="#text-metrics">Text Metrics</a></li>
 </ul>
 </li>
 </ul>

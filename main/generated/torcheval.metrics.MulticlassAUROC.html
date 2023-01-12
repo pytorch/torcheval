@@ -33,7 +33,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="torcheval.metrics.MulticlassBinnedAUROC" href="torcheval.metrics.MulticlassBinnedAUROC.html" />
-    <link rel="prev" title="torcheval.metrics.MulticlassAccuracy" href="torcheval.metrics.MulticlassAccuracy.html" />
+    <link rel="prev" title="torcheval.metrics.MulticlassAUPRC" href="torcheval.metrics.MulticlassAUPRC.html" />
   <!-- Google Analytics -->
   
   <!-- End Google Analytics -->
@@ -333,9 +333,11 @@
 <dt class="sig sig-object py" id="torcheval.metrics.MulticlassAUROC">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torcheval.metrics.</span></span><span class="sig-name descname"><span class="pre">MulticlassAUROC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">average</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'macro'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device" title="(in PyTorch v1.13)"><span class="pre">device</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torcheval.metrics.MulticlassAUROC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute AUROC, which is the area under the ROC Curve, for multiclass classification in a one vs rest fashion.
-One vs. rest Multiclass AUROC is equivalent to running a BinaryAUROC with <cite>num_classes</cite> tasks where
-1. The <cite>input</cite> is transposed
-2. The <cite>target</cite> is translated from a 1 dimensional tensor of the correct classes to a 2 dimensional tensor where each row is a list containing which examples belong to that class.</p>
+One vs. rest Multiclass AUROC is equivalent to running a BinaryAUROC with <cite>num_classes</cite> tasks where</p>
+<ol class="arabic simple">
+<li><p>The <cite>input</cite> is transposed</p></li>
+<li><p>The <cite>target</cite> is translated from a 1 dimensional tensor of the correct classes to a 2 dimensional tensor where each row is a list containing which examples belong to that class.</p></li>
+</ol>
 <p>See examples below for more details on the connection between Multiclass and Binary AUROC.</p>
 <p>The functional version of this metric is <a class="reference internal" href="torcheval.metrics.functional.multiclass_auroc.html#torcheval.metrics.functional.multiclass_auroc" title="torcheval.metrics.functional.multiclass_auroc"><code class="xref py py-func docutils literal notranslate"><span class="pre">torcheval.metrics.functional.multiclass_auroc()</span></code></a>.</p>
 <dl class="field-list simple">
@@ -448,7 +450,7 @@ or a deque of <code class="docutils literal notranslate"><span class="pre">torch
         <a href="torcheval.metrics.MulticlassBinnedAUROC.html" class="btn btn-neutral float-right" title="torcheval.metrics.MulticlassBinnedAUROC" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="torcheval.metrics.MulticlassAccuracy.html" class="btn btn-neutral" title="torcheval.metrics.MulticlassAccuracy" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="torcheval.metrics.MulticlassAUPRC.html" class="btn btn-neutral" title="torcheval.metrics.MulticlassAUPRC" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
