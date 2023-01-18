@@ -95,7 +95,7 @@ def sync_and_compute_collection(
     recipient_rank: Union[int, Literal["all"]] = 0,
 ) -> Optional[Dict[str, Any]]:
     """
-    Sync metric states across a list of dict of metrics and returns the
+    Sync metric states across a dict of metrics and returns the
     ``metric.compute()`` result of synced metrics on recipient rank.
     Returns ``None`` on other ranks.
 
