@@ -27,7 +27,6 @@ import torch
 from torch.nn.parameter import UninitializedParameter
 from torch.utils._pytree import PyTree, tree_flatten
 from torch.utils.hooks import RemovableHandle
-from torcheval.tools.flops import flop_mapping, FlopTensorDispatchMode
 
 from torchtnt.utils import Timer
 from torchtnt.utils.version import is_torch_version_geq_1_13
@@ -252,6 +251,8 @@ def _get_module_flops_and_activation_sizes(
         for hook_handle in activation_size_handles:
             hook_handle.remove()
     else:
+        from torcheval.tools.flops import FlopTensorDispatchMode
+
         with FlopTensorDispatchMode(module) as ftdm:
             # Count for forward flops (+ compute activation sizes)
             res = module(*module_args, **module_kwargs)
@@ -479,6 +480,8 @@ def get_summary_table(
         summary_table += " | ".join(row) + "\n"
     # Add disclaims for FLOPs:
     if "flops_forward" not in stop_attr or "flops_backward" not in stop_attr:
+        from torcheval.tools.flops import flop_mapping
+
         used_operators = "|".join(
             [
                 f"`{j.__name__}`"

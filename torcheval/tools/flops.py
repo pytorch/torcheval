@@ -172,7 +172,7 @@ def _normalize_tuple(x: Any) -> Tuple[Any]:
 
 class FlopTensorDispatchMode(TorchDispatchMode):
     """
-    A context manager to measure flops of a module.
+    A context manager to measure flops of a module. Requires PyTorch 1.13+.
 
     Flop count implementation based on
     https://dev-discuss.pytorch.org/t/the-ideal-pytorch-flop-counter-with-torch-dispatch/505

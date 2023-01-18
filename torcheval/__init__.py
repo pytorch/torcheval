@@ -6,11 +6,8 @@
 
 "A library that contains a collection of performant PyTorch model metrics"
 
-from . import metrics, tools
 from .version import __version__
 
 __all__ = [
     "__version__",
-    "metrics",
-    "tools",
 ]

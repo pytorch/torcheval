@@ -1,2 +1,2 @@
-torchtnt>=0.0.4
+torchtnt>=0.0.5
 typing_extensions
