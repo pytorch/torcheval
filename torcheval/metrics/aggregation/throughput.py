@@ -48,10 +48,12 @@ class Throughput(Metric[torch.Tensor]):
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)
-        self._add_state("num_total", torch.tensor(0.0, device=self.device))
+        self._add_state(
+            "num_total", torch.tensor(0.0, device=self.device, dtype=torch.float64)
+        )
         self._add_state(
             "elapsed_time_sec",
-            torch.tensor(0.0, device=self.device),
+            torch.tensor(0.0, device=self.device, dtype=torch.float64),
         )
 
     @torch.inference_mode()
@@ -81,15 +83,19 @@ class Throughput(Metric[torch.Tensor]):
                 f"Expected elapsed_time_sec to be a positive number, but received {elapsed_time_sec}."
             )
 
-        self.elapsed_time_sec += torch.tensor(elapsed_time_sec, device=self.device)
-        self.num_total += torch.tensor(num_processed, device=self.device)
+        self.elapsed_time_sec += torch.tensor(
+            elapsed_time_sec, device=self.device, dtype=torch.float64
+        )
+        self.num_total += torch.tensor(
+            num_processed, device=self.device, dtype=torch.float64
+        )
         return self
 
     @torch.inference_mode()
     def compute(self: TThroughput) -> torch.Tensor:
         if not self.elapsed_time_sec:
             _logger.warning("No calls to update() have been made - returning 0.0")
-            return torch.tensor(0.0, device=self.device)
+            return torch.tensor(0.0, device=self.device, dtype=torch.float64)
 
         return self.num_total / self.elapsed_time_sec
 
