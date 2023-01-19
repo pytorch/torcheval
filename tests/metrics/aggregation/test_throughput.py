@@ -23,7 +23,7 @@ class TestThroughput(MetricClassTester):
         elapsed_time_sec: List[float],
     ) -> None:
         num_individual_update = NUM_TOTAL_UPDATES // NUM_PROCESSES
-        expected_num_total = torch.sum(torch.tensor(num_processed))
+        expected_num_total = torch.sum(torch.tensor(num_processed)).to(torch.float64)
         max_elapsed_time_sec = torch.max(
             torch.tensor(
                 [
@@ -79,4 +79,4 @@ class TestThroughput(MetricClassTester):
 
     def test_throughput_class_compute_without_update(self) -> None:
         metric = Throughput()
-        self.assertEqual(metric.compute(), torch.tensor(0.0))
+        self.assertEqual(metric.compute(), torch.tensor(0.0, dtype=torch.float64))

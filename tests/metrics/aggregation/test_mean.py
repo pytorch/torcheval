@@ -22,7 +22,7 @@ class TestMean(MetricClassTester):
             metric=Mean(),
             state_names={"weighted_sum", "weights"},
             update_kwargs={"input": input_val_tensor},
-            compute_result=torch.mean(input_val_tensor),
+            compute_result=torch.mean(input_val_tensor).to(torch.float64),
         )
 
     def test_mean_class_base(self) -> None:
@@ -45,14 +45,14 @@ class TestMean(MetricClassTester):
                     torch.tensor([[1.0, 6.0], [2.0, -4.0]]),
                 ]
             },
-            compute_result=torch.tensor(1.700),
+            compute_result=torch.tensor(1.700, dtype=torch.float64),
             num_total_updates=4,
             num_processes=2,
         )
 
     def test_mean_class_compute_without_update(self) -> None:
         metric = Mean()
-        self.assertEqual(metric.compute(), torch.tensor(0.0))
+        self.assertEqual(metric.compute(), torch.tensor(0.0, dtype=torch.float64))
 
     def test_mean_class_update_input_valid_weight(self) -> None:
         update_value = [
@@ -86,7 +86,7 @@ class TestMean(MetricClassTester):
                 weights += sum_weights
                 weighted_sum += average * sum_weights
             weighted_mean = weighted_sum / weights
-            return torch.tensor(weighted_mean, dtype=torch.float32)
+            return torch.tensor(weighted_mean, dtype=torch.float64)
 
         self.run_class_implementation_tests(
             metric=Mean(),

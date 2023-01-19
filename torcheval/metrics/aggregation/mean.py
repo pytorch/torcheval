@@ -55,8 +55,12 @@ class Mean(Metric[torch.Tensor]):
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)
-        self._add_state("weighted_sum", torch.tensor(0.0, device=self.device))
-        self._add_state("weights", torch.tensor(0.0, device=self.device))
+        self._add_state(
+            "weighted_sum", torch.tensor(0.0, device=self.device, dtype=torch.float64)
+        )
+        self._add_state(
+            "weights", torch.tensor(0.0, device=self.device, dtype=torch.float64)
+        )
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
@@ -91,7 +95,7 @@ class Mean(Metric[torch.Tensor]):
         """
         if not self.weighted_sum:
             logging.warning("No calls to update() have been made - returning 0.0")
-            return torch.tensor(0.0)
+            return torch.tensor(0.0, dtype=torch.float64)
         return self.weighted_sum / self.weights
 
     @torch.inference_mode()
