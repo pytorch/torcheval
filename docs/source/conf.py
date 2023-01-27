@@ -23,6 +23,8 @@ import sys
 import pytorch_sphinx_theme
 from torcheval import __version__
 
+sys.path.append(os.path.abspath("./ext"))
+
 current_dir = os.path.dirname(__file__)
 target_dir = os.path.abspath(os.path.join(current_dir, "../.."))
 sys.path.insert(0, target_dir)
@@ -31,7 +33,7 @@ print(target_dir)
 # -- Project information -----------------------------------------------------
 
 project = "TorchEval"
-copyright = "2022, Meta"
+copyright = "2023, Meta"
 author = "Meta"
 
 # The full version, including alpha/beta/rc tags
@@ -51,9 +53,20 @@ else:
 extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.autodoc",
-    "sphinx.ext.intersphinx",
     "sphinx.ext.autosummary",
+    "fbcode",
 ]
+
+FBCODE = "fbcode" in os.getcwd()
+
+if not FBCODE:
+    extensions += [
+        "sphinx.ext.intersphinx",
+    ]
+else:
+    nbsphinx_execute = "never"
+
+html_context = {"fbcode": FBCODE}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
