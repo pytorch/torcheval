@@ -76,6 +76,17 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+Getting Started
+-------------------
+.. fbcode::
+
+   .. toctree::
+      :maxdepth: 2
+      :caption: Getting Started (Meta)
+      :glob:
+
+      meta/getting_started.rst
+
 TorchEval Tutorials
 -------------------
 .. toctree::
