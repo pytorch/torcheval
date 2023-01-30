@@ -59,8 +59,8 @@ jobs:
       - name: Upload to PyPI
         shell: bash -l {0}
         env:
-          PYPI_USER: ${{ secrets.PYPI_USER }}
-          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+          PYPI_USER: ${{ secrets.PYPI_USER_RELEASE }}
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN_RELEASE }}
         run: |
           set -eux
           conda activate test
