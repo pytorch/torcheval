@@ -69,6 +69,6 @@ jobs:
         run: |
           git commit -m "Update symbolic link to latest release"
       - name: Push changes
-        uses: ad-m/github-push-action@v1.7.0
+        uses: ad-m/github-push-action@master
         with:
           branch: gh-pages
