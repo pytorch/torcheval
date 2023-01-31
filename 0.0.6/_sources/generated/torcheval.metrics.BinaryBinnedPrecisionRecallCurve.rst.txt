@@ -1,0 +1,35 @@
+﻿torcheval.metrics.BinaryBinnedPrecisionRecallCurve
+==================================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: BinaryBinnedPrecisionRecallCurve
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BinaryBinnedPrecisionRecallCurve.__init__
+      ~BinaryBinnedPrecisionRecallCurve.compute
+      ~BinaryBinnedPrecisionRecallCurve.load_state_dict
+      ~BinaryBinnedPrecisionRecallCurve.merge_state
+      ~BinaryBinnedPrecisionRecallCurve.reset
+      ~BinaryBinnedPrecisionRecallCurve.state_dict
+      ~BinaryBinnedPrecisionRecallCurve.to
+      ~BinaryBinnedPrecisionRecallCurve.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BinaryBinnedPrecisionRecallCurve.device
+   
+   

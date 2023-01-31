@@ -1,0 +1,35 @@
+﻿torcheval.metrics.MulticlassAUPRC
+=================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: MulticlassAUPRC
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MulticlassAUPRC.__init__
+      ~MulticlassAUPRC.compute
+      ~MulticlassAUPRC.load_state_dict
+      ~MulticlassAUPRC.merge_state
+      ~MulticlassAUPRC.reset
+      ~MulticlassAUPRC.state_dict
+      ~MulticlassAUPRC.to
+      ~MulticlassAUPRC.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MulticlassAUPRC.device
+   
+   

@@ -1,0 +1,1171 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Index &mdash; TorchEval main documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="_static/pygments.css" type="text/css" /> -->
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+  <!-- Google Analytics -->
+  
+  <!-- End Google Analytics -->
+  
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://pytorch.org/" aria-label="PyTorch"></a>
+
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pytorch.org/get-started">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://pytorch.org/ecosystem">Ecosystem</a>
+          </li>
+
+          <li>
+            <a href="https://pytorch.org/mobile">Mobile</a>
+          </li>
+
+          <li>
+            <a href="https://pytorch.org/blog/">Blog</a>
+          </li>
+
+          <li>
+            <a href="https://pytorch.org/tutorials">Tutorials</a>
+          </li>
+
+          <li>
+            <div id="resourcesDropdownButton" data-toggle="resources-dropdown" class="resources-dropdown">
+              <a class="resource-option with-down-orange-arrow">
+                Docs
+              </a>
+              <div class="resources-dropdown-menu">
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/docs/stable/index.html">
+                  <span class="dropdown-title">PyTorch</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/audio/stable/index.html">
+                  <span class="dropdown-title">torchaudio</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/text/stable/index.html">
+                  <span class="dropdown-title">torchtext</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/vision/stable/index.html">
+                  <span class="dropdown-title">torchvision</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/torcharrow">
+                  <span class="dropdown-title">torcharrow</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/data">
+                  <span class="dropdown-title">TorchData</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/torchrec">
+                  <span class="dropdown-title">TorchRec</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/serve/">
+                  <span class="dropdown-title">TorchServe</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/torchx/">
+                  <span class="dropdown-title">TorchX</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/xla">
+                  <span class="dropdown-title">PyTorch on XLA Devices</span>
+                  <p></p>
+                </a>
+            </div>
+          </li>
+
+          <li>
+            <div id="resourcesDropdownButton" data-toggle="resources-dropdown" class="resources-dropdown">
+              <a class="resource-option with-down-arrow">
+                Resources
+              </a>
+              <div class="resources-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://pytorch.org/features">
+                  <span class="dropdown-title">About</span>
+                  <p>Learn about PyTorch’s features and capabilities</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://pytorch.org/foundation">
+                  <span class="dropdown-title">PyTorch Foundation</span>
+                  <p>Learn about the PyTorch foundation</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://pytorch.org/#community-module">
+                  <span class="dropdown-title">Community</span>
+                  <p>Join the PyTorch developer community to contribute, learn, and get your questions answered.</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://pytorch.org/community-stories">
+                  <span class="dropdown-title">Community Stories</span>
+                  <p>Learn how our community solves real, everyday machine learning problems with PyTorch.</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://pytorch.org/resources">
+                  <span class="dropdown-title">Developer Resources</span>
+                  <p>Find resources and get questions answered</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://pytorch.org/events">
+                  <span class="dropdown-title">Events</span>
+                  <p>Find events, webinars, and podcasts</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://discuss.pytorch.org/" target="_blank">
+                  <span class="dropdown-title">Forums</span>
+                  <p>A place to discuss PyTorch code, issues, install, research</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://pytorch.org/hub">
+                  <span class="dropdown-title">Models (Beta)</span>
+                  <p>Discover, publish, and reuse pre-trained models</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/pytorch/pytorch">GitHub</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+  </div>
+</div>
+
+<body class="pytorch-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="pytorch-left-menu" id="pytorch-left-menu">
+      <div class="pytorch-side-scroll">
+        <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="pytorch-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  main (unstable)
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb">QuickStart Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metric_example.html">Use Metrics in TorchEval</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="torcheval.metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="torcheval.metrics.functional.html">Functional Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="torcheval.metrics.toolkit.html">Metric Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="torcheval.tools.html">Module Tools</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="pytorch-container">
+      <div class="pytorch-page-level-bar" id="pytorch-page-level-bar">
+        <div class="pytorch-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="pytorch-breadcrumbs">
+    
+      <li>
+        <a href="index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+      <li>Index</li>
+    
+    
+      <li class="pytorch-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="pytorch-shortcuts-wrapper" id="pytorch-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="pytorch-content-wrap" class="pytorch-content-wrap">
+        <div class="pytorch-content-left">
+
+        
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
+              
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#_"><strong>_</strong></a>
+ | <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ 
+</div>
+<h2 id="_">_</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.AUC.html#torcheval.metrics.AUC.__init__">__init__() (torcheval.metrics.AUC method)</a>
+
+      <ul>
+        <li><a href="generated/torcheval.metrics.BinaryAccuracy.html#torcheval.metrics.BinaryAccuracy.__init__">(torcheval.metrics.BinaryAccuracy method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.BinaryAUPRC.html#torcheval.metrics.BinaryAUPRC.__init__">(torcheval.metrics.BinaryAUPRC method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.BinaryAUROC.html#torcheval.metrics.BinaryAUROC.__init__">(torcheval.metrics.BinaryAUROC method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.BinaryBinnedAUROC.html#torcheval.metrics.BinaryBinnedAUROC.__init__">(torcheval.metrics.BinaryBinnedAUROC method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.BinaryBinnedPrecisionRecallCurve.html#torcheval.metrics.BinaryBinnedPrecisionRecallCurve.__init__">(torcheval.metrics.BinaryBinnedPrecisionRecallCurve method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.BinaryConfusionMatrix.html#torcheval.metrics.BinaryConfusionMatrix.__init__">(torcheval.metrics.BinaryConfusionMatrix method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.BinaryF1Score.html#torcheval.metrics.BinaryF1Score.__init__">(torcheval.metrics.BinaryF1Score method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.BinaryNormalizedEntropy.html#torcheval.metrics.BinaryNormalizedEntropy.__init__">(torcheval.metrics.BinaryNormalizedEntropy method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.BinaryPrecision.html#torcheval.metrics.BinaryPrecision.__init__">(torcheval.metrics.BinaryPrecision method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.BinaryPrecisionRecallCurve.html#torcheval.metrics.BinaryPrecisionRecallCurve.__init__">(torcheval.metrics.BinaryPrecisionRecallCurve method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.BinaryRecall.html#torcheval.metrics.BinaryRecall.__init__">(torcheval.metrics.BinaryRecall method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.BinaryRecallAtFixedPrecision.html#torcheval.metrics.BinaryRecallAtFixedPrecision.__init__">(torcheval.metrics.BinaryRecallAtFixedPrecision method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.BLEUScore.html#torcheval.metrics.BLEUScore.__init__">(torcheval.metrics.BLEUScore method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.Cat.html#torcheval.metrics.Cat.__init__">(torcheval.metrics.Cat method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.ClickThroughRate.html#torcheval.metrics.ClickThroughRate.__init__">(torcheval.metrics.ClickThroughRate method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.HitRate.html#torcheval.metrics.HitRate.__init__">(torcheval.metrics.HitRate method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.Max.html#torcheval.metrics.Max.__init__">(torcheval.metrics.Max method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.Mean.html#torcheval.metrics.Mean.__init__">(torcheval.metrics.Mean method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.MeanSquaredError.html#torcheval.metrics.MeanSquaredError.__init__">(torcheval.metrics.MeanSquaredError method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.Min.html#torcheval.metrics.Min.__init__">(torcheval.metrics.Min method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.MulticlassAccuracy.html#torcheval.metrics.MulticlassAccuracy.__init__">(torcheval.metrics.MulticlassAccuracy method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.MulticlassAUPRC.html#torcheval.metrics.MulticlassAUPRC.__init__">(torcheval.metrics.MulticlassAUPRC method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.MulticlassAUROC.html#torcheval.metrics.MulticlassAUROC.__init__">(torcheval.metrics.MulticlassAUROC method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.MulticlassBinnedAUROC.html#torcheval.metrics.MulticlassBinnedAUROC.__init__">(torcheval.metrics.MulticlassBinnedAUROC method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.MulticlassBinnedPrecisionRecallCurve.html#torcheval.metrics.MulticlassBinnedPrecisionRecallCurve.__init__">(torcheval.metrics.MulticlassBinnedPrecisionRecallCurve method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.MulticlassConfusionMatrix.html#torcheval.metrics.MulticlassConfusionMatrix.__init__">(torcheval.metrics.MulticlassConfusionMatrix method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.MulticlassF1Score.html#torcheval.metrics.MulticlassF1Score.__init__">(torcheval.metrics.MulticlassF1Score method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.MulticlassPrecision.html#torcheval.metrics.MulticlassPrecision.__init__">(torcheval.metrics.MulticlassPrecision method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.MulticlassPrecisionRecallCurve.html#torcheval.metrics.MulticlassPrecisionRecallCurve.__init__">(torcheval.metrics.MulticlassPrecisionRecallCurve method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.MulticlassRecall.html#torcheval.metrics.MulticlassRecall.__init__">(torcheval.metrics.MulticlassRecall method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.MultilabelAccuracy.html#torcheval.metrics.MultilabelAccuracy.__init__">(torcheval.metrics.MultilabelAccuracy method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.MultilabelAUPRC.html#torcheval.metrics.MultilabelAUPRC.__init__">(torcheval.metrics.MultilabelAUPRC method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.MultilabelPrecisionRecallCurve.html#torcheval.metrics.MultilabelPrecisionRecallCurve.__init__">(torcheval.metrics.MultilabelPrecisionRecallCurve method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.MultilabelRecallAtFixedPrecision.html#torcheval.metrics.MultilabelRecallAtFixedPrecision.__init__">(torcheval.metrics.MultilabelRecallAtFixedPrecision method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.Perplexity.html#torcheval.metrics.Perplexity.__init__">(torcheval.metrics.Perplexity method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.R2Score.html#torcheval.metrics.R2Score.__init__">(torcheval.metrics.R2Score method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.ReciprocalRank.html#torcheval.metrics.ReciprocalRank.__init__">(torcheval.metrics.ReciprocalRank method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.Sum.html#torcheval.metrics.Sum.__init__">(torcheval.metrics.Sum method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.Throughput.html#torcheval.metrics.Throughput.__init__">(torcheval.metrics.Throughput method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.TopKMultilabelAccuracy.html#torcheval.metrics.TopKMultilabelAccuracy.__init__">(torcheval.metrics.TopKMultilabelAccuracy method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.WeightedCalibration.html#torcheval.metrics.WeightedCalibration.__init__">(torcheval.metrics.WeightedCalibration method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.WindowedBinaryAUROC.html#torcheval.metrics.WindowedBinaryAUROC.__init__">(torcheval.metrics.WindowedBinaryAUROC method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.WindowedBinaryNormalizedEntropy.html#torcheval.metrics.WindowedBinaryNormalizedEntropy.__init__">(torcheval.metrics.WindowedBinaryNormalizedEntropy method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.WindowedClickThroughRate.html#torcheval.metrics.WindowedClickThroughRate.__init__">(torcheval.metrics.WindowedClickThroughRate method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.WindowedMeanSquaredError.html#torcheval.metrics.WindowedMeanSquaredError.__init__">(torcheval.metrics.WindowedMeanSquaredError method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.WindowedWeightedCalibration.html#torcheval.metrics.WindowedWeightedCalibration.__init__">(torcheval.metrics.WindowedWeightedCalibration method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.WordErrorRate.html#torcheval.metrics.WordErrorRate.__init__">(torcheval.metrics.WordErrorRate method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.WordInformationLost.html#torcheval.metrics.WordInformationLost.__init__">(torcheval.metrics.WordInformationLost method)</a>
+</li>
+        <li><a href="generated/torcheval.metrics.WordInformationPreserved.html#torcheval.metrics.WordInformationPreserved.__init__">(torcheval.metrics.WordInformationPreserved method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.AUC.html#torcheval.metrics.AUC">AUC (class in torcheval.metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.functional.auc.html#torcheval.metrics.functional.auc">auc() (in module torcheval.metrics.functional)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.functional.binary_accuracy.html#torcheval.metrics.functional.binary_accuracy">binary_accuracy() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.binary_auprc.html#torcheval.metrics.functional.binary_auprc">binary_auprc() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.binary_auroc.html#torcheval.metrics.functional.binary_auroc">binary_auroc() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.binary_binned_auroc.html#torcheval.metrics.functional.binary_binned_auroc">binary_binned_auroc() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.binary_binned_precision_recall_curve.html#torcheval.metrics.functional.binary_binned_precision_recall_curve">binary_binned_precision_recall_curve() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.binary_confusion_matrix.html#torcheval.metrics.functional.binary_confusion_matrix">binary_confusion_matrix() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.binary_f1_score.html#torcheval.metrics.functional.binary_f1_score">binary_f1_score() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.binary_normalized_entropy.html#torcheval.metrics.functional.binary_normalized_entropy">binary_normalized_entropy() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.binary_precision.html#torcheval.metrics.functional.binary_precision">binary_precision() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.binary_precision_recall_curve.html#torcheval.metrics.functional.binary_precision_recall_curve">binary_precision_recall_curve() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.binary_recall.html#torcheval.metrics.functional.binary_recall">binary_recall() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.binary_recall_at_fixed_precision.html#torcheval.metrics.functional.binary_recall_at_fixed_precision">binary_recall_at_fixed_precision() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.BinaryAccuracy.html#torcheval.metrics.BinaryAccuracy">BinaryAccuracy (class in torcheval.metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.BinaryAUPRC.html#torcheval.metrics.BinaryAUPRC">BinaryAUPRC (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.BinaryAUROC.html#torcheval.metrics.BinaryAUROC">BinaryAUROC (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.BinaryBinnedAUROC.html#torcheval.metrics.BinaryBinnedAUROC">BinaryBinnedAUROC (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.BinaryBinnedPrecisionRecallCurve.html#torcheval.metrics.BinaryBinnedPrecisionRecallCurve">BinaryBinnedPrecisionRecallCurve (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.BinaryConfusionMatrix.html#torcheval.metrics.BinaryConfusionMatrix">BinaryConfusionMatrix (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.BinaryF1Score.html#torcheval.metrics.BinaryF1Score">BinaryF1Score (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.BinaryNormalizedEntropy.html#torcheval.metrics.BinaryNormalizedEntropy">BinaryNormalizedEntropy (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.BinaryPrecision.html#torcheval.metrics.BinaryPrecision">BinaryPrecision (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.BinaryPrecisionRecallCurve.html#torcheval.metrics.BinaryPrecisionRecallCurve">BinaryPrecisionRecallCurve (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.BinaryRecall.html#torcheval.metrics.BinaryRecall">BinaryRecall (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.BinaryRecallAtFixedPrecision.html#torcheval.metrics.BinaryRecallAtFixedPrecision">BinaryRecallAtFixedPrecision (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.bleu_score.html#torcheval.metrics.functional.bleu_score">bleu_score() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.BLEUScore.html#torcheval.metrics.BLEUScore">BLEUScore (class in torcheval.metrics)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.Cat.html#torcheval.metrics.Cat">Cat (class in torcheval.metrics)</a>
+</li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.classwise_converter">classwise_converter() (in module torcheval.metrics.toolkit)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.click_through_rate.html#torcheval.metrics.functional.click_through_rate">click_through_rate() (in module torcheval.metrics.functional)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.ClickThroughRate.html#torcheval.metrics.ClickThroughRate">ClickThroughRate (class in torcheval.metrics)</a>
+</li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.clone_metric">clone_metric() (in module torcheval.metrics.toolkit)</a>
+</li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.clone_metrics">clone_metrics() (in module torcheval.metrics.toolkit)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="torcheval.tools.html#torcheval.tools.ModuleSummary.flops_backward">flops_backward (torcheval.tools.ModuleSummary property)</a>
+</li>
+      <li><a href="torcheval.tools.html#torcheval.tools.ModuleSummary.flops_forward">flops_forward (torcheval.tools.ModuleSummary property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="torcheval.tools.html#torcheval.tools.ModuleSummary.forward_elapsed_time_ms">forward_elapsed_time_ms (torcheval.tools.ModuleSummary property)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.frequency_at_k.html#torcheval.metrics.functional.frequency_at_k">frequency_at_k() (in module torcheval.metrics.functional)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="torcheval.tools.html#torcheval.tools.get_module_summary">get_module_summary() (in module torcheval.tools)</a>
+</li>
+      <li><a href="torcheval.tools.html#torcheval.tools.get_summary_table">get_summary_table() (in module torcheval.tools)</a>
+</li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.get_synced_metric">get_synced_metric() (in module torcheval.metrics.toolkit)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.get_synced_metric_collection">get_synced_metric_collection() (in module torcheval.metrics.toolkit)</a>
+</li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.get_synced_state_dict">get_synced_state_dict() (in module torcheval.metrics.toolkit)</a>
+</li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.get_synced_state_dict_collection">get_synced_state_dict_collection() (in module torcheval.metrics.toolkit)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="torcheval.tools.html#torcheval.tools.ModuleSummary.has_uninitialized_param">has_uninitialized_param (torcheval.tools.ModuleSummary property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.functional.hit_rate.html#torcheval.metrics.functional.hit_rate">hit_rate() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.HitRate.html#torcheval.metrics.HitRate">HitRate (class in torcheval.metrics)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="torcheval.tools.html#torcheval.tools.ModuleSummary.in_size">in_size (torcheval.tools.ModuleSummary property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.Max.html#torcheval.metrics.Max">Max (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.Mean.html#torcheval.metrics.Mean">Mean (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.mean.html#torcheval.metrics.functional.mean">mean() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.mean_squared_error.html#torcheval.metrics.functional.mean_squared_error">mean_squared_error() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.MeanSquaredError.html#torcheval.metrics.MeanSquaredError">MeanSquaredError (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.Min.html#torcheval.metrics.Min">Min (class in torcheval.metrics)</a>
+</li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="torcheval.metrics.html#module-torcheval.metrics">torcheval.metrics</a>
+</li>
+        <li><a href="torcheval.metrics.functional.html#module-torcheval.metrics.functional">torcheval.metrics.functional</a>
+</li>
+        <li><a href="torcheval.metrics.toolkit.html#module-torcheval.metrics.toolkit">torcheval.metrics.toolkit</a>
+</li>
+        <li><a href="torcheval.tools.html#module-torcheval.tools">torcheval.tools</a>
+</li>
+      </ul></li>
+      <li><a href="torcheval.tools.html#torcheval.tools.ModuleSummary.module_name">module_name (torcheval.tools.ModuleSummary property)</a>
+</li>
+      <li><a href="torcheval.tools.html#torcheval.tools.ModuleSummary.module_type">module_type (torcheval.tools.ModuleSummary property)</a>
+</li>
+      <li><a href="torcheval.tools.html#torcheval.tools.ModuleSummary">ModuleSummary (class in torcheval.tools)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.multiclass_accuracy.html#torcheval.metrics.functional.multiclass_accuracy">multiclass_accuracy() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.multiclass_auprc.html#torcheval.metrics.functional.multiclass_auprc">multiclass_auprc() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.multiclass_auroc.html#torcheval.metrics.functional.multiclass_auroc">multiclass_auroc() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.multiclass_binned_auroc.html#torcheval.metrics.functional.multiclass_binned_auroc">multiclass_binned_auroc() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.multiclass_binned_precision_recall_curve.html#torcheval.metrics.functional.multiclass_binned_precision_recall_curve">multiclass_binned_precision_recall_curve() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.multiclass_confusion_matrix.html#torcheval.metrics.functional.multiclass_confusion_matrix">multiclass_confusion_matrix() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.multiclass_f1_score.html#torcheval.metrics.functional.multiclass_f1_score">multiclass_f1_score() (in module torcheval.metrics.functional)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.functional.multiclass_precision.html#torcheval.metrics.functional.multiclass_precision">multiclass_precision() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.multiclass_precision_recall_curve.html#torcheval.metrics.functional.multiclass_precision_recall_curve">multiclass_precision_recall_curve() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.multiclass_recall.html#torcheval.metrics.functional.multiclass_recall">multiclass_recall() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.MulticlassAccuracy.html#torcheval.metrics.MulticlassAccuracy">MulticlassAccuracy (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.MulticlassAUPRC.html#torcheval.metrics.MulticlassAUPRC">MulticlassAUPRC (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.MulticlassAUROC.html#torcheval.metrics.MulticlassAUROC">MulticlassAUROC (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.MulticlassBinnedAUROC.html#torcheval.metrics.MulticlassBinnedAUROC">MulticlassBinnedAUROC (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.MulticlassBinnedPrecisionRecallCurve.html#torcheval.metrics.MulticlassBinnedPrecisionRecallCurve">MulticlassBinnedPrecisionRecallCurve (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.MulticlassConfusionMatrix.html#torcheval.metrics.MulticlassConfusionMatrix">MulticlassConfusionMatrix (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.MulticlassF1Score.html#torcheval.metrics.MulticlassF1Score">MulticlassF1Score (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.MulticlassPrecision.html#torcheval.metrics.MulticlassPrecision">MulticlassPrecision (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.MulticlassPrecisionRecallCurve.html#torcheval.metrics.MulticlassPrecisionRecallCurve">MulticlassPrecisionRecallCurve (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.MulticlassRecall.html#torcheval.metrics.MulticlassRecall">MulticlassRecall (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.multilabel_accuracy.html#torcheval.metrics.functional.multilabel_accuracy">multilabel_accuracy() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.multilabel_auprc.html#torcheval.metrics.functional.multilabel_auprc">multilabel_auprc() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.multilabel_precision_recall_curve.html#torcheval.metrics.functional.multilabel_precision_recall_curve">multilabel_precision_recall_curve() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.multilabel_recall_at_fixed_precision.html#torcheval.metrics.functional.multilabel_recall_at_fixed_precision">multilabel_recall_at_fixed_precision() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.MultilabelAccuracy.html#torcheval.metrics.MultilabelAccuracy">MultilabelAccuracy (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.MultilabelAUPRC.html#torcheval.metrics.MultilabelAUPRC">MultilabelAUPRC (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.MultilabelPrecisionRecallCurve.html#torcheval.metrics.MultilabelPrecisionRecallCurve">MultilabelPrecisionRecallCurve (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.MultilabelRecallAtFixedPrecision.html#torcheval.metrics.MultilabelRecallAtFixedPrecision">MultilabelRecallAtFixedPrecision (class in torcheval.metrics)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.functional.num_collisions.html#torcheval.metrics.functional.num_collisions">num_collisions() (in module torcheval.metrics.functional)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="torcheval.tools.html#torcheval.tools.ModuleSummary.num_parameters">num_parameters (torcheval.tools.ModuleSummary property)</a>
+</li>
+      <li><a href="torcheval.tools.html#torcheval.tools.ModuleSummary.num_trainable_parameters">num_trainable_parameters (torcheval.tools.ModuleSummary property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="torcheval.tools.html#torcheval.tools.ModuleSummary.out_size">out_size (torcheval.tools.ModuleSummary property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.Perplexity.html#torcheval.metrics.Perplexity">Perplexity (class in torcheval.metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.functional.perplexity.html#torcheval.metrics.functional.perplexity">perplexity() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="torcheval.tools.html#torcheval.tools.prune_module_summary">prune_module_summary() (in module torcheval.tools)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.functional.r2_score.html#torcheval.metrics.functional.r2_score">r2_score() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.R2Score.html#torcheval.metrics.R2Score">R2Score (class in torcheval.metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.functional.reciprocal_rank.html#torcheval.metrics.functional.reciprocal_rank">reciprocal_rank() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.ReciprocalRank.html#torcheval.metrics.ReciprocalRank">ReciprocalRank (class in torcheval.metrics)</a>
+</li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.reset_metrics">reset_metrics() (in module torcheval.metrics.toolkit)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="torcheval.tools.html#torcheval.tools.ModuleSummary.size_bytes">size_bytes (torcheval.tools.ModuleSummary property)</a>
+</li>
+      <li><a href="torcheval.tools.html#torcheval.tools.ModuleSummary.submodule_summaries">submodule_summaries (torcheval.tools.ModuleSummary property)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.Sum.html#torcheval.metrics.Sum">Sum (class in torcheval.metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.functional.sum.html#torcheval.metrics.functional.sum">sum() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.sync_and_compute">sync_and_compute() (in module torcheval.metrics.toolkit)</a>
+</li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.sync_and_compute_collection">sync_and_compute_collection() (in module torcheval.metrics.toolkit)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.Throughput.html#torcheval.metrics.Throughput">Throughput (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.throughput.html#torcheval.metrics.functional.throughput">throughput() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.to_device">to_device() (in module torcheval.metrics.toolkit)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.topk_multilabel_accuracy.html#torcheval.metrics.functional.topk_multilabel_accuracy">topk_multilabel_accuracy() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.TopKMultilabelAccuracy.html#torcheval.metrics.TopKMultilabelAccuracy">TopKMultilabelAccuracy (class in torcheval.metrics)</a>
+</li>
+      <li>
+    torcheval.metrics
+
+      <ul>
+        <li><a href="torcheval.metrics.html#module-torcheval.metrics">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    torcheval.metrics.functional
+
+      <ul>
+        <li><a href="torcheval.metrics.functional.html#module-torcheval.metrics.functional">module</a>
+</li>
+      </ul></li>
+      <li>
+    torcheval.metrics.toolkit
+
+      <ul>
+        <li><a href="torcheval.metrics.toolkit.html#module-torcheval.metrics.toolkit">module</a>
+</li>
+      </ul></li>
+      <li>
+    torcheval.tools
+
+      <ul>
+        <li><a href="torcheval.tools.html#module-torcheval.tools">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.functional.weighted_calibration.html#torcheval.metrics.functional.weighted_calibration">weighted_calibration() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.WeightedCalibration.html#torcheval.metrics.WeightedCalibration">WeightedCalibration (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.WindowedBinaryAUROC.html#torcheval.metrics.WindowedBinaryAUROC">WindowedBinaryAUROC (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.WindowedBinaryNormalizedEntropy.html#torcheval.metrics.WindowedBinaryNormalizedEntropy">WindowedBinaryNormalizedEntropy (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.WindowedClickThroughRate.html#torcheval.metrics.WindowedClickThroughRate">WindowedClickThroughRate (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.WindowedMeanSquaredError.html#torcheval.metrics.WindowedMeanSquaredError">WindowedMeanSquaredError (class in torcheval.metrics)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/torcheval.metrics.WindowedWeightedCalibration.html#torcheval.metrics.WindowedWeightedCalibration">WindowedWeightedCalibration (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.word_error_rate.html#torcheval.metrics.functional.word_error_rate">word_error_rate() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.word_information_lost.html#torcheval.metrics.functional.word_information_lost">word_information_lost() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.functional.word_information_preserved.html#torcheval.metrics.functional.word_information_preserved">word_information_preserved() (in module torcheval.metrics.functional)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.WordErrorRate.html#torcheval.metrics.WordErrorRate">WordErrorRate (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.WordInformationLost.html#torcheval.metrics.WordInformationLost">WordInformationLost (class in torcheval.metrics)</a>
+</li>
+      <li><a href="generated/torcheval.metrics.WordInformationPreserved.html#torcheval.metrics.WordInformationPreserved">WordInformationPreserved (class in torcheval.metrics)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  
+
+    <hr>
+
+  
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2022, Meta.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="pytorch-content-right" id="pytorch-content-right">
+          <div class="pytorch-right-menu" id="pytorch-right-menu">
+            <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
+              
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+         <script src="_static/doctools.js"></script>
+         <script src="_static/sphinx_highlight.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="_static/js/vendor/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <div class="container-fluid docs-tutorials-resources" id="docs-tutorials-resources">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 text-center">
+          <h2>Docs</h2>
+          <p>Access comprehensive developer documentation for PyTorch</p>
+          <a class="with-right-arrow" href="https://pytorch.org/docs/stable/index.html">View Docs</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Tutorials</h2>
+          <p>Get in-depth tutorials for beginners and advanced developers</p>
+          <a class="with-right-arrow" href="https://pytorch.org/tutorials">View Tutorials</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Resources</h2>
+          <p>Find development resources and get your questions answered</p>
+          <a class="with-right-arrow" href="https://pytorch.org/resources">View Resources</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://pytorch.org/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pytorch.org/">PyTorch</a></li>
+            <li><a href="https://pytorch.org/get-started">Get Started</a></li>
+            <li><a href="https://pytorch.org/features">Features</a></li>
+            <li><a href="https://pytorch.org/ecosystem">Ecosystem</a></li>
+            <li><a href="https://pytorch.org/blog/">Blog</a></li>
+            <li><a href="https://github.com/pytorch/pytorch/blob/master/CONTRIBUTING.md">Contributing</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pytorch.org/resources">Resources</a></li>
+            <li><a href="https://pytorch.org/tutorials">Tutorials</a></li>
+            <li><a href="https://pytorch.org/docs/stable/index.html">Docs</a></li>
+            <li><a href="https://discuss.pytorch.org" target="_blank">Discuss</a></li>
+            <li><a href="https://github.com/pytorch/pytorch/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://pytorch.org/assets/brand-guidelines/PyTorch-Brand-Guidelines.pdf" target="_blank">Brand Guidelines</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title">Stay up to date</li>
+            <li><a href="https://www.facebook.com/pytorch" target="_blank">Facebook</a></li>
+            <li><a href="https://twitter.com/pytorch" target="_blank">Twitter</a></li>
+            <li><a href="https://www.youtube.com/pytorch" target="_blank">YouTube</a></li>
+            <li><a href="https://www.linkedin.com/company/pytorch" target="_blank">LinkedIn</a></li>
+          </ul>  
+          </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title">PyTorch Podcasts</li>
+            <li><a href="https://open.spotify.com/show/6UzHKeiy368jKfQMKKvJY5" target="_blank">Spotify</a></li>
+            <li><a href="https://podcasts.apple.com/us/podcast/pytorch-developer-podcast/id1566080008" target="_blank">Apple</a></li>
+            <li><a href="https://www.google.com/podcasts?feed=aHR0cHM6Ly9mZWVkcy5zaW1wbGVjYXN0LmNvbS9PQjVGa0lsOA%3D%3D" target="_blank">Google</a></li>
+            <li><a href="https://music.amazon.com/podcasts/7a4e6f0e-26c2-49e9-a478-41bd244197d0/PyTorch-Developer-Podcast?" target="_blank">Amazon</a></li>
+          </ul>
+         </div>
+        </div>
+        
+        <div class="privacy-policy">
+          <ul>
+            <li class="privacy-policy-links"><a href="https://www.linuxfoundation.org/terms/" target="_blank">Terms</a></li>
+            <li class="privacy-policy-links">|</li>
+            <li class="privacy-policy-links"><a href="https://www.linuxfoundation.org/privacy-policy/" target="_blank">Privacy</a></li>
+          </ul>
+        </div>
+        <div class="copyright">
+        <p>© Copyright The Linux Foundation. The PyTorch Foundation is a project of The Linux Foundation.
+          For web site terms of use, trademark policy and other policies applicable to The PyTorch Foundation please see
+          <a href="www.linuxfoundation.org/policies/">www.linuxfoundation.org/policies/</a>. The PyTorch Foundation supports the PyTorch open source
+          project, which has been established as PyTorch Project a Series of LF Projects, LLC. For policies applicable to the PyTorch Project a Series of LF Projects, LLC,
+          please see <a href="www.lfprojects.org/policies/">www.lfprojects.org/policies/</a>.</p>
+      </div>
+     </div>
+
+  </footer>
+
+  <div class="cookie-banner-wrapper">
+  <div class="container">
+    <p class="gdpr-notice">To analyze traffic and optimize your experience, we serve cookies on this site. By clicking or navigating, you agree to allow our usage of cookies. As the current maintainers of this site, Facebook’s Cookies Policy applies. Learn more, including about available controls: <a href="https://www.facebook.com/policies/cookies/">Cookies Policy</a>.</p>
+    <img class="close-button" src="_static/images/pytorch-x.svg">
+  </div>
+</div>
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://pytorch.org/" aria-label="PyTorch"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pytorch.org/get-started">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://pytorch.org/ecosystem">Ecosystem</a>
+          </li>
+            
+          <li>
+            <a href="https://pytorch.org/mobile">Mobile</a>
+          </li>
+
+          <li>
+            <a href="https://pytorch.org/blog/">Blog</a>
+          </li>
+
+          <li>
+            <a href="https://pytorch.org/tutorials">Tutorials</a>
+          </li>
+
+          <li class="resources-mobile-menu-title">
+            Docs
+          </li>
+
+          <ul class="resources-mobile-menu-items">
+            <li>
+              <a href="https://pytorch.org/docs/stable/index.html">PyTorch</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/audio/stable/index.html">torchaudio</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/text/stable/index.html">torchtext</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/vision/stable/index.html">torchvision</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/torcharrow">torcharrow</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/data">TorchData</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/torchrec">TorchRec</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/serve/">TorchServe</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/torchx/">TorchX</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/xla">PyTorch on XLA Devices</a>
+            </li>
+          </ul>
+
+          <li class="resources-mobile-menu-title">
+            Resources
+          </li>
+            
+           <ul class="resources-mobile-menu-items">
+
+            <li>
+              <a href="https://pytorch.org/features">About</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/foundation">PyTorch Foundation</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/#community-module">Community</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/community-stories">Community Stories</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/resources">Developer Resources</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/events">Events</a>
+            </li>
+
+            <li>
+              <a href="https://discuss.pytorch.org/">Forums</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/hub">Models (Beta)</a>
+            </li>
+          </ul>
+
+          <li>
+            <a href="https://github.com/pytorch/pytorch">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      pytorchAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+      filterTags.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.pytorch-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>

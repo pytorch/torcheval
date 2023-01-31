@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.word\_error\_rate
+==============================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: word_error_rate

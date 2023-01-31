@@ -1,0 +1,35 @@
+﻿torcheval.metrics.MulticlassPrecision
+=====================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: MulticlassPrecision
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MulticlassPrecision.__init__
+      ~MulticlassPrecision.compute
+      ~MulticlassPrecision.load_state_dict
+      ~MulticlassPrecision.merge_state
+      ~MulticlassPrecision.reset
+      ~MulticlassPrecision.state_dict
+      ~MulticlassPrecision.to
+      ~MulticlassPrecision.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MulticlassPrecision.device
+   
+   

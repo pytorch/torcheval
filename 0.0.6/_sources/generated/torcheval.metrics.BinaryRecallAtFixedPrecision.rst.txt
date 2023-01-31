@@ -1,0 +1,35 @@
+﻿torcheval.metrics.BinaryRecallAtFixedPrecision
+==============================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: BinaryRecallAtFixedPrecision
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BinaryRecallAtFixedPrecision.__init__
+      ~BinaryRecallAtFixedPrecision.compute
+      ~BinaryRecallAtFixedPrecision.load_state_dict
+      ~BinaryRecallAtFixedPrecision.merge_state
+      ~BinaryRecallAtFixedPrecision.reset
+      ~BinaryRecallAtFixedPrecision.state_dict
+      ~BinaryRecallAtFixedPrecision.to
+      ~BinaryRecallAtFixedPrecision.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BinaryRecallAtFixedPrecision.device
+   
+   

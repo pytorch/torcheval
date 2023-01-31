@@ -1,0 +1,35 @@
+﻿torcheval.metrics.WindowedMeanSquaredError
+==========================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: WindowedMeanSquaredError
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~WindowedMeanSquaredError.__init__
+      ~WindowedMeanSquaredError.compute
+      ~WindowedMeanSquaredError.load_state_dict
+      ~WindowedMeanSquaredError.merge_state
+      ~WindowedMeanSquaredError.reset
+      ~WindowedMeanSquaredError.state_dict
+      ~WindowedMeanSquaredError.to
+      ~WindowedMeanSquaredError.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~WindowedMeanSquaredError.device
+   
+   

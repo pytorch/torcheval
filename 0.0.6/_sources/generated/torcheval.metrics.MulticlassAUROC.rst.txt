@@ -1,0 +1,35 @@
+﻿torcheval.metrics.MulticlassAUROC
+=================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: MulticlassAUROC
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MulticlassAUROC.__init__
+      ~MulticlassAUROC.compute
+      ~MulticlassAUROC.load_state_dict
+      ~MulticlassAUROC.merge_state
+      ~MulticlassAUROC.reset
+      ~MulticlassAUROC.state_dict
+      ~MulticlassAUROC.to
+      ~MulticlassAUROC.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MulticlassAUROC.device
+   
+   

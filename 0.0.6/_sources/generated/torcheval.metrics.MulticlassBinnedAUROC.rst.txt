@@ -1,0 +1,35 @@
+﻿torcheval.metrics.MulticlassBinnedAUROC
+=======================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: MulticlassBinnedAUROC
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MulticlassBinnedAUROC.__init__
+      ~MulticlassBinnedAUROC.compute
+      ~MulticlassBinnedAUROC.load_state_dict
+      ~MulticlassBinnedAUROC.merge_state
+      ~MulticlassBinnedAUROC.reset
+      ~MulticlassBinnedAUROC.state_dict
+      ~MulticlassBinnedAUROC.to
+      ~MulticlassBinnedAUROC.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MulticlassBinnedAUROC.device
+   
+   

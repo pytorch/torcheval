@@ -1,0 +1,35 @@
+﻿torcheval.metrics.MultilabelRecallAtFixedPrecision
+==================================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: MultilabelRecallAtFixedPrecision
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MultilabelRecallAtFixedPrecision.__init__
+      ~MultilabelRecallAtFixedPrecision.compute
+      ~MultilabelRecallAtFixedPrecision.load_state_dict
+      ~MultilabelRecallAtFixedPrecision.merge_state
+      ~MultilabelRecallAtFixedPrecision.reset
+      ~MultilabelRecallAtFixedPrecision.state_dict
+      ~MultilabelRecallAtFixedPrecision.to
+      ~MultilabelRecallAtFixedPrecision.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MultilabelRecallAtFixedPrecision.device
+   
+   

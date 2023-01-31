@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.multilabel\_recall\_at\_fixed\_precision
+=====================================================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: multilabel_recall_at_fixed_precision

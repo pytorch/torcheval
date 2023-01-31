@@ -1,0 +1,35 @@
+﻿torcheval.metrics.MulticlassF1Score
+===================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: MulticlassF1Score
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MulticlassF1Score.__init__
+      ~MulticlassF1Score.compute
+      ~MulticlassF1Score.load_state_dict
+      ~MulticlassF1Score.merge_state
+      ~MulticlassF1Score.reset
+      ~MulticlassF1Score.state_dict
+      ~MulticlassF1Score.to
+      ~MulticlassF1Score.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MulticlassF1Score.device
+   
+   

@@ -1,0 +1,35 @@
+﻿torcheval.metrics.WordInformationLost
+=====================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: WordInformationLost
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~WordInformationLost.__init__
+      ~WordInformationLost.compute
+      ~WordInformationLost.load_state_dict
+      ~WordInformationLost.merge_state
+      ~WordInformationLost.reset
+      ~WordInformationLost.state_dict
+      ~WordInformationLost.to
+      ~WordInformationLost.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~WordInformationLost.device
+   
+   

@@ -1,0 +1,35 @@
+﻿torcheval.metrics.BLEUScore
+===========================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: BLEUScore
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BLEUScore.__init__
+      ~BLEUScore.compute
+      ~BLEUScore.load_state_dict
+      ~BLEUScore.merge_state
+      ~BLEUScore.reset
+      ~BLEUScore.state_dict
+      ~BLEUScore.to
+      ~BLEUScore.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BLEUScore.device
+   
+   

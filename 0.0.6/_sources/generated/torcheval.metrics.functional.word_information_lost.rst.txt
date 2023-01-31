@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.word\_information\_lost
+====================================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: word_information_lost

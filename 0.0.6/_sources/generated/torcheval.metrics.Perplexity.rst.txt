@@ -1,0 +1,35 @@
+﻿torcheval.metrics.Perplexity
+============================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: Perplexity
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Perplexity.__init__
+      ~Perplexity.compute
+      ~Perplexity.load_state_dict
+      ~Perplexity.merge_state
+      ~Perplexity.reset
+      ~Perplexity.state_dict
+      ~Perplexity.to
+      ~Perplexity.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Perplexity.device
+   
+   

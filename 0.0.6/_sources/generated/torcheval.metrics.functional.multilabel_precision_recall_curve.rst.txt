@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.multilabel\_precision\_recall\_curve
+=================================================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: multilabel_precision_recall_curve

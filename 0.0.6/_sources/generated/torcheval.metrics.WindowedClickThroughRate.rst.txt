@@ -1,0 +1,35 @@
+﻿torcheval.metrics.WindowedClickThroughRate
+==========================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: WindowedClickThroughRate
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~WindowedClickThroughRate.__init__
+      ~WindowedClickThroughRate.compute
+      ~WindowedClickThroughRate.load_state_dict
+      ~WindowedClickThroughRate.merge_state
+      ~WindowedClickThroughRate.reset
+      ~WindowedClickThroughRate.state_dict
+      ~WindowedClickThroughRate.to
+      ~WindowedClickThroughRate.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~WindowedClickThroughRate.device
+   
+   

@@ -1,0 +1,35 @@
+﻿torcheval.metrics.ClickThroughRate
+==================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: ClickThroughRate
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ClickThroughRate.__init__
+      ~ClickThroughRate.compute
+      ~ClickThroughRate.load_state_dict
+      ~ClickThroughRate.merge_state
+      ~ClickThroughRate.reset
+      ~ClickThroughRate.state_dict
+      ~ClickThroughRate.to
+      ~ClickThroughRate.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ClickThroughRate.device
+   
+   

@@ -1,0 +1,35 @@
+﻿torcheval.metrics.AUC
+=====================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: AUC
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AUC.__init__
+      ~AUC.compute
+      ~AUC.load_state_dict
+      ~AUC.merge_state
+      ~AUC.reset
+      ~AUC.state_dict
+      ~AUC.to
+      ~AUC.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AUC.device
+   
+   

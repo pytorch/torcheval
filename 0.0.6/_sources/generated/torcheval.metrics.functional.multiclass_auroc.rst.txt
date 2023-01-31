@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.multiclass\_auroc
+==============================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: multiclass_auroc

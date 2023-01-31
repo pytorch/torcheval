@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.binary\_f1\_score
+==============================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: binary_f1_score
