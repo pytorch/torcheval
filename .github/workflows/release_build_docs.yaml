@@ -1,0 +1,74 @@
+name: Build Docs for New Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      RELEASE_TAG:
+        description: 'Tag name for this release'
+        required: true
+        type: string
+      DOCS_DIRECTORY:
+        description: 'Directory which will store the compiled docs'
+        required: true
+        type: string
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+env:
+  RELEASE_TAG: ${{ inputs.RELEASE_TAG }}
+  DOCS_DIRECTORY: ${{ inputs.DOCS_DIRECTORY }}
+
+jobs:
+  build_docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+      - name: Setup conda env
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniconda-version: "latest"
+          activate-environment: test
+      - name: Install dependencies
+        shell: bash -l {0}
+        run: |
+          set -eux
+          conda activate test
+          conda install pytorch cpuonly -c pytorch-nightly
+          pip install -r requirements.txt
+          pip install -r dev-requirements.txt
+          python setup.py sdist bdist_wheel
+          pip install dist/*.whl
+      - name: Build docs
+        shell: bash -l {0}
+        run: |
+          set -eux
+          conda activate test
+          cd docs
+          pip install -r requirements.txt
+          make html
+          cd ..
+      - name: Deploy docs to Github pages
+        uses: JamesIves/github-pages-deploy-action@v4.4.1
+        with:
+            branch: gh-pages # The branch the action should deploy to.
+            folder: docs/build/html # The folder the action should deploy.
+            target-folder: ${{ env.DOCS_DIRECTORY }}
+      - name: Create symbolic link to latest release
+        run: |
+          ln -s ${{ env.DOCS_DIRECTORY }} stable
+      - name: Add symbolic link to latest release
+        run: |
+          git add stable
+      - name: Commit symbolic link
+        run: |
+          git commit -m "Update symbolic link to latest release"
+      - name: Push changes
+        uses: ad-m/github-push-action@v1.7.0
+        with:
+          branch: gh-pages
