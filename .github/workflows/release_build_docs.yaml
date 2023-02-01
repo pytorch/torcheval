@@ -61,7 +61,7 @@ jobs:
             target-folder: ${{ env.DOCS_DIRECTORY }}
   update_stable_link:
     needs: build_docs
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Check out repo
         uses: actions/checkout@v2
