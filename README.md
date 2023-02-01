@@ -1,7 +1,7 @@
 # TorchEval
 
 <p align="center">
-<a href="https://github.com/pytorch/torcheval/actions?query=branch%3Amain"><img src="https://img.shields.io/github/workflow/status/pytorch/torcheval/unit%20test/main" alt="build status"></a>
+<a href="https://github.com/pytorch/torcheval/actions?query=branch%3Amain"><img src="https://img.shields.io/github/actions/workflow/status/pytorch/torcheval/.github/workflows/unit_test.yaml?branch=main" alt="build status"></a>
 <a href="https://pypi.org/project/torcheval"><img src="https://img.shields.io/pypi/v/torcheval" alt="pypi version"></a>
 <a href="https://pypi.org/project/torcheval-nightly"><img src="https://img.shields.io/pypi/v/torcheval-nightly?label=nightly" alt="pypi nightly version"></a>
 <a href="https://github.com/pytorch/torcheval/blob/main/LICENSE"><img src="https://img.shields.io/pypi/l/torcheval" alt="bsd license"></a>
