@@ -59,6 +59,14 @@ jobs:
             branch: gh-pages # The branch the action should deploy to.
             folder: docs/build/html # The folder the action should deploy.
             target-folder: ${{ env.DOCS_DIRECTORY }}
+  update_stable_link:
+    needs: build_docs
+    runs_on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+        with:
+          ref: gh-pages
       - name: Create symbolic link to latest release
         run: |
           ln -s ${{ env.DOCS_DIRECTORY }} stable
@@ -69,6 +77,6 @@ jobs:
         run: |
           git commit -m "Update symbolic link to latest release"
       - name: Push changes
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@0fafdd62b84042d49ec0cb92d9cac7f7ce4ec79e
         with:
           branch: gh-pages
