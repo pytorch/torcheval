@@ -16,6 +16,7 @@ from sklearn.metrics import average_precision_score as sk_ap
 
 from torcheval.metrics import BinaryAUPRC, MulticlassAUPRC
 from torcheval.metrics.classification.auprc import MultilabelAUPRC
+from torcheval.utils.random_data import get_rand_data_binary, get_rand_data_multiclass
 from torcheval.utils.test_utils.metric_class_tester import (
     BATCH_SIZE,
     MetricClassTester,
@@ -40,15 +41,6 @@ class TestBinaryAUPRC(MetricClassTester):
             sktarget = sktargets[i, :]
             auprcs.append(np.nan_to_num(sk_ap(sktarget, skinput)))
         return torch.tensor(auprcs, device=device).to(torch.float32)
-
-    def _get_rand_inputs_binary(
-        self, num_updates: int, num_tasks: int, batch_size: int
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
-        input = torch.rand(size=[num_updates, num_tasks, batch_size])
-        targets = torch.randint(
-            low=0, high=2, size=[num_updates, num_tasks, batch_size]
-        )
-        return input, targets
 
     def _check_against_sklearn(
         self,
@@ -76,20 +68,20 @@ class TestBinaryAUPRC(MetricClassTester):
 
     def test_binary_auroc_class_with_good_inputs(self) -> None:
         num_tasks = 2
-        input, target = self._get_rand_inputs_binary(
-            NUM_TOTAL_UPDATES, num_tasks, BATCH_SIZE
+        input, target = get_rand_data_binary(
+            num_updates=NUM_TOTAL_UPDATES, num_tasks=num_tasks, batch_size=BATCH_SIZE
         )
         self._check_against_sklearn(input, target, num_tasks)
 
         num_tasks = 4
-        input, target = self._get_rand_inputs_binary(
-            NUM_TOTAL_UPDATES, num_tasks, BATCH_SIZE
+        input, target = get_rand_data_binary(
+            num_updates=NUM_TOTAL_UPDATES, num_tasks=num_tasks, batch_size=BATCH_SIZE
         )
         self._check_against_sklearn(input, target, num_tasks)
 
         num_tasks = 8
-        input, target = self._get_rand_inputs_binary(
-            NUM_TOTAL_UPDATES, num_tasks, BATCH_SIZE
+        input, target = get_rand_data_binary(
+            num_updates=NUM_TOTAL_UPDATES, num_tasks=num_tasks, batch_size=BATCH_SIZE
         )
         self._check_against_sklearn(input, target, num_tasks)
 
@@ -206,13 +198,6 @@ class TestMulticlassAUPRC(MetricClassTester):
             auprcs.append(np.nan_to_num(sk_ap(sktarget, skinput)))
         return torch.tensor(auprcs, device=device).to(torch.float32)
 
-    def _get_rand_inputs_multiclass(
-        self, num_updates: int, num_classes: int, batch_size: int
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
-        input = torch.rand(size=[num_updates, batch_size, num_classes])
-        targets = torch.randint(low=0, high=num_classes, size=[num_updates, batch_size])
-        return input, targets
-
     def _check_against_sklearn(
         self,
         input: torch.Tensor,
@@ -241,20 +226,26 @@ class TestMulticlassAUPRC(MetricClassTester):
 
     def test_multiclass_auroc_class_with_good_inputs(self) -> None:
         num_classes = 2
-        input, target = self._get_rand_inputs_multiclass(
-            NUM_TOTAL_UPDATES, num_classes, BATCH_SIZE
+        input, target = get_rand_data_multiclass(
+            num_updates=NUM_TOTAL_UPDATES,
+            num_classes=num_classes,
+            batch_size=BATCH_SIZE,
         )
         self._check_against_sklearn(input, target, num_classes)
 
         num_classes = 4
-        input, target = self._get_rand_inputs_multiclass(
-            NUM_TOTAL_UPDATES, num_classes, BATCH_SIZE
+        input, target = get_rand_data_multiclass(
+            num_updates=NUM_TOTAL_UPDATES,
+            num_classes=num_classes,
+            batch_size=BATCH_SIZE,
         )
         self._check_against_sklearn(input, target, num_classes)
 
         num_classes = 8
-        input, target = self._get_rand_inputs_multiclass(
-            NUM_TOTAL_UPDATES, num_classes, BATCH_SIZE
+        input, target = get_rand_data_multiclass(
+            num_updates=NUM_TOTAL_UPDATES,
+            num_classes=num_classes,
+            batch_size=BATCH_SIZE,
         )
         self._check_against_sklearn(input, target, num_classes)
 
@@ -319,8 +310,10 @@ class TestMulticlassAUPRC(MetricClassTester):
     def test_multiclass_auprc_options(self) -> None:
         # average = macro (implicit)
         num_classes = 4
-        input, target = self._get_rand_inputs_multiclass(
-            NUM_TOTAL_UPDATES, num_classes, BATCH_SIZE
+        input, target = get_rand_data_multiclass(
+            num_updates=NUM_TOTAL_UPDATES,
+            num_classes=num_classes,
+            batch_size=BATCH_SIZE,
         )
         self._check_against_sklearn(input, target, num_classes)
 
@@ -340,8 +333,10 @@ class TestMulticlassAUPRC(MetricClassTester):
 
         # average = macro (explicit)
         num_classes = 4
-        input, target = self._get_rand_inputs_multiclass(
-            NUM_TOTAL_UPDATES, num_classes, BATCH_SIZE
+        input, target = get_rand_data_multiclass(
+            num_updates=NUM_TOTAL_UPDATES,
+            num_classes=num_classes,
+            batch_size=BATCH_SIZE,
         )
         self._check_against_sklearn(input, target, num_classes)
 
@@ -361,8 +356,10 @@ class TestMulticlassAUPRC(MetricClassTester):
 
         # average = None
         num_classes = 4
-        input, target = self._get_rand_inputs_multiclass(
-            NUM_TOTAL_UPDATES, num_classes, BATCH_SIZE
+        input, target = get_rand_data_multiclass(
+            num_updates=NUM_TOTAL_UPDATES,
+            num_classes=num_classes,
+            batch_size=BATCH_SIZE,
         )
         self._check_against_sklearn(input, target, num_classes)
 
