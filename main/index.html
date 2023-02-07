@@ -6,7 +6,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
@@ -30,6 +30,8 @@
   <!-- <link rel="stylesheet" href="_static/pygments.css" type="text/css" /> -->
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/torcheval.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/torcheval.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Use Metrics in TorchEval" href="metric_example.html" />
@@ -194,7 +196,15 @@
 
 <body class="pytorch-body">
 
-   
+  
+  
+    <div id="redirect-banner" style="display: none">
+      <p>
+        This is the public documentation. There is internal documentation for Meta employees at
+        <a href="https://www.internalfb.com/intern/staticdocs/torcheval/">https://www.internalfb.com/intern/staticdocs/torcheval/</a>
+      </p>
+    </div>
+  
 
     
 
@@ -432,27 +442,8 @@
 <li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.functional.html#text-metrics">Text Metrics</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="torcheval.metrics.toolkit.html">Metric Toolkit</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.classwise_converter"><code class="docutils literal notranslate"><span class="pre">classwise_converter()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.clone_metric"><code class="docutils literal notranslate"><span class="pre">clone_metric()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.clone_metrics"><code class="docutils literal notranslate"><span class="pre">clone_metrics()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.get_synced_metric"><code class="docutils literal notranslate"><span class="pre">get_synced_metric()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.get_synced_metric_collection"><code class="docutils literal notranslate"><span class="pre">get_synced_metric_collection()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.get_synced_state_dict"><code class="docutils literal notranslate"><span class="pre">get_synced_state_dict()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.get_synced_state_dict_collection"><code class="docutils literal notranslate"><span class="pre">get_synced_state_dict_collection()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.reset_metrics"><code class="docutils literal notranslate"><span class="pre">reset_metrics()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.sync_and_compute"><code class="docutils literal notranslate"><span class="pre">sync_and_compute()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.sync_and_compute_collection"><code class="docutils literal notranslate"><span class="pre">sync_and_compute_collection()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.to_device"><code class="docutils literal notranslate"><span class="pre">to_device()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="torcheval.tools.html">Module Tools</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="torcheval.tools.html#torcheval.tools.ModuleSummary"><code class="docutils literal notranslate"><span class="pre">ModuleSummary</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="torcheval.tools.html#torcheval.tools.get_module_summary"><code class="docutils literal notranslate"><span class="pre">get_module_summary()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="torcheval.tools.html#torcheval.tools.get_summary_table"><code class="docutils literal notranslate"><span class="pre">get_summary_table()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="torcheval.tools.html#torcheval.tools.prune_module_summary"><code class="docutils literal notranslate"><span class="pre">prune_module_summary()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="torcheval.metrics.toolkit.html">Metric Toolkit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="torcheval.tools.html">Module Tools</a></li>
 </ul>
 </div>
 </section>
@@ -528,8 +519,11 @@
      
        <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
          <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+         <script src="_static/jquery.js"></script>
+         <script src="_static/underscore.js"></script>
+         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
          <script src="_static/doctools.js"></script>
-         <script src="_static/sphinx_highlight.js"></script>
+         <script src="_static/js/torcheval.js"></script>
      
 
   
