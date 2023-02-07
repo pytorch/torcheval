@@ -1,0 +1,12 @@
+{% extends "!layout.html" %}
+
+{%- block extrabody %}
+  {% if not fbcode %}
+    <div id="redirect-banner" style="display: none">
+      <p>
+        This is the public documentation. There is internal documentation for Meta employees at
+        <a href="https://www.internalfb.com/intern/staticdocs/torcheval/">https://www.internalfb.com/intern/staticdocs/torcheval/</a>
+      </p>
+    </div>
+  {% endif %}
+{%- endblock %}
