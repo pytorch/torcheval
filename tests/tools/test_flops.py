@@ -46,7 +46,6 @@ class ModuleSummaryTest(unittest.TestCase):
             )
 
             inp = torch.randn(10, 4, 5)
-            # pyre-fixme[28]: Unexpected keyword argument `requires_grad`.
             inp = torch.autograd.Variable(inp, requires_grad=True)
 
             ftdm.reset()
