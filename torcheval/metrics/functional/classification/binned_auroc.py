@@ -8,9 +8,7 @@ from typing import List, Optional, Tuple, Union
 
 import torch
 from torch.nn import functional as F
-from torcheval.metrics.functional.classification.binned_precision_recall_curve import (
-    _create_threshold_tensor,
-)
+from torcheval.metrics.functional.tensor_utils import _create_threshold_tensor
 
 DEFAULT_NUM_THRESHOLD = 200
 
@@ -33,7 +31,10 @@ def binary_binned_auroc(
         target (Tensor): Tensor of ground truth labels with shape of (num_tasks, n_sample) or (n_sample, ).
         num_tasks (int):  Number of tasks that need binary_binned_auroc calculation. Default value
                     is 1. binary_binned_auroc for each task will be calculated independently.
-        threshold: A integeter representing number of bins, a list of thresholds, or a tensor of thresholds.
+        threshold: A integer representing number of bins, a list of thresholds, or a tensor of thresholds.
+                    The same thresholds will be used for all tasks.
+                    If `threshold` is a tensor, it must be 1D.
+                    If list or tensor is given, the first element must be 0 and the last must be 1.
 
     Examples::
 
@@ -54,11 +55,10 @@ def binary_binned_auroc(
 
         >>> input = torch.tensor([[1, 1, 1, 0], [0.1, 0.5, 0.7, 0.8]])
         >>> target = torch.tensor([[1, 0, 1, 0], [1, 0, 1, 1]])
-        >>> binary_auroc(input, target, num_tasks=2, threshold=5)
+        >>> binary_binned_auroc(input, target, num_tasks=2, threshold=5)
         (tensor([0.7500, 0.5000],
         tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]))
     """
-    # TODO: @ningli move `_create_threshold_tensor()` to utils
     threshold = _create_threshold_tensor(
         threshold,
         target.device,
@@ -75,7 +75,7 @@ def _binary_binned_auroc_param_check(
     if num_tasks < 1:
         raise ValueError("`num_tasks` has to be at least 1.")
     if (torch.diff(threshold) < 0.0).any():
-        raise ValueError("The `threshold` should be a sorted array.")
+        raise ValueError("The `threshold` should be a sorted tensor.")
 
     if (threshold < 0.0).any() or (threshold > 1.0).any():
         raise ValueError("The values in `threshold` should be in the range of [0, 1].")
@@ -150,7 +150,7 @@ def multiclass_binned_auroc(
             It should be probabilities or logits with shape of (n_sample, n_class).
         target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
         num_classes (int): Number of classes.
-        threshold: A integeter representing number of bins, a list of thresholds, or a tensor of thresholds.
+        threshold: A integer representing number of bins, a list of thresholds, or a tensor of thresholds.
         average (str, optional):
             - ``'macro'`` [default]:
                 Calculate metrics for each class separately, and return their unweighted mean.
@@ -222,7 +222,7 @@ def _multiclass_binned_auroc_param_check(
         raise ValueError("`num_classes` has to be at least 2.")
 
     if (torch.diff(threshold) < 0.0).any():
-        raise ValueError("The `threshold` should be a sorted array.")
+        raise ValueError("The `threshold` should be a sorted tensor.")
 
     if (threshold < 0.0).any() or (threshold > 1.0).any():
         raise ValueError("The values in `threshold` should be in the range of [0, 1].")

@@ -128,7 +128,7 @@ class TestBinaryBinnedAUROC(MetricClassTester):
             metric.update(torch.rand(3, 2), torch.rand(3, 2))
 
         with self.assertRaisesRegex(
-            ValueError, "The `threshold` should be a sorted array."
+            ValueError, "The `threshold` should be a sorted tensor."
         ):
             metric = BinaryBinnedAUROC(
                 threshold=torch.tensor([0.1, 0.2, 0.5, 0.7, 0.6])
@@ -278,7 +278,7 @@ class TestMulticlassBinnedAUROC(MetricClassTester):
             metric.update(torch.rand(3, 4), torch.rand(3))
 
         with self.assertRaisesRegex(
-            ValueError, "The `threshold` should be a sorted array."
+            ValueError, "The `threshold` should be a sorted tensor."
         ):
             metric = MulticlassBinnedAUROC(
                 num_classes=4, threshold=torch.tensor([0.1, 0.2, 0.5, 0.7, 0.6])

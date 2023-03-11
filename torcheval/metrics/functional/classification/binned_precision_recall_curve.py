@@ -12,6 +12,7 @@ from torcheval.metrics.functional.classification.precision_recall_curve import (
     _binary_precision_recall_curve_update_input_check,
     _multiclass_precision_recall_curve_update_input_check,
 )
+from torcheval.metrics.functional.tensor_utils import _create_threshold_tensor
 
 
 @torch.inference_mode()
@@ -221,22 +222,11 @@ def _multiclass_binned_precision_recall_curve_compute(
     )
 
 
-def _create_threshold_tensor(
-    threshold: Union[int, List[float], torch.Tensor],
-    device: torch.device,
-) -> torch.Tensor:
-    if isinstance(threshold, int):
-        threshold = torch.linspace(0, 1.0, threshold, device=device)
-    elif isinstance(threshold, list):
-        threshold = torch.tensor(threshold, device=device)
-    return threshold
-
-
 def _binned_precision_recall_curve_param_check(
     threshold: torch.Tensor,
 ) -> None:
     if (torch.diff(threshold) < 0.0).any():
-        raise ValueError("The `threshold` should be a sorted array.")
+        raise ValueError("The `threshold` should be a sorted tensor.")
 
     if (threshold < 0.0).any() or (threshold > 1.0).any():
         raise ValueError("The values in `threshold` should be in the range of [0, 1].")

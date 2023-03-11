@@ -61,3 +61,26 @@ def get_rand_data_multiclass(
         device
     )
     return input, targets
+
+
+def get_rand_inputs_binned_binary(
+    num_updates: int, num_tasks: int, batch_size: int, num_bins: int
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """
+    Get random binary dataset, along with a threshold for binned data.
+    Args:
+        num_updates: the number of calls to update on each rank.
+        num_tasks: the number of tasks for the metric.
+        batch_size: batch size of the dataset.
+        num_bins: The number of bins.
+    Returns:
+        torch.Tensor: random feature data
+        torch.Tensor: random targets
+        torch.Tensor: thresholds
+    """
+    input, target = get_rand_data_binary(num_updates, num_tasks, batch_size)
+
+    threshold = torch.cat([torch.tensor([0, 1]), torch.rand(num_bins - 2)])
+    threshold, _ = torch.sort(threshold)
+    threshold = torch.unique(threshold)
+    return input, target, threshold

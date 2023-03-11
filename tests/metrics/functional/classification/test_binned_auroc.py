@@ -125,7 +125,7 @@ class TestBinaryBinnedAUROC(unittest.TestCase):
             binary_binned_auroc(torch.rand(3, 2), torch.rand(3, 2))
 
         with self.assertRaisesRegex(
-            ValueError, "The `threshold` should be a sorted array."
+            ValueError, "The `threshold` should be a sorted tensor."
         ):
             binary_binned_auroc(
                 torch.rand(4),
@@ -263,7 +263,7 @@ class TestMulticlassBinnedAUROC(unittest.TestCase):
             multiclass_binned_auroc(torch.rand(3, 4), torch.rand(3), num_classes=2)
 
         with self.assertRaisesRegex(
-            ValueError, "The `threshold` should be a sorted array."
+            ValueError, "The `threshold` should be a sorted tensor."
         ):
             multiclass_binned_auroc(
                 torch.randint(high=4, size=(4,)),

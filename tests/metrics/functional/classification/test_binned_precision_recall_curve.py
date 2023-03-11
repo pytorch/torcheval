@@ -108,7 +108,7 @@ class TestBinaryBinnedPrecisionRecallCurve(unittest.TestCase):
         ):
             binary_binned_precision_recall_curve(torch.rand(4), torch.rand(3))
         with self.assertRaisesRegex(
-            ValueError, "The `threshold` should be a sorted array."
+            ValueError, "The `threshold` should be a sorted tensor."
         ):
             binary_binned_precision_recall_curve(
                 torch.rand(4),
@@ -270,7 +270,7 @@ class TestMulticlassBinnedPrecisionRecallCurve(unittest.TestCase):
                 torch.rand(3, 4), torch.rand(3), num_classes=2
             )
         with self.assertRaisesRegex(
-            ValueError, "The `threshold` should be a sorted array."
+            ValueError, "The `threshold` should be a sorted tensor."
         ):
             multiclass_binned_precision_recall_curve(
                 torch.rand(4),

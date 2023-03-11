@@ -12,13 +12,7 @@ from torcheval.metrics.functional.classification.precision_recall_curve import (
     multiclass_precision_recall_curve,
     multilabel_precision_recall_curve,
 )
-
-
-def _riemann_integral(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
-    """Riemann integral approximates the area of each cell with a rectangle positioned at the egde.
-    It is conventionally used rather than trapezoid approximation, which uses a rectangle positioned in the
-    center, for PRAUC"""
-    return -torch.sum((x[1:] - x[:-1]) * y[:-1])
+from torcheval.metrics.functional.tensor_utils import _riemann_integral
 
 
 @torch.inference_mode()
@@ -45,7 +39,7 @@ def binary_auprc(
         target (Tensor): Tensor of ground truth labels with shape of (num_tasks, n_sample) or (n_sample, ).
         num_tasks (int):  Number of tasks that need BinaryAUPRC calculation. Default value
                     is 1. Binary AUPRC for each task will be calculated independently. Results are
-                    equivelent to calling binary_auprc for each row.
+                    equivalent to calling binary_auprc for each row.
 
     Examples::
 
