@@ -6,8 +6,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>torcheval.metrics.WindowedBinaryNormalizedEntropy &mdash; TorchEval main documentation</title>
@@ -254,7 +253,7 @@
             
               <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb">QuickStart Notebook</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb" target="_blank">QuickStart Notebook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../metric_example.html">Use Metrics in TorchEval</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
@@ -337,30 +336,34 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="torcheval-metrics-windowedbinarynormalizedentropy">
+  <div class="section" id="torcheval-metrics-windowedbinarynormalizedentropy">
 <h1>torcheval.metrics.WindowedBinaryNormalizedEntropy<a class="headerlink" href="#torcheval-metrics-windowedbinarynormalizedentropy" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="torcheval.metrics.WindowedBinaryNormalizedEntropy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torcheval.metrics.</span></span><span class="sig-name descname"><span class="pre">WindowedBinaryNormalizedEntropy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_logits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_num_updates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_lifetime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device" title="(in PyTorch v1.13)"><span class="pre">device</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torcheval.metrics.WindowedBinaryNormalizedEntropy" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><code class="sig-prename descclassname"><span class="pre">torcheval.metrics.</span></code><code class="sig-name descname"><span class="pre">WindowedBinaryNormalizedEntropy</span></code><span class="sig-paren">(</span><em><span class="o"><span class="pre">*</span></span></em>, <em><span class="n"><span class="pre">from_logits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em><span class="n"><span class="pre">num_tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em><span class="n"><span class="pre">max_num_updates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em><span class="n"><span class="pre">enable_lifetime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device" target="_blank" title="(in PyTorch v1.13)"><span class="pre">device</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torcheval.metrics.WindowedBinaryNormalizedEntropy" title="Permalink to this definition">¶</a></dt>
 <dd><p>The windowed version of BinaryNormalizedEntropy that provides both windowed and liftime values.
 Windowed value is calculated from the input and target of the last window_size number of <cite>update()</cite> calls.
 Lifetime value is calculated from all past input and target of <cite>update()</cite> calls.</p>
 <p>Compute the normalized binary cross entropy between predicted input and
 ground-truth binary target.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>from_logits</strong> (<em>bool</em>) – A boolean indicator whether the predicted value <cite>y_pred</cite> is
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>from_logits</strong> (<em>bool</em>) – A boolean indicator whether the predicted value <cite>y_pred</cite> is
 a floating-point logit value (i.e., value in [-inf, inf] when <cite>from_logits=True</cite>)
 or a probablity value (i.e., value in [0., 1.] when <cite>from_logits=False</cite>)
-Default value is False.</p></li>
-<li><p><strong>num_tasks</strong> (<em>int</em>) – Number of tasks that need BinaryNormalizedEntropy calculation. Default value
-is 1. BinaryNormalizedEntropy for each task will be calculated independently.</p></li>
-<li><p><strong>max_num_updates</strong> (<em>int</em>) – The max window size that can accommodate the number of updates.</p></li>
-<li><p><strong>enable_lifetime</strong> (<em>bool</em>) – A boolean indicator whether to calculate lifetime values.</p></li>
+Default value is False.</li>
+<li><strong>num_tasks</strong> (<em>int</em>) – Number of tasks that need BinaryNormalizedEntropy calculation. Default value
+is 1. BinaryNormalizedEntropy for each task will be calculated independently.</li>
+<li><strong>max_num_updates</strong> (<em>int</em>) – The max window size that can accommodate the number of updates.</li>
+<li><strong>enable_lifetime</strong> (<em>bool</em>) – A boolean indicator whether to calculate lifetime values.</li>
 </ul>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torcheval.metrics</span> <span class="kn">import</span> <span class="n">WindowedBinaryNormalizedEntropy</span>
@@ -398,7 +401,7 @@ is 1. BinaryNormalizedEntropy for each task will be calculated independently.</p
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="torcheval.metrics.WindowedBinaryNormalizedEntropy.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_logits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_num_updates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_lifetime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device" title="(in PyTorch v1.13)"><span class="pre">device</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#torcheval.metrics.WindowedBinaryNormalizedEntropy.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em><span class="o"><span class="pre">*</span></span></em>, <em><span class="n"><span class="pre">from_logits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em><span class="n"><span class="pre">num_tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em><span class="n"><span class="pre">max_num_updates</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em><span class="n"><span class="pre">enable_lifetime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device" target="_blank" title="(in PyTorch v1.13)"><span class="pre">device</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#torcheval.metrics.WindowedBinaryNormalizedEntropy.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize a metric object and its internal states.</p>
 <p>Use <code class="docutils literal notranslate"><span class="pre">self._add_state()</span></code> to initialize state variables of your metric class.
 The state variables should be either <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, a list of
@@ -407,45 +410,53 @@ or a deque of <code class="docutils literal notranslate"><span class="pre">torch
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#torcheval.metrics.WindowedBinaryNormalizedEntropy.__init__" title="torcheval.metrics.WindowedBinaryNormalizedEntropy.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*[, from_logits, num_tasks, ...])</p></td>
-<td><p>Initialize a metric object and its internal states.</p></td>
+<table border="1" class="autosummary longtable docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#torcheval.metrics.WindowedBinaryNormalizedEntropy.__init__" title="torcheval.metrics.WindowedBinaryNormalizedEntropy.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*[,&nbsp;from_logits,&nbsp;num_tasks,&nbsp;...])</td>
+<td>Initialize a metric object and its internal states.</td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code>()</p></td>
-<td><p>Return the normalized binary cross entropy.</p></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code>()</td>
+<td>Return the normalized binary cross entropy.</td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_state_dict</span></code>(state_dict[, strict])</p></td>
-<td><p>Loads metric state variables from state_dict.</p></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_state_dict</span></code>(state_dict[,&nbsp;strict])</td>
+<td>Loads metric state variables from state_dict.</td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_state</span></code>(metrics)</p></td>
-<td><p>Merge the metric state with its counterparts from other metric instances.</p></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_state</span></code>(metrics)</td>
+<td>Merge the metric state with its counterparts from other metric instances.</td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code>()</p></td>
-<td><p>Reset the metric state variables to their default value.</p></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code>()</td>
+<td>Reset the metric state variables to their default value.</td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">state_dict</span></code>()</p></td>
-<td><p>Save metric state variables in state_dict.</p></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">state_dict</span></code>()</td>
+<td>Save metric state variables in state_dict.</td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code>(device, *args, **kwargs)</p></td>
-<td><p>Move tensors in metric state variables to device.</p></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code>(device,&nbsp;*args,&nbsp;**kwargs)</td>
+<td>Move tensors in metric state variables to device.</td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code>(input, target, *[, weight])</p></td>
-<td><p>Update the metric state with the total entropy, total number of examples and total number of positive targets.</p></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code>(input,&nbsp;target,&nbsp;*[,&nbsp;weight])</td>
+<td>Update the metric state with the total entropy, total number of examples and total number of positive targets.</td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">device</span></code></p></td>
-<td><p>The last input device of <code class="docutils literal notranslate"><span class="pre">Metric.to()</span></code>.</p></td>
+<table border="1" class="autosummary longtable docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">device</span></code></td>
+<td>The last input device of <code class="docutils literal notranslate"><span class="pre">Metric.to()</span></code>.</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
-</section>
+</div>
 
 
              </article>

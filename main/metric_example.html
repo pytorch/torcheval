@@ -6,8 +6,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Use Metrics in TorchEval &mdash; TorchEval main documentation</title>
@@ -254,7 +253,7 @@
             
               <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb">QuickStart Notebook</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb" target="_blank">QuickStart Notebook</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Use Metrics in TorchEval</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
@@ -335,23 +334,23 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="use-metrics-in-torcheval">
+  <div class="section" id="use-metrics-in-torcheval">
 <h1>Use Metrics in TorchEval<a class="headerlink" href="#use-metrics-in-torcheval" title="Permalink to this heading">¶</a></h1>
 <p>PyTorch evaluation metrics are one of the core offerings of TorchEval.
 For most metrics, we offer both stateful class-based interfaces that only accumulate necessary data until told to compute the metric, and pure functional interfaces.</p>
-<section id="class-metrics">
+<div class="section" id="class-metrics">
 <h2>Class Metrics<a class="headerlink" href="#class-metrics" title="Permalink to this heading">¶</a></h2>
 <p>The class metrics keeps track of metric states, which enables them to be able to calculate values through accumulations and
 synchronizations across multiple processes. The base class is <code class="xref py py-obj docutils literal notranslate"><span class="pre">torcheval.metrics.Metric</span></code>.</p>
 <p>The core APIs of class metrics are <code class="docutils literal notranslate"><span class="pre">update()</span></code>, <code class="docutils literal notranslate"><span class="pre">compute()</span></code> and <code class="docutils literal notranslate"><span class="pre">reset()</span></code>.</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">update()</span></code>: Update the metric states with input data. This is often used when new data needs to be added for metric computation.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">compute()</span></code>: Compute the metric values from the metric state, which are updated by previous <code class="docutils literal notranslate"><span class="pre">update()</span></code> calls. The compute frequency can be less than the update frequency.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">reset()</span></code>: Reset the metric state variables to their default value. Usually this is called at the end of every epoch to clean up metric states.</p></li>
+<li><code class="docutils literal notranslate"><span class="pre">update()</span></code>: Update the metric states with input data. This is often used when new data needs to be added for metric computation.</li>
+<li><code class="docutils literal notranslate"><span class="pre">compute()</span></code>: Compute the metric values from the metric state, which are updated by previous <code class="docutils literal notranslate"><span class="pre">update()</span></code> calls. The compute frequency can be less than the update frequency.</li>
+<li><code class="docutils literal notranslate"><span class="pre">reset()</span></code>: Reset the metric state variables to their default value. Usually this is called at the end of every epoch to clean up metric states.</li>
 </ul>
 <div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Class metrics keep track of internal states that are updated by input data passed to <code class="docutils literal notranslate"><span class="pre">update()</span></code> calls. This means that metric states should be moved to the
+<p class="first admonition-title">Note</p>
+<p class="last">Class metrics keep track of internal states that are updated by input data passed to <code class="docutils literal notranslate"><span class="pre">update()</span></code> calls. This means that metric states should be moved to the
 same device as the input data. You can directly pass in device on initialization or use the <code class="docutils literal notranslate"><span class="pre">to(device)</span></code> API. The <code class="docutils literal notranslate"><span class="pre">.device</span></code> property shows the device of the metric states.</p>
 </div>
 <p>Below is an example of using class metric in a simple training script.</p>
@@ -390,7 +389,7 @@ same device as the input data. You can directly pass in device on initialization
     <span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 </pre></div>
 </div>
-<section id="save-and-load-metrics">
+<div class="section" id="save-and-load-metrics">
 <h3>Save and Load Metrics<a class="headerlink" href="#save-and-load-metrics" title="Permalink to this heading">¶</a></h3>
 <p>Class metrics also implements the stateful protocol, <code class="docutils literal notranslate"><span class="pre">.state_dict()</span></code> and <code class="docutils literal notranslate"><span class="pre">.load_state_dict()</span></code>. Those functions can be used to save and load metrics.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
@@ -409,9 +408,9 @@ same device as the input data. You can directly pass in device on initialization
 <span class="n">loaded_metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 </pre></div>
 </div>
-</section>
-</section>
-<section id="functional-metrics">
+</div>
+</div>
+<div class="section" id="functional-metrics">
 <h2>Functional Metrics<a class="headerlink" href="#functional-metrics" title="Permalink to this heading">¶</a></h2>
 <p>Functional metrics are simple python functions that calculate the metric value from input data. They are light-weighted and relatively faster since they don’t need to keep and operate on metric states.
 The example below shows calculating metric value with the functional version.</p>
@@ -424,8 +423,8 @@ The example below shows calculating metric value with the functional version.</p
 <span class="n">multiclass_accuracy</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-</section>
+</div>
+</div>
 
 
              </article>

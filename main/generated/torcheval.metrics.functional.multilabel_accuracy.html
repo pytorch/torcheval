@@ -6,8 +6,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>torcheval.metrics.functional.multilabel_accuracy &mdash; TorchEval main documentation</title>
@@ -254,7 +253,7 @@
             
               <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb">QuickStart Notebook</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb" target="_blank">QuickStart Notebook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../metric_example.html">Use Metrics in TorchEval</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
@@ -337,33 +336,37 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="torcheval-metrics-functional-multilabel-accuracy">
+  <div class="section" id="torcheval-metrics-functional-multilabel-accuracy">
 <h1>torcheval.metrics.functional.multilabel_accuracy<a class="headerlink" href="#torcheval-metrics-functional-multilabel-accuracy" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="torcheval.metrics.functional.multilabel_accuracy">
-<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.functional.</span></span><span class="sig-name descname"><span class="pre">multilabel_accuracy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criteria</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'exact_match'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></span><a class="headerlink" href="#torcheval.metrics.functional.multilabel_accuracy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.functional.</span></code><code class="sig-name descname"><span class="pre">multilabel_accuracy</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em><span class="o"><span class="pre">*</span></span></em>, <em><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em><span class="n"><span class="pre">criteria</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'exact_match'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></span><a class="headerlink" href="#torcheval.metrics.functional.multilabel_accuracy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute multilabel accuracy score, which is the frequency of input matching target.
 Its class version is <code class="docutils literal notranslate"><span class="pre">torcheval.metrics.MultilabelAccuracy</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>Tensor</em>) – Tensor of label predictions with shape of (n_sample, n_class).
-<cite>torch.where(input &lt; threshold, 0, 1)`</cite> will be applied to the <code class="docutils literal notranslate"><span class="pre">input</span></code>.</p></li>
-<li><p><strong>target</strong> (<em>Tensor</em>) – Tensor of ground truth labels with shape of (n_sample, n_class).</p></li>
-<li><p><strong>threshold</strong> – Threshold for converting input into predicted labels for each sample.</p></li>
-<li><p><strong>criteria</strong> – </p></li>
-<li><p><strong>[</strong><strong>default</strong><strong>]</strong> (<em>- 'exact_match'</em>) – The set of labels predicted for a sample must exactly match the corresponding
-set of labels in target. Also known as subset accuracy.</p></li>
-<li><p><strong>'hamming'</strong> (<em>-</em>) – Fraction of correct labels over total number of labels.</p></li>
-<li><p><strong>'overlap'</strong> (<em>-</em>) – The set of labels predicted for a sample must overlap with the corresponding
-set of labels in target.</p></li>
-<li><p><strong>'contain'</strong> (<em>-</em>) – The set of labels predicted for a sample must contain the corresponding
-set of labels in target.</p></li>
-<li><p><strong>'belong'</strong> (<em>-</em>) – The set of labels predicted for a sample must (fully) belong to the corresponding
-set of labels in target.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input</strong> (<em>Tensor</em>) – Tensor of label predictions with shape of (n_sample, n_class).
+<cite>torch.where(input &lt; threshold, 0, 1)`</cite> will be applied to the <code class="docutils literal notranslate"><span class="pre">input</span></code>.</li>
+<li><strong>target</strong> (<em>Tensor</em>) – Tensor of ground truth labels with shape of (n_sample, n_class).</li>
+<li><strong>threshold</strong> – Threshold for converting input into predicted labels for each sample.</li>
+<li><strong>criteria</strong> – </li>
+<li><strong>[</strong><strong>default</strong><strong>]</strong> (<em>- 'exact_match'</em>) – The set of labels predicted for a sample must exactly match the corresponding
+set of labels in target. Also known as subset accuracy.</li>
+<li><strong>'hamming'</strong> (<em>-</em>) – Fraction of correct labels over total number of labels.</li>
+<li><strong>'overlap'</strong> (<em>-</em>) – The set of labels predicted for a sample must overlap with the corresponding
+set of labels in target.</li>
+<li><strong>'contain'</strong> (<em>-</em>) – The set of labels predicted for a sample must contain the corresponding
+set of labels in target.</li>
+<li><strong>'belong'</strong> (<em>-</em>) – The set of labels predicted for a sample must (fully) belong to the corresponding
+set of labels in target.</li>
 </ul>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torcheval.metrics.functional</span> <span class="kn">import</span> <span class="n">multilabel_accuracy</span>
@@ -395,7 +398,7 @@ set of labels in target.</p></li>
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
              </article>

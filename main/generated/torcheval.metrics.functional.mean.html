@@ -6,8 +6,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>torcheval.metrics.functional.mean &mdash; TorchEval main documentation</title>
@@ -254,7 +253,7 @@
             
               <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb">QuickStart Notebook</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb" target="_blank">QuickStart Notebook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../metric_example.html">Use Metrics in TorchEval</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
@@ -337,25 +336,29 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="torcheval-metrics-functional-mean">
+  <div class="section" id="torcheval-metrics-functional-mean">
 <h1>torcheval.metrics.functional.mean<a class="headerlink" href="#torcheval-metrics-functional-mean" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="torcheval.metrics.functional.mean">
-<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.functional.</span></span><span class="sig-name descname"><span class="pre">mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></span><a class="headerlink" href="#torcheval.metrics.functional.mean" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.functional.</span></code><code class="sig-name descname"><span class="pre">mean</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em><span class="n"><span class="pre">weight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></span><a class="headerlink" href="#torcheval.metrics.functional.mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute weighted mean. When weight is not provided, it calculates the unweighted mean.
 Its class version is <code class="docutils literal notranslate"><span class="pre">torcheval.metrics.Mean</span></code>.</p>
 <p>weighted_mean = sum(weight * input) / sum(weight)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>Tensor</em>) – Tensor of input values.</p></li>
-<li><p><strong>weight</strong> (<em>optional</em>) – Float or Int or Tensor of input weights. It is default to 1.0. If weight is a Tensor, its size should match the input tensor size.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input</strong> (<em>Tensor</em>) – Tensor of input values.</li>
+<li><strong>weight</strong> (<em>optional</em>) – Float or Int or Tensor of input weights. It is default to 1.0. If weight is a Tensor, its size should match the input tensor size.</li>
 </ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If value of weight is neither a <code class="docutils literal notranslate"><span class="pre">float</span></code> nor a <code class="docutils literal notranslate"><span class="pre">int</span></code> nor a <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> that matches the input tensor size.</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>ValueError</strong> – If value of weight is neither a <code class="docutils literal notranslate"><span class="pre">float</span></code> nor a <code class="docutils literal notranslate"><span class="pre">int</span></code> nor a <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> that matches the input tensor size.</p>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torcheval.metrics.functional</span> <span class="kn">import</span> <span class="n">mean</span>
@@ -371,7 +374,7 @@ Its class version is <code class="docutils literal notranslate"><span class="pre
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
              </article>

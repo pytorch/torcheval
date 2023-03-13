@@ -6,8 +6,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>TorchEval &mdash; TorchEval main documentation</title>
@@ -253,7 +252,7 @@
             
               <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb">QuickStart Notebook</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb" target="_blank">QuickStart Notebook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metric_example.html">Use Metrics in TorchEval</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
@@ -334,19 +333,19 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="torcheval">
+  <div class="section" id="torcheval">
 <h1>TorchEval<a class="headerlink" href="#torcheval" title="Permalink to this heading">¶</a></h1>
 <p>A library with simple and straightforward tooling for model evaluations and a delightful user experience. At a high level TorchEval:</p>
 <ol class="arabic simple">
-<li><p>Contains a rich collection of high performance metric calculations out of the box. We utilize vectorization and GPU acceleration where possible via PyTorch.</p></li>
-<li><p>Integrates seamlessly with distributed training and tools using <a class="reference external" href="https://pytorch.org/tutorials/beginner/dist_overview.html">torch.distributed</a></p></li>
-<li><p>Is designed with extensibility in mind: you have the freedom to easily create your own metrics and leverage our toolkit.</p></li>
-<li><p>Provides tools for profiling memory and compute requirements for PyTorch based models.</p></li>
+<li>Contains a rich collection of high performance metric calculations out of the box. We utilize vectorization and GPU acceleration where possible via PyTorch.</li>
+<li>Integrates seamlessly with distributed training and tools using <a class="reference external" href="https://pytorch.org/tutorials/beginner/dist_overview.html" target="_blank">torch.distributed</a></li>
+<li>Is designed with extensibility in mind: you have the freedom to easily create your own metrics and leverage our toolkit.</li>
+<li>Provides tools for profiling memory and compute requirements for PyTorch based models.</li>
 </ol>
-</section>
-<section id="quickstart">
+</div>
+<div class="section" id="quickstart">
 <h1>QuickStart<a class="headerlink" href="#quickstart" title="Permalink to this heading">¶</a></h1>
-<section id="installing">
+<div class="section" id="installing">
 <h2>Installing<a class="headerlink" href="#installing" title="Permalink to this heading">¶</a></h2>
 <p>TorchEval can be installed from PyPi via</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install torcheval</span>
@@ -359,8 +358,8 @@
 <span class="go">python setup.py install</span>
 </pre></div>
 </div>
-</section>
-<section id="usage">
+</div>
+<div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading">¶</a></h2>
 <p>TorchEval provides two interfaces to each metric. If you are working in a single process environment, it is simplest to use metrics from the <code class="docutils literal notranslate"><span class="pre">functional</span></code> submodule. These can be found in <code class="docutils literal notranslate"><span class="pre">torcheval.metrics.functional</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torcheval.metrics.functional</span> <span class="kn">import</span> <span class="n">binary_f1_score</span>
@@ -386,32 +385,32 @@
 </pre></div>
 </div>
 <p>Read more about the class based method in the distributed example.</p>
-</section>
-<section id="further-reading">
+</div>
+<div class="section" id="further-reading">
 <h2>Further Reading<a class="headerlink" href="#further-reading" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>Check out the guides explaining the compute example</p></li>
-<li><p>Check out the distributed example</p></li>
-<li><p>Check out how to make your own metric</p></li>
+<li>Check out the guides explaining the compute example</li>
+<li>Check out the distributed example</li>
+<li>Check out how to make your own metric</li>
 </ul>
-</section>
-</section>
-<section id="indices-and-tables">
+</div>
+</div>
+<div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h1>
 <ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
 </ul>
-<section id="getting-started">
+<div class="section" id="getting-started">
 <h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading">¶</a></h2>
-</section>
-<section id="torcheval-tutorials">
+</div>
+<div class="section" id="torcheval-tutorials">
 <h2>TorchEval Tutorials<a class="headerlink" href="#torcheval-tutorials" title="Permalink to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb">QuickStart Notebook</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb" target="_blank">QuickStart Notebook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metric_example.html">Use Metrics in TorchEval</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="metric_example.html#class-metrics">Class Metrics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="metric_example.html#functional-metrics">Functional Metrics</a></li>
@@ -419,8 +418,8 @@
 </li>
 </ul>
 </div>
-</section>
-<section id="torcheval-api">
+</div>
+<div class="section" id="torcheval-api">
 <h2>TorchEval API<a class="headerlink" href="#torcheval-api" title="Permalink to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
@@ -446,8 +445,8 @@
 <li class="toctree-l1"><a class="reference internal" href="torcheval.tools.html">Module Tools</a></li>
 </ul>
 </div>
-</section>
-</section>
+</div>
+</div>
 
 
              </article>

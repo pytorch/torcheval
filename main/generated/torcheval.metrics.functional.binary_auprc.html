@@ -6,8 +6,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>torcheval.metrics.functional.binary_auprc &mdash; TorchEval main documentation</title>
@@ -254,7 +253,7 @@
             
               <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb">QuickStart Notebook</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb" target="_blank">QuickStart Notebook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../metric_example.html">Use Metrics in TorchEval</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
@@ -337,11 +336,11 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="torcheval-metrics-functional-binary-auprc">
+  <div class="section" id="torcheval-metrics-functional-binary-auprc">
 <h1>torcheval.metrics.functional.binary_auprc<a class="headerlink" href="#torcheval-metrics-functional-binary-auprc" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="torcheval.metrics.functional.binary_auprc">
-<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.functional.</span></span><span class="sig-name descname"><span class="pre">binary_auprc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></span><a class="headerlink" href="#torcheval.metrics.functional.binary_auprc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.functional.</span></code><code class="sig-name descname"><span class="pre">binary_auprc</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em><span class="o"><span class="pre">*</span></span></em>, <em><span class="n"><span class="pre">num_tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></span><a class="headerlink" href="#torcheval.metrics.functional.binary_auprc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute AUPRC, also called Average Precision, which is the area under the Precision-Recall Curve, for binary classification.
 Its class version is <code class="docutils literal notranslate"><span class="pre">torcheval.metrics.BinaryAUPRC</span></code>.</p>
 <p>Precision is defined as <span class="math notranslate nohighlight">\(\frac{T_p}{T_p+F_p}\)</span>, it is the probability that a positive prediction from the model is a true positive.
@@ -349,18 +348,22 @@ Recall is defined as <span class="math notranslate nohighlight">\(\frac{T_p}{T_p
 <p>The precision-recall curve plots the recall on the x axis and the precision on the y axis, both of which are bounded between 0 and 1.
 This function returns the area under that graph. If the area is near one, the model supports a threshold which correctly identifies
 a high percentage of true positives while also rejecting enough false examples so that most of the true predictions are true positives.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>Tensor</em>) – Tensor of label predictions
-It should be predicted label, probabilities or logits with shape of (num_tasks, n_sample) or (n_sample, ).</p></li>
-<li><p><strong>target</strong> (<em>Tensor</em>) – Tensor of ground truth labels with shape of (num_tasks, n_sample) or (n_sample, ).</p></li>
-<li><p><strong>num_tasks</strong> (<em>int</em>) – Number of tasks that need BinaryAUPRC calculation. Default value
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input</strong> (<em>Tensor</em>) – Tensor of label predictions
+It should be predicted label, probabilities or logits with shape of (num_tasks, n_sample) or (n_sample, ).</li>
+<li><strong>target</strong> (<em>Tensor</em>) – Tensor of ground truth labels with shape of (num_tasks, n_sample) or (n_sample, ).</li>
+<li><strong>num_tasks</strong> (<em>int</em>) – Number of tasks that need BinaryAUPRC calculation. Default value
 is 1. Binary AUPRC for each task will be calculated independently. Results are
-equivalent to calling binary_auprc for each row.</p></li>
+equivalent to calling binary_auprc for each row.</li>
 </ul>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torcheval.metrics.functional</span> <span class="kn">import</span> <span class="n">binary_auprc</span>
@@ -384,7 +387,7 @@ equivalent to calling binary_auprc for each row.</p></li>
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
              </article>

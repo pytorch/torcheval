@@ -6,8 +6,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>torcheval.metrics.functional.r2_score &mdash; TorchEval main documentation</title>
@@ -254,7 +253,7 @@
             
               <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb">QuickStart Notebook</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb" target="_blank">QuickStart Notebook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../metric_example.html">Use Metrics in TorchEval</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
@@ -337,47 +336,48 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="torcheval-metrics-functional-r2-score">
+  <div class="section" id="torcheval-metrics-functional-r2-score">
 <h1>torcheval.metrics.functional.r2_score<a class="headerlink" href="#torcheval-metrics-functional-r2-score" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="torcheval.metrics.functional.r2_score">
-<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.functional.</span></span><span class="sig-name descname"><span class="pre">r2_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multioutput</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'uniform_average'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_regressors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></span><a class="headerlink" href="#torcheval.metrics.functional.r2_score" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.functional.</span></code><code class="sig-name descname"><span class="pre">r2_score</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em><span class="o"><span class="pre">*</span></span></em>, <em><span class="n"><span class="pre">multioutput</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'uniform_average'</span></span></em>, <em><span class="n"><span class="pre">num_regressors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></span><a class="headerlink" href="#torcheval.metrics.functional.r2_score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute R-squared score, which is the proportion of variance in the dependent variable that can be explained by the independent variable.
 Its class version is <code class="docutils literal notranslate"><span class="pre">torcheval.metrics.R2Score</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> – Tensor of predicted values with shape of (n_sample, n_output).</p></li>
-<li><p><strong>target</strong> – Tensor of ground truth values with shape of (n_sample, n_output).</p></li>
-<li><p><strong>multioutput</strong> (<em>Optional</em>) – <ul>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">'uniform_average'</span></code> [default]:</dt><dd><p>Return scores of all outputs are averaged with uniform weight.</p>
-</dd>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input</strong> – Tensor of predicted values with shape of (n_sample, n_output).</li>
+<li><strong>target</strong> – Tensor of ground truth values with shape of (n_sample, n_output).</li>
+<li><strong>multioutput</strong> (<em>Optional</em>) – <ul>
+<li><dl class="first docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">'uniform_average'</span></code> [default]:</dt><dd>Return scores of all outputs are averaged with uniform weight.</dd>
 </dl>
 </li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">'raw_values'</span></code>:</dt><dd><p>Return a full set of scores.</p>
-</dd>
+<li><dl class="first docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">'raw_values'</span></code>:</dt><dd>Return a full set of scores.</dd>
 </dl>
 </li>
-<li><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">variance_weighted</span></code>:</dt><dd><p>Return scores of all outputs are averaged with weighted by the variances of each individual output.</p>
-</dd>
+<li><dl class="first docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">variance_weighted</span></code>:</dt><dd>Return scores of all outputs are averaged with weighted by the variances of each individual output.</dd>
 </dl>
 </li>
 </ul>
-</p></li>
-<li><p><strong>num_regressors</strong> (<em>Optional</em>) – Number of independent variables used, applied to adjusted R-squared score. Defaults to zero (standard R-squared score).</p></li>
+</li>
+<li><strong>num_regressors</strong> (<em>Optional</em>) – Number of independent variables used, applied to adjusted R-squared score. Defaults to zero (standard R-squared score).</li>
 </ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – <ul class="simple">
-<li><p>If value of multioutput does not exist in (<code class="docutils literal notranslate"><span class="pre">raw_values</span></code>, <code class="docutils literal notranslate"><span class="pre">uniform_average</span></code>, <code class="docutils literal notranslate"><span class="pre">variance_weighted</span></code>).
-    - If value of num_regressors is not an <code class="docutils literal notranslate"><span class="pre">integer</span></code> in the range of [0, n_samples - 1].</p></li>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>ValueError</strong> – <ul class="simple">
+<li>If value of multioutput does not exist in (<code class="docutils literal notranslate"><span class="pre">raw_values</span></code>, <code class="docutils literal notranslate"><span class="pre">uniform_average</span></code>, <code class="docutils literal notranslate"><span class="pre">variance_weighted</span></code>).
+    - If value of num_regressors is not an <code class="docutils literal notranslate"><span class="pre">integer</span></code> in the range of [0, n_samples - 1].</li>
 </ul>
 </p>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torcheval.metrics.functional</span> <span class="kn">import</span> <span class="n">r2_score</span>
@@ -409,7 +409,7 @@ Its class version is <code class="docutils literal notranslate"><span class="pre
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
              </article>

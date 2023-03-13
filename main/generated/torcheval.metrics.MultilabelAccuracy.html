@@ -6,8 +6,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>torcheval.metrics.MultilabelAccuracy &mdash; TorchEval main documentation</title>
@@ -254,7 +253,7 @@
             
               <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb">QuickStart Notebook</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb" target="_blank">QuickStart Notebook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../metric_example.html">Use Metrics in TorchEval</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
@@ -337,38 +336,42 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="torcheval-metrics-multilabelaccuracy">
+  <div class="section" id="torcheval-metrics-multilabelaccuracy">
 <h1>torcheval.metrics.MultilabelAccuracy<a class="headerlink" href="#torcheval-metrics-multilabelaccuracy" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="torcheval.metrics.MultilabelAccuracy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torcheval.metrics.</span></span><span class="sig-name descname"><span class="pre">MultilabelAccuracy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criteria</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'exact_match'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device" title="(in PyTorch v1.13)"><span class="pre">device</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torcheval.metrics.MultilabelAccuracy" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><code class="sig-prename descclassname"><span class="pre">torcheval.metrics.</span></code><code class="sig-name descname"><span class="pre">MultilabelAccuracy</span></code><span class="sig-paren">(</span><em><span class="o"><span class="pre">*</span></span></em>, <em><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em><span class="n"><span class="pre">criteria</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'exact_match'</span></span></em>, <em><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device" target="_blank" title="(in PyTorch v1.13)"><span class="pre">device</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torcheval.metrics.MultilabelAccuracy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute multilabel accuracy score, which is the frequency of input matching target.
 Its functional version is <a class="reference internal" href="torcheval.metrics.functional.multilabel_accuracy.html#torcheval.metrics.functional.multilabel_accuracy" title="torcheval.metrics.functional.multilabel_accuracy"><code class="xref py py-func docutils literal notranslate"><span class="pre">torcheval.metrics.functional.multilabel_accuracy()</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>threshold</strong> (<em>float</em><em>, </em><em>Optional</em>) – Threshold for converting input into predicted labels for each sample.
-<code class="docutils literal notranslate"><span class="pre">torch.where(input</span> <span class="pre">&lt;</span> <span class="pre">threshold,</span> <span class="pre">0,</span> <span class="pre">1)</span></code> will be applied to the <code class="docutils literal notranslate"><span class="pre">input</span></code>.</p></li>
-<li><p><strong>criteria</strong> (<em>str</em><em>, </em><em>Optional</em>) – <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">'exact_match'</span></code> [default]:
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>threshold</strong> (<em>float</em><em>, </em><em>Optional</em>) – Threshold for converting input into predicted labels for each sample.
+<code class="docutils literal notranslate"><span class="pre">torch.where(input</span> <span class="pre">&lt;</span> <span class="pre">threshold,</span> <span class="pre">0,</span> <span class="pre">1)</span></code> will be applied to the <code class="docutils literal notranslate"><span class="pre">input</span></code>.</li>
+<li><strong>criteria</strong> (<em>str</em><em>, </em><em>Optional</em>) – <ul>
+<li><code class="docutils literal notranslate"><span class="pre">'exact_match'</span></code> [default]:
 The set of labels predicted for a sample must exactly match the corresponding
-set of labels in target. Also known as subset accuracy.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'hamming'</span></code>:
-Fraction of correct labels over total number of labels.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'overlap'</span></code>:
+set of labels in target. Also known as subset accuracy.</li>
+<li><code class="docutils literal notranslate"><span class="pre">'hamming'</span></code>:
+Fraction of correct labels over total number of labels.</li>
+<li><code class="docutils literal notranslate"><span class="pre">'overlap'</span></code>:
 The set of labels predicted for a sample must overlap with the corresponding
-set of labels in target.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'contain'</span></code>:
+set of labels in target.</li>
+<li><code class="docutils literal notranslate"><span class="pre">'contain'</span></code>:
 The set of labels predicted for a sample must contain the corresponding
-set of labels in target.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">'belong'</span></code>:
+set of labels in target.</li>
+<li><code class="docutils literal notranslate"><span class="pre">'belong'</span></code>:
 The set of labels predicted for a sample must (fully) belong to the corresponding
-set of labels in target.</p></li>
+set of labels in target.</li>
 </ul>
-</p></li>
+</li>
 </ul>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torcheval.metrics</span> <span class="kn">import</span> <span class="n">MultilabelAccuracy</span>
@@ -410,7 +413,7 @@ set of labels in target.</p></li>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="torcheval.metrics.MultilabelAccuracy.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criteria</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'exact_match'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device" title="(in PyTorch v1.13)"><span class="pre">device</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#torcheval.metrics.MultilabelAccuracy.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em><span class="o"><span class="pre">*</span></span></em>, <em><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em><span class="n"><span class="pre">criteria</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'exact_match'</span></span></em>, <em><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device" target="_blank" title="(in PyTorch v1.13)"><span class="pre">device</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#torcheval.metrics.MultilabelAccuracy.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize a metric object and its internal states.</p>
 <p>Use <code class="docutils literal notranslate"><span class="pre">self._add_state()</span></code> to initialize state variables of your metric class.
 The state variables should be either <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, a list of
@@ -419,45 +422,53 @@ or a deque of <code class="docutils literal notranslate"><span class="pre">torch
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#torcheval.metrics.MultilabelAccuracy.__init__" title="torcheval.metrics.MultilabelAccuracy.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*[, threshold, criteria, device])</p></td>
-<td><p>Initialize a metric object and its internal states.</p></td>
+<table border="1" class="autosummary longtable docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#torcheval.metrics.MultilabelAccuracy.__init__" title="torcheval.metrics.MultilabelAccuracy.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*[,&nbsp;threshold,&nbsp;criteria,&nbsp;device])</td>
+<td>Initialize a metric object and its internal states.</td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code>()</p></td>
-<td><p>Return the accuracy score.</p></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code>()</td>
+<td>Return the accuracy score.</td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_state_dict</span></code>(state_dict[, strict])</p></td>
-<td><p>Loads metric state variables from state_dict.</p></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_state_dict</span></code>(state_dict[,&nbsp;strict])</td>
+<td>Loads metric state variables from state_dict.</td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_state</span></code>(metrics)</p></td>
-<td><p>Implement this method to update the current metric's state variables to be the merged states of the current metric and input metrics.</p></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_state</span></code>(metrics)</td>
+<td>Implement this method to update the current metric's state variables to be the merged states of the current metric and input metrics.</td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code>()</p></td>
-<td><p>Reset the metric state variables to their default value.</p></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code>()</td>
+<td>Reset the metric state variables to their default value.</td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">state_dict</span></code>()</p></td>
-<td><p>Save metric state variables in state_dict.</p></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">state_dict</span></code>()</td>
+<td>Save metric state variables in state_dict.</td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code>(device, *args, **kwargs)</p></td>
-<td><p>Move tensors in metric state variables to device.</p></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code>(device,&nbsp;*args,&nbsp;**kwargs)</td>
+<td>Move tensors in metric state variables to device.</td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code>(input, target)</p></td>
-<td><p>Update states with the ground truth labels and predictions.</p></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code>(input,&nbsp;target)</td>
+<td>Update states with the ground truth labels and predictions.</td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">device</span></code></p></td>
-<td><p>The last input device of <code class="docutils literal notranslate"><span class="pre">Metric.to()</span></code>.</p></td>
+<table border="1" class="autosummary longtable docutils align-default">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">device</span></code></td>
+<td>The last input device of <code class="docutils literal notranslate"><span class="pre">Metric.to()</span></code>.</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
-</section>
+</div>
 
 
              </article>

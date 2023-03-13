@@ -6,8 +6,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Metric Toolkit &mdash; TorchEval main documentation</title>
@@ -254,7 +253,7 @@
             
               <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb">QuickStart Notebook</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb" target="_blank">QuickStart Notebook</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metric_example.html">Use Metrics in TorchEval</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
@@ -335,79 +334,91 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <section id="module-torcheval.metrics.toolkit">
+  <div class="section" id="module-torcheval.metrics.toolkit">
 <span id="metric-toolkit"></span><h1>Metric Toolkit<a class="headerlink" href="#module-torcheval.metrics.toolkit" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="torcheval.metrics.toolkit.classwise_converter">
-<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></span><span class="sig-name descname"><span class="pre">classwise_converter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.classwise_converter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></code><code class="sig-name descname"><span class="pre">classwise_converter</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a></span></em>, <em><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v1.13)"><span class="pre">Tensor</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.classwise_converter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts an unaveraged metric result tensor into a dictionary with
 each key being ‘metricname_classlabel’ and value being the data
 associated with that class.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" title="(in PyTorch v1.13)"><em>torch.Tensor</em></a>) – The tensor to be split along its first dimension.</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – Name of the metric.</p></li>
-<li><p><strong>labels</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>Optional</em>) – Optional list of strings indicating the different classes.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input</strong> (<a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v1.13)"><em>torch.Tensor</em></a>) – The tensor to be split along its first dimension.</li>
+<li><strong>name</strong> (<em>str</em>) – Name of the metric.</li>
+<li><strong>labels</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>Optional</em>) – Optional list of strings indicating the different classes.</li>
 </ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – When the length of <cite>labels</cite> is not equal to the number of classes.</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>ValueError</strong> – When the length of <cite>labels</cite> is not equal to the number of classes.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="torcheval.metrics.toolkit.clone_metric">
-<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></span><span class="sig-name descname"><span class="pre">clone_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Metric</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Metric</span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.clone_metric" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></code><code class="sig-name descname"><span class="pre">clone_metric</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Metric</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Metric</span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.clone_metric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new metric instance which is cloned from the input metric.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>metric</strong> – The metric object to clone</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A new metric instance from cloning</p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metric</strong> – The metric object to clone</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A new metric instance from cloning</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="torcheval.metrics.toolkit.clone_metrics">
-<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></span><span class="sig-name descname"><span class="pre">clone_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_TMetrics</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.clone_metrics" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></code><code class="sig-name descname"><span class="pre">clone_metrics</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_TMetrics</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.clone_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of new metric instances which are cloned from the input metrics.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>metrics</strong> – The metric objects to clone</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of metric instances from cloning</p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metrics</strong> – The metric objects to clone</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A list of metric instances from cloning</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="torcheval.metrics.toolkit.get_synced_metric">
-<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></span><span class="sig-name descname"><span class="pre">get_synced_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ProcessGroup</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recipient_rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.get_synced_metric" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></code><code class="sig-name descname"><span class="pre">get_synced_metric</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Metric</span></span></em>, <em><span class="n"><span class="pre">process_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ProcessGroup</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em><span class="n"><span class="pre">recipient_rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.get_synced_metric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a metric object on recipient_rank whose internal state
 variables are synced across processes in the process_group.
 Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> on non-recipient rank.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">all</span></code> is passed as recipient_rank, all ranks in the
 <code class="docutils literal notranslate"><span class="pre">process_group</span></code> are considered as recipient ranks.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>metric</strong> – The metric object to sync.</p></li>
-<li><p><strong>process_group</strong> – The process group on which the metric states are
-gathered. default: <code class="docutils literal notranslate"><span class="pre">None</span></code> (the entire world)</p></li>
-<li><p><strong>recipient_rank</strong> – The destination rank. If string “all” is passed in,
-then all ranks are the destination ranks.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>metric</strong> – The metric object to sync.</li>
+<li><strong>process_group</strong> – The process group on which the metric states are
+gathered. default: <code class="docutils literal notranslate"><span class="pre">None</span></code> (the entire world)</li>
+<li><strong>recipient_rank</strong> – The destination rank. If string “all” is passed in,
+then all ranks are the destination ranks.</li>
 </ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – when <code class="docutils literal notranslate"><span class="pre">recipient_rank</span></code> is not an integer or string
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>ValueError</strong> – when <code class="docutils literal notranslate"><span class="pre">recipient_rank</span></code> is not an integer or string
     “all”.</p>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Assumes world_size of 3.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Process group initialization omitted on each rank.</span>
@@ -439,28 +450,32 @@ then all ranks are the destination ranks.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="torcheval.metrics.toolkit.get_synced_metric_collection">
-<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></span><span class="sig-name descname"><span class="pre">get_synced_metric_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_collection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MutableMapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ProcessGroup</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recipient_rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MutableMapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.get_synced_metric_collection" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></code><code class="sig-name descname"><span class="pre">get_synced_metric_collection</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">metric_collection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MutableMapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span></span></em>, <em><span class="n"><span class="pre">process_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ProcessGroup</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em><span class="n"><span class="pre">recipient_rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">MutableMapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.get_synced_metric_collection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a dict of metric objects to the recipient_rank whose
 internal state variables are synced across processes in the process_group.
 Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> on non-recipient rank.</p>
 <p>The data transfer is batched to maximize efficiency.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">all</span></code> is passed as recipient_rank, all ranks in the
 <code class="docutils literal notranslate"><span class="pre">process_group</span></code> are considered as recipient ranks.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>metric_collection</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Metric</em><em>]</em>) – The dict of metric objects to sync.</p></li>
-<li><p><strong>process_group</strong> (<em>int</em>) – The process group on which the metric states are
-gathered. default: <code class="docutils literal notranslate"><span class="pre">None</span></code> (the entire world)</p></li>
-<li><p><strong>recipient_rank</strong> – The destination rank. If string “all” is passed in,
-then all ranks are the destination ranks.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>metric_collection</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Metric</em><em>]</em>) – The dict of metric objects to sync.</li>
+<li><strong>process_group</strong> (<em>int</em>) – The process group on which the metric states are
+gathered. default: <code class="docutils literal notranslate"><span class="pre">None</span></code> (the entire world)</li>
+<li><strong>recipient_rank</strong> – The destination rank. If string “all” is passed in,
+then all ranks are the destination ranks.</li>
 </ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – when <code class="docutils literal notranslate"><span class="pre">recipient_rank</span></code> is not an integer or string
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>ValueError</strong> – when <code class="docutils literal notranslate"><span class="pre">recipient_rank</span></code> is not an integer or string
     “all”.</p>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Assumes world_size of 3.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Process group initialization omitted on each rank.</span>
@@ -498,23 +513,27 @@ then all ranks are the destination ranks.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="torcheval.metrics.toolkit.get_synced_state_dict">
-<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></span><span class="sig-name descname"><span class="pre">get_synced_state_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ProcessGroup</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recipient_rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.get_synced_state_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></code><code class="sig-name descname"><span class="pre">get_synced_state_dict</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Metric</span></span></em>, <em><span class="n"><span class="pre">process_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ProcessGroup</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em><span class="n"><span class="pre">recipient_rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.get_synced_state_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the state dict of a metric after syncing on recipient_rank.
 Return an empty dict on other ranks.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>metric</strong> – The metric object to sync and get <code class="docutils literal notranslate"><span class="pre">state_dict()</span></code></p></li>
-<li><p><strong>process_group</strong> – The process group on which the metric states are
-gathered. default: <code class="docutils literal notranslate"><span class="pre">None</span></code> (the entire world)</p></li>
-<li><p><strong>recipient_rank</strong> – The destination rank. If string “all” is passed in,
-then all ranks are the destination ranks.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>metric</strong> – The metric object to sync and get <code class="docutils literal notranslate"><span class="pre">state_dict()</span></code></li>
+<li><strong>process_group</strong> – The process group on which the metric states are
+gathered. default: <code class="docutils literal notranslate"><span class="pre">None</span></code> (the entire world)</li>
+<li><strong>recipient_rank</strong> – The destination rank. If string “all” is passed in,
+then all ranks are the destination ranks.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>state dict of synced metric</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">state dict of synced metric</p>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Assumes world_size of 3.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Process group initialization omitted on each rank.</span>
@@ -537,23 +556,27 @@ then all ranks are the destination ranks.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="torcheval.metrics.toolkit.get_synced_state_dict_collection">
-<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></span><span class="sig-name descname"><span class="pre">get_synced_state_dict_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_collection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MutableMapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ProcessGroup</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recipient_rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.get_synced_state_dict_collection" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></code><code class="sig-name descname"><span class="pre">get_synced_state_dict_collection</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">metric_collection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MutableMapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span></span></em>, <em><span class="n"><span class="pre">process_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ProcessGroup</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em><span class="n"><span class="pre">recipient_rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.get_synced_state_dict_collection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the state dict of a collection of metrics after syncing on recipient_rank.
 Return an None on other ranks.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>metric_collection</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Metric</em><em>]</em>) – The metric objects to sync and get <code class="docutils literal notranslate"><span class="pre">state_dict()</span></code></p></li>
-<li><p><strong>process_group</strong> – The process group on which the metric states are
-gathered. default: <code class="docutils literal notranslate"><span class="pre">None</span></code> (the entire world)</p></li>
-<li><p><strong>recipient_rank</strong> – The destination rank. If string “all” is passed in,
-then all ranks are the destination ranks.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>metric_collection</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Metric</em><em>]</em>) – The metric objects to sync and get <code class="docutils literal notranslate"><span class="pre">state_dict()</span></code></li>
+<li><strong>process_group</strong> – The process group on which the metric states are
+gathered. default: <code class="docutils literal notranslate"><span class="pre">None</span></code> (the entire world)</li>
+<li><strong>recipient_rank</strong> – The destination rank. If string “all” is passed in,
+then all ranks are the destination ranks.</li>
 </ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Bundle of state dicts of for the synced metrics</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Bundle of state dicts of for the synced metrics</p>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Assumes world_size of 3.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Process group initialization omitted on each rank.</span>
@@ -578,13 +601,16 @@ then all ranks are the destination ranks.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="torcheval.metrics.toolkit.reset_metrics">
-<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></span><span class="sig-name descname"><span class="pre">reset_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_TMetrics</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">_TMetrics</span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.reset_metrics" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></code><code class="sig-name descname"><span class="pre">reset_metrics</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_TMetrics</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">_TMetrics</span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.reset_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset input metrics and returns the reset collection back to users.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>metrics</strong> – The metrics to be reset</p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metrics</strong> – The metrics to be reset</td>
+</tr>
+</tbody>
+</table>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torcheval.metrics</span> <span class="kn">import</span> <span class="n">Max</span><span class="p">,</span> <span class="n">Min</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">max</span> <span class="o">=</span> <span class="n">Max</span><span class="p">()</span>
@@ -602,20 +628,24 @@ then all ranks are the destination ranks.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="torcheval.metrics.toolkit.sync_and_compute">
-<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></span><span class="sig-name descname"><span class="pre">sync_and_compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Metric</span><span class="p"><span class="pre">[</span></span><span class="pre">TComputeReturn</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ProcessGroup</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recipient_rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">TComputeReturn</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.sync_and_compute" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></code><code class="sig-name descname"><span class="pre">sync_and_compute</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Metric</span><span class="p"><span class="pre">[</span></span><span class="pre">TComputeReturn</span><span class="p"><span class="pre">]</span></span></span></em>, <em><span class="n"><span class="pre">process_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ProcessGroup</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em><span class="n"><span class="pre">recipient_rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">TComputeReturn</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.sync_and_compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sync metric states and returns the <code class="docutils literal notranslate"><span class="pre">metric.compute()</span></code> result of
 synced metric on recipient rank. Return <code class="docutils literal notranslate"><span class="pre">None</span></code> on other ranks.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>metric</strong> – The metric object to be synced and computed.</p></li>
-<li><p><strong>process_group</strong> – The process group on which the metric states are
-gathered. default: <code class="docutils literal notranslate"><span class="pre">None</span></code> (the entire world)</p></li>
-<li><p><strong>recipient_rank</strong> – The destination rank. If string “all” is passed in,
-then all ranks are the destination ranks.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>metric</strong> – The metric object to be synced and computed.</li>
+<li><strong>process_group</strong> – The process group on which the metric states are
+gathered. default: <code class="docutils literal notranslate"><span class="pre">None</span></code> (the entire world)</li>
+<li><strong>recipient_rank</strong> – The destination rank. If string “all” is passed in,
+then all ranks are the destination ranks.</li>
 </ul>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Assumes world_size of 3.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Process group initialization omitted on each rank.</span>
@@ -641,21 +671,25 @@ then all ranks are the destination ranks.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="torcheval.metrics.toolkit.sync_and_compute_collection">
-<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></span><span class="sig-name descname"><span class="pre">sync_and_compute_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MutableMapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ProcessGroup</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recipient_rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.sync_and_compute_collection" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></code><code class="sig-name descname"><span class="pre">sync_and_compute_collection</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MutableMapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Metric</span><span class="p"><span class="pre">]</span></span></span></em>, <em><span class="n"><span class="pre">process_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">ProcessGroup</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em><span class="n"><span class="pre">recipient_rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'all'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.sync_and_compute_collection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sync metric states across a dict of metrics and returns the
 <code class="docutils literal notranslate"><span class="pre">metric.compute()</span></code> result of synced metrics on recipient rank.
 Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> on other ranks.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>metrics</strong> – The dict of metric objects to be synced and computed.</p></li>
-<li><p><strong>process_group</strong> – The process group on which the metric states are
-gathered. default: <code class="docutils literal notranslate"><span class="pre">None</span></code> (the entire world)</p></li>
-<li><p><strong>recipient_rank</strong> – The destination rank. If string “all” is passed in,
-then all ranks are the destination ranks.</p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>metrics</strong> – The dict of metric objects to be synced and computed.</li>
+<li><strong>process_group</strong> – The process group on which the metric states are
+gathered. default: <code class="docutils literal notranslate"><span class="pre">None</span></code> (the entire world)</li>
+<li><strong>recipient_rank</strong> – The destination rank. If string “all” is passed in,
+then all ranks are the destination ranks.</li>
 </ul>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Assumes world_size of 3.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Process group initialization omitted on each rank.</span>
@@ -685,18 +719,22 @@ then all ranks are the destination ranks.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="torcheval.metrics.toolkit.to_device">
-<span class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></span><span class="sig-name descname"><span class="pre">to_device</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_TMetrics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device" title="(in PyTorch v1.13)"><span class="pre">device</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">_TMetrics</span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.to_device" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.toolkit.</span></code><code class="sig-name descname"><span class="pre">to_device</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_TMetrics</span></span></em>, <em><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device" target="_blank" title="(in PyTorch v1.13)"><span class="pre">device</span></a></span></em>, <em><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">_TMetrics</span></span></span><a class="headerlink" href="#torcheval.metrics.toolkit.to_device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Moves input metrics to the target device and returns the moved metrics back to users.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>metrics</strong> – The metrics to be moved to the device</p></li>
-<li><p><strong>device</strong> – the device to move te metrics to</p></li>
-<li><p><strong>*args</strong> – Variadic arguments forwarded to <code class="docutils literal notranslate"><span class="pre">Metric.to</span></code></p></li>
-<li><p><strong>**kwargs</strong> – Named arguments forwarded to <code class="docutils literal notranslate"><span class="pre">Metric.to</span></code></p></li>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>metrics</strong> – The metrics to be moved to the device</li>
+<li><strong>device</strong> – the device to move te metrics to</li>
+<li><strong>*args</strong> – Variadic arguments forwarded to <code class="docutils literal notranslate"><span class="pre">Metric.to</span></code></li>
+<li><strong>**kwargs</strong> – Named arguments forwarded to <code class="docutils literal notranslate"><span class="pre">Metric.to</span></code></li>
 </ul>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torcheval.metrics</span> <span class="kn">import</span> <span class="n">Max</span><span class="p">,</span> <span class="n">Min</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">max</span> <span class="o">=</span> <span class="n">Max</span><span class="p">()</span>
@@ -710,7 +748,7 @@ then all ranks are the destination ranks.</p></li>
 </div>
 </dd></dl>
 
-</section>
+</div>
 
 
              </article>
