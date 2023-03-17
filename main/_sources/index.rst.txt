@@ -87,6 +87,13 @@ Getting Started
 
       meta/getting_started.rst
 
+   .. toctree::
+      :maxdepth: 2
+      :caption: Migration (Meta)
+      :glob:
+
+      meta/migrating_to_torcheval.rst
+
 TorchEval Tutorials
 -------------------
 .. toctree::
