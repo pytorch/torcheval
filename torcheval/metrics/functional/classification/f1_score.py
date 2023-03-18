@@ -225,6 +225,7 @@ def _f1_score_compute(
     elif average == "macro":
         return f1.mean()
     elif average == "weighted":
+        # pyre-fixme[61]: `mask` is undefined, or not always defined.
         return (f1 * (num_label[mask] / num_label.sum())).sum()
     else:  # average is None
         return f1

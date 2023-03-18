@@ -170,6 +170,7 @@ def _precision_compute(
     elif average == "macro":
         return precision.mean()
     elif average == "weighted":
+        # pyre-fixme[61]: `mask` is undefined, or not always defined.
         return torch.inner(precision, (num_label[mask] / num_label.sum()))
     else:  # average is None
         return precision
