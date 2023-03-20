@@ -44,6 +44,16 @@ class TestBinaryAccuracy(unittest.TestCase):
 
         self._test_binary_accuracy_with_input(input, target)
 
+    def test_binary_accuracy_with_bool_target(self) -> None:
+        num_classes = 2
+        input = torch.randint(high=num_classes, size=(BATCH_SIZE,))
+        target = torch.randint(high=num_classes, size=(BATCH_SIZE,))
+
+        output = binary_accuracy(input, target)
+        output_bool = binary_accuracy(input, target.bool())
+
+        torch.testing.assert_close(output, output_bool)
+
     def test_binary_accuracy_with_rounding(self) -> None:
         num_classes = 2
         input = torch.rand(size=(BATCH_SIZE,))

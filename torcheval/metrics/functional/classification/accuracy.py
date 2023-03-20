@@ -353,7 +353,16 @@ def _binary_accuracy_update(
     input = torch.where(input < threshold, 0, 1)
 
     num_correct = (input == target).sum()
-    num_total = target.new_tensor(target.shape[0])
+    if target.dtype == torch.bool:
+        num_total = torch.tensor(
+            target.shape[0],
+            dtype=torch.int64,
+            device=target.device,
+            requires_grad=False,
+        )
+    else:
+        # this is faster than using torch.tensor, but breaks for bool tensors because the shape will be cast to 1 in a bool tensor
+        num_total = target.new_tensor(target.shape[0])
     return num_correct, num_total
 
 
