@@ -35,6 +35,7 @@ from torcheval.metrics.classification import (
     MultilabelRecallAtFixedPrecision,
     TopKMultilabelAccuracy,
 )
+from torcheval.metrics.image.psnr import PeakSignalNoiseRatio
 from torcheval.metrics.metric import Metric
 
 from torcheval.metrics.ranking import (
@@ -106,6 +107,7 @@ __all__ = [
     "R2Score",
     "ReciprocalRank",
     "Sum",
+    "PeakSignalNoiseRatio",
     "Throughput",
     "WeightedCalibration",
     "WindowedBinaryAUROC",
