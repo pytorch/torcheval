@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.peak\_signal\_noise\_ratio
+=======================================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: peak_signal_noise_ratio

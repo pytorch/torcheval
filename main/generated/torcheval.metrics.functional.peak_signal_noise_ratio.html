@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torcheval.metrics.TopKMultilabelAccuracy &mdash; TorchEval main documentation</title>
+  <title>torcheval.metrics.functional.peak_signal_noise_ratio &mdash; TorchEval main documentation</title>
   
 
   
@@ -33,8 +33,8 @@
   <link rel="stylesheet" href="../_static/css/torcheval.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="torcheval.metrics.PeakSignalNoiseRatio" href="torcheval.metrics.PeakSignalNoiseRatio.html" />
-    <link rel="prev" title="torcheval.metrics.MultilabelRecallAtFixedPrecision" href="torcheval.metrics.MultilabelRecallAtFixedPrecision.html" />
+    <link rel="next" title="torcheval.metrics.functional.click_through_rate" href="torcheval.metrics.functional.click_through_rate.html" />
+    <link rel="prev" title="torcheval.metrics.functional.topk_multilabel_accuracy" href="torcheval.metrics.functional.topk_multilabel_accuracy.html" />
   <!-- Google Analytics -->
   
   <!-- End Google Analytics -->
@@ -258,8 +258,8 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../torcheval.metrics.html">Metrics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../torcheval.metrics.functional.html">Functional Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../torcheval.metrics.html">Metrics</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../torcheval.metrics.functional.html">Functional Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../torcheval.metrics.toolkit.html">Metric Toolkit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../torcheval.tools.html">Module Tools</a></li>
 </ul>
@@ -302,15 +302,15 @@
       </li>
 
         
-          <li><a href="../torcheval.metrics.html">Metrics</a> &gt;</li>
+          <li><a href="../torcheval.metrics.functional.html">Functional Metrics</a> &gt;</li>
         
-      <li>torcheval.metrics.TopKMultilabelAccuracy</li>
+      <li>torcheval.metrics.functional.peak_signal_noise_ratio</li>
     
     
       <li class="pytorch-breadcrumbs-aside">
         
             
-            <a href="../_sources/generated/torcheval.metrics.TopKMultilabelAccuracy.rst.txt" rel="nofollow"><img src="../_static/images/view-page-source-icon.svg"></a>
+            <a href="../_sources/generated/torcheval.metrics.functional.peak_signal_noise_ratio.rst.txt" rel="nofollow"><img src="../_static/images/view-page-source-icon.svg"></a>
           
         
       </li>
@@ -336,31 +336,22 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <div class="section" id="torcheval-metrics-topkmultilabelaccuracy">
-<h1>torcheval.metrics.TopKMultilabelAccuracy<a class="headerlink" href="#torcheval-metrics-topkmultilabelaccuracy" title="Permalink to this heading">¶</a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="torcheval.metrics.TopKMultilabelAccuracy">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><code class="sig-prename descclassname"><span class="pre">torcheval.metrics.</span></code><code class="sig-name descname"><span class="pre">TopKMultilabelAccuracy</span></code><span class="sig-paren">(</span><em><span class="o"><span class="pre">*</span></span></em>, <em><span class="n"><span class="pre">criteria</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'exact_match'</span></span></em>, <em><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device" target="_blank" title="(in PyTorch v2.0)"><span class="pre">device</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torcheval.metrics.TopKMultilabelAccuracy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute multilabel accuracy score, which is the frequency of the top k label predicted matching target.
-Its functional version is <a class="reference internal" href="torcheval.metrics.functional.topk_multilabel_accuracy.html#torcheval.metrics.functional.topk_multilabel_accuracy" title="torcheval.metrics.functional.topk_multilabel_accuracy"><code class="xref py py-func docutils literal notranslate"><span class="pre">torcheval.metrics.functional.topk_multilabel_accuracy()</span></code></a>.</p>
+  <div class="section" id="torcheval-metrics-functional-peak-signal-noise-ratio">
+<h1>torcheval.metrics.functional.peak_signal_noise_ratio<a class="headerlink" href="#torcheval-metrics-functional-peak-signal-noise-ratio" title="Permalink to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="torcheval.metrics.functional.peak_signal_noise_ratio">
+<code class="sig-prename descclassname"><span class="pre">torcheval.metrics.functional.</span></code><code class="sig-name descname"><span class="pre">peak_signal_noise_ratio</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v2.0)"><span class="pre">Tensor</span></a></span></em>, <em><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v2.0)"><span class="pre">Tensor</span></a></span></em>, <em><span class="n"><span class="pre">data_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pytorch.org/docs/stable/tensors.html#torch.Tensor" target="_blank" title="(in PyTorch v2.0)"><span class="pre">Tensor</span></a></span></span><a class="headerlink" href="#torcheval.metrics.functional.peak_signal_noise_ratio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the peak signal-to-noise ratio between two images.
+It’s class version is <cite>torcheval.metrics.PeakSignalNoiseRatio</cite></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>criteria</strong> (<em>string</em>) – <ul>
-<li><code class="docutils literal notranslate"><span class="pre">'exact_match'</span></code> [default]: The set of top-k labels predicted for a sample must exactly match the corresponding
-set of labels in target. Also known as subset accuracy.</li>
-<li><code class="docutils literal notranslate"><span class="pre">'hamming'</span></code>: Fraction of top-k correct labels over total number of labels.</li>
-<li><code class="docutils literal notranslate"><span class="pre">'overlap'</span></code>: The set of top-k labels predicted for a sample must overlap with the corresponding
-set of labels in target.</li>
-<li><code class="docutils literal notranslate"><span class="pre">'contain'</span></code>: The set of top-k labels predicted for a sample must contain the corresponding
-set of labels in target.</li>
-<li><code class="docutils literal notranslate"><span class="pre">'belong'</span></code>: The set of top-k labels predicted for a sample must (fully) belong to the corresponding
-set of labels in target.</li>
-</ul>
-</li>
-<li><strong>k</strong> (<em>int</em>) – Number of top probabilities to be considered. K should be an integer greater than or equal to 1.</li>
+<li><strong>input</strong> (<em>Tensor</em>) – Input image <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">C,</span> <span class="pre">H,</span> <span class="pre">W)</span></code>.</li>
+<li><strong>target</strong> (<em>Tensor</em>) – Target image <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">C,</span> <span class="pre">H,</span> <span class="pre">W)</span></code>.</li>
+<li><strong>data_range</strong> (<em>float</em>) – the range of the input images. Default: None.
+If None, the input range computed from the target data <code class="docutils literal notranslate"><span class="pre">(target.max()</span> <span class="pre">-</span> <span class="pre">targert.min())</span></code>.</li>
 </ul>
 </td>
 </tr>
@@ -368,98 +359,13 @@ set of labels in target.</li>
 </table>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torcheval.metrics</span> <span class="kn">import</span> <span class="n">TopKMultilabelAccuracy</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span> <span class="o">=</span> <span class="n">TopKMultilabelAccuracy</span><span class="p">(</span><span class="n">k</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="go">tensor(0)  # 0 / 4</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span> <span class="o">=</span> <span class="n">TopKMultilabelAccuracy</span><span class="p">(</span><span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;hamming&quot;</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="go">tensor(0.583)  # 7 / 12</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span> <span class="o">=</span> <span class="n">TopKMultilabelAccuracy</span><span class="p">(</span><span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;overlap&quot;</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="go">tensor(1)  # 4 / 4</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span> <span class="o">=</span> <span class="n">TopKMultilabelAccuracy</span><span class="p">(</span><span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;contain&quot;</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="go">tensor(0.5)  # 2 / 4</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span> <span class="o">=</span> <span class="n">TopKMultilabelAccuracy</span><span class="p">(</span><span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;belong&quot;</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-<span class="go">tensor(0.25)  # 1 / 4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torcheval.metrics.functional</span> <span class="kn">import</span> <span class="n">peak_signal_noise_ratio</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="nb">input</span> <span class="o">*</span> <span class="mf">0.9</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">peak_signal_noise_ratio</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<span class="go">tensor(19.8767)</span>
 </pre></div>
 </div>
-<dl class="py method">
-<dt class="sig sig-object py" id="torcheval.metrics.TopKMultilabelAccuracy.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em><span class="o"><span class="pre">*</span></span></em>, <em><span class="n"><span class="pre">criteria</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'exact_match'</span></span></em>, <em><span class="n"><span class="pre">k</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device" target="_blank" title="(in PyTorch v2.0)"><span class="pre">device</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#torcheval.metrics.TopKMultilabelAccuracy.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize a metric object and its internal states.</p>
-<p>Use <code class="docutils literal notranslate"><span class="pre">self._add_state()</span></code> to initialize state variables of your metric class.
-The state variables should be either <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, a list of
-<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, a dictionary with <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> as values,
-or a deque of <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>.</p>
-</dd></dl>
-
-<p class="rubric">Methods</p>
-<table border="1" class="autosummary longtable docutils align-default">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#torcheval.metrics.TopKMultilabelAccuracy.__init__" title="torcheval.metrics.TopKMultilabelAccuracy.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*[,&nbsp;criteria,&nbsp;k,&nbsp;device])</td>
-<td>Initialize a metric object and its internal states.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute</span></code>()</td>
-<td>Return the accuracy score.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_state_dict</span></code>(state_dict[,&nbsp;strict])</td>
-<td>Loads metric state variables from state_dict.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_state</span></code>(metrics)</td>
-<td>Implement this method to update the current metric's state variables to be the merged states of the current metric and input metrics.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code>()</td>
-<td>Reset the metric state variables to their default value.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">state_dict</span></code>()</td>
-<td>Save metric state variables in state_dict.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">to</span></code>(device,&nbsp;*args,&nbsp;**kwargs)</td>
-<td>Move tensors in metric state variables to device.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code>(input,&nbsp;target)</td>
-<td>Update states with the ground truth labels and predictions.</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="autosummary longtable docutils align-default">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">device</span></code></td>
-<td>The last input device of <code class="docutils literal notranslate"><span class="pre">Metric.to()</span></code>.</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 </div>
@@ -472,10 +378,10 @@ or a deque of <code class="docutils literal notranslate"><span class="pre">torch
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="torcheval.metrics.PeakSignalNoiseRatio.html" class="btn btn-neutral float-right" title="torcheval.metrics.PeakSignalNoiseRatio" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="torcheval.metrics.functional.click_through_rate.html" class="btn btn-neutral float-right" title="torcheval.metrics.functional.click_through_rate" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="torcheval.metrics.MultilabelRecallAtFixedPrecision.html" class="btn btn-neutral" title="torcheval.metrics.MultilabelRecallAtFixedPrecision" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="torcheval.metrics.functional.topk_multilabel_accuracy.html" class="btn btn-neutral" title="torcheval.metrics.functional.topk_multilabel_accuracy" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
@@ -507,7 +413,7 @@ or a deque of <code class="docutils literal notranslate"><span class="pre">torch
           <div class="pytorch-right-menu" id="pytorch-right-menu">
             <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
               <ul>
-<li><a class="reference internal" href="#">torcheval.metrics.TopKMultilabelAccuracy</a></li>
+<li><a class="reference internal" href="#">torcheval.metrics.functional.peak_signal_noise_ratio</a></li>
 </ul>
 
             </div>

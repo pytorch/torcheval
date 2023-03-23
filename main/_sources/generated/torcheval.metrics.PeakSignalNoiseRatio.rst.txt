@@ -1,0 +1,35 @@
+﻿torcheval.metrics.PeakSignalNoiseRatio
+======================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: PeakSignalNoiseRatio
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PeakSignalNoiseRatio.__init__
+      ~PeakSignalNoiseRatio.compute
+      ~PeakSignalNoiseRatio.load_state_dict
+      ~PeakSignalNoiseRatio.merge_state
+      ~PeakSignalNoiseRatio.reset
+      ~PeakSignalNoiseRatio.state_dict
+      ~PeakSignalNoiseRatio.to
+      ~PeakSignalNoiseRatio.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PeakSignalNoiseRatio.device
+   
+   
