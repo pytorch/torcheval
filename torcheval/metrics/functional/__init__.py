@@ -34,6 +34,7 @@ from torcheval.metrics.functional.classification import (
     multilabel_recall_at_fixed_precision,
     topk_multilabel_accuracy,
 )
+from torcheval.metrics.functional.image import peak_signal_noise_ratio
 from torcheval.metrics.functional.ranking import (
     click_through_rate,
     frequency_at_k,
@@ -86,6 +87,7 @@ __all__ = [
     "multilabel_precision_recall_curve",
     "multilabel_recall_at_fixed_precision",
     "num_collisions",
+    "peak_signal_noise_ratio",
     "perplexity",
     "r2_score",
     "reciprocal_rank",

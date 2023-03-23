@@ -22,6 +22,10 @@ from torchtnt.utils import copy_data_to_device, init_from_env
 from typing_extensions import Literal
 
 BATCH_SIZE = 16
+IMG_CHANNELS = 3
+IMG_WIDTH = 32
+IMG_HEIGHT = 32
+
 # By default, we can test merge_state() on 4 processes with
 # each processes will update states twice, which is 8 updates in total.
 NUM_TOTAL_UPDATES = 8
