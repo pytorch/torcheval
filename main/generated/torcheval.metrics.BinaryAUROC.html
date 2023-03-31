@@ -345,7 +345,8 @@
 AUROC is defined as the area under the Receiver Operating Curve, a plot with x=false positive rate y=true positive rate.
 The points on the curve are sampled from the data given and the area is computed using the trapezoid method.</p>
 <p>Multiple tasks are supported for Binary AUROC. A two-dimensional vector can given for the predicted values (inputs) and targets. This gives equivalent results to having one BinaryAUROC object for each row.</p>
-<p>Its functional version is <a class="reference internal" href="torcheval.metrics.functional.binary_auroc.html#torcheval.metrics.functional.binary_auroc" title="torcheval.metrics.functional.binary_auroc"><code class="xref py py-func docutils literal notranslate"><span class="pre">torcheval.metrics.functional.binary_auroc()</span></code></a>.</p>
+<p>Its functional version is <a class="reference internal" href="torcheval.metrics.functional.binary_auroc.html#torcheval.metrics.functional.binary_auroc" title="torcheval.metrics.functional.binary_auroc"><code class="xref py py-func docutils literal notranslate"><span class="pre">torcheval.metrics.functional.binary_auroc()</span></code></a>.
+See also <a class="reference internal" href="torcheval.metrics.MulticlassAUROC.html#torcheval.metrics.MulticlassAUROC" title="torcheval.metrics.MulticlassAUROC"><code class="xref py py-class docutils literal notranslate"><span class="pre">MulticlassAUROC</span></code></a></p>
 <p>Examples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torcheval.metrics</span> <span class="kn">import</span> <span class="n">BinaryAUROC</span>
