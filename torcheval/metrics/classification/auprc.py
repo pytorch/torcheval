@@ -43,6 +43,7 @@ class BinaryAUPRC(Metric[torch.Tensor]):
     instance of binary auprc.
 
     The functional version of this metric is :func:`torcheval.metrics.functional.binary_auprc`.
+    See also :class:`MulticlassAUPRC <MulticlassAUPRC>`, :class:`MultilabelAUPRC <MultilabelAUPRC>`
 
     Args:
         num_tasks (int): Number of tasks that need BinaryAUPRC calculation. Default value
@@ -170,6 +171,7 @@ class MulticlassAUPRC(Metric[torch.Tensor]):
     See examples below for more details on the connection between Multiclass and Binary AUPRC.
 
     The functional version of this metric is :func:`torcheval.metrics.functional.multiclass_auprc`.
+    See also :class:`BinaryAUPRC <BinaryAUPRC>`, :class:`MultilabelAUPRC <MultilabelAUPRC>`
 
     Args:
         num_classes (int): Number of classes.
@@ -310,6 +312,7 @@ class MultilabelAUPRC(Metric[torch.Tensor]):
     See examples below for more details on the connection between Multilabel and Binary AUPRC.
 
     The functional version of this metric is :func:`torcheval.metrics.functional.multilabel_auprc`.
+    See also :class:`BinaryAUPRC <BinaryAUPRC>`, :class:`MulticlassAUPRC <MulticlassAUPRC>`
 
     Args:
         num_labels (int): Number of labels.

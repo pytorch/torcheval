@@ -33,6 +33,8 @@ def binary_auprc(
     This function returns the area under that graph. If the area is near one, the model supports a threshold which correctly identifies
     a high percentage of true positives while also rejecting enough false examples so that most of the true predictions are true positives.
 
+    See also :func:`multiclass_auprc <torcheval.metrics.functional.multiclass_auprc>`, :func:`multilabel_auprc <torcheval.metrics.functional.multilabel_auprc>`
+
     Args:
         input (Tensor): Tensor of label predictions
             It should be predicted label, probabilities or logits with shape of (num_tasks, n_sample) or (n_sample, ).
@@ -93,6 +95,8 @@ def multiclass_auprc(
 
     1. the input is transposed, in binary classification examples are associated with columns, whereas they are associated with rows in multiclass classification.
     2. the `target` is translated from the form [1,0,1] to the form [[0,1,0], [1,0,1]]
+
+    See also :func:`binary_auprc <torcheval.metrics.functional.binary_auprc>`, :func:`multilabel_auprc <torcheval.metrics.functional.multilabel_auprc>`
 
     Args:
         input (Tensor): 2 dimensional tensor of label predictions
@@ -175,6 +179,7 @@ def multilabel_auprc(
     2. the `target` is transposed for the same reason
 
     See examples below for more details on the connection between Multilabel and Binary AUPRC.
+    See also :func:`binary_auprc <torcheval.metrics.functional.binary_auprc>`, :func:`multiclass_auprc <torcheval.metrics.functional.multiclass_auprc>`
 
     Args:
         input (Tensor): Tensor of label predictions

@@ -24,6 +24,7 @@ def binary_binned_auroc(
     """
     Compute AUROC, which is the area under the ROC Curve, for binary classification.
     Its class version is ``torcheval.metrics.BinaryBinnedAUROC``.
+    See also :func:`multiclass_binned_auroc <torcheval.metrics.functional.multiclass_binned_auroc>`
 
     Args:
         input (Tensor): Tensor of label predictions
@@ -144,6 +145,7 @@ def multiclass_binned_auroc(
     """
     Compute AUROC, which is the area under the ROC Curve, for multiclass classification.
     Its class version is :obj:`torcheval.metrics.MulticlassAUROC`.
+    See also :func:`binary_binned_auroc <torcheval.metrics.functional.binary_binned_auroc>`
 
     Args:
         input (Tensor): Tensor of label predictions

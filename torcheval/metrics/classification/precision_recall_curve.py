@@ -38,6 +38,7 @@ class BinaryPrecisionRecallCurve(
     its recall values are set to 1.0.
 
     Its functional version is :func:`torcheval.metrics.functional.binary_precision_recall_curve`.
+    See also :class:`MulticlassPrecisionRecallCurve <MulticlassPrecisionRecallCurve>`, :class:`MultilabelPrecisionRecallCurve <MultilabelPrecisionRecallCurve>`
 
         >>> import torch
         >>> from torcheval.metrics import BinaryPrecisionRecallCurve
@@ -127,6 +128,7 @@ class MulticlassPrecisionRecallCurve(
     tensor, its recall values are set to 1.0.
 
     Its class version is :func:`torcheval.metrics.functional.multiclass_precision_recall_curve`.
+    See also :class:`BinaryPrecisionRecallCurve <BinaryPrecisionRecallCurve>`, :class:`MultilabelPrecisionRecallCurve <MultilabelPrecisionRecallCurve>`
 
     Args:
         num_classes (int, Optional):
@@ -235,6 +237,7 @@ class MultilabelPrecisionRecallCurve(
     in the target tensor, its recall values are set to 1.0.
 
     Its class version is :func:`torcheval.metrics.functional.multilabel_precision_recall_curve`.
+    See also :class:`BinaryPrecisionRecallCurve <BinaryPrecisionRecallCurve>`, :class:`MulticlassPrecisionRecallCurve <MulticlassPrecisionRecallCurve>`
 
     Args:
         num_labels (int): Number of labels.

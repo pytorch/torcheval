@@ -32,6 +32,7 @@ class BinaryRecallAtFixedPrecision(Metric[Tuple[torch.Tensor, torch.Tensor]]):
     for binary classification tasks.
 
     Its functional version is :func:`torcheval.metrics.functional.binary_recall_at_fixed_precision`.
+    See also :class:`MultilabelRecallAtFixedPrecision <MultilabelRecallAtFixedPrecision>`
 
     Args:
         min_precision (float): Minimum precision threshold
@@ -111,6 +112,7 @@ class MultilabelRecallAtFixedPrecision(
     equivalent to _binary_recall_at_fixed_precision_compute in BinaryRecallAtFixedPrecision.
 
     Its functional version is :func:`torcheval.metrics.functional.multilabel_recall_at_fixed_precision`.
+    See also :class:`BinaryRecallAtFixedPrecision <BinaryRecallAtFixedPrecision>`
 
     Args:
         num_labels (int): Number of labels

@@ -37,6 +37,7 @@ class BinaryBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
         num_tasks (int):  Number of tasks that need binary_binned_auroc calculation. Default value
                     is 1. binary_binned_auroc for each task will be calculated independently.
         threshold: A integeter representing number of bins, a list of thresholds, or a tensor of thresholds.
+    See also :class:`MulticlassBinnedAUROC <MulticlassBinnedAUROC>`
 
 
     Examples::
@@ -150,6 +151,7 @@ class MulticlassBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
     """
     Compute AUROC, which is the area under the ROC Curve, for multiclass classification.
     Its functional version is :func:`torcheval.metrics.functional.multiclass_binned_auroc`.
+    See also :class:`BinaryBinnedAUROC <BinaryBinnedAUROC>`
 
     Args:
         num_classes (int): Number of classes.

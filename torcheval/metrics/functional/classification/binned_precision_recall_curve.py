@@ -25,6 +25,7 @@ def binary_binned_precision_recall_curve(
     """
     Compute precision recall curve with given thresholds.
     Its class version is ``torcheval.metrics.BinaryBinnedPrecisionRecallCurve``.
+    See also :func:`multiclass_binned_precision_recall_curve <torcheval.metrics.functional.multiclass_binned_precision_recall_curve>`
 
     Args:
         input (Tensor): Tensor of label predictions
@@ -121,6 +122,7 @@ def multiclass_binned_precision_recall_curve(
     """
     Compute precision recall curve with given thresholds.
     Its class version is ``torcheval.metrics.MulticlassBinnedPrecisionRecallCurve``.
+    See also :func:`binary_binned_precision_recall_curve <torcheval.metrics.functional.binary_binned_precision_recall_curve>`
 
     Args:
         input (Tensor): Tensor of label predictions

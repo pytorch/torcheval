@@ -26,6 +26,7 @@ TBinaryConfusionMatrix = TypeVar("TBinaryConfusionMatrix")
 class MulticlassConfusionMatrix(Metric[torch.Tensor]):
     """
     Compute multi-class confusion matrix, a matrix of dimension num_classes x num_classes where each element at position `(i,j)` is the number of examples with true class `i` that were predicted to be class `j`.
+    See also :class:`BinaryConfusionMatrix <BinaryConfusionMatrix>`
 
     Args:
         input (Tensor): Tensor of label predictions.
@@ -212,6 +213,7 @@ class MulticlassConfusionMatrix(Metric[torch.Tensor]):
 class BinaryConfusionMatrix(MulticlassConfusionMatrix):
     """
     Compute binary confusion matrix, a 2 by 2 tensor with counts ( (true positive, false negative) , (false positive, true negative) )
+    See also :class:`MulticlassConfusionMatrix <MulticlassConfusionMatrix>`
 
     Args:
         input (Tensor): Tensor of label predictions with shape of (n_sample,).

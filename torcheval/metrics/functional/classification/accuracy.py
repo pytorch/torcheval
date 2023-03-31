@@ -19,6 +19,7 @@ def binary_accuracy(
     """
     Compute binary accuracy score, which is the frequency of input matching target.
     Its class version is :obj:`torcheval.metrics.BinaryAccuracy`.
+    See also :func:`multiclass_accuracy <torcheval.metrics.functional.multiclass_accuracy>`, :func:`multilabel_accuracy <torcheval.metrics.functional.multilabel_accuracy>`, :func:`topk_multilabel_accuracy <torcheval.metrics.functional.topk_multilabel_accuracy>`
 
     Args:
         input (Tensor): Tensor of label predictions with shape of (n_sample,).
@@ -57,6 +58,7 @@ def multiclass_accuracy(
     """
     Compute accuracy score, which is the frequency of input matching target.
     Its class version is ``torcheval.metrics.MultiClassAccuracy``.
+    See also :func:`binary_accuracy <torcheval.metrics.functional.binary_accuracy>`, :func:`multilabel_accuracy <torcheval.metrics.functional.multilabel_accuracy>`, :func:`topk_multilabel_accuracy <torcheval.metrics.functional.topk_multilabel_accuracy>`
 
     Args:
         input (Tensor): Tensor of label predictions
@@ -114,6 +116,7 @@ def multilabel_accuracy(
     """
     Compute multilabel accuracy score, which is the frequency of input matching target.
     Its class version is ``torcheval.metrics.MultilabelAccuracy``.
+    See also :func:`binary_accuracy <torcheval.metrics.functional.binary_accuracy>`, :func:`multiclass_accuracy <torcheval.metrics.functional.multiclass_accuracy>`, :func:`topk_multilabel_accuracy <torcheval.metrics.functional.topk_multilabel_accuracy>`
 
     Args:
         input (Tensor): Tensor of label predictions with shape of (n_sample, n_class).
@@ -184,6 +187,7 @@ def topk_multilabel_accuracy(
     """
     Compute multilabel accuracy score, which is the frequency of the top k label predicted matching target.
     Its class version is ``torcheval.metrics.TopKMultilabelAccuracy``.
+    See also :func:`binary_accuracy <torcheval.metrics.functional.binary_accuracy>`, :func:`multiclass_accuracy <torcheval.metrics.functional.multiclass_accuracy>`, :func:`multilabel_accuracy <torcheval.metrics.functional.multilabel_accuracy>`
 
     Args:
         input (Tensor): Tensor of logits/probabilities with shape of (n_sample, n_class).

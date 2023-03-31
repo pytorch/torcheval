@@ -40,6 +40,7 @@ class BinaryAUROC(Metric[torch.Tensor]):
     Multiple tasks are supported for Binary AUROC. A two-dimensional vector can given for the predicted values (inputs) and targets. This gives equivalent results to having one BinaryAUROC object for each row.
 
     Its functional version is :func:`torcheval.metrics.functional.binary_auroc`.
+    See also :class:`MulticlassAUROC <MulticlassAUROC>`
 
     Examples::
 
@@ -162,6 +163,7 @@ class MulticlassAUROC(Metric[torch.Tensor]):
     See examples below for more details on the connection between Multiclass and Binary AUROC.
 
     The functional version of this metric is :func:`torcheval.metrics.functional.multiclass_auroc`.
+    See also :class:`BinaryAUROC <BinaryAUROC>`
 
     Args:
         num_classes (int): Number of classes.

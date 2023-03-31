@@ -21,6 +21,7 @@ def binary_f1_score(
 ) -> torch.Tensor:
     """
     Compute binary f1 score, the harmonic mean of precision and recall.
+    See also :func:`multiclass_f1_score <torcheval.metrics.functional.multiclass_f1_score>`
 
     Args:
         input (Tensor): Tensor of label predictions with shape of (n_sample,).
@@ -61,6 +62,7 @@ def multiclass_f1_score(
     We convert NaN to zero when f1 score is NaN. This happens when either precision
     or recall is NaN or when both precision and recall are zero.
     Its class version is ``torcheval.metrics.MultiClassF1Score``.
+    See also :func:`binary_f1_score <torcheval.metrics.functional.binary_f1_score>`
 
     Args:
         input (Tensor): Tensor of label predictions.
