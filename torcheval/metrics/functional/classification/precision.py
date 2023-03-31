@@ -24,6 +24,7 @@ def binary_precision(
     Compute precision score for binary classification class, which is calculated as the ratio between the number of
     true positives (TP) and the total number of predicted positives (TP + FP).
     Its class version is ``torcheval.metrics.BinaryPrecision``.
+    See also :func:`multiclass_precision <torcheval.metrics.functional.multiclass_precision>`
 
     Args:
         input (Tensor): Tensor of label predictions
@@ -63,6 +64,7 @@ def multiclass_precision(
     Compute precision score, which is the ratio of the true positives (TP) and the
     total number of points classified as positives (TP + FP).
     Its class version is ``torcheval.metrics.MultiClassPrecision``.
+    See also :func:`binary_precision <torcheval.metrics.functional.binary_precision>`
 
     Args:
         input (Tensor): Tensor of label predictions

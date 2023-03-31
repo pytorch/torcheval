@@ -29,6 +29,7 @@ def binary_recall_at_fixed_precision(
     for binary classification tasks.
 
     Its class version is ``torcheval.metrics.BinaryRecallAtFixedPrecision``.
+    See also :func:`multilabel_recall_at_fixed_precision <torcheval.metrics.functional.multilabel_recall_at_fixed_precision>`
 
     Args:
         input (Tensor): Tensor of label predictions
@@ -83,6 +84,7 @@ def multilabel_recall_at_fixed_precision(
     equivalent to _binary_recall_at_fixed_precision_compute in binary_recall_at_fixed_precision.
 
     Its class version is ``torcheval.metrics.MultilabelRecallAtFixedPrecision``.
+    See also :func:`binary_recall_at_fixed_precision <torcheval.metrics.functional.binary_recall_at_fixed_precision>`
 
     Args:
         input (Tensor): Tensor of label predictions

@@ -28,6 +28,7 @@ class MulticlassPrecision(Metric[torch.Tensor]):
     true positives and false positives.
     Its functional version is :func:`torcheval.metrics.functional.multiclass_precision`.
     We cast NaNs to 0 in case some classes have zero instances in the predictions.
+    See also :class:`BinaryPrecision <BinaryPrecision>`
 
     Args:
         num_classes (int):
@@ -159,6 +160,7 @@ class BinaryPrecision(MulticlassPrecision):
     Its functional version is :func:`torcheval.metrics.functional.binary_precision`.
     We cast NaNs to 0 when classes have zero positive instances in prediction labels
     (when TP + FP = 0).
+    See also :class:`MulticlassPrecision <MulticlassPrecision>`
 
     Args:
         threshold (float, default = 0.5): Threshold for converting input into predicted labels for each sample.

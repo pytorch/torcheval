@@ -33,6 +33,7 @@ class MulticlassAccuracy(Metric[torch.Tensor]):
     """
     Compute accuracy score, which is the frequency of input matching target.
     Its functional version is :func:`torcheval.metrics.functional.multiclass_accuracy`.
+    See also :class:`BinaryAccuracy <BinaryAccuracy>`, :class:`MultilabelAccuracy <MultilabelAccuracy>`, :class:`TopKMultilabelAccuracy <TopKMultilabelAccuracy>`
 
     Args:
         average (str, Optional)
@@ -148,6 +149,7 @@ class BinaryAccuracy(MulticlassAccuracy):
     """
     Compute binary accuracy score, which is the frequency of input matching target.
     Its functional version is :func:`torcheval.metrics.functional.binary_accuracy`.
+    See also :class:`MulticlassAccuracy <MulticlassAccuracy>`, :class:`MultilabelAccuracy <MultilabelAccuracy>`, :class:`TopKMultilabelAccuracy <TopKMultilabelAccuracy>`
 
     Args:
 
@@ -208,6 +210,7 @@ class MultilabelAccuracy(MulticlassAccuracy):
     """
     Compute multilabel accuracy score, which is the frequency of input matching target.
     Its functional version is :func:`torcheval.metrics.functional.multilabel_accuracy`.
+    See also :class:`MulticlassAccuracy <MulticlassAccuracy>`, :class:`BinaryAccuracy <BinaryAccuracy>`, :class:`TopKMultilabelAccuracy <TopKMultilabelAccuracy>`
 
     Args:
         threshold (float, Optional): Threshold for converting input into predicted labels for each sample.
@@ -306,6 +309,7 @@ class TopKMultilabelAccuracy(MulticlassAccuracy):
     """
     Compute multilabel accuracy score, which is the frequency of the top k label predicted matching target.
     Its functional version is :func:`torcheval.metrics.functional.topk_multilabel_accuracy`.
+    See also :class:`MulticlassAccuracy <MulticlassAccuracy>`, :class:`BinaryAccuracy <BinaryAccuracy>`, :class:`MultilabelAccuracy <MultilabelAccuracy>`
 
     Args:
         criteria (string):

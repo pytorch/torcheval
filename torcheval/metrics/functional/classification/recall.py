@@ -21,6 +21,7 @@ def binary_recall(
     Compute recall score for binary classification class, which is calculated as the ratio between the number of
     true positives (TP) and the total number of actual positives (TP + FN).
     Its class version is ``torcheval.metrics.BinaryRecall``.
+    See also :func:`multiclass_recall <torcheval.metrics.functional.multiclass_recall>`
 
     Args:
         input (Tensor): Tensor of the predicted labels/logits/probabilities, with shape of (n_sample, ).
@@ -104,6 +105,7 @@ def multiclass_recall(
     Compute recall score, which is calculated as the ratio between the number of
     true positives (TP) and the total number of actual positives (TP + FN).
     Its class version is ``torcheval.metrics.MultiClassRecall``.
+    See also :func:`binary_recall <torcheval.metrics.functional.binary_recall>`
 
     Args:
         input (Tensor): Tensor of label predictions

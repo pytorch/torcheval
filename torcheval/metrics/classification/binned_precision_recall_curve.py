@@ -30,6 +30,7 @@ class BinaryBinnedPrecisionRecallCurve(
     """
     Compute precision recall curve with given thresholds.
     Its functional version is :func:`torcheval.metrics.functional.binary_binned_precision_recall_curve`.
+    See also :class:`MulticlassBinnedPrecisionRecallCurve <MulticlassBinnedPrecisionRecallCurve>`
 
     Args:
         threshold (Union[int, List[float], torch.Tensor], Optional):
@@ -135,6 +136,7 @@ class MulticlassBinnedPrecisionRecallCurve(
     """
     Compute precision recall curve with given thresholds.
     Its functional version is :func:`torcheval.metrics.functional.multiclass_binned_precision_recall_curve`.
+    See also :class:`BinaryBinnedPrecisionRecallCurve <BinaryBinnedPrecisionRecallCurve>`
 
     Args:
         num_classes (int):

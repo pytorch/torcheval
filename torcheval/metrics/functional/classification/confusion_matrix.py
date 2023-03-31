@@ -21,6 +21,7 @@ def binary_confusion_matrix(
 ) -> torch.Tensor:
     """
     Compute binary confusion matrix, a 2 by 2 tensor with counts ( (true positive, false negative) , (false positive, true negative) )
+    See also :func:`multiclass_confusion_matrix <torcheval.metrics.functional.multiclass_confusion_matrix>`
 
     Args:
         input (Tensor): Tensor of label predictions with shape of (n_sample,).
@@ -74,6 +75,7 @@ def multiclass_confusion_matrix(
 ) -> torch.Tensor:
     """
     Compute multi-class confusion matrix, a matrix of dimension num_classes x num_classes where each element at position `(i,j)` is the number of examples with true class `i` that were predicted to be class `j`.
+    See also :func:`binary_confusion_matrix <torcheval.metrics.functional.binary_confusion_matrix>`
 
     Args:
         input (Tensor): Tensor of label predictions.

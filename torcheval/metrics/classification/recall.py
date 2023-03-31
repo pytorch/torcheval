@@ -30,6 +30,7 @@ class BinaryRecall(Metric[torch.Tensor]):
     Its functional version is :func:`torcheval.metrics.functional.binary_recall`.
     We cast NaNs to 0 when classes have zero instances in the ground-truth labels
     (when TP + FN = 0).
+    See also :class:`MulticlassRecall <MulticlassRecall>`
 
     Args:
         threshold (float, default 0.5): Threshold for converting input into predicted labels for each sample.
@@ -117,6 +118,7 @@ class MulticlassRecall(Metric[torch.Tensor]):
     Its functional version is :func:`torcheval.metrics.functional.multiclass_recall`.
     We cast NaNs to 0 when classes have zero instances in the ground-truth labels
     (when TP + FN = 0).
+    See also :class:`BinaryRecall <BinaryRecall>`
 
     Args:
         num_classes (int):

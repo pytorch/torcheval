@@ -29,6 +29,7 @@ class MulticlassF1Score(Metric[torch.Tensor]):
     We convert NaN to zero when f1 score is NaN. This happens when either precision
     or recall is NaN or when both precision and recall are zero.
     Its functional version is :func:`torcheval.metrics.functional.multi_class_f1_score`.
+    See also :class:`BinaryF1Score <BinaryF1Score>`
 
     Args:
         num_classes (int):
@@ -160,6 +161,7 @@ class BinaryF1Score(MulticlassF1Score):
     We convert NaN to zero when f1 score is NaN. This happens when either precision
     or recall is NaN or when both precision and recall are zero.
     Its functional version is :func:``torcheval.metrics.functional.binary_f1_score``.
+    See also :class:`MulticlassF1Score <MulticlassF1Score>`
 
     Args:
         threshold (float, optional) : Threshold for converting input into predicted labels for each sample.
