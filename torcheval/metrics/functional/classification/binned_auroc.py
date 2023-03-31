@@ -93,6 +93,10 @@ def _binary_binned_auroc_update_input_check(
             "The `input` and `target` should have the same shape, "
             f"got shapes {input.shape} and {target.shape}."
         )
+    if len(input.shape) > 2:
+        raise ValueError(
+            f"`input` is expected to be two dimensions or less, but got {len(input.shape)}D tensor."
+        )
     if num_tasks == 1:
         if len(input.shape) > 1:
             raise ValueError(

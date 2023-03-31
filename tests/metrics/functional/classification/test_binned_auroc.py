@@ -125,6 +125,12 @@ class TestBinaryBinnedAUROC(unittest.TestCase):
             binary_binned_auroc(torch.rand(3, 2), torch.rand(3, 2))
 
         with self.assertRaisesRegex(
+            ValueError,
+            "`input` is expected to be two dimensions or less, but got 3D tensor.",
+        ):
+            binary_binned_auroc(torch.rand(3, 2, 2), torch.rand(3, 2, 2), num_tasks=2)
+
+        with self.assertRaisesRegex(
             ValueError, "The `threshold` should be a sorted tensor."
         ):
             binary_binned_auroc(

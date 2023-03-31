@@ -143,20 +143,19 @@ def _binary_binned_auprc_update_input_check(
             "The `input` and `target` should have the same shape, "
             f"got shapes {input.shape} and {target.shape}."
         )
-    if num_tasks == 1:
-        if input.ndim == 2 and input.shape[0] > 1:
+    elif num_tasks == 1:
+        # for num_tasks = 1, accept 1D or 2D tensor
+        if input.ndim not in (1, 2):
             raise ValueError(
-                f"`num_tasks = 1`, `input` and `target` are expected to be one-dimensional tensors or 1xN tensors, but got shape input: {input.shape}, target: {target.shape}."
+                f"`num_tasks = 1`, `input` is expected to be 1D or 2D tensor, but got shape {input.shape}."
             )
-        elif input.ndim > 2:
+    else:
+        # for num_tasks > 1, accept 2D tensor only, and the shape should be (num_tasks, num_samples)
+        if input.ndim != 2:
             raise ValueError(
-                f"`num_tasks = 1`, `input` and `target` are expected to be one-dimensional tensors or 1xN tensors, but got shape input: {input.shape}, target: {target.shape}."
+                f"`num_tasks = {num_tasks}`, `input` is expected to be 2D tensor, but got shape {input.shape}."
             )
-    elif input.shape[0] != num_tasks:
-        raise ValueError(
-            f"`num_tasks = {num_tasks}`, `input` and `target` shape is expected to be ({num_tasks}, num_samples), but got shape input: {input.shape}, target: {target.shape}."
-        )
-    elif threshold.ndim != 1:
-        raise ValueError(
-            f"`threshold` should be 1-dimensional, but got {threshold.ndim}D tensor."
-        )
+        elif input.shape[0] != num_tasks:
+            raise ValueError(
+                f"`num_tasks = {num_tasks}`, `input`'s shape is expected to be ({num_tasks}, num_samples), but got shape {input.shape}."
+            )

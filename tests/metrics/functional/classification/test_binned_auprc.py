@@ -151,18 +151,32 @@ class TestBinaryBinnedAUPRC(unittest.TestCase):
 
         with self.assertRaisesRegex(
             ValueError,
-            "`num_tasks = 1`, `input` and `target` are expected to be one-dimensional tensors or 1xN tensors, but got shape input: "
-            r"torch.Size\(\[4, 5\]\), target: torch.Size\(\[4, 5\]\).",
-        ):
-            binary_binned_auprc(torch.rand(4, 5), torch.rand(4, 5))
-
-        with self.assertRaisesRegex(
-            ValueError,
-            "`num_tasks = 1`, `input` and `target` are expected to be one-dimensional tensors or 1xN tensors, but got shape input: "
-            r"torch.Size\(\[4, 5, 5\]\), target: torch.Size\(\[4, 5, 5\]\).",
+            "`num_tasks = 1`, `input` is expected to be 1D or 2D tensor, but got shape "
+            r"torch.Size\(\[4, 5, 5\]\).",
         ):
             binary_binned_auprc(torch.rand(4, 5, 5), torch.rand(4, 5, 5))
 
+        with self.assertRaisesRegex(
+            ValueError,
+            "`num_tasks = 2`, `input` is expected to be 2D tensor, but got shape "
+            r"torch.Size\(\[4, 5, 5\]\).",
+        ):
+            binary_binned_auprc(torch.rand(4, 5, 5), torch.rand(4, 5, 5), num_tasks=2)
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "`num_tasks = 2`, `input` is expected to be 2D tensor, but got shape "
+            r"torch.Size\(\[5\]\).",
+        ):
+            binary_binned_auprc(torch.rand(5), torch.rand(5), num_tasks=2)
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"`num_tasks = 2`, `input`'s shape is expected to be \(2, num_samples\), but got shape torch.Size\(\[4, 5\]\).",
+        ):
+            binary_binned_auprc(torch.rand(4, 5), torch.rand(4, 5), num_tasks=2)
+
+        # threshold checks
         with self.assertRaisesRegex(
             ValueError, "The `threshold` should be a sorted tensor."
         ):
