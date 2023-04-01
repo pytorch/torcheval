@@ -26,8 +26,8 @@ def binary_auprc(
     Compute AUPRC, also called Average Precision, which is the area under the Precision-Recall Curve, for binary classification.
     Its class version is ``torcheval.metrics.BinaryAUPRC``.
 
-    Precision is defined as :math:`\frac{T_p}{T_p+F_p}`, it is the probability that a positive prediction from the model is a true positive.
-    Recall is defined as :math:`\frac{T_p}{T_p+F_n}`, it is the probability that a true positive is predicted to be positive by the model.
+    Precision is defined as :math:`\frac{T_p}{T_p+F_p}`; it is the probability that a positive prediction from the model is a true positive.
+    Recall is defined as :math:`\frac{T_p}{T_p+F_n}`; it is the probability that a true positive is predicted to be positive by the model.
 
     The precision-recall curve plots the recall on the x axis and the precision on the y axis, both of which are bounded between 0 and 1.
     This function returns the area under that graph. If the area is near one, the model supports a threshold which correctly identifies
@@ -80,14 +80,14 @@ def multiclass_auprc(
     Compute AUPRC, also called Average Precision, which is the area under the Precision-Recall Curve, for multiclass classification.
     Its class version is ``torcheval.metrics.MulticlassAUPRC``.
 
-    Precision is defined as :math:`\frac{T_p}{T_p+F_p}`, it is the probability that a positive prediction from the model is a true positive.
-    Recall is defined as :math:`\frac{T_p}{T_p+F_n}`, it is the probability that a true positive is predicted to be positive by the model.
+    Precision is defined as :math:`\frac{T_p}{T_p+F_p}`; it is the probability that a positive prediction from the model is a true positive.
+    Recall is defined as :math:`\frac{T_p}{T_p+F_n}`; it is the probability that a true positive is predicted to be positive by the model.
 
     The precision-recall curve plots the recall on the x axis and the precision on the y axis, both of which are bounded between 0 and 1.
     This function returns the area under that graph. If the area is near one, the model supports a threshold which correctly identifies
     a high percentage of true positives while also rejecting enough false examples so that most of the true predictions are true positives.
 
-    In the multiclass version of auprc, the target tensor is a 1 dimensional and contains an integer entry representing the class for each example
+    In the multiclass version of auprc, the target tensor is 1-dimensional and contains an integer entry representing the class for each example
     in the input tensor. Each class is considered independently in a one-vs-all fashion, examples for that class are labeled condition true and all other
     classes are considered condition false.
 

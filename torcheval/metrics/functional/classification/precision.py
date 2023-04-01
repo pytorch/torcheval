@@ -147,7 +147,6 @@ def _precision_compute(
 ) -> torch.Tensor:
 
     if average in ("macro", "weighted"):
-
         # Ignore the class that has no samples in both `input` and `target`
         mask = (num_label != 0) | ((num_tp + num_fp) != 0)
         num_tp, num_fp = num_tp[mask], num_fp[mask]

@@ -79,7 +79,7 @@ def multiclass_accuracy(
         num_classes:
             Number of classes. Required for ``'macro'`` and ``None`` average methods.
         k: Number of top probabilities to be considered. K should be an integer greater than or equal to 1.
-            If k >1, the input tensor must contain probabilities or logits for every class.
+            If k > 1, the input tensor must contain probabilities or logits for every class.
 
     Examples::
 

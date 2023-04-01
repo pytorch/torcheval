@@ -20,6 +20,7 @@ from torcheval.metrics.classification.auroc import BinaryAUROC, MulticlassAUROC
 from torcheval.metrics.classification.binary_normalized_entropy import (
     BinaryNormalizedEntropy,
 )
+from torcheval.metrics.classification.binned_auprc import BinaryBinnedAUPRC
 from torcheval.metrics.classification.binned_auroc import (
     BinaryBinnedAUROC,
     MulticlassBinnedAUROC,
@@ -53,6 +54,7 @@ __all__ = [
     "BinaryAUPRC",
     "BinaryAUROC",
     "BinaryBinnedAUROC",
+    "BinaryBinnedAUPRC",
     "BinaryBinnedPrecisionRecallCurve",
     "BinaryConfusionMatrix",
     "BinaryF1Score",

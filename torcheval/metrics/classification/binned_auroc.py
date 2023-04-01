@@ -25,7 +25,7 @@ from torcheval.metrics.functional.classification.binned_precision_recall_curve i
 from torcheval.metrics.metric import Metric
 
 TBinaryBinnedAUROC = TypeVar("TBinaryBinnedAUROC")
-TMulticlasslBinnedAUROC = TypeVar("TMulticlasslBinnedAUROC")
+TMulticlassBinnedAUROC = TypeVar("TMulticlassBinnedAUROC")
 
 
 class BinaryBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
@@ -181,7 +181,7 @@ class MulticlassBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
     """
 
     def __init__(
-        self: TMulticlasslBinnedAUROC,
+        self: TMulticlassBinnedAUROC,
         *,
         num_classes: int,
         threshold: Union[int, List[float], torch.Tensor] = 200,
@@ -204,10 +204,10 @@ class MulticlassBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
     def update(
-        self: TMulticlasslBinnedAUROC,
+        self: TMulticlassBinnedAUROC,
         input: torch.Tensor,
         target: torch.Tensor,
-    ) -> TMulticlasslBinnedAUROC:
+    ) -> TMulticlassBinnedAUROC:
         """
         Update states with the ground truth labels and predictions.
 
@@ -223,7 +223,7 @@ class MulticlassBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
 
     @torch.inference_mode()
     def compute(
-        self: TMulticlasslBinnedAUROC,
+        self: TMulticlassBinnedAUROC,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         return _multiclass_binned_auroc_compute(
             torch.cat(self.inputs),
@@ -235,8 +235,8 @@ class MulticlassBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
 
     @torch.inference_mode()
     def merge_state(
-        self: TMulticlasslBinnedAUROC, metrics: Iterable[TMulticlasslBinnedAUROC]
-    ) -> TMulticlasslBinnedAUROC:
+        self: TMulticlassBinnedAUROC, metrics: Iterable[TMulticlassBinnedAUROC]
+    ) -> TMulticlassBinnedAUROC:
         for metric in metrics:
             if metric.inputs:
                 metric_inputs = torch.cat(metric.inputs).to(self.device)
@@ -246,7 +246,7 @@ class MulticlassBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
         return self
 
     @torch.inference_mode()
-    def _prepare_for_merge_state(self: TMulticlasslBinnedAUROC) -> None:
+    def _prepare_for_merge_state(self: TMulticlassBinnedAUROC) -> None:
         if self.inputs and self.targets:
             self.inputs = [torch.cat(self.inputs)]
             self.targets = [torch.cat(self.targets)]

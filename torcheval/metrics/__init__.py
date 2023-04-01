@@ -10,6 +10,7 @@ from torcheval.metrics.classification import (
     BinaryAccuracy,
     BinaryAUPRC,
     BinaryAUROC,
+    BinaryBinnedAUPRC,
     BinaryBinnedAUROC,
     BinaryBinnedPrecisionRecallCurve,
     BinaryConfusionMatrix,
