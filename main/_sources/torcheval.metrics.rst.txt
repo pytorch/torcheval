@@ -30,6 +30,7 @@ Classification Metrics
    BinaryAUPRC
    BinaryAUROC
    BinaryBinnedAUROC
+   BinaryBinnedAUPRC
    BinaryBinnedPrecisionRecallCurve
    BinaryConfusionMatrix
    BinaryF1Score
