@@ -165,15 +165,14 @@ def multiclass_binned_auroc(
                 the metric for every class.
 
     Examples::
-
         >>> import torch
         >>> from torcheval.metrics.functional import multiclass_binned_auroc
-        >>> input = torch.tensor([[0.1, 0.1, 0.1, 0.1], [0.5, 0.5, 0.5, 0.5], [0.7, 0.7, 0.7, 0.7], [0.8, 0.8, 0.8, 0.8]])
-        >>> target = torch.tensor([0, 1, 2, 3])
-        >>> multiclass_auroc(input, target, num_classes=4, threshold = 5)
-        0.5
-        >>> multiclass_binned_auroc(input, target, num_classes=4, threshold = 5, average=None)
-        tensor([0.0000, 0.3333, 0.6667, 1.0000])
+        >>> input = torch.tensor([[0.1, 0.2, 0.1], [0.4, 0.2, 0.1], [0.6, 0.1, 0.2], [0.4, 0.2, 0.3], [0.6, 0.2, 0.4]])
+        >>> target = torch.tensor([0, 1, 2, 1, 0])
+        >>> multiclass_binned_auroc(input, target, num_classes=3, threshold=5)
+        tensor(0.4000)
+        >>> multiclass_binned_auroc(input, target, num_classes=3, threshold=5, average=None)
+        tensor([0.5000, 0.2500, 0.2500, 0.0000, 1.0000])
     """
     threshold = _create_threshold_tensor(
         threshold,
