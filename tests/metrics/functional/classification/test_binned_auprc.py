@@ -69,7 +69,7 @@ class TestBinaryBinnedAUPRC(unittest.TestCase):
         num_updates = 1
 
         for _ in range(100):
-            input, target, threshold = rd.get_rand_inputs_binned_binary(
+            input, target, threshold = rd.get_rand_data_binned_binary(
                 num_updates, num_tasks, batch_size, num_bins
             )
             input = input.reshape(shape=(num_tasks, batch_size))
