@@ -36,7 +36,8 @@ from torcheval.metrics.classification import (
     MultilabelRecallAtFixedPrecision,
     TopKMultilabelAccuracy,
 )
-from torcheval.metrics.image.psnr import PeakSignalNoiseRatio
+
+from torcheval.metrics.image import FrechetInceptionDistance, PeakSignalNoiseRatio
 from torcheval.metrics.metric import Metric
 
 from torcheval.metrics.ranking import (
@@ -72,6 +73,7 @@ __all__ = [
     "BinaryAccuracy",
     "BinaryAUPRC",
     "BinaryAUROC",
+    "BinaryBinnedAUPRC",
     "BinaryBinnedAUROC",
     "BinaryBinnedPrecisionRecallCurve",
     "BinaryConfusionMatrix",
@@ -84,6 +86,7 @@ __all__ = [
     "BLEUScore",
     "Cat",
     "ClickThroughRate",
+    "FrechetInceptionDistance",
     "HitRate",
     "Max",
     "Mean",
@@ -103,12 +106,12 @@ __all__ = [
     "MultilabelAUPRC",
     "MultilabelPrecisionRecallCurve",
     "MultilabelRecallAtFixedPrecision",
+    "PeakSignalNoiseRatio",
     "Perplexity",
     "TopKMultilabelAccuracy",
     "R2Score",
     "ReciprocalRank",
     "Sum",
-    "PeakSignalNoiseRatio",
     "Throughput",
     "WeightedCalibration",
     "WindowedBinaryAUROC",
