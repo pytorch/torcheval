@@ -77,5 +77,8 @@ if __name__ == "__main__":
             "Programming Language :: Python :: 3.7",
             "Topic :: Scientific/Engineering :: Artificial Intelligence",
         ],
-        extras_require={"dev": read_requirements("dev-requirements.txt")},
+        extras_require={
+            "dev": read_requirements("dev-requirements.txt"),
+            "image": read_requirements("image-requirements.txt"),
+        },
     )

@@ -45,6 +45,7 @@ class _MetricClassTestCaseSpecs:
     num_processes: int = NUM_PROCESSES
     atol: float = 1e-8
     rtol: float = 1e-5
+    min_updates_before_compute: int = 0
     device: Literal["cuda", "cpu"] = "cpu"
 
 
@@ -64,6 +65,7 @@ class MetricClassTester(unittest.TestCase):
         num_total_updates: int = NUM_TOTAL_UPDATES,
         num_processes: int = NUM_PROCESSES,
         test_merge_with_one_update: bool = True,
+        min_updates_before_compute: int = 0,
         atol: float = 1e-8,
         rtol: float = 1e-5,
         test_devices: Optional[List[str]] = None,
@@ -91,6 +93,7 @@ class MetricClassTester(unittest.TestCase):
                 ``num_processes``.
             test_merge_with_one_update: Whether to test merge_state when there's only
                 one update call applied to all metric instances.
+            min_updates_before_compute: Minimum number of updates before testing compute.
             atol: Absolute tolerance used in ``torch.testing.assert_close``
             rtol: Relative tolerance used in ``torch.testing.assert_close``
             test_devices: List of test devices. If None, will be determined
@@ -124,6 +127,7 @@ class MetricClassTester(unittest.TestCase):
             num_processes,
             atol,
             rtol,
+            min_updates_before_compute,
         )
 
         if test_devices is None:
@@ -172,7 +176,10 @@ class MetricClassTester(unittest.TestCase):
             current_batch_update_kwargs = {
                 k: v[i] for k, v in self._test_case_spec.update_kwargs.items()
             }
-            result = test_metric.update(**current_batch_update_kwargs).compute()
+            if i >= self._test_case_spec.min_updates_before_compute:
+                result = test_metric.update(**current_batch_update_kwargs).compute()
+            else:
+                test_metric.update(**current_batch_update_kwargs)
 
         final_computation_result = test_metric.compute()
         # compute result from single process should be same as one merged from multiple processes
@@ -234,7 +241,9 @@ class MetricClassTester(unittest.TestCase):
                     k: v[i * num_total_updates // num_processes + j]
                     for k, v in self._test_case_spec.update_kwargs.items()
                 }
-                test_metrics[i].update(**metric_i_current_batch_update_kwargs).compute()
+                test_metrics[i].update(**metric_i_current_batch_update_kwargs)
+                if j >= self._test_case_spec.min_updates_before_compute:
+                    test_metrics[i].compute()
         test_metrics_unmerged = [deepcopy(metric) for metric in test_metrics]
         final_computation_result = (
             test_metrics[0].merge_state(test_metrics[1:]).compute()
@@ -319,7 +328,9 @@ class MetricClassTester(unittest.TestCase):
                 k: v[rank * num_total_updates // num_processes + i]
                 for k, v in test_spec.update_kwargs.items()
             }
-            metric.update(**metric_current_batch_update_kwargs).compute()
+            metric.update(**metric_current_batch_update_kwargs)
+            if i >= test_spec.min_updates_before_compute:
+                metric.compute()
         final_computation_result = sync_and_compute(metric)
         if rank == 0:
             assert_result_close(
