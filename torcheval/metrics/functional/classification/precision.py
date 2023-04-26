@@ -227,8 +227,8 @@ def _binary_precision_update(
     _binary_precision_update_input_check(input, target)
 
     input = torch.where(input < threshold, 0, 1)
-    num_tp = (input & target).sum()
-    num_fp = (input & (~target)).sum()
+    num_tp = (input * target).sum(dim=-1)
+    num_fp = input.sum(dim=-1) - num_tp
 
     num_label = torch.tensor(0.0)
 
