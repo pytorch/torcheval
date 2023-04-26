@@ -72,6 +72,7 @@ __all__ = [
     "BinaryAccuracy",
     "BinaryAUPRC",
     "BinaryAUROC",
+    "BinaryBinnedAUPRC",
     "BinaryBinnedAUROC",
     "BinaryBinnedPrecisionRecallCurve",
     "BinaryConfusionMatrix",
