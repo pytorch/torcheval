@@ -1,0 +1,35 @@
+﻿torcheval.metrics.FrechetInceptionDistance
+==========================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: FrechetInceptionDistance
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~FrechetInceptionDistance.__init__
+      ~FrechetInceptionDistance.compute
+      ~FrechetInceptionDistance.load_state_dict
+      ~FrechetInceptionDistance.merge_state
+      ~FrechetInceptionDistance.reset
+      ~FrechetInceptionDistance.state_dict
+      ~FrechetInceptionDistance.to
+      ~FrechetInceptionDistance.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~FrechetInceptionDistance.device
+   
+   
