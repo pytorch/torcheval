@@ -185,7 +185,7 @@ class FlopTensorDispatchMode(TorchDispatchMode):
         >>> from torcheval.tools.flops import FlopTensorDispatchMode
 
         >>> module = models.resnet18()
-        >>> inp = torch.randn(1, 3, 224, 224)
+        >>> module_input = torch.randn(1, 3, 224, 224)
         >>> with FlopTensorDispatchMode(module) as ftdm:
         >>>     # count forward flops
         >>>     res = module(module_input).mean()
