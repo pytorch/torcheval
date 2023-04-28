@@ -85,6 +85,41 @@ def get_rand_data_multiclass(
     return input.to(device), targets.to(device)
 
 
+def get_rand_data_multilabel(
+    num_updates: int,
+    num_labels: int,
+    batch_size: int,
+    device: Optional[torch.device] = None,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    """
+    Generates a random multilabel dataset.
+
+    Notes:
+        - If num_updates is 1, the update dimension will be omitted; input tensors will have shape (batch_size, num_labels) and target tensor will have shape (batch_size, ).
+
+    Args:
+        num_updates: the number of calls to update on each rank.
+        num_labels: the number of labels for the dataset.
+        batch_size: batch size of the dataset.
+
+    Returns:
+        torch.Tensor: random feature data
+        torch.Tensor: random targets
+    """
+    if device is None:
+        device = torch.device("cpu")
+
+    input_shape = [num_updates, batch_size, num_labels]
+    targets_shape = [num_updates, batch_size, num_labels]
+    if num_updates == 1:
+        input_shape = [batch_size, num_labels]
+        targets_shape = [batch_size, num_labels]
+
+    input = torch.rand(size=input_shape)
+    targets = torch.randint(low=0, high=2, size=targets_shape)
+    return input.to(device), targets.to(device)
+
+
 def get_rand_data_binned_binary(
     num_updates: int,
     num_tasks: int,
