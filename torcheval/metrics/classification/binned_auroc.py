@@ -36,7 +36,7 @@ class BinaryBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
     Args:
         num_tasks (int):  Number of tasks that need binary_binned_auroc calculation. Default value
                     is 1. binary_binned_auroc for each task will be calculated independently.
-        threshold: A integeter representing number of bins, a list of thresholds, or a tensor of thresholds.
+        threshold: A integer representing number of bins, a list of thresholds, or a tensor of thresholds.
     See also :class:`MulticlassBinnedAUROC <MulticlassBinnedAUROC>`
 
 

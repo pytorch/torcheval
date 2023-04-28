@@ -30,6 +30,7 @@ from torcheval.metrics.functional.classification.binned_auroc import (
 from torcheval.metrics.functional.classification.binned_precision_recall_curve import (
     binary_binned_precision_recall_curve,
     multiclass_binned_precision_recall_curve,
+    multilabel_binned_precision_recall_curve,
 )
 from torcheval.metrics.functional.classification.confusion_matrix import (
     binary_confusion_matrix,
@@ -82,6 +83,7 @@ __all__ = [
     "multiclass_recall",
     "multilabel_accuracy",
     "multilabel_auprc",
+    "multilabel_binned_precision_recall_curve",
     "multilabel_precision_recall_curve",
     "multilabel_recall_at_fixed_precision",
     "topk_multilabel_accuracy",

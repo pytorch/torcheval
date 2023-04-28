@@ -11,6 +11,7 @@ import torch
 from torcheval.metrics.functional import (
     binary_binned_precision_recall_curve,
     multiclass_binned_precision_recall_curve,
+    multilabel_binned_precision_recall_curve,
 )
 
 
@@ -291,6 +292,126 @@ class TestMulticlassBinnedPrecisionRecallCurve(unittest.TestCase):
             r"The values in `threshold` should be in the range of \[0, 1\].",
         ):
             multiclass_binned_precision_recall_curve(
+                torch.rand(4),
+                torch.rand(4),
+                threshold=torch.tensor([0.1, 0.2, 0.5, 1.7]),
+            )
+
+
+class TestMultilabelBinnedPrecisionRecallCurve(unittest.TestCase):
+    def test_multilabel_binned_precision_recall_curve_base(self) -> None:
+        input = torch.tensor(
+            [
+                [0.75, 0.05, 0.35],
+                [0.45, 0.75, 0.05],
+                [0.05, 0.55, 0.75],
+                [0.05, 0.65, 0.05],
+            ]
+        )
+        target = torch.tensor([[1, 0, 1], [0, 0, 0], [0, 1, 1], [1, 1, 1]])
+
+        num_labels = 3
+
+        threshold = 5
+        my_compute_result = multilabel_binned_precision_recall_curve(
+            input, target, num_labels, threshold
+        )
+        expected_result = (
+            [
+                torch.tensor([0.5000, 0.5000, 1.0000, 1.0000, 1.0000, 1.0000]),
+                torch.tensor([0.5000, 0.6667, 0.6667, 0.0000, 1.0000, 1.0000]),
+                torch.tensor([0.7500, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000]),
+            ],
+            [
+                torch.tensor([1.0000, 0.5000, 0.5000, 0.5000, 0.0000, 0.0000]),
+                torch.tensor([1.0, 1.0, 1.0, 0.0, 0.0, 0.0]),
+                torch.tensor([1.0000, 0.6667, 0.3333, 0.3333, 0.0000, 0.0000]),
+            ],
+            torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
+        )
+        torch.testing.assert_close(
+            my_compute_result,
+            expected_result,
+            equal_nan=True,
+            atol=1e-4,
+            rtol=1e-4,
+        )
+
+        threshold = torch.tensor([0.0, 0.2, 0.5, 0.8, 1.0])
+        my_compute_result = multilabel_binned_precision_recall_curve(
+            input, target, num_labels, threshold
+        )
+        expected_result = (
+            [
+                torch.tensor([0.5000, 0.5000, 1.0000, 1.0000, 1.0000, 1.0000]),
+                torch.tensor([0.5000, 0.6667, 0.6667, 1.0000, 1.0000, 1.0000]),
+                torch.tensor([0.7500, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000]),
+            ],
+            [
+                torch.tensor([1.0000, 0.5000, 0.5000, 0.0000, 0.0000, 0.0000]),
+                torch.tensor([1.0, 1.0, 1.0, 0.0, 0.0, 0.0]),
+                torch.tensor([1.0000, 0.6667, 0.3333, 0.0000, 0.0000, 0.0000]),
+            ],
+            torch.tensor([0.0000, 0.2000, 0.5000, 0.8000, 1.0000]),
+        )
+
+        torch.testing.assert_close(
+            my_compute_result,
+            expected_result,
+            equal_nan=True,
+            atol=1e-4,
+            rtol=1e-4,
+        )
+
+    def test_multilabel_binned_precision_recall_curve_invalid_input(self) -> None:
+        with self.assertRaisesRegex(
+            ValueError,
+            "Expected both input.shape and target.shape to have the same shape"
+            r" but got torch.Size\(\[4, 2\]\) and torch.Size\(\[3\]\).",
+        ):
+            multilabel_binned_precision_recall_curve(
+                torch.rand(4, 2), torch.rand(3), num_labels=3
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "input should be a two-dimensional tensor, got shape "
+            r"torch.Size\(\[3\]\).",
+        ):
+            multilabel_binned_precision_recall_curve(
+                torch.rand(3), torch.rand(3), num_labels=3
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "input should have shape of "
+            r"\(num_sample, num_labels\), got torch.Size\(\[4, 2\]\) and num_labels=3.",
+        ):
+            multilabel_binned_precision_recall_curve(
+                torch.rand(4, 2), torch.rand(4, 2), num_labels=3
+            )
+        with self.assertRaisesRegex(
+            ValueError, "The `threshold` should be a sorted tensor."
+        ):
+            multilabel_binned_precision_recall_curve(
+                torch.rand(4),
+                torch.rand(4),
+                threshold=torch.tensor([0.1, 0.2, 0.5, 0.7, 0.6]),
+            )
+        with self.assertRaisesRegex(
+            ValueError,
+            r"The values in `threshold` should be in the range of \[0, 1\].",
+        ):
+            multilabel_binned_precision_recall_curve(
+                torch.rand(4),
+                torch.rand(4),
+                threshold=torch.tensor([-0.1, 0.2, 0.5, 0.7]),
+            )
+        with self.assertRaisesRegex(
+            ValueError,
+            r"The values in `threshold` should be in the range of \[0, 1\].",
+        ):
+            multilabel_binned_precision_recall_curve(
                 torch.rand(4),
                 torch.rand(4),
                 threshold=torch.tensor([0.1, 0.2, 0.5, 1.7]),

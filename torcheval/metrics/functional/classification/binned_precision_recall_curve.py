@@ -11,6 +11,7 @@ from torch.nn import functional as F
 from torcheval.metrics.functional.classification.precision_recall_curve import (
     _binary_precision_recall_curve_update_input_check,
     _multiclass_precision_recall_curve_update_input_check,
+    _multilabel_precision_recall_curve_update_input_check,
 )
 from torcheval.metrics.functional.tensor_utils import _create_threshold_tensor
 
@@ -232,6 +233,138 @@ def _multiclass_binned_precision_recall_curve_compute(
     assert isinstance(num_classes, int)
     precision = torch.cat([precision, precision.new_ones(1, num_classes)], dim=0)
     recall = torch.cat([recall, recall.new_zeros(1, num_classes)], dim=0)
+
+    return (
+        list(precision.T),
+        list(recall.T),
+        threshold,
+    )
+
+
+@torch.inference_mode()
+def multilabel_binned_precision_recall_curve(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    num_labels: Optional[int] = None,
+    threshold: Union[int, List[float], torch.Tensor] = 100,
+) -> Tuple[List[torch.Tensor], List[torch.Tensor], torch.Tensor]:
+    """
+    Compute precision recall curve with given thresholds.
+    Its class version is ``torcheval.metrics.MultilabelBinnedPrecisionRecallCurve``.
+    See also :func:`binary_binned_precision_recall_curve <torcheval.metrics.functional.binary_binned_precision_recall_curve>`,
+    :func:`multiclass_precision_recall_curve <torcheval.metrics.functional.multiclass_precision_recall_curve>`
+
+    Args:
+        input (Tensor): Tensor of label predictions
+            It should be probabilities or logits with shape of (n_sample, n_label).
+        target (Tensor): Tensor of ground truth labels with shape of (n_samples, n_label).
+        num_labels (Optional): Number of labels.
+        threshold:
+            a integer representing number of bins, a list of thresholds,
+            or a tensor of thresholds.
+
+    Return:
+        a tuple of (precision: List[torch.Tensor], recall: List[torch.Tensor], thresholds: List[torch.Tensor])
+            precision: List of precision result. Each index indicates the result of a label.
+            recall: List of recall result. Each index indicates the result of a label.
+            thresholds: List of threshold. Each index indicates the result of a label.
+
+    Examples::
+
+        >>> import torch
+        >>> from torcheval.metrics.functional import multilabel_binned_precision_recall_curve
+        >>> input = torch.tensor([[0.75, 0.05, 0.35], [0.45, 0.75, 0.05], [0.05, 0.55, 0.75], [0.05, 0.65, 0.05]])
+        >>> target = torch.tensor([[1, 0, 1], [0, 0, 0], [0, 1, 1], [1, 1, 1]])
+        >>> multilabel_binned_precision_recall_curve(input, target, num_labels=3, thresholds=5)
+        (tensor([[0.5000, 0.5000, 1.0000, 1.0000, 0.0000, 1.0000],
+                 [0.5000, 0.6667, 0.6667, 0.0000, 0.0000, 1.0000],
+                 [0.7500, 1.0000, 1.0000, 1.0000, 0.0000, 1.0000]]),
+         tensor([[1.0000, 0.5000, 0.5000, 0.5000, 0.0000, 0.0000],
+                 [1.0000, 1.0000, 1.0000, 0.0000, 0.0000, 0.0000],
+                 [1.0000, 0.6667, 0.3333, 0.3333, 0.0000, 0.0000]]),
+         tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]))
+    """
+    threshold = _create_threshold_tensor(threshold, target.device)
+    _binned_precision_recall_curve_param_check(threshold)
+
+    if input.ndim != 2:
+        raise ValueError(
+            f"input should be a two-dimensional tensor, got shape {input.shape}."
+        )
+    if num_labels is None:
+        num_labels = input.shape[1]
+    num_tp, num_fp, num_fn = _multilabel_binned_precision_recall_curve_update(
+        input, target, num_labels, threshold
+    )
+    return _multilabel_binned_precision_recall_curve_compute(
+        num_tp, num_fp, num_fn, num_labels, threshold
+    )
+
+
+def _multilabel_binned_precision_recall_curve_update(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    num_labels: int,
+    threshold: torch.Tensor,
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    _multilabel_precision_recall_curve_update_input_check(input, target, num_labels)
+
+    num_samples, num_labels = tuple(input.shape)
+    num_thresholds = len(threshold)
+
+    # For each sample index j and label k, we need:
+    # (largest_threshold_index, k, target[j, k])
+    # where largest_threshold_index is largest i such that input[j,k] >= threshold[i].
+    # We flatten this tuple into a single value.
+    largest_index = (
+        2
+        * (
+            num_labels * (torch.searchsorted(threshold, input, right=True) - 1)
+            + torch.arange(num_labels, device=input.device, dtype=torch.int64)
+        )
+        + target
+    )
+
+    hist = torch.histc(
+        largest_index.type(torch.float64),
+        bins=2 * num_thresholds * num_labels,
+        min=0,
+        max=2 * num_thresholds * num_labels,
+    )
+    class_counts = target.sum(dim=0)
+
+    # false positives are positives_idx[0], true positives are positives_idx[1]
+    positives_idx = (
+        hist.reshape((num_thresholds, num_labels, 2))
+        .transpose(0, 2)
+        .type(class_counts.dtype)
+    )
+
+    # suffix sum: For each threshold index/("true/false" positives) combination,
+    # find how many indices j such that input[j] >= threshold[i].
+    suffix_total = positives_idx.flip(dims=(-1,)).cumsum(dim=-1).flip(dims=(-1,))
+    num_fp, num_tp = suffix_total[0].T, suffix_total[1].T
+    num_fn = class_counts[None, :] - num_tp
+    return num_tp, num_fp, num_fn
+
+
+@torch.jit.script
+def _multilabel_binned_precision_recall_curve_compute(
+    num_tp: torch.Tensor,
+    num_fp: torch.Tensor,
+    num_fn: torch.Tensor,
+    num_labels: int,
+    threshold: torch.Tensor,
+) -> Tuple[List[torch.Tensor], List[torch.Tensor], torch.Tensor]:
+    # Set precision to 1.0 if all predictions are zeros.
+    precision = torch.nan_to_num(num_tp / (num_tp + num_fp), 1.0)
+    recall = num_tp / (num_tp + num_fn)
+
+    # The last precision and recall values are 1.0 and 0.0 without a corresponding threshold.
+    # This ensures that the graph starts on the y-axis.
+    assert isinstance(num_labels, int)
+    precision = torch.cat([precision, precision.new_ones(1, num_labels)], dim=0)
+    recall = torch.cat([recall, recall.new_zeros(1, num_labels)], dim=0)
 
     return (
         list(precision.T),
