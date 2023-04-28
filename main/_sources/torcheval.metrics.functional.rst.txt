@@ -46,6 +46,7 @@ Classification Metrics
    multiclass_recall
    multilabel_accuracy
    multilabel_auprc
+   multilabel_binned_precision_recall_curve
    multilabel_precision_recall_curve
    multilabel_recall_at_fixed_precision
    topk_multilabel_accuracy
