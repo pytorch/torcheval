@@ -86,10 +86,26 @@ def _update(
     target: torch.Tensor,
     threshold: torch.Tensor,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-    pred_label = input >= threshold[:, None]
-    num_tp = (pred_label & target).sum(dim=1)
-    num_fp = pred_label.sum(dim=1) - num_tp
-    num_fn = target.sum() - num_tp
+    num_thresholds = len(threshold)
+
+    # (index, target) values, stored as 2 * index + target
+    index_target = (
+        2 * (torch.searchsorted(threshold, input, right=True) - 1) + target
+    ).type(torch.float64)
+    hist = torch.histc(
+        index_target, bins=2 * num_thresholds, min=0, max=2 * num_thresholds
+    )
+    # For each index j, Find the last index i such that input[j] >= threshold[i]
+
+    # false positives are positives_idx[0], true positives are positives_idx[1]
+    target_sum = target.sum()
+    positives_idx = hist.reshape((num_thresholds, 2)).T.type(target_sum.dtype)
+
+    # suffix sum: For each threshold index/("true/false" positives) combination,
+    # find how many indices j such that input[j] >= threshold[i]
+    suffix_total = positives_idx.flip(dims=(1,)).cumsum(dim=1).flip(dims=(1,))
+    num_fp, num_tp = suffix_total[0], suffix_total[1]
+    num_fn = target_sum - num_tp
     return num_tp, num_fp, num_fn
 
 

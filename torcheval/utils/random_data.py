@@ -65,6 +65,7 @@ def get_rand_data_multiclass(
         num_updates: the number of calls to update on each rank.
         num_classes: the number of classes for the dataset.
         batch_size: batch size of the dataset.
+        device: device for the returned Tensors
 
     Returns:
         torch.Tensor: random feature data

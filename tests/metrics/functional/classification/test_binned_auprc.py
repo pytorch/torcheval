@@ -264,10 +264,12 @@ class TestMulticlassBinnedAUPRC(unittest.TestCase):
                 else threshold
             )
             compute_result_cuda = tuple(c.to("cuda") for c in compute_result)
-            my_compute_result = binary_binned_auprc(
+            my_compute_result = multiclass_binned_auprc(
                 input.to("cuda"),
                 target.to("cuda"),
+                num_classes=num_classes,
                 threshold=threshold_cuda,
+                average=average,
             )
             my_compute_result_cuda = tuple(c.to("cuda") for c in my_compute_result)
             torch.testing.assert_close(
