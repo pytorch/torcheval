@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.retrieval\_precision
+=================================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: retrieval_precision

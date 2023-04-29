@@ -73,6 +73,7 @@ Ranking Metrics
    num_collisions
    reciprocal_rank
    weighted_calibration
+   retrieval_precision
 
 Regression Metrics
 -------------------------------------------------------------------
