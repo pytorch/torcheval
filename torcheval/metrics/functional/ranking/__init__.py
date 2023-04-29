@@ -9,6 +9,7 @@ from torcheval.metrics.functional.ranking.frequency import frequency_at_k
 from torcheval.metrics.functional.ranking.hit_rate import hit_rate
 from torcheval.metrics.functional.ranking.num_collisions import num_collisions
 from torcheval.metrics.functional.ranking.reciprocal_rank import reciprocal_rank
+from torcheval.metrics.functional.ranking.retrieval_precision import retrieval_precision
 from torcheval.metrics.functional.ranking.weighted_calibration import (
     weighted_calibration,
 )
@@ -20,5 +21,6 @@ __all__ = [
     "num_collisions",
     "reciprocal_rank",
     "weighted_calibration",
+    "retrieval_precision",
 ]
 __doc_name__ = "Ranking Metrics"
