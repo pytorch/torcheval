@@ -12,6 +12,12 @@ from torcheval.metrics.classification.binned_auprc import (
     MulticlassBinnedAUPRC,
     MultilabelBinnedAUPRC,
 )
+from torcheval.metrics.functional.classification import (
+    binary_auprc,
+    multiclass_auprc,
+    multilabel_auprc,
+)
+from torcheval.utils import random_data as rd
 from torcheval.utils.test_utils.metric_class_tester import (
     BATCH_SIZE,
     MetricClassTester,
@@ -22,8 +28,8 @@ from torcheval.utils.test_utils.metric_class_tester import (
 class TestBinaryBinnedAUPRC(MetricClassTester):
     def _test_binned_auprc_class_with_input(
         self,
-        input: torch.Tensor,
-        target: torch.Tensor,
+        update_input: torch.Tensor,
+        update_target: torch.Tensor,
         num_tasks: int,
         threshold: Union[int, List[float], torch.Tensor],
         compute_result: torch.Tensor,
@@ -32,8 +38,8 @@ class TestBinaryBinnedAUPRC(MetricClassTester):
             metric=BinaryBinnedAUPRC(num_tasks=num_tasks, threshold=threshold),
             state_names={"inputs", "targets"},
             update_kwargs={
-                "input": input,
-                "target": target,
+                "input": update_input,
+                "target": update_target,
             },
             compute_result=compute_result,
         )
@@ -96,6 +102,77 @@ class TestBinaryBinnedAUPRC(MetricClassTester):
             num_total_updates=4,
             num_processes=2,
         )
+
+    def test_with_randomized_binary_data_getter_single_task(self) -> None:
+        batch_size = 4
+        num_bins = 5
+
+        for _ in range(10):
+            update_input, update_target = rd.get_rand_data_binary(
+                NUM_TOTAL_UPDATES, 1, batch_size
+            )
+            threshold = torch.cat([torch.tensor([0, 1]), torch.rand(num_bins - 2)])
+            threshold, _ = torch.sort(threshold)
+            threshold = torch.unique(threshold)
+
+            input_positions = (
+                torch.searchsorted(threshold, update_input, right=True) - 1
+            )  # get thresholds not larger than each element
+
+            # update_input, update_target original shape: [num_updates, batch_size]
+            # simply reshape to a 1D tensor: [num_updates * batch_size, ]
+            inputs_quantized = threshold[input_positions].reshape((-1,))
+            full_target = update_target.reshape((-1,))
+
+            compute_result = binary_auprc(
+                inputs_quantized,
+                full_target,
+                num_tasks=1,
+            )
+
+            self._test_binned_auprc_class_with_input(
+                update_input,
+                update_target,
+                num_tasks=1,
+                threshold=threshold,
+                compute_result=compute_result,
+            )
+
+    def test_with_randomized_binary_data_getter_multiple_tasks(self) -> None:
+        batch_size = 4
+        num_bins = 5
+        num_tasks = 3
+
+        for _ in range(10):
+            update_input, update_target = rd.get_rand_data_binary(
+                NUM_TOTAL_UPDATES, num_tasks, batch_size
+            )
+            threshold = torch.cat([torch.tensor([0, 1]), torch.rand(num_bins - 2)])
+            threshold, _ = torch.sort(threshold)
+            threshold = torch.unique(threshold)
+            input_positions = (
+                torch.searchsorted(threshold, update_input, right=True) - 1
+            )  # get thresholds not larger than each element
+
+            # update_target original shape: [num_updates, num_tasks, batch_size]
+            # transpose 0, 1: [num_tasks, num_updates, batch_size]
+            # then, flatten to get full_target shape: [num_tasks, num_updates * batch_size]
+            inputs_quantized = threshold[input_positions].transpose(0, 1).flatten(1, 2)
+            full_target = update_target.transpose(0, 1).flatten(1, 2)
+
+            compute_result = binary_auprc(
+                inputs_quantized,
+                full_target,
+                num_tasks=num_tasks,
+            )
+
+            self._test_binned_auprc_class_with_input(
+                update_input,
+                update_target,
+                num_tasks=num_tasks,
+                threshold=threshold,
+                compute_result=compute_result,
+            )
 
     def test_binary_binned_auprc_class_invalid_input(self) -> None:
         with self.assertRaisesRegex(
@@ -185,6 +262,29 @@ class TestBinaryBinnedAUPRC(MetricClassTester):
 
 
 class TestMulticlassBinnedAUPRC(MetricClassTester):
+    def _test_multiclass_binned_auprc_class_with_input(
+        self,
+        update_input: Union[torch.Tensor, List[torch.Tensor]],
+        update_target: Union[torch.Tensor, List[torch.Tensor]],
+        compute_result: torch.Tensor,
+        num_classes: int,
+        threshold: Union[int, List[float], torch.Tensor],
+        average: Optional[str],
+    ) -> None:
+        self.run_class_implementation_tests(
+            metric=MulticlassBinnedAUPRC(
+                num_classes=num_classes, threshold=threshold, average=average
+            ),
+            state_names={"num_tp", "num_fp", "num_fn"},
+            update_kwargs={
+                "input": update_input,
+                "target": update_target,
+            },
+            compute_result=compute_result,
+            num_total_updates=len(update_input),
+            num_processes=2,
+        )
+
     def test_binned_auprc_class_base(self) -> None:
         num_classes = 4
         threshold = 5
@@ -195,14 +295,8 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
 
         compute_result = torch.tensor(0.2522818148136139)
 
-        self.run_class_implementation_tests(
-            metric=MulticlassBinnedAUPRC(num_classes=num_classes, threshold=threshold),
-            state_names={"num_tp", "num_fp", "num_fn"},
-            update_kwargs={
-                "input": input,
-                "target": target,
-            },
-            compute_result=compute_result,
+        self._test_multiclass_binned_auprc_class_with_input(
+            input, target, compute_result, num_classes, threshold, average="macro"
         )
 
     def test_binned_auprc_average_options(self) -> None:
@@ -215,30 +309,51 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
             ]
         )
         target = torch.tensor([[0], [0], [1], [2]])
+        num_classes = 3
+        threshold = 5
 
-        self.run_class_implementation_tests(
-            metric=MulticlassBinnedAUPRC(num_classes=3, threshold=5, average="macro"),
-            state_names={"num_tp", "num_fp", "num_fn"},
-            update_kwargs={
-                "input": input,
-                "target": target,
-            },
-            num_total_updates=4,
-            num_processes=2,
-            compute_result=torch.tensor(2 / 3),
+        compute_result = torch.tensor(2 / 3)
+        self._test_multiclass_binned_auprc_class_with_input(
+            input, target, compute_result, num_classes, threshold, average="macro"
         )
 
-        self.run_class_implementation_tests(
-            metric=MulticlassBinnedAUPRC(num_classes=3, threshold=5, average=None),
-            state_names={"num_tp", "num_fp", "num_fn"},
-            update_kwargs={
-                "input": input,
-                "target": target,
-            },
-            num_total_updates=4,
-            num_processes=2,
-            compute_result=torch.tensor([0.5000, 1.0000, 0.5000]),
+        compute_result = torch.tensor([0.5000, 1.0000, 0.5000])
+        self._test_multiclass_binned_auprc_class_with_input(
+            input, target, compute_result, num_classes, threshold, average=None
         )
+
+    def test_with_randomized_data_getter(self) -> None:
+        num_classes = 3
+        batch_size = 4
+        num_bins = 5
+
+        for _ in range(10):
+            input, target = rd.get_rand_data_multiclass(1, num_classes, batch_size)
+            threshold = torch.cat([torch.tensor([0, 1]), torch.rand(num_bins - 2)])
+
+            threshold, _ = torch.sort(threshold)
+            threshold = torch.unique(threshold)
+
+            input_positions = torch.searchsorted(
+                threshold, input, right=False
+            )  # get thresholds not larger than each element
+            inputs_quantized = threshold[input_positions]
+
+            for average in (None, "macro"):
+                compute_result = multiclass_auprc(
+                    inputs_quantized,
+                    target,
+                    num_classes=num_classes,
+                    average=average,
+                )
+                self._test_multiclass_binned_auprc_class_with_input(
+                    input.unsqueeze(1),
+                    target.unsqueeze(1),
+                    compute_result,
+                    num_classes,
+                    threshold,
+                    average,
+                )
 
     def test_binned_auprc_class_update_input_shape_different(self) -> None:
         torch.manual_seed(123)
@@ -259,18 +374,16 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
             torch.randint(high=num_classes, size=(2,)),
             torch.randint(high=num_classes, size=(5,)),
         ]
+        threshold = 5
         compute_result = torch.tensor(0.372433333333333)
 
-        self.run_class_implementation_tests(
-            metric=MulticlassBinnedAUPRC(num_classes=num_classes, threshold=5),
-            state_names={"num_tp", "num_fp", "num_fn"},
-            update_kwargs={
-                "input": update_input,
-                "target": update_target,
-            },
-            compute_result=compute_result,
-            num_total_updates=4,
-            num_processes=2,
+        self._test_multiclass_binned_auprc_class_with_input(
+            update_input,
+            update_target,
+            compute_result,
+            num_classes,
+            threshold,
+            average="macro",
         )
 
     def test_binned_auprc_class_invalid_input(self) -> None:
@@ -428,6 +541,39 @@ class TestMultilabelBinnedAUPRC(MetricClassTester):
         self._test_multilabel_binned_auprc_class_with_input(
             input, target, compute_result, num_labels, threshold, "macro"
         )
+
+    def test_with_randomized_data_getter(self) -> None:
+        num_labels = 3
+        batch_size = 4
+        num_bins = 5
+
+        for _ in range(10):
+            input, target = rd.get_rand_data_multilabel(1, num_labels, batch_size)
+            threshold = torch.cat([torch.tensor([0, 1]), torch.rand(num_bins - 2)])
+
+            threshold, _ = torch.sort(threshold)
+            threshold = torch.unique(threshold)
+
+            input_positions = torch.searchsorted(
+                threshold, input, right=False
+            )  # get thresholds not larger than each element
+            inputs_quantized = threshold[input_positions]
+
+            for average in (None, "macro"):
+                compute_result = multilabel_auprc(
+                    inputs_quantized,
+                    target,
+                    num_labels=num_labels,
+                    average=average,
+                )
+                self._test_multilabel_binned_auprc_class_with_input(
+                    input.unsqueeze(1),
+                    target.unsqueeze(1),
+                    compute_result,
+                    num_labels,
+                    threshold,
+                    average,
+                )
 
     def test_multilabel_binned_auprc_class_update_input_shape_different(
         self,
