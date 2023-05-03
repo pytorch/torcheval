@@ -173,7 +173,7 @@ def _compute_riemann_integrals(
     auprcs = []
     for p, r in zip(prec, recall):
         auprcs.append(_riemann_integral(r, p))
-    auprcs = torch.tensor(auprcs).to(device).nan_to_num(nan=0.0)
+    auprcs = torch.tensor(auprcs, device=device).nan_to_num(nan=0.0)
 
     if average == "macro":
         return torch.mean(auprcs)

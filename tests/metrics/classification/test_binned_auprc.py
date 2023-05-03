@@ -4,11 +4,14 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import torch
 from torcheval.metrics import BinaryBinnedAUPRC
-from torcheval.metrics.classification.binned_auprc import MulticlassBinnedAUPRC
+from torcheval.metrics.classification.binned_auprc import (
+    MulticlassBinnedAUPRC,
+    MultilabelBinnedAUPRC,
+)
 from torcheval.utils.test_utils.metric_class_tester import (
     BATCH_SIZE,
     MetricClassTester,
@@ -366,4 +369,175 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
             metric = MulticlassBinnedAUPRC(
                 num_classes=4,
                 threshold=torch.tensor([0.0, 0.2, 0.5, 0.9]),
+            )
+
+
+class TestMultilabelBinnedAUPRC(MetricClassTester):
+    def _test_multilabel_binned_auprc_class_with_input(
+        self,
+        update_input: Union[torch.Tensor, List[torch.Tensor]],
+        update_target: Union[torch.Tensor, List[torch.Tensor]],
+        compute_result: Tuple[torch.Tensor, torch.Tensor],
+        num_labels: int,
+        threshold: Union[int, List[float], torch.Tensor],
+        average: Optional[str],
+    ) -> None:
+        self.run_class_implementation_tests(
+            metric=MultilabelBinnedAUPRC(
+                num_labels=num_labels, threshold=threshold, average=average
+            ),
+            state_names={"num_tp", "num_fp", "num_fn"},
+            update_kwargs={
+                "input": update_input,
+                "target": update_target,
+            },
+            compute_result=compute_result,
+            num_total_updates=len(update_input),
+            num_processes=2,
+        )
+
+    def test_multilabel_binned_auprc_class_threshold_specified_as_int(
+        self,
+    ) -> None:
+        num_labels = 3
+        input = torch.tensor(
+            [
+                [[0.75, 0.05, 0.35]],
+                [[0.45, 0.75, 0.05]],
+                [[0.05, 0.55, 0.75]],
+                [[0.05, 0.65, 0.05]],
+            ]
+        )
+        target = torch.tensor([[[1, 0, 1]], [[0, 0, 0]], [[0, 1, 1]], [[1, 1, 1]]])
+        threshold = 5
+        compute_result = (
+            torch.tensor([0.7500, 2 / 3, 11 / 12]),
+            torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
+        )
+        self._test_multilabel_binned_auprc_class_with_input(
+            input, target, compute_result, num_labels, threshold, None
+        )
+
+        compute_result = (
+            torch.tensor(7 / 9),
+            torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
+        )
+        self._test_multilabel_binned_auprc_class_with_input(
+            input, target, compute_result, num_labels, threshold, "macro"
+        )
+
+        # Result should match non-binned result if there are enough thresholds
+        threshold = 100
+        compute_result = (
+            torch.tensor([0.7500, 7 / 12, 11 / 12]),
+            torch.tensor(list(range(100))) / 99,
+        )
+        self._test_multilabel_binned_auprc_class_with_input(
+            input, target, compute_result, num_labels, threshold, None
+        )
+
+    def test_multilabel_binned_auprc_class_threshold_specified_as_tensor(
+        self,
+    ) -> None:
+        num_labels = 3
+        input = torch.tensor(
+            [
+                [[0.75, 0.05, 0.35]],
+                [[0.45, 0.75, 0.05]],
+                [[0.05, 0.55, 0.75]],
+                [[0.05, 0.65, 0.05]],
+            ]
+        )
+        target = torch.tensor([[[1, 0, 1]], [[0, 0, 0]], [[0, 1, 1]], [[1, 1, 1]]])
+        threshold = torch.tensor([0.0, 0.1, 0.4, 0.7, 0.8, 0.9, 1.0])
+        compute_result = (
+            torch.tensor([0.7500, 2 / 3, 11 / 12]),
+            torch.tensor([0.0, 0.1, 0.4, 0.7, 0.8, 0.9, 1.0]),
+        )
+
+        self._test_multilabel_binned_auprc_class_with_input(
+            input, target, compute_result, num_labels, threshold, None
+        )
+
+        compute_result = (
+            torch.tensor(7 / 9),
+            torch.tensor([0.0, 0.1, 0.4, 0.7, 0.8, 0.9, 1.0]),
+        )
+        self._test_multilabel_binned_auprc_class_with_input(
+            input, target, compute_result, num_labels, threshold, "macro"
+        )
+
+    def test_multilabel_binned_auprc_class_update_input_shape_different(
+        self,
+    ) -> None:
+        torch.manual_seed(123)
+        num_labels = 10
+        update_input = [
+            torch.rand(5, num_labels),
+            torch.rand(8, num_labels),
+            torch.rand(2, num_labels),
+            torch.rand(5, num_labels),
+        ]
+
+        update_target = [
+            torch.randint(high=num_labels, size=(5, num_labels)),
+            torch.randint(high=num_labels, size=(8, num_labels)),
+            torch.randint(high=num_labels, size=(2, num_labels)),
+            torch.randint(high=num_labels, size=(5, num_labels)),
+        ]
+
+        threshold = 5
+
+        compute_result = (
+            torch.tensor(0.07507620751857758),
+            torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
+        )
+        self._test_multilabel_binned_auprc_class_with_input(
+            update_input, update_target, compute_result, num_labels, threshold, "macro"
+        )
+
+    def test_multilabel_binned_auprc_invalid_input(self) -> None:
+        metric = MultilabelBinnedAUPRC(num_labels=3)
+        with self.assertRaisesRegex(
+            ValueError,
+            "Expected both input.shape and target.shape to have the same shape"
+            r" but got torch.Size\(\[4, 2\]\) and torch.Size\(\[3\]\).",
+        ):
+            metric.update(torch.rand(4, 2), torch.rand(3))
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "input should be a two-dimensional tensor, got shape "
+            r"torch.Size\(\[3\]\).",
+        ):
+            metric.update(torch.rand(3), torch.rand(3))
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "input should have shape of "
+            r"\(num_sample, num_labels\), got torch.Size\(\[4, 2\]\) and num_labels=3.",
+        ):
+            metric.update(torch.rand(4, 2), torch.rand(4, 2))
+
+        with self.assertRaisesRegex(
+            ValueError, "The `threshold` should be a sorted tensor."
+        ):
+            MultilabelBinnedAUPRC(
+                num_labels=3, threshold=torch.tensor([0.1, 0.2, 0.5, 0.7, 0.6])
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"The values in `threshold` should be in the range of \[0, 1\].",
+        ):
+            MultilabelBinnedAUPRC(
+                num_labels=3, threshold=torch.tensor([-0.1, 0.2, 0.5, 0.7])
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"The values in `threshold` should be in the range of \[0, 1\].",
+        ):
+            MultilabelBinnedAUPRC(
+                num_labels=3, threshold=torch.tensor([0.1, 0.2, 0.5, 1.7])
             )
