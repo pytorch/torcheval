@@ -78,7 +78,7 @@ class BinaryBinnedPrecisionRecallCurve(
             else torch.tensor(threshold, device=self.device)
         )
         _binned_precision_recall_curve_param_check(threshold)
-        self._add_state("threshold", threshold)
+        self.threshold = threshold
         self._add_state("num_tp", torch.zeros(len(threshold), device=self.device))
         self._add_state("num_fp", torch.zeros(len(threshold), device=self.device))
         self._add_state("num_fn", torch.zeros(len(threshold), device=self.device))
@@ -184,7 +184,7 @@ class MulticlassBinnedPrecisionRecallCurve(
         )
         _binned_precision_recall_curve_param_check(threshold)
         self.num_classes = num_classes
-        self._add_state("threshold", threshold)
+        self.threshold = threshold
         self._add_state(
             "num_tp",
             torch.zeros(len(threshold), self.num_classes, device=self.device),

@@ -43,7 +43,7 @@ class TestBinaryBinnedPrecisionRecallCurve(MetricClassTester):
 
         self.run_class_implementation_tests(
             metric=BinaryBinnedPrecisionRecallCurve(threshold=threshold),
-            state_names={"num_tp", "num_fp", "num_fn", "threshold"},
+            state_names={"num_tp", "num_fp", "num_fn"},
             update_kwargs={
                 "input": input,
                 "target": target,
@@ -100,7 +100,7 @@ class TestBinaryBinnedPrecisionRecallCurve(MetricClassTester):
 
         self.run_class_implementation_tests(
             metric=BinaryBinnedPrecisionRecallCurve(),
-            state_names={"num_tp", "num_fp", "num_fn", "threshold"},
+            state_names={"num_tp", "num_fp", "num_fn"},
             update_kwargs={
                 "input": update_input,
                 "target": update_target,
@@ -168,7 +168,7 @@ class TestMulticlassBinnedPrecisionRecallCurve(MetricClassTester):
             metric=MulticlassBinnedPrecisionRecallCurve(
                 num_classes=num_classes, threshold=threshold
             ),
-            state_names={"num_tp", "num_fp", "num_fn", "threshold"},
+            state_names={"num_tp", "num_fp", "num_fn"},
             update_kwargs={
                 "input": input,
                 "target": target,
@@ -206,7 +206,7 @@ class TestMulticlassBinnedPrecisionRecallCurve(MetricClassTester):
             metric=MulticlassBinnedPrecisionRecallCurve(
                 num_classes=num_classes, threshold=threshold
             ),
-            state_names={"num_tp", "num_fp", "num_fn", "threshold"},
+            state_names={"num_tp", "num_fp", "num_fn"},
             update_kwargs={
                 "input": input,
                 "target": target,
@@ -331,7 +331,7 @@ class TestMulticlassBinnedPrecisionRecallCurve(MetricClassTester):
             metric=MulticlassBinnedPrecisionRecallCurve(
                 num_classes=num_classes, threshold=threshold
             ),
-            state_names={"num_tp", "num_fp", "num_fn", "threshold"},
+            state_names={"num_tp", "num_fp", "num_fn"},
             update_kwargs={
                 "input": update_input,
                 "target": update_target,
