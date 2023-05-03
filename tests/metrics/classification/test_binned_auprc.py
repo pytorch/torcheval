@@ -4,7 +4,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Union
 
 import torch
 from torcheval.metrics import BinaryBinnedAUPRC
@@ -20,13 +20,13 @@ from torcheval.utils.test_utils.metric_class_tester import (
 
 
 class TestBinaryBinnedAUPRC(MetricClassTester):
-    def _test_auprc_class_with_input(
+    def _test_binned_auprc_class_with_input(
         self,
         input: torch.Tensor,
         target: torch.Tensor,
         num_tasks: int,
         threshold: Union[int, List[float], torch.Tensor],
-        compute_result: Tuple[torch.Tensor, torch.Tensor],
+        compute_result: torch.Tensor,
     ) -> None:
         self.run_class_implementation_tests(
             metric=BinaryBinnedAUPRC(num_tasks=num_tasks, threshold=threshold),
@@ -38,21 +38,18 @@ class TestBinaryBinnedAUPRC(MetricClassTester):
             compute_result=compute_result,
         )
 
-    def test_auprc_class_valid_input(self) -> None:
+    def test_binned_auprc_class_valid_input(self) -> None:
         torch.manual_seed(123)
         # test case with num_tasks=1
         input = torch.randint(high=2, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
         target = torch.randint(high=2, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
         threshold = 5
-        self._test_auprc_class_with_input(
+        self._test_binned_auprc_class_with_input(
             input,
             target,
             num_tasks=1,
             threshold=threshold,
-            compute_result=(
-                torch.tensor(0.5117788314819336),
-                torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
-            ),
+            compute_result=torch.tensor(0.5117788314819336),
         )
 
         # test case with num_tasks=2
@@ -61,17 +58,12 @@ class TestBinaryBinnedAUPRC(MetricClassTester):
         input = torch.rand(NUM_TOTAL_UPDATES, num_tasks, BATCH_SIZE)
         target = torch.randint(high=2, size=(NUM_TOTAL_UPDATES, num_tasks, BATCH_SIZE))
         threshold = 5
-        self._test_auprc_class_with_input(
+        self._test_binned_auprc_class_with_input(
             input,
             target,
             num_tasks=num_tasks,
             threshold=threshold,
-            compute_result=(
-                torch.tensor(
-                    [0.5810506343841553, 0.5106710195541382],
-                ),
-                torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
-            ),
+            compute_result=torch.tensor([0.5810506343841553, 0.5106710195541382]),
         )
 
         # test case with different update shape
@@ -91,10 +83,7 @@ class TestBinaryBinnedAUPRC(MetricClassTester):
             torch.randint(high=num_classes, size=(2,)),
             torch.randint(high=num_classes, size=(5,)),
         ]
-        compute_result = (
-            torch.tensor(0.42704516649246216),
-            torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
-        )
+        compute_result = torch.tensor(0.42704516649246216)
 
         self.run_class_implementation_tests(
             metric=BinaryBinnedAUPRC(threshold=threshold),
@@ -196,7 +185,7 @@ class TestBinaryBinnedAUPRC(MetricClassTester):
 
 
 class TestMulticlassBinnedAUPRC(MetricClassTester):
-    def test_auprc_class_base(self) -> None:
+    def test_binned_auprc_class_base(self) -> None:
         num_classes = 4
         threshold = 5
         torch.manual_seed(123)
@@ -204,10 +193,7 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
         input = input.abs() / input.abs().sum(dim=-1, keepdim=True)
         target = torch.randint(high=num_classes, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
 
-        compute_result = (
-            torch.tensor(0.2522818148136139),
-            torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
-        )
+        compute_result = torch.tensor(0.2522818148136139)
 
         self.run_class_implementation_tests(
             metric=MulticlassBinnedAUPRC(num_classes=num_classes, threshold=threshold),
@@ -219,7 +205,7 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
             compute_result=compute_result,
         )
 
-    def test_auprc_average_options(self) -> None:
+    def test_binned_auprc_average_options(self) -> None:
         input = torch.tensor(
             [
                 [[0.16, 0.04, 0.8]],
@@ -239,10 +225,7 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
             },
             num_total_updates=4,
             num_processes=2,
-            compute_result=(
-                torch.tensor(2 / 3),
-                torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
-            ),
+            compute_result=torch.tensor(2 / 3),
         )
 
         self.run_class_implementation_tests(
@@ -254,13 +237,10 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
             },
             num_total_updates=4,
             num_processes=2,
-            compute_result=(
-                torch.tensor([0.5000, 1.0000, 0.5000]),
-                torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
-            ),
+            compute_result=torch.tensor([0.5000, 1.0000, 0.5000]),
         )
 
-    def test_auprc_class_update_input_shape_different(self) -> None:
+    def test_binned_auprc_class_update_input_shape_different(self) -> None:
         torch.manual_seed(123)
         num_classes = 3
         update_input = [
@@ -279,10 +259,7 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
             torch.randint(high=num_classes, size=(2,)),
             torch.randint(high=num_classes, size=(5,)),
         ]
-        compute_result = (
-            torch.tensor(0.372433333333333),
-            torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
-        )
+        compute_result = torch.tensor(0.372433333333333)
 
         self.run_class_implementation_tests(
             metric=MulticlassBinnedAUPRC(num_classes=num_classes, threshold=5),
@@ -296,7 +273,7 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
             num_processes=2,
         )
 
-    def test_auprc_class_invalid_input(self) -> None:
+    def test_binned_auprc_class_invalid_input(self) -> None:
         with self.assertRaisesRegex(
             ValueError, "`average` was not in the allowed value of .*, got micro."
         ):
@@ -377,7 +354,7 @@ class TestMultilabelBinnedAUPRC(MetricClassTester):
         self,
         update_input: Union[torch.Tensor, List[torch.Tensor]],
         update_target: Union[torch.Tensor, List[torch.Tensor]],
-        compute_result: Tuple[torch.Tensor, torch.Tensor],
+        compute_result: torch.Tensor,
         num_labels: int,
         threshold: Union[int, List[float], torch.Tensor],
         average: Optional[str],
@@ -410,28 +387,19 @@ class TestMultilabelBinnedAUPRC(MetricClassTester):
         )
         target = torch.tensor([[[1, 0, 1]], [[0, 0, 0]], [[0, 1, 1]], [[1, 1, 1]]])
         threshold = 5
-        compute_result = (
-            torch.tensor([0.7500, 2 / 3, 11 / 12]),
-            torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
-        )
+        compute_result = torch.tensor([0.7500, 2 / 3, 11 / 12])
         self._test_multilabel_binned_auprc_class_with_input(
             input, target, compute_result, num_labels, threshold, None
         )
 
-        compute_result = (
-            torch.tensor(7 / 9),
-            torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
-        )
+        compute_result = torch.tensor(7 / 9)
         self._test_multilabel_binned_auprc_class_with_input(
             input, target, compute_result, num_labels, threshold, "macro"
         )
 
         # Result should match non-binned result if there are enough thresholds
         threshold = 100
-        compute_result = (
-            torch.tensor([0.7500, 7 / 12, 11 / 12]),
-            torch.tensor(list(range(100))) / 99,
-        )
+        compute_result = torch.tensor([0.7500, 7 / 12, 11 / 12])
         self._test_multilabel_binned_auprc_class_with_input(
             input, target, compute_result, num_labels, threshold, None
         )
@@ -450,19 +418,13 @@ class TestMultilabelBinnedAUPRC(MetricClassTester):
         )
         target = torch.tensor([[[1, 0, 1]], [[0, 0, 0]], [[0, 1, 1]], [[1, 1, 1]]])
         threshold = torch.tensor([0.0, 0.1, 0.4, 0.7, 0.8, 0.9, 1.0])
-        compute_result = (
-            torch.tensor([0.7500, 2 / 3, 11 / 12]),
-            torch.tensor([0.0, 0.1, 0.4, 0.7, 0.8, 0.9, 1.0]),
-        )
+        compute_result = torch.tensor([0.7500, 2 / 3, 11 / 12])
 
         self._test_multilabel_binned_auprc_class_with_input(
             input, target, compute_result, num_labels, threshold, None
         )
 
-        compute_result = (
-            torch.tensor(7 / 9),
-            torch.tensor([0.0, 0.1, 0.4, 0.7, 0.8, 0.9, 1.0]),
-        )
+        compute_result = torch.tensor(7 / 9)
         self._test_multilabel_binned_auprc_class_with_input(
             input, target, compute_result, num_labels, threshold, "macro"
         )
@@ -488,10 +450,7 @@ class TestMultilabelBinnedAUPRC(MetricClassTester):
 
         threshold = 5
 
-        compute_result = (
-            torch.tensor(0.07507620751857758),
-            torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
-        )
+        compute_result = torch.tensor(0.07507620751857758)
         self._test_multilabel_binned_auprc_class_with_input(
             update_input, update_target, compute_result, num_labels, threshold, "macro"
         )

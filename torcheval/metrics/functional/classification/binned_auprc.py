@@ -78,7 +78,7 @@ def binary_binned_auprc(
     threshold = _create_threshold_tensor(threshold, target.device)
     _binary_binned_auprc_param_check(num_tasks, threshold)
     _binary_binned_auprc_update_input_check(input, target, num_tasks, threshold)
-    return _binary_binned_auprc_compute(input, target, num_tasks, threshold)
+    return _binary_binned_auprc_compute(input, target, num_tasks, threshold), threshold
 
 
 def _binary_binned_auprc_compute(
@@ -86,7 +86,7 @@ def _binary_binned_auprc_compute(
     target: torch.Tensor,
     num_tasks: int,
     threshold: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> torch.Tensor:
     if num_tasks == 1 and input.ndim == 1:
         num_tp, num_fp, num_fn = _binary_binned_precision_recall_curve_update(
             input, target, threshold
@@ -107,7 +107,7 @@ def _binary_binned_auprc_compute(
             auprcs.append(_riemann_integral(recall, precision))
         auprc_result = torch.tensor(auprcs, device=input.device)
     auprc_result = torch.nan_to_num(auprc_result, nan=0.0)
-    return auprc_result, threshold
+    return auprc_result
 
 
 def _binary_binned_auprc_param_check(
@@ -237,8 +237,11 @@ def multiclass_binned_auprc(
     threshold = _create_threshold_tensor(threshold, target.device)
     _multiclass_binned_auprc_param_check(num_classes, threshold, average)
     _multiclass_binned_auprc_update_input_check(input, target, num_classes)
-    return _multiclass_binned_auprc_compute(
-        input, target, num_classes, threshold, average
+    return (
+        _multiclass_binned_auprc_compute(
+            input, target, num_classes, threshold, average
+        ),
+        threshold,
     )
 
 
@@ -248,14 +251,14 @@ def _multiclass_binned_auprc_compute(
     num_classes: int,
     threshold: torch.Tensor,
     average: Optional[str] = "macro",
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> torch.Tensor:
     num_tp, num_fp, num_fn = _multiclass_binned_precision_recall_curve_update(
         input, target, num_classes, threshold
     )
     prec, recall, thresh = _multiclass_binned_precision_recall_curve_compute(
         num_tp, num_fp, num_fn, num_classes, threshold
     )
-    return _compute_riemann_integrals(prec, recall, average, input.device), threshold
+    return _compute_riemann_integrals(prec, recall, average, input.device)
 
 
 def _multiclass_binned_auprc_param_check(
@@ -362,8 +365,9 @@ def multilabel_binned_auprc(
     threshold = _create_threshold_tensor(threshold, target.device)
     _multilabel_binned_auprc_param_check(num_labels, threshold, average)
     _multilabel_binned_auprc_update_input_check(input, target, num_labels)
-    return _multilabel_binned_auprc_compute(
-        input, target, num_labels, threshold, average
+    return (
+        _multilabel_binned_auprc_compute(input, target, num_labels, threshold, average),
+        threshold,
     )
 
 
@@ -373,11 +377,11 @@ def _multilabel_binned_auprc_compute(
     num_labels: int,
     threshold: torch.Tensor,
     average: Optional[str] = "macro",
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> torch.Tensor:
     prec, recall, thresh = multilabel_binned_precision_recall_curve(
         input, target, num_labels=num_labels, threshold=threshold
     )
-    return _compute_riemann_integrals(prec, recall, average, input.device), threshold
+    return _compute_riemann_integrals(prec, recall, average, input.device)
 
 
 def _multilabel_binned_auprc_param_check(

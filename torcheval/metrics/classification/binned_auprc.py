@@ -7,7 +7,7 @@
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
 
-from typing import Iterable, List, Optional, Tuple, TypeVar, Union
+from typing import Iterable, List, Optional, TypeVar, Union
 
 import torch
 from torcheval.metrics.functional.classification.binned_auprc import (
@@ -15,9 +15,7 @@ from torcheval.metrics.functional.classification.binned_auprc import (
     _binary_binned_auprc_param_check,
     _binary_binned_auprc_update_input_check,
     _compute_riemann_integrals,
-    _multiclass_binned_auprc_compute,
     _multiclass_binned_auprc_param_check,
-    _multiclass_binned_auprc_update_input_check,
     _multilabel_binned_auprc_param_check,
     DEFAULT_NUM_THRESHOLD,
 )
@@ -36,7 +34,7 @@ TMulticlassBinnedAUPRC = TypeVar("TMulticlassBinnedAUPRC")
 TMultilabelBinnedAUPRC = TypeVar("TMultilabelBinnedAUPRC")
 
 
-class BinaryBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
+class BinaryBinnedAUPRC(Metric[torch.Tensor]):
     """
     Compute Binned AUPRC, which is the area under the binned version of the Precision Recall Curve, for binary classification.
     Its functional version is :func:`torcheval.metrics.functional.binary_binned_auprc`.
@@ -118,15 +116,13 @@ class BinaryBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
     @torch.inference_mode()
     def compute(
         self: TBinaryBinnedAUPRC,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> torch.Tensor:
         """
         Return Binned_AUPRC.  If no ``update()`` calls are made before
         ``compute()`` is called, return an empty tensor.
 
         Returns:
-            Tuple:
-                - Binned_AUPRC (Tensor): The return value of Binned_AUPRC for each task (num_tasks,).
-                - threshold (Tensor): Tensor of threshold. Its shape is (n_thresholds, ).
+            - Binned_AUPRC (Tensor): The return value of Binned_AUPRC for each task (num_tasks,).
         """
         return _binary_binned_auprc_compute(
             torch.cat(self.inputs, -1),
@@ -154,7 +150,7 @@ class BinaryBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
             self.targets = [torch.cat(self.targets, -1)]
 
 
-class MulticlassBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
+class MulticlassBinnedAUPRC(Metric[torch.Tensor]):
     """
     Compute Binned AUPRC, which is the area under the binned version of the Precision Recall Curve, for multiclass classification.
     Its functional version is :func:`torcheval.metrics.functional.multiclass_binned_auprc`.
@@ -256,15 +252,13 @@ class MulticlassBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
     @torch.inference_mode()
     def compute(
         self: TMulticlassBinnedAUPRC,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> torch.Tensor:
         """
         Return Binned_AUPRC.  If no ``update()`` calls are made before
         ``compute()`` is called, return an empty tensor.
 
         Returns:
-            Tuple:
-                - Binned_AUPRC (Tensor): The return value of Binned_AUPRC for each task (num_tasks,).
-                - threshold (Tensor): Tensor of threshold. Its shape is (n_thresholds, ).
+            - Binned_AUPRC (Tensor): The return value of Binned_AUPRC for each task (num_tasks,).
         """
         prec, recall, thresh = _multiclass_binned_precision_recall_curve_compute(
             self.num_tp,
@@ -273,10 +267,7 @@ class MulticlassBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
             num_classes=self.num_classes,
             threshold=self.threshold,
         )
-        return (
-            _compute_riemann_integrals(prec, recall, self.average, self.device),
-            thresh,
-        )
+        return _compute_riemann_integrals(prec, recall, self.average, self.device)
 
     @torch.inference_mode()
     def merge_state(
@@ -290,7 +281,7 @@ class MulticlassBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
         return self
 
 
-class MultilabelBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
+class MultilabelBinnedAUPRC(Metric[torch.Tensor]):
     """
     Compute Binned AUPRC, which is the area under the binned version of the Precision Recall Curve, for multilabel classification.
     Its functional version is :func:`torcheval.metrics.functional.multilabel_binned_auprc`.
@@ -396,15 +387,13 @@ class MultilabelBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
     @torch.inference_mode()
     def compute(
         self: TMultilabelBinnedAUPRC,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> torch.Tensor:
         """
         Return Binned_AUPRC.  If no ``update()`` calls are made before
         ``compute()`` is called, return an empty tensor.
 
         Returns:
-            Tuple:
-                - Binned_AUPRC (Tensor): The return value of Binned_AUPRC for each task (num_tasks,).
-                - threshold (Tensor): Tensor of threshold. Its shape is (n_thresholds, ).
+            - Binned_AUPRC (Tensor): The return value of Binned_AUPRC for each task (num_tasks,).
         """
         prec, recall, thresh = _multilabel_binned_precision_recall_curve_compute(
             self.num_tp,
@@ -413,10 +402,7 @@ class MultilabelBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
             num_labels=self.num_labels,
             threshold=self.threshold,
         )
-        return (
-            _compute_riemann_integrals(prec, recall, self.average, self.device),
-            thresh,
-        )
+        return _compute_riemann_integrals(prec, recall, self.average, self.device)
 
     @torch.inference_mode()
     def merge_state(
