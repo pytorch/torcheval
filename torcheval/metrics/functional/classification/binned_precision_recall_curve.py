@@ -7,7 +7,6 @@
 from typing import List, Optional, Tuple, Union
 
 import torch
-from torch.nn import functional as F
 from torcheval.metrics.functional.classification.precision_recall_curve import (
     _binary_precision_recall_curve_update_input_check,
     _multiclass_precision_recall_curve_update_input_check,
@@ -208,12 +207,43 @@ def _multiclass_binned_precision_recall_curve_update(
     threshold: torch.Tensor,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     _multiclass_precision_recall_curve_update_input_check(input, target, num_classes)
-    labels = input >= threshold[:, None, None]
-    target = F.one_hot(target, num_classes)
-    num_tp = (labels & target).sum(dim=1)
-    num_fp = labels.sum(dim=1) - num_tp
-    num_fn = target.sum(dim=0) - num_tp
 
+    num_samples, num_classes = tuple(input.shape)
+    num_thresholds = len(threshold)
+
+    # false positives are positives_idx[0], true positives are positives_idx[1]
+    # For each j, k we find largest i such that input[j,k] >= threshold[i]. We also need to store whether target[j] == k.
+    # largest_index: (index, class, target) values, stored as 2 * ((num_classes * index) + class) + target
+    largest_index = (
+        2
+        * (
+            num_classes * (torch.searchsorted(threshold, input, right=True) - 1)
+            + torch.arange(num_classes, device=input.device)
+        )
+    ).type(torch.float64)
+    largest_index[range(num_samples), target] += 1
+
+    hist = torch.histc(
+        largest_index,
+        bins=2 * num_thresholds * num_classes,
+        min=0,
+        max=2 * num_thresholds * num_classes,
+    )
+    positives_idx = (
+        hist.reshape((num_thresholds, num_classes, 2))
+        .transpose(0, 2)
+        .type(target.dtype)
+    )
+
+    class_counts = torch.histc(
+        target.type(torch.float64), bins=num_classes, min=0, max=num_classes
+    ).type(target.dtype)
+
+    # suffix sum: For each threshold index/("true/false" positives) combination,
+    # find how many indices j such that input[j] >= threshold[i].
+    suffix_total = positives_idx.flip(dims=(-1,)).cumsum(dim=-1).flip(dims=(-1,))
+    num_fp, num_tp = suffix_total[0].T, suffix_total[1].T
+    num_fn = class_counts[None, :] - num_tp
     return num_tp, num_fp, num_fn
 
 
