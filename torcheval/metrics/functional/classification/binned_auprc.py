@@ -164,6 +164,23 @@ def _binary_binned_auprc_update_input_check(
             )
 
 
+def _compute_riemann_integrals(
+    prec: List[torch.Tensor],
+    recall: List[torch.Tensor],
+    average: Optional[str] = "macro",
+    device: Optional[torch.device] = None,
+) -> torch.Tensor:
+    auprcs = []
+    for p, r in zip(prec, recall):
+        auprcs.append(_riemann_integral(r, p))
+    auprcs = torch.tensor(auprcs).to(device).nan_to_num(nan=0.0)
+
+    if average == "macro":
+        return torch.mean(auprcs)
+    else:
+        return auprcs
+
+
 @torch.inference_mode()
 def multiclass_binned_auprc(
     input: torch.Tensor,
@@ -238,15 +255,7 @@ def _multiclass_binned_auprc_compute(
     prec, recall, thresh = _multiclass_binned_precision_recall_curve_compute(
         num_tp, num_fp, num_fn, num_classes, threshold
     )
-    auprcs = []
-    for p, r in zip(prec, recall):
-        auprcs.append(_riemann_integral(r, p))
-    auprcs = torch.tensor(auprcs).to(input.device).nan_to_num(nan=0.0)
-
-    if average == "macro":
-        return torch.mean(auprcs), threshold
-    else:
-        return auprcs, threshold
+    return _compute_riemann_integrals(prec, recall, average, input.device), threshold
 
 
 def _multiclass_binned_auprc_param_check(
@@ -368,15 +377,7 @@ def _multilabel_binned_auprc_compute(
     prec, recall, thresh = multilabel_binned_precision_recall_curve(
         input, target, num_labels=num_labels, threshold=threshold
     )
-    auprcs = []
-    for p, r in zip(prec, recall):
-        auprcs.append(_riemann_integral(r, p))
-    auprcs = torch.tensor(auprcs).to(input.device).nan_to_num(nan=0.0)
-
-    if average == "macro":
-        return torch.mean(auprcs), threshold
-    else:
-        return auprcs, threshold
+    return _compute_riemann_integrals(prec, recall, average, input.device), threshold
 
 
 def _multilabel_binned_auprc_param_check(

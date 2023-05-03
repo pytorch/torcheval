@@ -14,19 +14,24 @@ from torcheval.metrics.functional.classification.binned_auprc import (
     _binary_binned_auprc_compute,
     _binary_binned_auprc_param_check,
     _binary_binned_auprc_update_input_check,
+    _compute_riemann_integrals,
     _multiclass_binned_auprc_compute,
     _multiclass_binned_auprc_param_check,
     _multiclass_binned_auprc_update_input_check,
+    _multilabel_binned_auprc_param_check,
     DEFAULT_NUM_THRESHOLD,
 )
 from torcheval.metrics.functional.classification.binned_precision_recall_curve import (
     _create_threshold_tensor,
+    _multilabel_binned_precision_recall_curve_compute,
+    _multilabel_binned_precision_recall_curve_update,
 )
 from torcheval.metrics.metric import Metric
 
 
 TBinaryBinnedAUPRC = TypeVar("TBinaryBinnedAUPRC")
 TMulticlassBinnedAUPRC = TypeVar("TMulticlassBinnedAUPRC")
+TMultilabelBinnedAUPRC = TypeVar("TMultilabelBinnedAUPRC")
 
 
 class BinaryBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
@@ -271,3 +276,143 @@ class MulticlassBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
         if self.inputs and self.targets:
             self.inputs = [torch.cat(self.inputs)]
             self.targets = [torch.cat(self.targets)]
+
+
+class MultilabelBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
+    """
+    Compute Binned AUPRC, which is the area under the binned version of the Precision Recall Curve, for multilabel classification.
+    Its functional version is :func:`torcheval.metrics.functional.multilabel_binned_auprc`.
+
+    Args:
+        num_labels (int): Number of labels.
+        threshold (Tensor, int, List[float]): Either an integer representing the number of bins, a list of thresholds, or a tensor of thresholds.
+                    The same thresholds will be used for all tasks.
+                    If `threshold` is a tensor, it must be 1D.
+                    If list or tensor is given, the first element must be 0 and the last must be 1.
+        average (str, optional):
+            - ``'macro'`` [default]:
+                Calculate metrics for each label separately, and return their unweighted mean.
+            - ``None``:
+                Calculate the metric for each label separately, and return
+                the metric for every label.
+
+
+    Examples::
+
+        >>> import torch
+        >>> from torcheval.metrics import MultilabelBinnedAUPRC
+        >>> input = torch.tensor([[0.75, 0.05, 0.35], [0.45, 0.75, 0.05], [0.05, 0.55, 0.75], [0.05, 0.65, 0.05]])
+        >>> target = torch.tensor([[1, 0, 1], [0, 0, 0], [0, 1, 1], [1, 1, 1]])
+        >>> threshold = torch.tensor([0.0, 0.1, 0.4, 0.7, 0.8, 0.9, 1.0])
+        >>> metric = MultilabelBinnedAUPRC(num_labels=3, threshold=threshold, average='none')
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor([0.7500, 0.6667, 0.9167])
+        >>> metric = MultilabelBinnedAUPRC(num_labels=3, threshold=threshold, average='macro')
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(0.7778)
+        >>> threshold = 5
+        >>> metric = MultilabelBinnedAUPRC(num_labels=3, threshold=threshold, average='macro')
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(0.7778)
+        >>> threshold = 100
+        >>> metric = MultilabelBinnedAUPRC(num_labels=3, threshold=threshold, average='none')
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor([0.7500, 0.5833, 0.9167])
+        >>> metric = MultilabelBinnedAUPRC(num_labels=3, threshold=threshold, average='macro')
+        >>> metric.update(input, target)
+        >>> metric.compute()
+        tensor(0.7500)
+    """
+
+    def __init__(
+        self: TMultilabelBinnedAUPRC,
+        *,
+        num_labels: int,
+        threshold: Union[int, List[float], torch.Tensor] = DEFAULT_NUM_THRESHOLD,
+        average: Optional[str] = "macro",
+        device: Optional[torch.device] = None,
+    ) -> None:
+        super().__init__(device=device)
+        threshold = _create_threshold_tensor(
+            threshold,
+            self.device,
+        )
+        _multilabel_binned_auprc_param_check(num_labels, threshold, average)
+        self.num_labels = num_labels
+        self.threshold = threshold
+        self.average = average
+        self._add_state(
+            "num_tp",
+            torch.zeros(len(threshold), self.num_labels, device=self.device),
+        )
+        self._add_state(
+            "num_fp",
+            torch.zeros(len(threshold), self.num_labels, device=self.device),
+        )
+        self._add_state(
+            "num_fn",
+            torch.zeros(len(threshold), self.num_labels, device=self.device),
+        )
+
+    @torch.inference_mode()
+    # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
+    def update(
+        self: TMultilabelBinnedAUPRC,
+        input: torch.Tensor,
+        target: torch.Tensor,
+    ) -> TMultilabelBinnedAUPRC:
+        """
+        Update states with the ground truth labels and predictions.
+
+        Args:
+            input: Tensor of label predictions
+                It should be probabilities or logits with shape of (n_sample, ).
+            target: Tensor of ground truth labels with shape of (n_samples, ).
+        """
+        num_tp, num_fp, num_fn = _multilabel_binned_precision_recall_curve_update(
+            input, target, num_labels=self.num_labels, threshold=self.threshold
+        )
+        self.num_tp += num_tp
+        self.num_fp += num_fp
+        self.num_fn += num_fn
+        return self
+
+    @torch.inference_mode()
+    def compute(
+        self: TMultilabelBinnedAUPRC,
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        Return Binned_AUPRC.  If no ``update()`` calls are made before
+        ``compute()`` is called, return an empty tensor.
+
+        Returns:
+            Tuple:
+                - Binned_AUPRC (Tensor): The return value of Binned_AUPRC for each task (num_tasks,).
+                - threshold (Tensor): Tensor of threshold. Its shape is (n_thresholds, ).
+        """
+        prec, recall, thresh = _multilabel_binned_precision_recall_curve_compute(
+            self.num_tp,
+            self.num_fp,
+            self.num_fn,
+            num_labels=self.num_labels,
+            threshold=self.threshold,
+        )
+        return (
+            _compute_riemann_integrals(prec, recall, self.average, self.device),
+            thresh,
+        )
+
+    @torch.inference_mode()
+    def merge_state(
+        self: TMultilabelBinnedAUPRC,
+        metrics: Iterable[TMultilabelBinnedAUPRC],
+    ) -> TMultilabelBinnedAUPRC:
+        for metric in metrics:
+            self.num_tp += metric.num_tp.to(self.device)
+            self.num_fp += metric.num_fp.to(self.device)
+            self.num_fn += metric.num_fn.to(self.device)
+        return self
