@@ -211,7 +211,7 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
 
         self.run_class_implementation_tests(
             metric=MulticlassBinnedAUPRC(num_classes=num_classes, threshold=threshold),
-            state_names={"inputs", "targets"},
+            state_names={"num_tp", "num_fp", "num_fn"},
             update_kwargs={
                 "input": input,
                 "target": target,
@@ -232,7 +232,7 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
 
         self.run_class_implementation_tests(
             metric=MulticlassBinnedAUPRC(num_classes=3, threshold=5, average="macro"),
-            state_names={"inputs", "targets"},
+            state_names={"num_tp", "num_fp", "num_fn"},
             update_kwargs={
                 "input": input,
                 "target": target,
@@ -247,7 +247,7 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
 
         self.run_class_implementation_tests(
             metric=MulticlassBinnedAUPRC(num_classes=3, threshold=5, average=None),
-            state_names={"inputs", "targets"},
+            state_names={"num_tp", "num_fp", "num_fn"},
             update_kwargs={
                 "input": input,
                 "target": target,
@@ -286,7 +286,7 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
 
         self.run_class_implementation_tests(
             metric=MulticlassBinnedAUPRC(num_classes=num_classes, threshold=5),
-            state_names={"inputs", "targets"},
+            state_names={"num_tp", "num_fp", "num_fn"},
             update_kwargs={
                 "input": update_input,
                 "target": update_target,

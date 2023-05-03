@@ -23,6 +23,8 @@ from torcheval.metrics.functional.classification.binned_auprc import (
 )
 from torcheval.metrics.functional.classification.binned_precision_recall_curve import (
     _create_threshold_tensor,
+    _multiclass_binned_precision_recall_curve_compute,
+    _multiclass_binned_precision_recall_curve_update,
     _multilabel_binned_precision_recall_curve_compute,
     _multilabel_binned_precision_recall_curve_update,
 )
@@ -215,8 +217,18 @@ class MulticlassBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
         self.num_classes = num_classes
         self.threshold = threshold
         self.average = average
-        self._add_state("inputs", [])
-        self._add_state("targets", [])
+        self._add_state(
+            "num_tp",
+            torch.zeros(len(threshold), self.num_classes, device=self.device),
+        )
+        self._add_state(
+            "num_fp",
+            torch.zeros(len(threshold), self.num_classes, device=self.device),
+        )
+        self._add_state(
+            "num_fn",
+            torch.zeros(len(threshold), self.num_classes, device=self.device),
+        )
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
@@ -233,9 +245,12 @@ class MulticlassBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
                 It should be predicted label, probabilities or logits with shape of (num_tasks, n_sample) or (n_sample, ).
             target (Tensor): Tensor of ground truth labels with shape of (num_tasks, n_sample) or (n_sample, ).
         """
-        _multiclass_binned_auprc_update_input_check(input, target, self.num_classes)
-        self.inputs.append(input)
-        self.targets.append(target)
+        num_tp, num_fp, num_fn = _multiclass_binned_precision_recall_curve_update(
+            input, target, num_classes=self.num_classes, threshold=self.threshold
+        )
+        self.num_tp += num_tp
+        self.num_fp += num_fp
+        self.num_fn += num_fn
         return self
 
     @torch.inference_mode()
@@ -251,31 +266,28 @@ class MulticlassBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
                 - Binned_AUPRC (Tensor): The return value of Binned_AUPRC for each task (num_tasks,).
                 - threshold (Tensor): Tensor of threshold. Its shape is (n_thresholds, ).
         """
-        return _multiclass_binned_auprc_compute(
-            torch.cat(self.inputs),
-            torch.cat(self.targets),
-            self.num_classes,
-            self.threshold,
-            self.average,
+        prec, recall, thresh = _multiclass_binned_precision_recall_curve_compute(
+            self.num_tp,
+            self.num_fp,
+            self.num_fn,
+            num_classes=self.num_classes,
+            threshold=self.threshold,
+        )
+        return (
+            _compute_riemann_integrals(prec, recall, self.average, self.device),
+            thresh,
         )
 
     @torch.inference_mode()
     def merge_state(
-        self: TMulticlassBinnedAUPRC, metrics: Iterable[TMulticlassBinnedAUPRC]
-    ) -> TMulticlassBinnedAUPRC:
+        self: TMultilabelBinnedAUPRC,
+        metrics: Iterable[TMultilabelBinnedAUPRC],
+    ) -> TMultilabelBinnedAUPRC:
         for metric in metrics:
-            if metric.inputs:
-                metric_inputs = torch.cat(metric.inputs).to(self.device)
-                metric_targets = torch.cat(metric.targets).to(self.device)
-                self.inputs.append(metric_inputs)
-                self.targets.append(metric_targets)
+            self.num_tp += metric.num_tp.to(self.device)
+            self.num_fp += metric.num_fp.to(self.device)
+            self.num_fn += metric.num_fn.to(self.device)
         return self
-
-    @torch.inference_mode()
-    def _prepare_for_merge_state(self: TMulticlassBinnedAUPRC) -> None:
-        if self.inputs and self.targets:
-            self.inputs = [torch.cat(self.inputs)]
-            self.targets = [torch.cat(self.targets)]
 
 
 class MultilabelBinnedAUPRC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
