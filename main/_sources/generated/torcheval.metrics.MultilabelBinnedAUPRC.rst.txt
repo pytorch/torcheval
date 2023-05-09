@@ -1,0 +1,35 @@
+﻿torcheval.metrics.MultilabelBinnedAUPRC
+=======================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: MultilabelBinnedAUPRC
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MultilabelBinnedAUPRC.__init__
+      ~MultilabelBinnedAUPRC.compute
+      ~MultilabelBinnedAUPRC.load_state_dict
+      ~MultilabelBinnedAUPRC.merge_state
+      ~MultilabelBinnedAUPRC.reset
+      ~MultilabelBinnedAUPRC.state_dict
+      ~MultilabelBinnedAUPRC.to
+      ~MultilabelBinnedAUPRC.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MultilabelBinnedAUPRC.device
+   
+   

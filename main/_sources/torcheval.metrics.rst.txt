@@ -42,6 +42,7 @@ Classification Metrics
    MulticlassAccuracy
    MulticlassAUPRC
    MulticlassAUROC
+   MulticlassBinnedAUPRC
    MulticlassBinnedAUROC
    MulticlassBinnedPrecisionRecallCurve
    MulticlassConfusionMatrix
@@ -51,6 +52,8 @@ Classification Metrics
    MulticlassRecall
    MultilabelAccuracy
    MultilabelAUPRC
+   MultilabelBinnedAUPRC
+   MultilabelBinnedPrecisionRecallCurve
    MultilabelPrecisionRecallCurve
    MultilabelRecallAtFixedPrecision
    TopKMultilabelAccuracy

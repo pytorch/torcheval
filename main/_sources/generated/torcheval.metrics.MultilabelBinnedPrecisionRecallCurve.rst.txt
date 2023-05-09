@@ -1,0 +1,35 @@
+﻿torcheval.metrics.MultilabelBinnedPrecisionRecallCurve
+======================================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: MultilabelBinnedPrecisionRecallCurve
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MultilabelBinnedPrecisionRecallCurve.__init__
+      ~MultilabelBinnedPrecisionRecallCurve.compute
+      ~MultilabelBinnedPrecisionRecallCurve.load_state_dict
+      ~MultilabelBinnedPrecisionRecallCurve.merge_state
+      ~MultilabelBinnedPrecisionRecallCurve.reset
+      ~MultilabelBinnedPrecisionRecallCurve.state_dict
+      ~MultilabelBinnedPrecisionRecallCurve.to
+      ~MultilabelBinnedPrecisionRecallCurve.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MultilabelBinnedPrecisionRecallCurve.device
+   
+   
