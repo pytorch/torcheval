@@ -7,6 +7,7 @@
 from typing import List, Optional, Tuple, Union
 
 import torch
+import torch.nn.functional as F
 from torcheval.metrics.functional.classification.precision_recall_curve import (
     _binary_precision_recall_curve_update_input_check,
     _multiclass_precision_recall_curve_update_input_check,
@@ -134,6 +135,7 @@ def multiclass_binned_precision_recall_curve(
     target: torch.Tensor,
     num_classes: Optional[int] = None,
     threshold: Union[int, List[float], torch.Tensor] = 100,
+    optimization: str = "vectorized",
 ) -> Tuple[List[torch.Tensor], List[torch.Tensor], torch.Tensor]:
     """
     Compute precision recall curve with given thresholds.
@@ -146,9 +148,17 @@ def multiclass_binned_precision_recall_curve(
         target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
         num_classes (Optional):
             Number of classes. Set to the second dimension of the input if num_classes is None.
-        threshold:
+        threshold (Tensor):
             a integer representing number of bins, a list of thresholds,
             or a tensor of thresholds.
+        optimization (str):
+            Choose the optimization to use. Accepted values: "vectorized" and "memory".
+            The "vectorized" optimization makes more use of vectorization but uses more memory; the "memory" optimization uses less memory but takes more steps.
+            Here are the tradeoffs between these two options:
+            - "vectorized": consumes more memory but is faster on some hardware, e.g. modern GPUs.
+            - "memory": consumes less memory but can be significantly slower on some hardware, e.g. modern GPUs
+            Generally, on GPUs, the "vectorized" optimization requires more memory but is faster; the "memory" optimization requires less memory but is slower.
+            On CPUs, the "memory" optimization is recommended in all cases; it uses less memory and is faster.
 
     Return:
         a tuple of (precision: List[torch.Tensor], recall: List[torch.Tensor], thresholds: torch.Tensor)
@@ -187,25 +197,58 @@ def multiclass_binned_precision_recall_curve(
         tensor([1., 1., 1., 1., 1., 1., 1., 1., 0., 0.])],
         tensor([0.1000, 0.2000, 0.3000, 0.4000, 0.5000, 0.6000, 0.7000, 0.8000, 0.9000]))
     """
+    _optimization_param_check(optimization)
     threshold = _create_threshold_tensor(threshold, target.device)
     _binned_precision_recall_curve_param_check(threshold)
 
     if num_classes is None and input.ndim == 2:
         num_classes = input.shape[1]
     num_tp, num_fp, num_fn = _multiclass_binned_precision_recall_curve_update(
-        input, target, num_classes, threshold
+        input, target, num_classes, threshold, optimization
     )
     return _multiclass_binned_precision_recall_curve_compute(
         num_tp, num_fp, num_fn, num_classes, threshold
     )
 
 
-def _multiclass_binned_precision_recall_curve_update(
+def _multiclass_binned_precision_recall_curve_update_vectorized(
     input: torch.Tensor,
     target: torch.Tensor,
     num_classes: Optional[int],
     threshold: torch.Tensor,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """
+    Vectorized version for the update function on multiclass binned precision curve.
+    This function uses O(num_thresholds * num_samples * num_classes) memory but compared with `_multiclass_binned_precision_recall_curve_update_memory`
+    is faster *on GPU* due to more effective vectorization during computation.
+
+    On GPU, this is recommended if time is more critical than memory.
+    Note that this is still slower on CPU, so it is not recommended to use this function on CPU.
+    """
+    _multiclass_precision_recall_curve_update_input_check(input, target, num_classes)
+    labels = input >= threshold[:, None, None]
+    target = F.one_hot(target, num_classes)
+    num_tp = (labels & target).sum(dim=1)
+    num_fp = labels.sum(dim=1) - num_tp
+    num_fn = target.sum(dim=0) - num_tp
+
+    return num_tp, num_fp, num_fn
+
+
+def _multiclass_binned_precision_recall_curve_update_memory(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    num_classes: Optional[int],
+    threshold: torch.Tensor,
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """
+    Less-memory version for the update function on multiclass binned precision curve.
+    This function uses O(num_samples * num_classes) memory but is slower *on GPU*, as
+    `_multiclass_binned_precision_recall_curve_update_vectorized` uses more effective tensor broadcasting.
+    However, this function is faster on CPU.
+
+    This version is recommended for CPU in all cases, and for GPU if memory usage is more critical than time.
+    """
     _multiclass_precision_recall_curve_update_input_check(input, target, num_classes)
 
     num_samples, num_classes = tuple(input.shape)
@@ -245,6 +288,24 @@ def _multiclass_binned_precision_recall_curve_update(
     num_fp, num_tp = suffix_total[0].T, suffix_total[1].T
     num_fn = class_counts[None, :] - num_tp
     return num_tp, num_fp, num_fn
+
+
+def _multiclass_binned_precision_recall_curve_update(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    num_classes: Optional[int],
+    threshold: torch.Tensor,
+    optimization: str = "vectorized",
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    _optimization_param_check(optimization)
+    if optimization == "vectorized":
+        return _multiclass_binned_precision_recall_curve_update_vectorized(
+            input, target, num_classes, threshold
+        )
+    else:
+        return _multiclass_binned_precision_recall_curve_update_memory(
+            input, target, num_classes, threshold
+        )
 
 
 def _multiclass_binned_precision_recall_curve_compute(
@@ -411,3 +472,12 @@ def _binned_precision_recall_curve_param_check(
 
     if (threshold < 0.0).any() or (threshold > 1.0).any():
         raise ValueError("The values in `threshold` should be in the range of [0, 1].")
+
+
+def _optimization_param_check(
+    optimization: str,
+) -> None:
+    if optimization not in ("vectorized", "memory"):
+        raise ValueError(
+            f"Unknown memory approach: expected 'vectorized' or 'memory', but got {optimization}."
+        )

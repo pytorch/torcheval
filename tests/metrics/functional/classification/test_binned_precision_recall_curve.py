@@ -149,9 +149,6 @@ class TestMulticlassBinnedPrecisionRecallCurve(unittest.TestCase):
         )
         target = torch.tensor([0, 1, 2, 1, 0])
         threshold = 10
-        my_compute_result = multiclass_binned_precision_recall_curve(
-            input, target, num_classes=3, threshold=threshold
-        )
 
         compute_result = (
             [
@@ -235,13 +232,22 @@ class TestMulticlassBinnedPrecisionRecallCurve(unittest.TestCase):
                 ]
             ),
         )
-        torch.testing.assert_close(
-            my_compute_result,
-            compute_result,
-            equal_nan=True,
-            atol=1e-4,
-            rtol=1e-4,
-        )
+
+        for optimization in ("vectorized", "memory"):
+            my_compute_result = multiclass_binned_precision_recall_curve(
+                input,
+                target,
+                num_classes=3,
+                threshold=threshold,
+                optimization=optimization,
+            )
+            torch.testing.assert_close(
+                my_compute_result,
+                compute_result,
+                equal_nan=True,
+                atol=1e-4,
+                rtol=1e-4,
+            )
 
     def test_multiclass_binned_precision_recall_curve_invalid_input(self) -> None:
         with self.assertRaisesRegex(
@@ -295,6 +301,16 @@ class TestMulticlassBinnedPrecisionRecallCurve(unittest.TestCase):
                 torch.rand(4),
                 torch.rand(4),
                 threshold=torch.tensor([0.1, 0.2, 0.5, 1.7]),
+            )
+        with self.assertRaisesRegex(
+            ValueError,
+            r"Unknown memory approach: expected 'vectorized' or 'memory', but got foo.",
+        ):
+            multiclass_binned_precision_recall_curve(
+                torch.rand(4),
+                torch.rand(4),
+                threshold=5,
+                optimization="foo",
             )
 
 
