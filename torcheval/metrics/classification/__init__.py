@@ -20,7 +20,11 @@ from torcheval.metrics.classification.auroc import BinaryAUROC, MulticlassAUROC
 from torcheval.metrics.classification.binary_normalized_entropy import (
     BinaryNormalizedEntropy,
 )
-from torcheval.metrics.classification.binned_auprc import BinaryBinnedAUPRC
+from torcheval.metrics.classification.binned_auprc import (
+    BinaryBinnedAUPRC,
+    MulticlassBinnedAUPRC,
+    MultilabelBinnedAUPRC,
+)
 from torcheval.metrics.classification.binned_auroc import (
     BinaryBinnedAUROC,
     MulticlassBinnedAUROC,
@@ -28,6 +32,7 @@ from torcheval.metrics.classification.binned_auroc import (
 from torcheval.metrics.classification.binned_precision_recall_curve import (
     BinaryBinnedPrecisionRecallCurve,
     MulticlassBinnedPrecisionRecallCurve,
+    MultilabelBinnedPrecisionRecallCurve,
 )
 from torcheval.metrics.classification.confusion_matrix import (
     BinaryConfusionMatrix,
@@ -66,6 +71,7 @@ __all__ = [
     "MulticlassAccuracy",
     "MulticlassAUPRC",
     "MulticlassAUROC",
+    "MulticlassBinnedAUPRC",
     "MulticlassBinnedAUROC",
     "MulticlassBinnedPrecisionRecallCurve",
     "MulticlassConfusionMatrix",
@@ -75,6 +81,8 @@ __all__ = [
     "MulticlassRecall",
     "MultilabelAccuracy",
     "MultilabelAUPRC",
+    "MultilabelBinnedAUPRC",
+    "MultilabelBinnedPrecisionRecallCurve",
     "MultilabelPrecisionRecallCurve",
     "MultilabelRecallAtFixedPrecision",
     "TopKMultilabelAccuracy",

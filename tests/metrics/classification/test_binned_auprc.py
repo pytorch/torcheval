@@ -7,8 +7,8 @@
 from typing import List, Optional, Union
 
 import torch
-from torcheval.metrics import BinaryBinnedAUPRC
 from torcheval.metrics.classification.binned_auprc import (
+    BinaryBinnedAUPRC,
     MulticlassBinnedAUPRC,
     MultilabelBinnedAUPRC,
 )
@@ -271,19 +271,23 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
         threshold: Union[int, List[float], torch.Tensor],
         average: Optional[str],
     ) -> None:
-        self.run_class_implementation_tests(
-            metric=MulticlassBinnedAUPRC(
-                num_classes=num_classes, threshold=threshold, average=average
-            ),
-            state_names={"num_tp", "num_fp", "num_fn"},
-            update_kwargs={
-                "input": update_input,
-                "target": update_target,
-            },
-            compute_result=compute_result,
-            num_total_updates=len(update_input),
-            num_processes=2,
-        )
+        for optimization in ("vectorized", "memory"):
+            self.run_class_implementation_tests(
+                metric=MulticlassBinnedAUPRC(
+                    num_classes=num_classes,
+                    threshold=threshold,
+                    average=average,
+                    optimization=optimization,
+                ),
+                state_names={"num_tp", "num_fp", "num_fn"},
+                update_kwargs={
+                    "input": update_input,
+                    "target": update_target,
+                },
+                compute_result=compute_result,
+                num_total_updates=len(update_input),
+                num_processes=2,
+            )
 
     def test_binned_auprc_class_base(self) -> None:
         num_classes = 4
@@ -327,7 +331,7 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
         batch_size = 4
         num_bins = 5
 
-        for _ in range(10):
+        for _ in range(4):
             input, target = rd.get_rand_data_multiclass(1, num_classes, batch_size)
             threshold = torch.cat([torch.tensor([0, 1]), torch.rand(num_bins - 2)])
 
@@ -459,6 +463,18 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
             metric = MulticlassBinnedAUPRC(
                 num_classes=4,
                 threshold=torch.tensor([0.0, 0.2, 0.5, 0.9]),
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"Unknown memory approach: expected 'vectorized' or 'memory', but got cpu.",
+        ):
+            metric = (
+                MulticlassBinnedAUPRC(
+                    num_classes=3,
+                    threshold=5,
+                    optimization="cpu",
+                ),
             )
 
 

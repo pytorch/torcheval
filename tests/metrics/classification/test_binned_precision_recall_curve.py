@@ -11,8 +11,6 @@ import torch
 from torcheval.metrics import (
     BinaryBinnedPrecisionRecallCurve,
     MulticlassBinnedPrecisionRecallCurve,
-)
-from torcheval.metrics.classification.binned_precision_recall_curve import (
     MultilabelBinnedPrecisionRecallCurve,
 )
 from torcheval.metrics.functional import (
@@ -164,17 +162,20 @@ class TestMulticlassBinnedPrecisionRecallCurve(MetricClassTester):
         num_classes: int,
         threshold: Union[int, List[float], torch.Tensor],
     ) -> None:
-        self.run_class_implementation_tests(
-            metric=MulticlassBinnedPrecisionRecallCurve(
-                num_classes=num_classes, threshold=threshold
-            ),
-            state_names={"num_tp", "num_fp", "num_fn"},
-            update_kwargs={
-                "input": input,
-                "target": target,
-            },
-            compute_result=compute_result,
-        )
+        for optimization in ("vectorized", "memory"):
+            self.run_class_implementation_tests(
+                metric=MulticlassBinnedPrecisionRecallCurve(
+                    num_classes=num_classes,
+                    threshold=threshold,
+                    optimization=optimization,
+                ),
+                state_names={"num_tp", "num_fp", "num_fn"},
+                update_kwargs={
+                    "input": input,
+                    "target": target,
+                },
+                compute_result=compute_result,
+            )
 
     def test_multiclass_binned_precision_recall_curve_class_base(self) -> None:
         num_classes = 3
@@ -386,6 +387,16 @@ class TestMulticlassBinnedPrecisionRecallCurve(MetricClassTester):
         ):
             MulticlassBinnedPrecisionRecallCurve(
                 num_classes=5, threshold=torch.tensor([0.1, 0.2, 0.5, 1.7])
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"Unknown memory approach: expected 'vectorized' or 'memory', but got cpu.",
+        ):
+            metric = MulticlassBinnedPrecisionRecallCurve(
+                num_classes=3,
+                threshold=5,
+                optimization="cpu",
             )
 
 

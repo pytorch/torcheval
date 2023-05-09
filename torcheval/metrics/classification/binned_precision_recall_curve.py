@@ -18,6 +18,7 @@ from torcheval.metrics.functional.classification.binned_precision_recall_curve i
     _multiclass_binned_precision_recall_curve_update,
     _multilabel_binned_precision_recall_curve_compute,
     _multilabel_binned_precision_recall_curve_update,
+    _optimization_param_check,
 )
 from torcheval.metrics.metric import Metric
 
@@ -147,6 +148,15 @@ class MulticlassBinnedPrecisionRecallCurve(
         threshold (Union[int, List[float], torch.Tensor], Optional):
             a integer representing number of bins, a list of thresholds,
             or a tensor of thresholds.
+        optimization (str):
+            Choose the optimization to use. Accepted values: "vectorized" and "memory".
+            The "vectorized" optimization makes more use of vectorization but uses more memory; the "memory" optimization uses less memory but takes more steps.
+            Here are the tradeoffs between these two options:
+            - "vectorized": consumes more memory but is faster on some hardware, e.g. modern GPUs.
+            - "memory": consumes less memory but can be significantly slower on some hardware, e.g. modern GPUs
+            Generally, on GPUs, the "vectorized" optimization requires more memory but is faster; the "memory" optimization requires less memory but is slower.
+            On CPUs, the "memory" optimization is recommended in all cases; it uses less memory and is faster.
+
 
     Examples::
 
@@ -174,9 +184,11 @@ class MulticlassBinnedPrecisionRecallCurve(
         *,
         num_classes: int,
         threshold: Union[int, List[float], torch.Tensor] = 100,
+        optimization: str = "vectorized",
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)
+        _optimization_param_check(optimization)
         threshold = (
             torch.linspace(0, 1.0, threshold, device=self.device)
             if isinstance(threshold, int)
@@ -185,6 +197,7 @@ class MulticlassBinnedPrecisionRecallCurve(
         _binned_precision_recall_curve_param_check(threshold)
         self.num_classes = num_classes
         self.threshold = threshold
+        self.optimization = optimization
         self._add_state(
             "num_tp",
             torch.zeros(len(threshold), self.num_classes, device=self.device),
@@ -214,7 +227,11 @@ class MulticlassBinnedPrecisionRecallCurve(
             target: Tensor of ground truth labels with shape of (n_samples, ).
         """
         num_tp, num_fp, num_fn = _multiclass_binned_precision_recall_curve_update(
-            input, target, num_classes=self.num_classes, threshold=self.threshold
+            input,
+            target,
+            num_classes=self.num_classes,
+            threshold=self.threshold,
+            optimization=self.optimization,
         )
         self.num_tp += num_tp
         self.num_fp += num_fp

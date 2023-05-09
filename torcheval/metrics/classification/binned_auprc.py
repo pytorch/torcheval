@@ -25,6 +25,7 @@ from torcheval.metrics.functional.classification.binned_precision_recall_curve i
     _multiclass_binned_precision_recall_curve_update,
     _multilabel_binned_precision_recall_curve_compute,
     _multilabel_binned_precision_recall_curve_update,
+    _optimization_param_check,
 )
 from torcheval.metrics.metric import Metric
 
@@ -42,7 +43,7 @@ class BinaryBinnedAUPRC(Metric[torch.Tensor]):
     Args:
         num_tasks (int):  Number of tasks that need binary_binned_auprc calculation. Default value
                     is 1. binary_binned_auprc for each task will be calculated independently.
-        threshold: A integeter representing number of bins, a list of thresholds, or a tensor of thresholds.
+        threshold: A integer representing number of bins, a list of thresholds, or a tensor of thresholds.
 
 
     Examples::
@@ -167,7 +168,14 @@ class MulticlassBinnedAUPRC(Metric[torch.Tensor]):
             - ``None``:
                 Calculate the metric for each class separately, and return
                 the metric for every class.
-
+        optimization (str):
+            Choose the optimization to use. Accepted values: "vectorized" and "memory".
+            The "vectorized" optimization makes more use of vectorization but uses more memory; the "memory" optimization uses less memory but takes more steps.
+            Here are the tradeoffs between these two options:
+            - "vectorized": consumes more memory but is faster on some hardware, e.g. modern GPUs.
+            - "memory": consumes less memory but can be significantly slower on some hardware, e.g. modern GPUs
+            Generally, on GPUs, the "vectorized" optimization requires more memory but is faster; the "memory" optimization requires less memory but is slower.
+            On CPUs, the "memory" optimization is recommended in all cases; it uses less memory and is faster.
 
     Examples::
 
@@ -202,9 +210,11 @@ class MulticlassBinnedAUPRC(Metric[torch.Tensor]):
         num_classes: int,
         threshold: Union[int, List[float], torch.Tensor] = DEFAULT_NUM_THRESHOLD,
         average: Optional[str] = "macro",
+        optimization: str = "vectorized",
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)
+        _optimization_param_check(optimization)
         threshold = _create_threshold_tensor(
             threshold,
             self.device,
@@ -213,6 +223,7 @@ class MulticlassBinnedAUPRC(Metric[torch.Tensor]):
         self.num_classes = num_classes
         self.threshold = threshold
         self.average = average
+        self.optimization = optimization
         self._add_state(
             "num_tp",
             torch.zeros(len(threshold), self.num_classes, device=self.device),
@@ -242,7 +253,11 @@ class MulticlassBinnedAUPRC(Metric[torch.Tensor]):
             target (Tensor): Tensor of ground truth labels with shape of (num_tasks, n_sample) or (n_sample, ).
         """
         num_tp, num_fp, num_fn = _multiclass_binned_precision_recall_curve_update(
-            input, target, num_classes=self.num_classes, threshold=self.threshold
+            input,
+            target,
+            num_classes=self.num_classes,
+            threshold=self.threshold,
+            optimization=self.optimization,
         )
         self.num_tp += num_tp
         self.num_fp += num_fp
