@@ -8,9 +8,9 @@ import unittest
 from typing import List, Optional, Tuple, Union
 
 import torch
-from torcheval.metrics.functional.classification import multiclass_auprc
 from torcheval.metrics.functional.classification.auprc import (
     binary_auprc,
+    multiclass_auprc,
     multilabel_auprc,
 )
 from torcheval.metrics.functional.classification.binned_auprc import (
@@ -245,44 +245,47 @@ class TestMulticlassBinnedAUPRC(unittest.TestCase):
         average: Optional[str],
         compute_result: Tuple[torch.Tensor, torch.Tensor],
     ) -> None:
-        my_compute_result = multiclass_binned_auprc(
-            input,
-            target,
-            num_classes=num_classes,
-            threshold=threshold,
-            average=average,
-        )
-        torch.testing.assert_close(
-            my_compute_result,
-            compute_result,
-            equal_nan=True,
-            atol=1e-8,
-            rtol=1e-5,
-        )
-
-        # Also test for cuda
-        if torch.cuda.is_available():
-            threshold_cuda = (
-                threshold.to("cuda")
-                if isinstance(threshold, torch.Tensor)
-                else threshold
-            )
-            compute_result_cuda = tuple(c.to("cuda") for c in compute_result)
+        for optimization in ("vectorized", "memory"):
             my_compute_result = multiclass_binned_auprc(
-                input.to("cuda"),
-                target.to("cuda"),
+                input,
+                target,
                 num_classes=num_classes,
-                threshold=threshold_cuda,
+                threshold=threshold,
                 average=average,
+                optimization=optimization,
             )
-            my_compute_result_cuda = tuple(c.to("cuda") for c in my_compute_result)
             torch.testing.assert_close(
-                my_compute_result_cuda,
-                compute_result_cuda,
+                my_compute_result,
+                compute_result,
                 equal_nan=True,
                 atol=1e-8,
                 rtol=1e-5,
             )
+
+            # Also test for cuda
+            if torch.cuda.is_available():
+                threshold_cuda = (
+                    threshold.to("cuda")
+                    if isinstance(threshold, torch.Tensor)
+                    else threshold
+                )
+                compute_result_cuda = tuple(c.to("cuda") for c in compute_result)
+                my_compute_result = multiclass_binned_auprc(
+                    input.to("cuda"),
+                    target.to("cuda"),
+                    num_classes=num_classes,
+                    threshold=threshold_cuda,
+                    average=average,
+                    optimization=optimization,
+                )
+                my_compute_result_cuda = tuple(c.to("cuda") for c in my_compute_result)
+                torch.testing.assert_close(
+                    my_compute_result_cuda,
+                    compute_result_cuda,
+                    equal_nan=True,
+                    atol=1e-8,
+                    rtol=1e-5,
+                )
 
     def test_with_randomized_data_getter(self) -> None:
         num_classes = 4
@@ -467,6 +470,18 @@ class TestMulticlassBinnedAUPRC(unittest.TestCase):
                 torch.rand(4),
                 num_classes=4,
                 threshold=torch.tensor([0.0, 0.2, 0.5, 0.9]),
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"Unknown memory approach: expected 'vectorized' or 'memory', but got foo.",
+        ):
+            multiclass_binned_auprc(
+                torch.rand(4),
+                torch.rand(4),
+                num_classes=4,
+                threshold=5,
+                optimization="foo",
             )
 
 

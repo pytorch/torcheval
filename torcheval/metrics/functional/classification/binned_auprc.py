@@ -12,6 +12,7 @@ from torcheval.metrics.functional.classification.binned_precision_recall_curve i
     _binary_binned_precision_recall_curve_update,
     _multiclass_binned_precision_recall_curve_compute,
     _multiclass_binned_precision_recall_curve_update,
+    _optimization_param_check,
     multilabel_binned_precision_recall_curve,
 )
 from torcheval.metrics.functional.tensor_utils import (
@@ -164,31 +165,15 @@ def _binary_binned_auprc_update_input_check(
             )
 
 
-def _compute_riemann_integrals(
-    prec: List[torch.Tensor],
-    recall: List[torch.Tensor],
-    average: Optional[str] = "macro",
-    device: Optional[torch.device] = None,
-) -> torch.Tensor:
-    auprcs = []
-    for p, r in zip(prec, recall):
-        auprcs.append(_riemann_integral(r, p))
-    auprcs = torch.tensor(auprcs, device=device).nan_to_num(nan=0.0)
-
-    if average == "macro":
-        return torch.mean(auprcs)
-    else:
-        return auprcs
-
-
 @torch.inference_mode()
 def multiclass_binned_auprc(
     input: torch.Tensor,
     target: torch.Tensor,
+    num_classes: Optional[int] = None,
     *,
-    num_classes: int,
     threshold: Union[int, List[float], torch.Tensor] = DEFAULT_NUM_THRESHOLD,
     average: Optional[str] = "macro",
+    optimization: str = "vectorized",
 ) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Binned Version of AUPRC, which is the area under the AUPRC Curve, for multiclass classification.
@@ -212,6 +197,14 @@ def multiclass_binned_auprc(
             - ``None``:
                 Calculate the metric for each class separately, and return
                 the metric for every class.
+        optimization (str):
+            Choose the optimization to use. Accepted values: "vectorized" and "memory".
+            The "vectorized" optimization makes more use of vectorization but uses more memory; the "memory" optimization uses less memory but takes more steps.
+            Here are the tradeoffs between these two options:
+            - "vectorized": consumes more memory but is faster on some hardware, e.g. modern GPUs.
+            - "memory": consumes less memory but can be significantly slower on some hardware, e.g. modern GPUs
+            Generally, on GPUs, the "vectorized" optimization requires more memory but is faster; the "memory" optimization requires less memory but is slower.
+            On CPUs, the "memory" optimization is recommended in all cases; it uses less memory and is faster.
 
     Examples::
 
@@ -234,12 +227,15 @@ def multiclass_binned_auprc(
         (tensor([0.3250, 0.2000, 0.2000, 0.2500]),
         tensor([0.0, 0.1, 0.4, 0.7, 0.8, 1.0]))
     """
+    _optimization_param_check(optimization)
+    if num_classes is None:
+        num_classes = input.shape[1]
     threshold = _create_threshold_tensor(threshold, target.device)
     _multiclass_binned_auprc_param_check(num_classes, threshold, average)
     _multiclass_binned_auprc_update_input_check(input, target, num_classes)
     return (
         _multiclass_binned_auprc_compute(
-            input, target, num_classes, threshold, average
+            input, target, num_classes, threshold, average, optimization
         ),
         threshold,
     )
@@ -251,9 +247,10 @@ def _multiclass_binned_auprc_compute(
     num_classes: int,
     threshold: torch.Tensor,
     average: Optional[str] = "macro",
+    optimization: str = "vectorized",
 ) -> torch.Tensor:
     num_tp, num_fp, num_fn = _multiclass_binned_precision_recall_curve_update(
-        input, target, num_classes, threshold
+        input, target, num_classes, threshold, optimization
     )
     prec, recall, thresh = _multiclass_binned_precision_recall_curve_compute(
         num_tp, num_fp, num_fn, num_classes, threshold
@@ -435,3 +432,20 @@ def _multilabel_binned_auprc_update_input_check(
             f"input should have shape of (num_sample, num_labels), "
             f"got {input.shape} and num_labels={num_labels}."
         )
+
+
+def _compute_riemann_integrals(
+    prec: List[torch.Tensor],
+    recall: List[torch.Tensor],
+    average: Optional[str] = "macro",
+    device: Optional[torch.device] = None,
+) -> torch.Tensor:
+    auprcs = []
+    for p, r in zip(prec, recall):
+        auprcs.append(_riemann_integral(r, p))
+    auprcs = torch.tensor(auprcs, device=device).nan_to_num(nan=0.0)
+
+    if average == "macro":
+        return torch.mean(auprcs)
+    else:
+        return auprcs
