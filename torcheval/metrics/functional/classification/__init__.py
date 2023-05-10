@@ -23,6 +23,11 @@ from torcheval.metrics.functional.classification.auroc import (
 from torcheval.metrics.functional.classification.binary_normalized_entropy import (
     binary_normalized_entropy,
 )
+from torcheval.metrics.functional.classification.binned_auprc import (
+    binary_binned_auprc,
+    multiclass_binned_auprc,
+    multilabel_binned_auprc,
+)
 from torcheval.metrics.functional.classification.binned_auroc import (
     binary_binned_auroc,
     multiclass_binned_auroc,
@@ -62,6 +67,7 @@ __all__ = [
     "binary_accuracy",
     "binary_auprc",
     "binary_auroc",
+    "binary_binned_auprc",
     "binary_binned_auroc",
     "binary_binned_precision_recall_curve",
     "binary_confusion_matrix",
@@ -74,6 +80,7 @@ __all__ = [
     "multiclass_accuracy",
     "multiclass_auprc",
     "multiclass_auroc",
+    "multiclass_binned_auprc",
     "multiclass_binned_auroc",
     "multiclass_binned_precision_recall_curve",
     "multiclass_confusion_matrix",
@@ -83,6 +90,7 @@ __all__ = [
     "multiclass_recall",
     "multilabel_accuracy",
     "multilabel_auprc",
+    "multilabel_binned_auprc",
     "multilabel_binned_precision_recall_curve",
     "multilabel_precision_recall_curve",
     "multilabel_recall_at_fixed_precision",

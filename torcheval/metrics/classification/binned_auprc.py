@@ -313,7 +313,12 @@ class MultilabelBinnedAUPRC(Metric[torch.Tensor]):
             - ``None``:
                 Calculate the metric for each label separately, and return
                 the metric for every label.
-
+        optimization (str):
+            Choose the optimization to use. Accepted values: "vectorized" and "memory". Here are the tradeoffs between these two options:
+            - "vectorized": consumes more memory but is faster on some hardware, e.g. modern GPUs.
+            - "memory": consumes less memory but can be significantly slower on some hardware, e.g. modern GPUs
+            Generally, on GPUs, the "vectorized" optimization requires more memory but is faster; the "memory" optimization requires less memory but is slower.
+            On CPUs, the "memory" optimization is recommended in all cases; it uses less memory and is faster.
 
     Examples::
 
@@ -352,9 +357,11 @@ class MultilabelBinnedAUPRC(Metric[torch.Tensor]):
         num_labels: int,
         threshold: Union[int, List[float], torch.Tensor] = DEFAULT_NUM_THRESHOLD,
         average: Optional[str] = "macro",
+        optimization: str = "vectorized",
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)
+        _optimization_param_check(optimization)
         threshold = _create_threshold_tensor(
             threshold,
             self.device,
@@ -363,6 +370,7 @@ class MultilabelBinnedAUPRC(Metric[torch.Tensor]):
         self.num_labels = num_labels
         self.threshold = threshold
         self.average = average
+        self.optimization = optimization
         self._add_state(
             "num_tp",
             torch.zeros(len(threshold), self.num_labels, device=self.device),
@@ -392,7 +400,11 @@ class MultilabelBinnedAUPRC(Metric[torch.Tensor]):
             target: Tensor of ground truth labels with shape of (n_samples, ).
         """
         num_tp, num_fp, num_fn = _multilabel_binned_precision_recall_curve_update(
-            input, target, num_labels=self.num_labels, threshold=self.threshold
+            input,
+            target,
+            num_labels=self.num_labels,
+            threshold=self.threshold,
+            optimization=self.optimization,
         )
         self.num_tp += num_tp
         self.num_fp += num_fp

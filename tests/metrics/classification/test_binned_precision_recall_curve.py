@@ -409,17 +409,20 @@ class TestMultilabelBinnedPrecisionRecallCurve(MetricClassTester):
         num_labels: int,
         threshold: Union[int, torch.Tensor],
     ) -> None:
-        self.run_class_implementation_tests(
-            metric=MultilabelBinnedPrecisionRecallCurve(
-                num_labels=num_labels, threshold=threshold
-            ),
-            state_names={"num_tp", "num_fp", "num_fn"},
-            update_kwargs={
-                "input": input,
-                "target": target,
-            },
-            compute_result=compute_result,
-        )
+        for optimization in ["vectorized", "memory"]:
+            self.run_class_implementation_tests(
+                metric=MultilabelBinnedPrecisionRecallCurve(
+                    num_labels=num_labels,
+                    threshold=threshold,
+                    optimization=optimization,
+                ),
+                state_names={"num_tp", "num_fp", "num_fn"},
+                update_kwargs={
+                    "input": input,
+                    "target": target,
+                },
+                compute_result=compute_result,
+            )
 
     def test_multilabel_binned_precision_recall_curve_like_multiclass(self) -> None:
         # Same test as multiclass, except that target is specified as one-hot.
@@ -547,9 +550,8 @@ class TestMultilabelBinnedPrecisionRecallCurve(MetricClassTester):
     def test_multilabel_binned_precision_recall_curve_random_data(self) -> None:
         num_labels = 3
         input = torch.rand(NUM_TOTAL_UPDATES, BATCH_SIZE, num_labels)
-        target = torch.randint(
-            high=num_labels, size=(NUM_TOTAL_UPDATES, BATCH_SIZE, num_labels)
-        )
+        # Note: these are BINARY labels.
+        target = torch.randint(high=2, size=(NUM_TOTAL_UPDATES, BATCH_SIZE, num_labels))
         threshold = 10
 
         precision, recall, thresholds = multilabel_binned_precision_recall_curve(
@@ -575,9 +577,7 @@ class TestMultilabelBinnedPrecisionRecallCurve(MetricClassTester):
 
         num_labels = 5
         input = torch.rand(NUM_TOTAL_UPDATES, BATCH_SIZE, num_labels)
-        target = torch.randint(
-            high=num_labels, size=(NUM_TOTAL_UPDATES, BATCH_SIZE, num_labels)
-        )
+        target = torch.randint(high=2, size=(NUM_TOTAL_UPDATES, BATCH_SIZE, num_labels))
         threshold = torch.tensor([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
 
         precision, recall, thresholds = multilabel_binned_precision_recall_curve(
@@ -692,4 +692,12 @@ class TestMultilabelBinnedPrecisionRecallCurve(MetricClassTester):
         ):
             MultilabelBinnedPrecisionRecallCurve(
                 num_labels=3, threshold=torch.tensor([0.1, 0.2, 0.5, 1.7])
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"Unknown memory approach: expected 'vectorized' or 'memory', but got cpu.",
+        ):
+            MultilabelBinnedPrecisionRecallCurve(
+                num_labels=3, threshold=5, optimization="cpu"
             )
