@@ -25,6 +25,7 @@ Classification Metrics
    binary_accuracy
    binary_auprc
    binary_auroc
+   binary_binned_auprc
    binary_binned_auroc
    binary_binned_precision_recall_curve
    binary_confusion_matrix
@@ -37,6 +38,7 @@ Classification Metrics
    multiclass_accuracy
    multiclass_auprc
    multiclass_auroc
+   multiclass_binned_auprc
    multiclass_binned_auroc
    multiclass_binned_precision_recall_curve
    multiclass_confusion_matrix
@@ -46,6 +48,7 @@ Classification Metrics
    multiclass_recall
    multilabel_accuracy
    multilabel_auprc
+   multilabel_binned_auprc
    multilabel_binned_precision_recall_curve
    multilabel_precision_recall_curve
    multilabel_recall_at_fixed_precision

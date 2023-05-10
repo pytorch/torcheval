@@ -1,0 +1,6 @@
+﻿torcheval.metrics.functional.multiclass\_binned\_auprc
+======================================================
+
+.. currentmodule:: torcheval.metrics.functional
+
+.. autofunction:: multiclass_binned_auprc
