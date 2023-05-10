@@ -36,7 +36,7 @@ class TestBinaryBinnedAUPRC(MetricClassTester):
     ) -> None:
         self.run_class_implementation_tests(
             metric=BinaryBinnedAUPRC(num_tasks=num_tasks, threshold=threshold),
-            state_names={"inputs", "targets"},
+            state_names={"num_tp", "num_fp", "num_fn"},
             update_kwargs={
                 "input": update_input,
                 "target": update_target,
@@ -93,7 +93,7 @@ class TestBinaryBinnedAUPRC(MetricClassTester):
 
         self.run_class_implementation_tests(
             metric=BinaryBinnedAUPRC(threshold=threshold),
-            state_names={"inputs", "targets"},
+            state_names={"num_tp", "num_fp", "num_fn"},
             update_kwargs={
                 "input": update_input,
                 "target": update_target,

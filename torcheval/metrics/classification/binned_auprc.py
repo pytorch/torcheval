@@ -20,13 +20,16 @@ from torcheval.metrics.functional.classification.binned_auprc import (
     DEFAULT_NUM_THRESHOLD,
 )
 from torcheval.metrics.functional.classification.binned_precision_recall_curve import (
+    _binary_binned_precision_recall_curve_compute,
     _create_threshold_tensor,
     _multiclass_binned_precision_recall_curve_compute,
     _multiclass_binned_precision_recall_curve_update,
     _multilabel_binned_precision_recall_curve_compute,
     _multilabel_binned_precision_recall_curve_update,
     _optimization_param_check,
+    _update,
 )
+from torcheval.metrics.functional.tensor_utils import _riemann_integral
 from torcheval.metrics.metric import Metric
 
 
@@ -89,8 +92,18 @@ class BinaryBinnedAUPRC(Metric[torch.Tensor]):
         _binary_binned_auprc_param_check(num_tasks, threshold)
         self.num_tasks = num_tasks
         self.threshold = threshold
-        self._add_state("inputs", [])
-        self._add_state("targets", [])
+        self._add_state(
+            "num_tp",
+            torch.zeros(num_tasks, len(threshold), device=self.device),
+        )
+        self._add_state(
+            "num_fp",
+            torch.zeros(num_tasks, len(threshold), device=self.device),
+        )
+        self._add_state(
+            "num_fn",
+            torch.zeros(num_tasks, len(threshold), device=self.device),
+        )
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
@@ -110,8 +123,18 @@ class BinaryBinnedAUPRC(Metric[torch.Tensor]):
         _binary_binned_auprc_update_input_check(
             input, target, self.num_tasks, self.threshold
         )
-        self.inputs.append(input)
-        self.targets.append(target)
+
+        if self.num_tasks == 1:
+            if input.ndim == 1:
+                input = input[None, :]
+                target = target[None, :]
+
+        for i in range(self.num_tasks):
+            num_tp, num_fp, num_fn = _update(input[i], target[i], self.threshold)
+            self.num_tp[i] += num_tp.to(self.device)
+            self.num_fp[i] += num_fp.to(self.device)
+            self.num_fn[i] += num_fn.to(self.device)
+
         return self
 
     @torch.inference_mode()
@@ -123,32 +146,33 @@ class BinaryBinnedAUPRC(Metric[torch.Tensor]):
         ``compute()`` is called, return an empty tensor.
 
         Returns:
-            - Binned_AUPRC (Tensor): The return value of Binned_AUPRC for each task (num_tasks,).
+            - Binned_AUPRC (Tensor): The return value of Binned_AUPRC for each task (num_tasks,) - except if num_tasks = 1,
+            in which case we simply return the value as a scalar.
         """
-        return _binary_binned_auprc_compute(
-            torch.cat(self.inputs, -1),
-            torch.cat(self.targets, -1),
-            self.num_tasks,
-            self.threshold,
-        )
+
+        result = []
+        for i in range(self.num_tasks):
+            prec, recall, thresh = _binary_binned_precision_recall_curve_compute(
+                self.num_tp[i],
+                self.num_fp[i],
+                self.num_fn[i],
+                threshold=self.threshold,
+            )
+            result.append(_riemann_integral(recall, prec))
+
+        if self.num_tasks == 1:
+            result = result[0]
+        return torch.tensor(result, device=self.device).nan_to_num(nan=0.0)
 
     @torch.inference_mode()
     def merge_state(
         self: TBinaryBinnedAUPRC, metrics: Iterable[TBinaryBinnedAUPRC]
     ) -> TBinaryBinnedAUPRC:
         for metric in metrics:
-            if metric.inputs:
-                metric_inputs = torch.cat(metric.inputs, -1).to(self.device)
-                metric_targets = torch.cat(metric.targets, -1).to(self.device)
-                self.inputs.append(metric_inputs)
-                self.targets.append(metric_targets)
+            self.num_tp += metric.num_tp.to(self.device)
+            self.num_fp += metric.num_fp.to(self.device)
+            self.num_fn += metric.num_fn.to(self.device)
         return self
-
-    @torch.inference_mode()
-    def _prepare_for_merge_state(self: TBinaryBinnedAUPRC) -> None:
-        if self.inputs and self.targets:
-            self.inputs = [torch.cat(self.inputs, -1)]
-            self.targets = [torch.cat(self.targets, -1)]
 
 
 class MulticlassBinnedAUPRC(Metric[torch.Tensor]):
