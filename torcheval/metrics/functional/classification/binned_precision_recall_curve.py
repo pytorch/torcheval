@@ -242,9 +242,9 @@ def _multiclass_binned_precision_recall_curve_update_memory(
     threshold: torch.Tensor,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
-    Less-memory version for the update function on multiclass binned precision curve.
+    Memory-optimized version for the update function on multiclass binned precision curve.
     This function uses O(num_samples * num_classes) memory but is slower *on GPU*, as
-    `_multiclass_binned_precision_recall_curve_update_vectorized` uses more effective tensor broadcasting.
+    `_multiclass_binned_precision_recall_curve_update_vectorized` uses more effective vectorization.
     However, this function is faster on CPU.
 
     This version is recommended for CPU in all cases, and for GPU if memory usage is more critical than time.
@@ -338,6 +338,7 @@ def multilabel_binned_precision_recall_curve(
     target: torch.Tensor,
     num_labels: Optional[int] = None,
     threshold: Union[int, List[float], torch.Tensor] = 100,
+    optimization: str = "vectorized",
 ) -> Tuple[List[torch.Tensor], List[torch.Tensor], torch.Tensor]:
     """
     Compute precision recall curve with given thresholds.
@@ -353,6 +354,14 @@ def multilabel_binned_precision_recall_curve(
         threshold:
             a integer representing number of bins, a list of thresholds,
             or a tensor of thresholds.
+        optimization (str):
+            Choose the optimization to use. Accepted values: "vectorized" and "memory".
+            The "vectorized" optimization makes more use of vectorization but uses more memory; the "memory" optimization uses less memory but takes more steps.
+            Here are the tradeoffs between these two options:
+            - "vectorized": consumes more memory but is faster on some hardware, e.g. modern GPUs.
+            - "memory": consumes less memory but can be significantly slower on some hardware, e.g. modern GPUs
+            Generally, on GPUs, the "vectorized" optimization requires more memory but is faster; the "memory" optimization requires less memory but is slower.
+            On CPUs, the "memory" optimization is recommended in all cases; it uses less memory and is faster.
 
     Return:
         a tuple of (precision: List[torch.Tensor], recall: List[torch.Tensor], thresholds: List[torch.Tensor])
@@ -375,6 +384,7 @@ def multilabel_binned_precision_recall_curve(
                  [1.0000, 0.6667, 0.3333, 0.3333, 0.0000, 0.0000]]),
          tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]))
     """
+    _optimization_param_check(optimization)
     threshold = _create_threshold_tensor(threshold, target.device)
     _binned_precision_recall_curve_param_check(threshold)
 
@@ -385,19 +395,50 @@ def multilabel_binned_precision_recall_curve(
     if num_labels is None:
         num_labels = input.shape[1]
     num_tp, num_fp, num_fn = _multilabel_binned_precision_recall_curve_update(
-        input, target, num_labels, threshold
+        input, target, num_labels, threshold, optimization
     )
     return _multilabel_binned_precision_recall_curve_compute(
         num_tp, num_fp, num_fn, num_labels, threshold
     )
 
 
-def _multilabel_binned_precision_recall_curve_update(
+def _multilabel_binned_precision_recall_curve_update_vectorized(
     input: torch.Tensor,
     target: torch.Tensor,
     num_labels: int,
     threshold: torch.Tensor,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """
+    Vectorized version for the update function on multilabel binned precision curve.
+    This function uses O(num_thresholds * num_samples * num_labels) memory but compared with `_multilabel_binned_precision_recall_curve_update_memory`
+    is faster *on GPU* due to more effective vectorization during computation.
+
+    On GPU, this is recommended if time is more critical than memory.
+    Note that this is still slower on CPU, so it is not recommended to use this function on CPU.
+    """
+    _multilabel_precision_recall_curve_update_input_check(input, target, num_labels)
+    labels = input >= threshold[:, None, None]
+    num_tp = (labels & target).sum(dim=1)
+    num_fp = labels.sum(dim=1) - num_tp
+    num_fn = target.sum(dim=0) - num_tp
+
+    return num_tp, num_fp, num_fn
+
+
+def _multilabel_binned_precision_recall_curve_update_memory(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    num_labels: int,
+    threshold: torch.Tensor,
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """
+    Memory-optimized version for the update function on multilabel binned precision-recall curve.
+    This function uses O(num_samples * num_labels) memory but is slower *on GPU*, as
+    `_multilabel_binned_precision_recall_curve_update_optimize_speed` uses more effective vectorization.
+    However, this function is faster on CPU.
+
+    This version is recommended for CPU in all cases, and for GPU if memory usage is more critical than time.
+    """
     _multilabel_precision_recall_curve_update_input_check(input, target, num_labels)
 
     num_samples, num_labels = tuple(input.shape)
@@ -437,6 +478,24 @@ def _multilabel_binned_precision_recall_curve_update(
     num_fp, num_tp = suffix_total[0].T, suffix_total[1].T
     num_fn = class_counts[None, :] - num_tp
     return num_tp, num_fp, num_fn
+
+
+def _multilabel_binned_precision_recall_curve_update(
+    input: torch.Tensor,
+    target: torch.Tensor,
+    num_labels: int,
+    threshold: torch.Tensor,
+    optimization: str = "vectorized",
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    _optimization_param_check(optimization)
+    if optimization == "vectorized":
+        return _multilabel_binned_precision_recall_curve_update_vectorized(
+            input, target, num_labels, threshold
+        )
+    else:
+        return _multilabel_binned_precision_recall_curve_update_memory(
+            input, target, num_labels, threshold
+        )
 
 
 @torch.jit.script

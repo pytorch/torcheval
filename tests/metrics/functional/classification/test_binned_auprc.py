@@ -495,45 +495,48 @@ class TestMultilabelBinnedAUPRC(unittest.TestCase):
         average: Optional[str],
         compute_result: Tuple[torch.Tensor, torch.Tensor],
     ) -> None:
-        my_compute_result = multilabel_binned_auprc(
-            input,
-            target,
-            num_labels=num_labels,
-            threshold=threshold,
-            average=average,
-        )
-
-        torch.testing.assert_close(
-            my_compute_result,
-            compute_result,
-            equal_nan=True,
-            atol=1e-4,
-            rtol=1e-4,
-        )
-
-        # Also test for cuda
-        if torch.cuda.is_available():
-            threshold_cuda = (
-                threshold.to("cuda")
-                if isinstance(threshold, torch.Tensor)
-                else threshold
-            )
-            compute_result_cuda = tuple(c.to("cuda") for c in compute_result)
+        for optimization in ["vectorized", "memory"]:
             my_compute_result = multilabel_binned_auprc(
-                input.to("cuda"),
-                target.to("cuda"),
+                input,
+                target,
                 num_labels=num_labels,
-                threshold=threshold_cuda,
+                threshold=threshold,
                 average=average,
+                optimization=optimization,
             )
-            my_compute_result_cuda = tuple(c.to("cuda") for c in my_compute_result)
+
             torch.testing.assert_close(
-                my_compute_result_cuda,
-                compute_result_cuda,
+                my_compute_result,
+                compute_result,
                 equal_nan=True,
                 atol=1e-4,
                 rtol=1e-4,
             )
+
+            # Also test for cuda
+            if torch.cuda.is_available():
+                threshold_cuda = (
+                    threshold.to("cuda")
+                    if isinstance(threshold, torch.Tensor)
+                    else threshold
+                )
+                compute_result_cuda = tuple(c.to("cuda") for c in compute_result)
+                my_compute_result = multilabel_binned_auprc(
+                    input.to("cuda"),
+                    target.to("cuda"),
+                    num_labels=num_labels,
+                    threshold=threshold_cuda,
+                    average=average,
+                    optimization=optimization,
+                )
+                my_compute_result_cuda = tuple(c.to("cuda") for c in my_compute_result)
+                torch.testing.assert_close(
+                    my_compute_result_cuda,
+                    compute_result_cuda,
+                    equal_nan=True,
+                    atol=1e-4,
+                    rtol=1e-4,
+                )
 
     def test_with_randomized_data_getter(self) -> None:
         num_labels = 3
@@ -708,4 +711,15 @@ class TestMultilabelBinnedAUPRC(unittest.TestCase):
                 torch.randint(low=0, high=2, size=(4,)),
                 num_labels=4,
                 threshold=torch.tensor([0.1, 0.2, 0.5, 1.7]),
+            )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"Unknown memory approach: expected 'vectorized' or 'memory', but got cpu.",
+        ):
+            multilabel_binned_auprc(
+                torch.rand(4, 3),
+                torch.randint(high=3, size=(4, 3)),
+                threshold=5,
+                optimization="cpu",
             )

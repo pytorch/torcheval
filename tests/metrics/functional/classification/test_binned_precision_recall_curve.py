@@ -328,56 +328,57 @@ class TestMultilabelBinnedPrecisionRecallCurve(unittest.TestCase):
 
         num_labels = 3
 
-        threshold = 5
-        my_compute_result = multilabel_binned_precision_recall_curve(
-            input, target, num_labels, threshold
-        )
-        expected_result = (
-            [
-                torch.tensor([0.5000, 0.5000, 1.0000, 1.0000, 1.0000, 1.0000]),
-                torch.tensor([0.5000, 0.6667, 0.6667, 0.0000, 1.0000, 1.0000]),
-                torch.tensor([0.7500, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000]),
-            ],
-            [
-                torch.tensor([1.0000, 0.5000, 0.5000, 0.5000, 0.0000, 0.0000]),
-                torch.tensor([1.0, 1.0, 1.0, 0.0, 0.0, 0.0]),
-                torch.tensor([1.0000, 0.6667, 0.3333, 0.3333, 0.0000, 0.0000]),
-            ],
-            torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
-        )
-        torch.testing.assert_close(
-            my_compute_result,
-            expected_result,
-            equal_nan=True,
-            atol=1e-4,
-            rtol=1e-4,
-        )
+        for optimization in ["vectorized", "memory"]:
+            threshold = 5
+            my_compute_result = multilabel_binned_precision_recall_curve(
+                input, target, num_labels, threshold, optimization
+            )
+            expected_result = (
+                [
+                    torch.tensor([0.5000, 0.5000, 1.0000, 1.0000, 1.0000, 1.0000]),
+                    torch.tensor([0.5000, 0.6667, 0.6667, 0.0000, 1.0000, 1.0000]),
+                    torch.tensor([0.7500, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000]),
+                ],
+                [
+                    torch.tensor([1.0000, 0.5000, 0.5000, 0.5000, 0.0000, 0.0000]),
+                    torch.tensor([1.0, 1.0, 1.0, 0.0, 0.0, 0.0]),
+                    torch.tensor([1.0000, 0.6667, 0.3333, 0.3333, 0.0000, 0.0000]),
+                ],
+                torch.tensor([0.0000, 0.2500, 0.5000, 0.7500, 1.0000]),
+            )
+            torch.testing.assert_close(
+                my_compute_result,
+                expected_result,
+                equal_nan=True,
+                atol=1e-4,
+                rtol=1e-4,
+            )
 
-        threshold = torch.tensor([0.0, 0.2, 0.5, 0.8, 1.0])
-        my_compute_result = multilabel_binned_precision_recall_curve(
-            input, target, num_labels, threshold
-        )
-        expected_result = (
-            [
-                torch.tensor([0.5000, 0.5000, 1.0000, 1.0000, 1.0000, 1.0000]),
-                torch.tensor([0.5000, 0.6667, 0.6667, 1.0000, 1.0000, 1.0000]),
-                torch.tensor([0.7500, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000]),
-            ],
-            [
-                torch.tensor([1.0000, 0.5000, 0.5000, 0.0000, 0.0000, 0.0000]),
-                torch.tensor([1.0, 1.0, 1.0, 0.0, 0.0, 0.0]),
-                torch.tensor([1.0000, 0.6667, 0.3333, 0.0000, 0.0000, 0.0000]),
-            ],
-            torch.tensor([0.0000, 0.2000, 0.5000, 0.8000, 1.0000]),
-        )
+            threshold = torch.tensor([0.0, 0.2, 0.5, 0.8, 1.0])
+            my_compute_result = multilabel_binned_precision_recall_curve(
+                input, target, num_labels, threshold, optimization
+            )
+            expected_result = (
+                [
+                    torch.tensor([0.5000, 0.5000, 1.0000, 1.0000, 1.0000, 1.0000]),
+                    torch.tensor([0.5000, 0.6667, 0.6667, 1.0000, 1.0000, 1.0000]),
+                    torch.tensor([0.7500, 1.0000, 1.0000, 1.0000, 1.0000, 1.0000]),
+                ],
+                [
+                    torch.tensor([1.0000, 0.5000, 0.5000, 0.0000, 0.0000, 0.0000]),
+                    torch.tensor([1.0, 1.0, 1.0, 0.0, 0.0, 0.0]),
+                    torch.tensor([1.0000, 0.6667, 0.3333, 0.0000, 0.0000, 0.0000]),
+                ],
+                torch.tensor([0.0000, 0.2000, 0.5000, 0.8000, 1.0000]),
+            )
 
-        torch.testing.assert_close(
-            my_compute_result,
-            expected_result,
-            equal_nan=True,
-            atol=1e-4,
-            rtol=1e-4,
-        )
+            torch.testing.assert_close(
+                my_compute_result,
+                expected_result,
+                equal_nan=True,
+                atol=1e-4,
+                rtol=1e-4,
+            )
 
     def test_multilabel_binned_precision_recall_curve_invalid_input(self) -> None:
         with self.assertRaisesRegex(
@@ -431,4 +432,14 @@ class TestMultilabelBinnedPrecisionRecallCurve(unittest.TestCase):
                 torch.rand(4),
                 torch.rand(4),
                 threshold=torch.tensor([0.1, 0.2, 0.5, 1.7]),
+            )
+        with self.assertRaisesRegex(
+            ValueError,
+            r"Unknown memory approach: expected 'vectorized' or 'memory', but got cpu.",
+        ):
+            multilabel_binned_precision_recall_curve(
+                torch.rand(4, 3),
+                torch.randint(high=3, size=(4, 3)),
+                threshold=5,
+                optimization="cpu",
             )

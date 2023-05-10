@@ -12,8 +12,9 @@ from torcheval.metrics.functional.classification.binned_precision_recall_curve i
     _binary_binned_precision_recall_curve_update,
     _multiclass_binned_precision_recall_curve_compute,
     _multiclass_binned_precision_recall_curve_update,
+    _multilabel_binned_precision_recall_curve_compute,
+    _multilabel_binned_precision_recall_curve_update,
     _optimization_param_check,
-    multilabel_binned_precision_recall_curve,
 )
 from torcheval.metrics.functional.tensor_utils import (
     _create_threshold_tensor,
@@ -316,10 +317,11 @@ def _multiclass_binned_auprc_update_input_check(
 def multilabel_binned_auprc(
     input: torch.Tensor,
     target: torch.Tensor,
+    num_labels: Optional[int] = None,
     *,
-    num_labels: int,
     threshold: Union[int, List[float], torch.Tensor] = DEFAULT_NUM_THRESHOLD,
     average: Optional[str] = "macro",
+    optimization: str = "vectorized",
 ) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Binned Version of AUPRC, which is the area under the AUPRC Curve, for multilabel classification.
@@ -332,7 +334,7 @@ def multilabel_binned_auprc(
         input (Tensor): Tensor of label predictions
             It should be probabilities or logits with shape of (n_samples, n_labels).
         target (Tensor): Tensor of ground truth labels with shape of (n_samples, n_labels).
-        num_labels (int): Number of labels.
+        num_labels (int, optional): Number of labels.
         threshold (Tensor, int, List[float]): Either an integer representing the number of bins, a list of thresholds, or a tensor of thresholds.
                     The same thresholds will be used for all tasks.
                     If `threshold` is a tensor, it must be 1D.
@@ -343,6 +345,14 @@ def multilabel_binned_auprc(
             - ``None``:
                 Calculate the metric for each label separately, and return
                 the metric for every label.
+        optimization (str):
+            Choose the optimization to use. Accepted values: "vectorized" and "memory".
+            The "vectorized" optimization makes more use of vectorization but uses more memory; the "memory" optimization uses less memory but takes more steps.
+            Here are the tradeoffs between these two options:
+            - "vectorized": consumes more memory but is faster on some hardware, e.g. modern GPUs.
+            - "memory": consumes less memory but can be significantly slower on some hardware, e.g. modern GPUs
+            Generally, on GPUs, the "vectorized" optimization requires more memory but is faster; the "memory" optimization requires less memory but is slower.
+            On CPUs, the "memory" optimization is recommended in all cases; it uses less memory and is faster.
 
     Examples::
 
@@ -359,11 +369,16 @@ def multilabel_binned_auprc(
         >>> multilabel_binned_auprc(input, target, num_labels=3, threshold=threshold, average='macro')
         tensor([0.7500, 0.5833, 0.9167])
     """
+    _optimization_param_check(optimization)
+    if num_labels is None:
+        num_labels = input.shape[1]
     threshold = _create_threshold_tensor(threshold, target.device)
     _multilabel_binned_auprc_param_check(num_labels, threshold, average)
     _multilabel_binned_auprc_update_input_check(input, target, num_labels)
     return (
-        _multilabel_binned_auprc_compute(input, target, num_labels, threshold, average),
+        _multilabel_binned_auprc_compute(
+            input, target, num_labels, threshold, average, optimization
+        ),
         threshold,
     )
 
@@ -374,9 +389,13 @@ def _multilabel_binned_auprc_compute(
     num_labels: int,
     threshold: torch.Tensor,
     average: Optional[str] = "macro",
+    optimization: str = "vectorized",
 ) -> torch.Tensor:
-    prec, recall, thresh = multilabel_binned_precision_recall_curve(
-        input, target, num_labels=num_labels, threshold=threshold
+    num_tp, num_fp, num_fn = _multilabel_binned_precision_recall_curve_update(
+        input, target, num_labels, threshold, optimization
+    )
+    prec, recall, thresh = _multilabel_binned_precision_recall_curve_compute(
+        num_tp, num_fp, num_fn, num_labels, threshold
     )
     return _compute_riemann_integrals(prec, recall, average, input.device)
 

@@ -612,7 +612,7 @@ class TestMultilabelBinnedAUPRC(MetricClassTester):
 
         threshold = 5
 
-        compute_result = torch.tensor(0.07507620751857758)
+        compute_result = torch.tensor(0.07306567579507828)
         self._test_multilabel_binned_auprc_class_with_input(
             update_input, update_target, compute_result, num_labels, threshold, "macro"
         )
