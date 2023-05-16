@@ -11,7 +11,6 @@ from typing import Iterable, List, Optional, TypeVar, Union
 
 import torch
 from torcheval.metrics.functional.classification.binned_auprc import (
-    _binary_binned_auprc_compute,
     _binary_binned_auprc_param_check,
     _binary_binned_auprc_update_input_check,
     _compute_riemann_integrals,
@@ -120,6 +119,9 @@ class BinaryBinnedAUPRC(Metric[torch.Tensor]):
                 It should be predicted label, probabilities or logits with shape of (num_tasks, n_sample) or (n_sample, ).
             target (Tensor): Tensor of ground truth labels with shape of (num_tasks, n_sample) or (n_sample, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         _binary_binned_auprc_update_input_check(
             input, target, self.num_tasks, self.threshold
         )
@@ -276,6 +278,9 @@ class MulticlassBinnedAUPRC(Metric[torch.Tensor]):
                 It should be predicted label, probabilities or logits with shape of (num_tasks, n_sample) or (n_sample, ).
             target (Tensor): Tensor of ground truth labels with shape of (num_tasks, n_sample) or (n_sample, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         num_tp, num_fp, num_fn = _multiclass_binned_precision_recall_curve_update(
             input,
             target,
@@ -423,6 +428,9 @@ class MultilabelBinnedAUPRC(Metric[torch.Tensor]):
                 It should be probabilities or logits with shape of (n_sample, ).
             target: Tensor of ground truth labels with shape of (n_samples, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         num_tp, num_fp, num_fn = _multilabel_binned_precision_recall_curve_update(
             input,
             target,
