@@ -105,6 +105,8 @@ class BinaryNormalizedEntropy(Metric[torch.Tensor]):
             target (Tensor): Ground truth binary class indices (num_tasks, num_samples).
             weight (Tensor, optional): A manual rescaling weight to match input tensor shape (num_tasks, num_samples).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
 
         cross_entropy, num_positive, num_examples = _binary_normalized_entropy_update(
             input, target, self.from_logits, self.num_tasks, weight

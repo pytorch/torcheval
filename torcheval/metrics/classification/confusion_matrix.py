@@ -165,6 +165,9 @@ class MulticlassConfusionMatrix(Metric[torch.Tensor]):
                 ``torch.argmax`` will be used to convert input into predicted labels.
             target (Tensor): Tensor of ground truth labels with shape of (n_sample, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         self.confusion_matrix += _confusion_matrix_update(
             input, target, self.num_classes
         )
@@ -302,6 +305,9 @@ class BinaryConfusionMatrix(MulticlassConfusionMatrix):
                 ``torch.where(input < threshold, 0, 1)`` will be applied to the input.
             target (Tensor): Tensor of ground truth labels with shape of (n_sample,).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         self.confusion_matrix += _binary_confusion_matrix_update(
             input, target, self.threshold
         )

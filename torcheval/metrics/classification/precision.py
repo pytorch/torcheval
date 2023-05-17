@@ -125,6 +125,9 @@ class MulticlassPrecision(Metric[torch.Tensor]):
                 ``torch.argmax`` will be used to convert input into predicted labels.
             target (Tensor): Tensor of ground truth labels with shape of (n_sample, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         num_tp, num_fp, num_label = _precision_update(
             input, target, self.num_classes, self.average
         )
@@ -207,6 +210,9 @@ class BinaryPrecision(MulticlassPrecision):
                    ``torch.where(input < threshold, 0, 1)`` will be used to convert input into predicted labels.
             target (Tensor): Tensor of ground truth labels with shape of (n_sample,).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         num_tp, num_fp, num_label = _binary_precision_update(
             input, target, self.threshold
         )

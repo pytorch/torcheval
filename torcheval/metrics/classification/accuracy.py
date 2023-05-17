@@ -121,6 +121,9 @@ class MulticlassAccuracy(Metric[torch.Tensor]):
                 ``torch.argmax`` will be used to convert input into predicted labels.
             target (Tensor): Tensor of ground truth labels with shape of (n_sample, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         num_correct, num_total = _multiclass_accuracy_update(
             input, target, self.average, self.num_classes, self.k
         )
@@ -200,6 +203,9 @@ class BinaryAccuracy(MulticlassAccuracy):
                 ``torch.where(input < threshold, 0, 1)`` will be applied to the input.
             target (Tensor): Tensor of ground truth labels with shape of (n_sample,).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         num_correct, num_total = _binary_accuracy_update(input, target, self.threshold)
         self.num_correct += num_correct
         self.num_total += num_total
@@ -297,6 +303,9 @@ class MultilabelAccuracy(MulticlassAccuracy):
                 ``torch.where(input < threshold, 0, 1)`` will be applied to the input.
             target (Tensor): Tensor of ground truth labels with shape of (n_sample, n_class).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         num_correct, num_total = _multilabel_accuracy_update(
             input, target, self.threshold, self.criteria
         )
@@ -390,6 +399,9 @@ class TopKMultilabelAccuracy(MulticlassAccuracy):
                 ``torch.where(input < threshold, 0, 1)`` will be applied to the input.
             target (Tensor): Tensor of ground truth labels with shape of (n_sample, n_class).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         num_correct, num_total = _topk_multilabel_accuracy_update(
             input, target, self.criteria, self.k
         )

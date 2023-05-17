@@ -114,6 +114,9 @@ class BinaryAUPRC(Metric[torch.Tensor]):
                 It should be probabilities or logits with shape of (n_sample, n_class).
             target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         _binary_auprc_update_input_check(input, target, self.num_tasks)
         self.inputs.append(input)
         self.targets.append(target)
@@ -253,6 +256,9 @@ class MulticlassAUPRC(Metric[torch.Tensor]):
                 It should be probabilities or logits with shape of (n_sample, n_class).
             target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         _multiclass_auprc_update_input_check(input, target, self.num_classes)
         self.inputs.append(input)
         self.targets.append(target)
@@ -394,6 +400,9 @@ class MultilabelAUPRC(Metric[torch.Tensor]):
                 It should be probabilities or logits with shape of (n_sample, n_label).
             target (Tensor): Tensor of ground truth labels with shape of (n_samples, n_label).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         _multilabel_auprc_update_input_check(input, target, self.num_labels)
         self.inputs.append(input)
         self.targets.append(target)

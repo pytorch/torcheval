@@ -76,6 +76,9 @@ class BinaryPrecisionRecallCurve(
                 It should be probabilities or logits with shape of (n_sample, ).
             target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         _binary_precision_recall_curve_update(
             input,
             target,
@@ -183,6 +186,9 @@ class MulticlassPrecisionRecallCurve(
                 It should be probabilities or logits with shape of (n_sample, n_class).
             target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         _multiclass_precision_recall_curve_update(
             input,
             target,
@@ -288,6 +294,9 @@ class MultilabelPrecisionRecallCurve(
                 It should be the probabilites with shape of (n_samples, n_labels).
             target (Tensor):Tensor of ground truth labels with shape of (n_samples, n_labels).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         _multilabel_precision_recall_curve_update(
             input,
             target,

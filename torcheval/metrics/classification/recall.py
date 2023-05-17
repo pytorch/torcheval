@@ -87,6 +87,9 @@ class BinaryRecall(Metric[torch.Tensor]):
                 ``torch.where(input ‹ threshold, 0, 1)`` will be used to convert input into predicted labels
             target (Tensor): Tensor of ground truth labels with shape of (n_sample, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         num_tp, num_true_labels = _binary_recall_update(input, target, self.threshold)
         self.num_tp += num_tp
         self.num_true_labels += num_true_labels
@@ -219,6 +222,9 @@ class MulticlassRecall(Metric[torch.Tensor]):
                 ``torch.argmax`` will be used to convert input into predicted labels.
             target (Tensor): Tensor of ground truth labels with shape of (n_sample, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         num_tp, num_labels, num_predictions = _recall_update(
             input, target, self.num_classes, self.average
         )

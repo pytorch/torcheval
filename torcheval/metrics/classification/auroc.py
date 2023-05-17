@@ -106,6 +106,9 @@ class BinaryAUROC(Metric[torch.Tensor]):
             target (Tensor): Tensor of ground truth labels with shape of (num_tasks, n_sample) or (n_sample, ).
             weight (Tensor): Optional. A manual rescaling weight to match input tensor shape (num_tasks, num_samples) or (n_sample, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         if weight is None:
             weight = torch.ones_like(input, dtype=torch.double)
         _binary_auroc_update_input_check(input, target, self.num_tasks, weight)
@@ -232,6 +235,9 @@ class MulticlassAUROC(Metric[torch.Tensor]):
                 It should be probabilities or logits with shape of (n_sample, n_class).
             target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         _multiclass_auroc_update_input_check(input, target, self.num_classes)
         self.inputs.append(input)
         self.targets.append(target)

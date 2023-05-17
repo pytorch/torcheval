@@ -127,6 +127,9 @@ class MulticlassF1Score(Metric[torch.Tensor]):
                 ``torch.argmax`` will be used to convert input into predicted labels.
             target (Tensor): Tensor of ground truth labels with shape of (n_sample, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         num_tp, num_label, num_prediction = _f1_score_update(
             input, target, self.num_classes, self.average
         )
@@ -212,6 +215,9 @@ class BinaryF1Score(MulticlassF1Score):
                 ``torch.where(input < threshold, 0, 1)`` will be applied to the input.
             target (Tensor): Tensor of ground truth labels with shape of (n_sample,).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         num_tp, num_label, num_prediction = _binary_f1_score_update(
             input, target, self.threshold
         )

@@ -67,6 +67,9 @@ class BinaryRecallAtFixedPrecision(Metric[Tuple[torch.Tensor, torch.Tensor]]):
         input: torch.Tensor,
         target: torch.Tensor,
     ) -> TBinaryRecallAtFixedPrecision:
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         _binary_recall_at_fixed_precision_update_input_check(
             input, target, self.min_precision
         )
@@ -151,6 +154,9 @@ class MultilabelRecallAtFixedPrecision(
         input: torch.Tensor,
         target: torch.Tensor,
     ) -> TMultilabelRecallAtFixedPrecision:
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         _multilabel_recall_at_fixed_precision_update_input_check(
             input, target, self.num_labels, self.min_precision
         )

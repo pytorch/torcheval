@@ -104,6 +104,9 @@ class BinaryBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
                 It should be predicted label, probabilities or logits with shape of (num_tasks, n_sample) or (n_sample, ).
             target (Tensor): Tensor of ground truth labels with shape of (num_tasks, n_sample) or (n_sample, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         _binary_binned_auroc_update_input_check(
             input, target, self.num_tasks, self.threshold
         )
@@ -216,6 +219,9 @@ class MulticlassBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
                 It should be probabilities or logits with shape of (n_sample, n_class).
             target (Tensor): Tensor of ground truth labels with shape of (n_samples, ).
         """
+        input = input.to(self.device)
+        target = target.to(self.device)
+
         _multiclass_binned_auroc_update_input_check(input, target, self.num_classes)
         self.inputs.append(input)
         self.targets.append(target)
