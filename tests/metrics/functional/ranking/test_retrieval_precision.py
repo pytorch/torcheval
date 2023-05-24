@@ -84,9 +84,12 @@ class TestRetrievalPrecision(unittest.TestCase):
             ]
         )
         expected_rp = torch.tensor([0.0, 1 / 3, 1 / 3, 2 / 3, 1 / 3, 2 / 3, 2 / 3, 1.0])
-        torch.testing.assert_close(retrieval_precision(input, target, k=k), expected_rp)
         torch.testing.assert_close(
-            retrieval_precision(input, target, k=10, limit_k_to_size=True), expected_rp
+            retrieval_precision(input, target, k=k, num_tasks=8), expected_rp
+        )
+        torch.testing.assert_close(
+            retrieval_precision(input, target, k=10, limit_k_to_size=True, num_tasks=8),
+            expected_rp,
         )
 
     def test_with_randomized_data_getter(self) -> None:
@@ -104,6 +107,7 @@ class TestRetrievalPrecision(unittest.TestCase):
                     input,
                     target,
                     k=k,
+                    num_tasks=num_tasks,
                 )
                 expected_prec = torch.stack(
                     [self.rp_1D(inp, tar, k=k) for inp, tar in zip(input, target)]
@@ -142,46 +146,31 @@ class TestRetrievalPrecision(unittest.TestCase):
 
         with self.assertRaisesRegex(
             ValueError,
-            r"input should be a one or two dimensional tensor, got input\.dim\(\)=3\.",
+            r"input and target should be one dimensional tensors, got input and target dimensions=3\.",
         ):
             prec(
                 {
                     "input": torch.tensor([[[1], [1], [1]]]),
-                    "target": torch.tensor([[1, 2]]),
-                }
-            )
-
-        with self.assertRaisesRegex(
-            ValueError,
-            r"target should be a one or two dimensional tensor, got target\.dim\(\)=3\.",
-        ):
-            prec(
-                {
                     "target": torch.tensor([[[1], [1], [1]]]),
-                    "input": torch.tensor([1, 2]),
                 }
             )
         with self.assertRaisesRegex(
             ValueError,
-            r"input should be a one or two dimensional tensor, got input\.dim\(\)=0\.",
+            r"input and target should be two dimensional tensors with 3 rows, got input and target shape=torch\.Size\(\[1, 3, 1\]\)\.",
         ):
             prec(
                 {
-                    "input": torch.tensor(1),
-                    "target": torch.tensor([1, 2]),
+                    "input": torch.tensor([[[1], [1], [1]]]),
+                    "target": torch.tensor([[[1], [1], [1]]]),
+                    "num_tasks": 3,
                 }
             )
 
         with self.assertRaisesRegex(
             ValueError,
-            r"target should be a one or two dimensional tensor, got target\.dim\(\)=0\.",
+            r"input and target should be one dimensional tensors, got input and target dimensions=0\.",
         ):
-            prec(
-                {
-                    "target": torch.tensor(0),
-                    "input": torch.tensor([[1, 2]]),
-                }
-            )
+            prec({"input": torch.tensor(1), "target": torch.tensor(1), "num_tasks": 1})
 
         with self.assertRaisesRegex(
             ValueError,
