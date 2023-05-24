@@ -112,6 +112,7 @@ class MetricToolkitTest(unittest.TestCase):
             for original, clone in zip(metrics, cloned):
                 self.assertEqual(original.device, clone.device)
                 self.assertEqual(clone.device, device)
+                # pyre-fixme[16]: `Metric` has no attribute `sum`.
                 self.assertEqual(clone.sum.device, device)
 
     @staticmethod
