@@ -47,6 +47,7 @@ from torcheval.metrics.ranking import (
     ClickThroughRate,
     HitRate,
     ReciprocalRank,
+    RetrievalPrecision,
     WeightedCalibration,
 )
 from torcheval.metrics.regression import MeanSquaredError, R2Score
@@ -117,6 +118,7 @@ __all__ = [
     "TopKMultilabelAccuracy",
     "R2Score",
     "ReciprocalRank",
+    "RetrievalPrecision",
     "Sum",
     "Throughput",
     "WeightedCalibration",
