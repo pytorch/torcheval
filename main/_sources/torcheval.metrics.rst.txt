@@ -78,6 +78,7 @@ Ranking Metrics
    ClickThroughRate
    HitRate
    ReciprocalRank
+   RetrievalPrecision
    WeightedCalibration
 
 Regression Metrics

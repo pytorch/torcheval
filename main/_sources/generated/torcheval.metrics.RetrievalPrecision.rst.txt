@@ -1,0 +1,36 @@
+﻿torcheval.metrics.RetrievalPrecision
+====================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: RetrievalPrecision
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~RetrievalPrecision.__init__
+      ~RetrievalPrecision.compute
+      ~RetrievalPrecision.load_state_dict
+      ~RetrievalPrecision.merge_state
+      ~RetrievalPrecision.reset
+      ~RetrievalPrecision.state_dict
+      ~RetrievalPrecision.to
+      ~RetrievalPrecision.update
+      ~RetrievalPrecision.update_single_query
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~RetrievalPrecision.device
+   
+   
