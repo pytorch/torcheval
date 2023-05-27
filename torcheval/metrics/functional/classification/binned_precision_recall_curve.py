@@ -418,7 +418,12 @@ def _multilabel_binned_precision_recall_curve_update_vectorized(
     """
     _multilabel_precision_recall_curve_update_input_check(input, target, num_labels)
     labels = input >= threshold[:, None, None]
-    num_tp = (labels & target).sum(dim=1)
+    try:
+        num_tp = (labels & target).sum(dim=1)
+    except RuntimeError:
+        # target could be a floating-point tensor
+        num_tp = (labels & target.bool()).sum(dim=1)
+
     num_fp = labels.sum(dim=1) - num_tp
     num_fn = target.sum(dim=0) - num_tp
 

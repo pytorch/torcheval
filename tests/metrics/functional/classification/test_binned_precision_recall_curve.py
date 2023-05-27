@@ -380,6 +380,19 @@ class TestMultilabelBinnedPrecisionRecallCurve(unittest.TestCase):
                 rtol=1e-4,
             )
 
+            # Test with floating-point tensors now
+            target_floating_point = target.float()
+            my_compute_result = multilabel_binned_precision_recall_curve(
+                input, target_floating_point, num_labels, threshold, optimization
+            )
+            torch.testing.assert_close(
+                my_compute_result,
+                expected_result,
+                equal_nan=True,
+                atol=1e-4,
+                rtol=1e-4,
+            )
+
     def test_multilabel_binned_precision_recall_curve_invalid_input(self) -> None:
         with self.assertRaisesRegex(
             ValueError,
