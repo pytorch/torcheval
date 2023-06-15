@@ -5,9 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 
 from abc import ABC, abstractmethod
-from collections import defaultdict, deque
+from collections import defaultdict
 from copy import deepcopy
-from typing import Any, Deque, Dict, Generic, Iterable, List, Optional, TypeVar, Union
+from typing import Any, Dict, Generic, Iterable, List, Optional, TypeVar, Union
 
 import torch
 
@@ -15,9 +15,7 @@ import torch
 TSelf = TypeVar("TSelf", bound="Metric")
 TComputeReturn = TypeVar("TComputeReturn")
 # pyre-ignore[33]: Flexible key data type for dictionary
-TState = Union[
-    torch.Tensor, List[torch.Tensor], Dict[Any, torch.Tensor], Deque[torch.Tensor]
-]
+TState = Union[torch.Tensor, List[torch.Tensor], Dict[Any, torch.Tensor]]
 
 
 class Metric(Generic[TComputeReturn], ABC):
@@ -38,8 +36,7 @@ class Metric(Generic[TComputeReturn], ABC):
 
         Use ``self._add_state()`` to initialize state variables of your metric class.
         The state variables should be either ``torch.Tensor``, a list of
-        ``torch.Tensor``, a dictionary with ``torch.Tensor`` as values,
-        or a deque of ``torch.Tensor``.
+        ``torch.Tensor``, or a dictionary with ``torch.Tensor`` as values
         """
         torch._C._log_api_usage_once(f"torcheval.metrics.{self.__class__.__name__}")
 
@@ -147,12 +144,6 @@ class Metric(Generic[TComputeReturn], ABC):
                         },
                     ),
                 )
-            elif isinstance(default, deque):
-                setattr(
-                    self,
-                    state_name,
-                    deque([tensor.clone().to(self.device) for tensor in default]),
-                )
         return self
 
     def state_dict(self: TSelf) -> Dict[str, TState]:
@@ -175,10 +166,6 @@ class Metric(Generic[TComputeReturn], ABC):
                 state_dict[state_name] = {
                     key: tensor.detach().clone() for key, tensor in value.items()
                 }
-            elif isinstance(value, deque):
-                state_dict[state_name] = deque(
-                    [tensor.detach().clone() for tensor in value]
-                )
         return state_dict
 
     def load_state_dict(
@@ -253,15 +240,6 @@ class Metric(Generic[TComputeReturn], ABC):
                         },
                     ),
                 )
-            elif isinstance(value, deque):
-                setattr(
-                    self,
-                    state_name,
-                    deque(
-                        [tensor.to(device, *args, **kwargs) for tensor in value],
-                        maxlen=value.maxlen,
-                    ),
-                )
         self._device = device
         return self
 
@@ -289,12 +267,9 @@ def _check_state_variable_type(name: str, value: Any) -> None:
             isinstance(value, dict)
             and all(isinstance(x, torch.Tensor) for x in value.values())
         )
-        and not (
-            isinstance(value, deque) and all(isinstance(x, torch.Tensor) for x in value)
-        )
     ):
         raise TypeError(
             "The value of state variable must be a ``torch.Tensor``, a list of ``torch.Tensor``, "
-            f"a dictionary with ``torch.Tensor`` as values, or a deque of ``torch.Tensor``."
+            f"or a dictionary with ``torch.Tensor`` as values."
             f"Get {name}={value} instead."
         )

@@ -8,11 +8,9 @@
 # pyre-ignore-all-errors[56]: Pyre was not able to infer the type of argument
 
 import unittest
-from collections import deque
 
 import torch
 from torcheval.utils.test_utils.dummy_metric import (
-    DummySumDequeStateMetric,
     DummySumDictStateMetric,
     DummySumListStateMetric,
     DummySumMetric,
@@ -81,34 +79,6 @@ class MetricBaseClassTest(unittest.TestCase):
                 "doc4": torch.tensor(0.0),
             },
         )
-
-    def test_add_state_tensor_deque(self) -> None:
-        metric = DummySumDequeStateMetric()
-        metric._add_state("x1", deque())
-        assert isinstance(metric.x1, deque)
-        torch.testing.assert_close(metric.x1, deque())
-
-        metric._add_state("x2", deque([torch.tensor(0.0), torch.tensor(1.0)]))
-        assert isinstance(metric.x2, deque)
-        torch.testing.assert_close(
-            metric.x2, deque([torch.tensor(0.0), torch.tensor(1.0)])
-        )
-
-        tensor_deque = deque([torch.tensor(0.0)])
-        metric._add_state("x3", tensor_deque)
-        assert isinstance(metric.x3, deque)
-        torch.testing.assert_close(metric.x3, tensor_deque)
-        tensor_deque.append(torch.tensor(1.0))
-        self.assertNotEqual(metric.x3, tensor_deque)
-        assert isinstance(metric.x3, deque)
-        torch.testing.assert_close(metric.x3, deque([torch.tensor(0.0)]))
-
-        tensor_deque = metric.x3
-        tensor_deque.append(torch.tensor(1.0))
-        tensor_deque.popleft()
-        metric._add_state("x4", tensor_deque)
-        assert isinstance(metric.x4, deque)
-        torch.testing.assert_close(metric.x4, deque([torch.tensor(1.0)]))
 
     def test_add_state_invalid(self) -> None:
         metric = DummySumMetric()
@@ -201,38 +171,6 @@ class MetricBaseClassTest(unittest.TestCase):
             metric.x, {"doc1": torch.tensor(0.0), "doc2": torch.tensor(1.0)}
         )
 
-    def test_reset_state_tensor_deque(self) -> None:
-        metric = DummySumDequeStateMetric()
-        assert isinstance(metric.x, deque)
-        torch.testing.assert_close(metric.x, deque())
-        metric.update(torch.tensor(1.0))
-        metric.update(torch.tensor(2.0))
-        assert isinstance(metric.x, deque)
-        torch.testing.assert_close(
-            metric.x, deque([torch.tensor(1.0), torch.tensor(2.0)])
-        )
-
-        # reset once
-        metric.reset()
-        assert isinstance(metric.x, deque)
-        torch.testing.assert_close(metric.x, deque())
-        metric.update(torch.tensor(1.0))
-        metric.update(torch.tensor(2.0))
-        assert isinstance(metric.x, deque)
-        torch.testing.assert_close(
-            metric.x, deque([torch.tensor(1.0), torch.tensor(2.0)])
-        )
-
-        # reset again
-        metric.reset()
-        assert isinstance(metric.x, deque)
-        torch.testing.assert_close(metric.x, deque())
-
-        # update and reset chained
-        metric.update(torch.tensor(1.0)).reset().update(torch.tensor(2.0))
-        assert isinstance(metric.x, deque)
-        torch.testing.assert_close(metric.x, deque([torch.tensor(2.0)]))
-
     def test_save_load_state_dict_state_tensor(self) -> None:
         metric = DummySumMetric()
         self.assertDictEqual(metric.state_dict(), {"sum": torch.tensor(0.0)})
@@ -315,37 +253,6 @@ class MetricBaseClassTest(unittest.TestCase):
         self.assertDictEqual(
             another_loaded_metric.state_dict(),
             {"x": {"doc1": torch.tensor(1.0), "doc2": torch.tensor(2.0)}},
-        )
-
-    def test_save_load_state_dict_state_tensor_deque(self) -> None:
-        metric = DummySumDequeStateMetric()
-        self.assertDictEqual(metric.state_dict(), {"x": deque()})
-        metric.update(torch.tensor(1.0))
-        metric.update(torch.tensor(2.0))
-        self.assertDictEqual(
-            metric.state_dict(), {"x": deque([torch.tensor(1.0), torch.tensor(2.0)])}
-        )
-
-        state_dict = metric.state_dict()
-        loaded_metric = DummySumDequeStateMetric()
-        loaded_metric.load_state_dict(state_dict)
-        self.assertDictEqual(
-            loaded_metric.state_dict(),
-            {"x": deque([torch.tensor(1.0), torch.tensor(2.0)])},
-        )
-        torch.testing.assert_close(
-            loaded_metric.update(torch.tensor(-1.0)).compute(), torch.tensor(2.0)
-        )
-        self.assertDictEqual(
-            loaded_metric.state_dict(),
-            {"x": deque([torch.tensor(1.0), torch.tensor(2.0), torch.tensor(-1.0)])},
-        )
-
-        another_loaded_metric = DummySumDequeStateMetric()
-        another_loaded_metric.load_state_dict(state_dict)
-        self.assertDictEqual(
-            another_loaded_metric.state_dict(),
-            {"x": deque([torch.tensor(1.0), torch.tensor(2.0)])},
         )
 
     def test_state_dict_destination_prefix_wrong_state_value(self) -> None:
@@ -440,29 +347,6 @@ class MetricBaseClassTest(unittest.TestCase):
         torch.testing.assert_close(metric.x, {"doc1": torch.tensor(1.0, device="cpu")})
         metric.to("cuda")
         torch.testing.assert_close(metric.x, {"doc1": torch.tensor(1.0, device="cuda")})
-
-    @unittest.skipUnless(
-        condition=torch.cuda.is_available(), reason="This test needs a GPU host to run."
-    )
-    def test_to_device_state_tensor_deque(self) -> None:
-        metric = DummySumDequeStateMetric().to("cuda")
-        metric.update(torch.tensor(1.0).to("cuda")).compute()
-        assert isinstance(metric.x, deque)
-        torch.testing.assert_close(metric.x, deque([torch.tensor(1.0, device="cuda")]))
-
-        metric.to("cpu")
-        assert isinstance(metric.x, deque)
-        torch.testing.assert_close(metric.x, deque([torch.tensor(1.0, device="cpu")]))
-        metric.to("cuda")
-        assert isinstance(metric.x, deque)
-        torch.testing.assert_close(metric.x, deque([torch.tensor(1.0, device="cuda")]))
-
-        metric = DummySumDequeStateMetric().to("cuda")
-        torch.testing.assert_close(metric.x.maxlen, 10)
-        metric.to("cpu")
-        torch.testing.assert_close(metric.x.maxlen, 10)
-        metric.to("cuda")
-        torch.testing.assert_close(metric.x.maxlen, 10)
 
     def test_to_device_invalid_state(self) -> None:
         metric = DummySumMetric()
