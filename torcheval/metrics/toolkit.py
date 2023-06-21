@@ -34,7 +34,7 @@ _TMetrics = TypeVar("_TMetrics", bound=Iterable[Metric])
 def sync_and_compute(
     metric: Metric[TComputeReturn],
     process_group: Optional[dist.ProcessGroup] = None,
-) -> Optional[TComputeReturn]:
+) -> TComputeReturn:
     """
     Sync metric states and returns the ``metric.compute()`` result of
     synced metric on all ranks.
@@ -63,14 +63,6 @@ def sync_and_compute(
     """
     synced_metric = get_synced_metric(metric, process_group)
     compute_result = synced_metric.compute() if synced_metric else None
-
-    obj_list = [compute_result]
-    pg = PGWrapper(process_group)
-    if pg.get_rank() == 0:
-        pg.broadcast_object_list(obj_list)
-    else:
-        pg.broadcast_object_list(obj_list)
-        compute_result = obj_list[0]
 
     return compute_result
 
@@ -113,14 +105,6 @@ def sync_and_compute_collection(
     compute_result = None
     if synced_metrics is not None:
         compute_result = {key: m.compute() for key, m in synced_metrics.items()}
-
-    obj_list = [compute_result]
-    pg = PGWrapper(process_group)
-    if pg.get_rank() == 0:
-        pg.broadcast_object_list(obj_list)
-    else:
-        pg.broadcast_object_list(obj_list)
-        compute_result = obj_list[0]
 
     return compute_result
 
