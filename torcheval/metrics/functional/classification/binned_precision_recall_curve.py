@@ -227,6 +227,7 @@ def _multiclass_binned_precision_recall_curve_update_vectorized(
     """
     _multiclass_precision_recall_curve_update_input_check(input, target, num_classes)
     labels = input >= threshold[:, None, None]
+    # pyre-fixme[6]: For 2nd argument expected `int` but got `Optional[int]`.
     target = F.one_hot(target, num_classes)
     num_tp = (labels & target).sum(dim=1)
     num_fp = labels.sum(dim=1) - num_tp
