@@ -82,6 +82,8 @@ class TestMeanSquaredError(MetricClassTester):
         ).squeeze()
         state_names = (
             {
+                "max_num_updates",
+                "total_updates",
                 "sum_squared_error",
                 "sum_weight",
                 "windowed_sum_squared_error",
@@ -297,6 +299,8 @@ class TestMeanSquaredError(MetricClassTester):
                 multioutput=multioutput,
             ),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "windowed_sum_squared_error",
                 "windowed_sum_weight",
             },
@@ -364,6 +368,8 @@ class TestMeanSquaredError(MetricClassTester):
                 multioutput=multioutput,
             ),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "windowed_sum_squared_error",
                 "windowed_sum_weight",
             },

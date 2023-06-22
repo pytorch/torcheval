@@ -88,11 +88,11 @@ class WindowedMeanSquaredError(
                 "`max_num_updates` value should be greater than and equal to 1, but received {max_num_updates}. "
             )
         self.num_tasks = num_tasks
-        self.max_num_updates = max_num_updates
+        self._add_state("max_num_updates", max_num_updates)
         self.enable_lifetime = enable_lifetime
         self.multioutput = multioutput
         self.next_inserted = 0
-        self.total_updates = 0
+        self._add_state("total_updates", 0)
 
         if self.enable_lifetime:
             self._add_state(
