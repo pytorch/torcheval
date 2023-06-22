@@ -60,7 +60,7 @@ class Cat(Metric[torch.Tensor]):
             dim: The dimension along which to concatenate, as in ``torch.cat()``.
         """
         super().__init__(device=device)
-        self.dim = dim
+        self._add_state("dim", dim)
         self._add_state("inputs", [])
 
     @torch.inference_mode()

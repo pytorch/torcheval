@@ -70,9 +70,9 @@ class WindowedBinaryAUROC(Metric[torch.Tensor]):
                 "`max_num_samples` value should be greater than and equal to 1, but received {max_num_samples}. "
             )
         self.num_tasks = num_tasks
-        self.max_num_samples = max_num_samples
+        self._add_state("max_num_samples", max_num_samples)
         self.next_inserted = 0
-        self.total_samples = 0
+        self._add_state("total_samples", 0)
         self._add_state(
             "inputs",
             torch.zeros(self.num_tasks, self.max_num_samples, device=self.device),

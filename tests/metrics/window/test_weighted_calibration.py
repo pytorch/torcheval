@@ -19,6 +19,8 @@ class TestWindowedWeightedCalibration(MetricClassTester):
         self.run_class_implementation_tests(
             metric=WindowedWeightedCalibration(max_num_updates=2, enable_lifetime=True),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "weighted_input_sum",
                 "weighted_target_sum",
                 "windowed_weighted_input_sum",
@@ -43,6 +45,8 @@ class TestWindowedWeightedCalibration(MetricClassTester):
                 max_num_updates=2, enable_lifetime=False
             ),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "windowed_weighted_input_sum",
                 "windowed_weighted_target_sum",
             },
@@ -87,6 +91,8 @@ class TestWindowedWeightedCalibration(MetricClassTester):
                 num_tasks=2, max_num_updates=2, enable_lifetime=True
             ),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "weighted_input_sum",
                 "weighted_target_sum",
                 "windowed_weighted_input_sum",
@@ -119,6 +125,8 @@ class TestWindowedWeightedCalibration(MetricClassTester):
                 num_tasks=2, max_num_updates=2, enable_lifetime=False
             ),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "windowed_weighted_input_sum",
                 "windowed_weighted_target_sum",
             },

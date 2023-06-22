@@ -21,7 +21,7 @@ class TestCat(MetricClassTester):
     ) -> None:
         self.run_class_implementation_tests(
             metric=Cat(),
-            state_names={"inputs"},
+            state_names={"dim", "inputs"},
             update_kwargs={"input": input_val_tensors},
             compute_result=torch.cat(input_val_tensors, dim=dim),
         )
@@ -46,7 +46,7 @@ class TestCat(MetricClassTester):
 
         self.run_class_implementation_tests(
             metric=Cat(),
-            state_names={"inputs"},
+            state_names={"dim", "inputs"},
             update_kwargs={"input": update_inputs},
             compute_result=torch.cat(update_inputs, dim=0),
             num_total_updates=4,
@@ -63,7 +63,7 @@ class TestCat(MetricClassTester):
 
         self.run_class_implementation_tests(
             metric=Cat(dim=1),
-            state_names={"inputs"},
+            state_names={"dim", "inputs"},
             update_kwargs={"input": update_inputs},
             compute_result=torch.cat(update_inputs, dim=1),
             num_total_updates=4,
@@ -80,7 +80,7 @@ class TestCat(MetricClassTester):
 
         self.run_class_implementation_tests(
             metric=Cat(dim=-1),
-            state_names={"inputs"},
+            state_names={"dim", "inputs"},
             update_kwargs={"input": update_inputs},
             compute_result=torch.cat(update_inputs, dim=-1),
             num_total_updates=4,
@@ -97,7 +97,7 @@ class TestCat(MetricClassTester):
 
         self.run_class_implementation_tests(
             metric=Cat(),
-            state_names={"inputs"},
+            state_names={"dim", "inputs"},
             update_kwargs={"input": update_inputs},
             compute_result=torch.cat(update_inputs, dim=0),
             num_total_updates=4,
@@ -128,7 +128,7 @@ class TestCat(MetricClassTester):
 
         self.run_class_implementation_tests(
             metric=Cat(),
-            state_names={"inputs"},
+            state_names={"dim", "inputs"},
             update_kwargs={"input": update_inputs},
             compute_result=torch.cat(update_inputs, dim=0),
             num_total_updates=4,
