@@ -62,7 +62,7 @@ def sync_and_compute(
         tensor(2.) # Rank 2
     """
     synced_metric = get_synced_metric(metric, process_group)
-    compute_result = synced_metric.compute() if synced_metric else None
+    compute_result = synced_metric.compute()
 
     return compute_result
 
@@ -70,7 +70,7 @@ def sync_and_compute(
 def sync_and_compute_collection(
     metrics: MutableMapping[str, Metric],
     process_group: Optional[dist.ProcessGroup] = None,
-) -> Optional[Dict[str, Any]]:
+) -> Dict[str, Any]:
     """
     Sync metric states across a dict of metrics and returns the
     ``metric.compute()`` result of synced metrics on all ranks
@@ -102,9 +102,7 @@ def sync_and_compute_collection(
         {"max" : tensor(2.), "min": tensor(0.)} # Rank 2
     """
     synced_metrics = get_synced_metric_collection(metrics, process_group)
-    compute_result = None
-    if synced_metrics is not None:
-        compute_result = {key: m.compute() for key, m in synced_metrics.items()}
+    compute_result = {key: m.compute() for key, m in synced_metrics.items()}
 
     return compute_result
 
@@ -145,7 +143,7 @@ def get_synced_state_dict(
 def get_synced_state_dict_collection(
     metric_collection: MutableMapping[str, Metric],
     process_group: Optional[dist.ProcessGroup] = None,
-) -> Optional[Dict[str, Dict[str, Any]]]:
+) -> Dict[str, Dict[str, Any]]:
     """
     Return the state dict of a collection of metrics after syncing on all ranks.
     Return an None on other ranks.
@@ -178,8 +176,6 @@ def get_synced_state_dict_collection(
         process_group,
     )
 
-    if synced_metrics is None:
-        return None
     return {key: metric.state_dict() for key, metric in synced_metrics.items()}
 
 
@@ -210,7 +206,7 @@ def clone_metrics(metrics: _TMetrics) -> List[Metric]:
 def get_synced_metric(
     metric: Metric,
     process_group: Optional[dist.ProcessGroup] = None,
-) -> Optional[Metric]:
+) -> Metric:
     """
     Returns a metric object on all ranks whose internal state
     variables are synced across processes in the process_group.
@@ -248,8 +244,6 @@ def get_synced_metric(
 
     if world_size == 1:
         return metric
-    elif world_size == -1:
-        return None
 
     gathered_metric_list = _sync_metric_object(
         metric,
@@ -259,8 +253,6 @@ def get_synced_metric(
         world_size,
     )
 
-    if gathered_metric_list is None:
-        return None
     return (
         clone_metric(gathered_metric_list[0])
         .to(metric.device)
@@ -271,7 +263,7 @@ def get_synced_metric(
 def get_synced_metric_collection(
     metric_collection: MutableMapping[str, Metric],
     process_group: Optional[dist.ProcessGroup] = None,
-) -> Union[Optional[Dict[str, Metric]], MutableMapping[str, Metric]]:
+) -> Union[Dict[str, Metric], MutableMapping[str, Metric]]:
     """
     Returns a dict of metric objects to all ranks whose
     internal state variables are synced across processes in the process_group.
@@ -308,8 +300,6 @@ def get_synced_metric_collection(
 
     if world_size == 1:
         return metric_collection
-    elif world_size == -1:
-        return None
 
     list_of_metric_collections = _sync_metric_object(
         metric_collection,
@@ -319,10 +309,7 @@ def get_synced_metric_collection(
         world_size,
     )
 
-    if list_of_metric_collections is None:
-        return None
-
-    elif isinstance(
+    if isinstance(
         list_of_metric_collections[0], MutableMapping
     ):  # metric bundles are dicts.
         synced_metric_dict: Dict[str, Metric] = {}
@@ -356,10 +343,7 @@ def _validate_rank_and_world_size(
             "returning the input metric(s)."
         )
     elif world_size == -1:
-        log.warning(
-            "World size is -1, and current process might not be "
-            "in the process group. Returning ``None`` instead of synced metric(s)."
-        )
+        raise RuntimeError("The current process is not part of the process group")
     if world_size < 1:
         raise RuntimeError(
             f"Unexpected world_size {world_size} is seen when syncing metrics!"
@@ -371,7 +355,7 @@ def _sync_metric_object(
     metric_data: Metric,
     process_group: dist.ProcessGroup,
     world_size: int,
-) -> Optional[List[Metric]]:
+) -> List[Metric]:
     ...
 
 
@@ -380,7 +364,7 @@ def _sync_metric_object(
     metric_data: MutableMapping[str, Metric],
     process_group: dist.ProcessGroup,
     world_size: int,
-) -> Optional[List[Dict[str, Metric]]]:
+) -> List[Dict[str, Metric]]:
     ...
 
 
@@ -388,7 +372,7 @@ def _sync_metric_object(
     metric_data: Union[Metric, MutableMapping[str, Metric]],
     process_group: dist.ProcessGroup,
     world_size: int,
-) -> Union[Optional[List[Metric]], Optional[List[Dict[str, Metric]]]]:
+) -> Union[List[Metric], List[Dict[str, Metric]]]:
 
     # Prepare metrics in data package for merge
     if isinstance(metric_data, Metric):
@@ -403,7 +387,7 @@ def _sync_metric_object(
     # sync data
     dist.all_gather_object(gathered_data_list, metric_data, group=process_group)
     # c10d does not have type annotations.
-    # pyre-ignore: Incompatible return type [7]: Expected `Union[List[Optional[Dict[str, Metric[typing.Any]]]], List[Optional[List[Metric[typing.Any]]]], List[Optional[Metric[typing.Any]]]]` but got `Optional[List[None]]`.
+    # pyre-ignore Incompatible return type [7]: Expected `Union[List[Dict[str, Metric[typing.Any]]], List[Metric[typing.Any]]]` but got `List[None]`.
     return gathered_data_list
 
 
