@@ -4,6 +4,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+import copy
 import logging
 from copy import deepcopy
 from typing import (
@@ -22,13 +23,16 @@ import torch
 import torch.distributed as dist
 
 from torcheval.metrics import Metric
-from torcheval.metrics.metric import TComputeReturn
+from torcheval.metrics.metric import TComputeReturn, TState
+from torcheval.metrics.synclib import metrics_traversal_order, sync_states
 
 from torchtnt.utils import PGWrapper
 
 log: logging.Logger = logging.getLogger(__name__)
 
 _TMetrics = TypeVar("_TMetrics", bound=Iterable[Metric])
+
+_TMP: str = "tmp"
 
 
 def sync_and_compute(
@@ -352,7 +356,7 @@ def _validate_rank_and_world_size(
 
 @overload
 def _sync_metric_object(
-    metric_data: Metric,
+    local_metric_data: Metric,
     process_group: dist.ProcessGroup,
     world_size: int,
 ) -> List[Metric]:
@@ -361,33 +365,63 @@ def _sync_metric_object(
 
 @overload
 def _sync_metric_object(
-    metric_data: MutableMapping[str, Metric],
+    local_metric_data: MutableMapping[str, Metric],
     process_group: dist.ProcessGroup,
     world_size: int,
-) -> List[Dict[str, Metric]]:
+) -> List[MutableMapping[str, Metric]]:
     ...
 
 
 def _sync_metric_object(
-    metric_data: Union[Metric, MutableMapping[str, Metric]],
+    local_metric_data: Union[Metric, MutableMapping[str, Metric]],
     process_group: dist.ProcessGroup,
     world_size: int,
-) -> Union[List[Metric], List[Dict[str, Metric]]]:
+) -> Union[List[Metric], List[MutableMapping[str, Metric]]]:
 
-    # Prepare metrics in data package for merge
-    if isinstance(metric_data, Metric):
-        metric_data._prepare_for_merge_state()
+    unpack = False  # unpack the dictionary into a single metric when returned. Only used when metric_data is a metric and not a dict of metrics.
+    if isinstance(local_metric_data, Metric):
+        local_metric_data = {_TMP: local_metric_data}
+        unpack = True
+
+    # Allow metrics to run some pre-processing before syncing states
+    # for example, a common optimization is to concat tensors in a list into a single tensor
+    for m in local_metric_data.values():
+        m._prepare_for_merge_state()
+
+    # create a dict of state dicts for each metric in the collection, i.e. extract the state dicts from the Metric objects
+    metric_state_data: Dict[str, Dict[str, TState]] = {}
+    metric_to_device: Dict[str, torch.device] = {}
+    for metric_name, metric in local_metric_data.items():
+        metric_state_data[metric_name] = metric.state_dict()
+        metric_to_device[metric_name] = metric.device
+
+    metric_state_traversal_order = metrics_traversal_order(metric_state_data)
+
+    world_metric_data = sync_states(
+        metric_state_data,
+        metric_to_device,
+        metric_state_traversal_order,
+        process_group=process_group,
+    )
+
+    ##============================================================
+    ## Repack states into Metrics or Dict[str, Metric]s
+    ##============================================================
+    if unpack:
+        # if they sent in one metric, just read it from the "tmp" key and return a list of metrics.
+        gathered_data_list = []
+        for rank_data in world_metric_data:
+            gathered_data_list.append(copy.deepcopy(local_metric_data[_TMP]))
+            gathered_data_list[-1].load_state_dict(rank_data[_TMP])
     else:
-        for m in metric_data.values():
-            m._prepare_for_merge_state()
-
-    # create buffer for data to land in on all ranks
-    gathered_data_list = [None] * world_size
-
-    # sync data
-    dist.all_gather_object(gathered_data_list, metric_data, group=process_group)
-    # c10d does not have type annotations.
-    # pyre-ignore Incompatible return type [7]: Expected `Union[List[Dict[str, Metric[typing.Any]]], List[Metric[typing.Any]]]` but got `List[None]`.
+        # if they sent in a dict[str, metric] return a list of dict[str, metric] populated with the gathered state dicts.
+        gathered_data_list = []
+        for rank_data in world_metric_data:
+            rank_dict = {}
+            for metric_name in local_metric_data.keys():
+                rank_dict[metric_name] = copy.deepcopy(local_metric_data[metric_name])
+                rank_dict[metric_name].load_state_dict(rank_data[metric_name])
+            gathered_data_list.append(rank_dict)
     return gathered_data_list
 
 
