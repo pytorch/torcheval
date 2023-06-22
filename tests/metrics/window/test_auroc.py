@@ -76,7 +76,13 @@ class TestWindowedBinaryAUROC(MetricClassTester):
         )
         self.run_class_implementation_tests(
             metric=WindowedBinaryAUROC(max_num_samples=max_num_samples),
-            state_names={"inputs", "targets", "weights"},
+            state_names={
+                "max_num_samples",
+                "total_samples",
+                "inputs",
+                "targets",
+                "weights",
+            },
             update_kwargs={
                 "input": input,
                 "target": target,
@@ -159,7 +165,13 @@ class TestWindowedBinaryAUROC(MetricClassTester):
             metric=WindowedBinaryAUROC(
                 num_tasks=num_tasks, max_num_samples=max_num_samples
             ),
-            state_names={"inputs", "targets", "weights"},
+            state_names={
+                "max_num_samples",
+                "total_samples",
+                "inputs",
+                "targets",
+                "weights",
+            },
             update_kwargs={
                 "input": input,
                 "target": target,
@@ -213,7 +225,13 @@ class TestWindowedBinaryAUROC(MetricClassTester):
 
         self.run_class_implementation_tests(
             metric=WindowedBinaryAUROC(max_num_samples=6),
-            state_names={"inputs", "targets", "weights"},
+            state_names={
+                "max_num_samples",
+                "total_samples",
+                "inputs",
+                "targets",
+                "weights",
+            },
             update_kwargs={
                 "input": update_input,
                 "target": update_target,

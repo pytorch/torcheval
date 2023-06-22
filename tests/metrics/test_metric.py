@@ -88,11 +88,6 @@ class MetricBaseClassTest(unittest.TestCase):
         ):
             # pyre-ignore[6]: Incompatible parameter type
             metric._add_state("x2", [[torch.tensor(0.0)]])
-        with self.assertRaisesRegex(
-            TypeError, r"The value of state variable must be.*Get x3=0.0 instead."
-        ):
-            # pyre-ignore[6]: Incompatible parameter type
-            metric._add_state("x3", 0.0)
 
     def test_reset_state_tensor(self) -> None:
         metric = DummySumMetric()
@@ -257,7 +252,7 @@ class MetricBaseClassTest(unittest.TestCase):
 
     def test_state_dict_destination_prefix_wrong_state_value(self) -> None:
         metric = DummySumMetric()
-        metric.sum = 1.0
+        metric.sum = "1.0"
 
         with self.assertRaisesRegex(
             TypeError, r"The value of state variable must be.*Get sum=1.0 instead."
@@ -300,7 +295,7 @@ class MetricBaseClassTest(unittest.TestCase):
         with self.assertRaisesRegex(
             TypeError, r"The value of state variable must be.*Get sum=1.0 instead."
         ):
-            metric.load_state_dict({"sum": 1.0})
+            metric.load_state_dict({"sum": "1.0"})
 
     #  `torch.cuda.is_available()` to decorator factory `unittest.skipUnless`.
     @unittest.skipUnless(
@@ -347,11 +342,3 @@ class MetricBaseClassTest(unittest.TestCase):
         torch.testing.assert_close(metric.x, {"doc1": torch.tensor(1.0, device="cpu")})
         metric.to("cuda")
         torch.testing.assert_close(metric.x, {"doc1": torch.tensor(1.0, device="cuda")})
-
-    def test_to_device_invalid_state(self) -> None:
-        metric = DummySumMetric()
-        metric.sum = 1.0
-        with self.assertRaisesRegex(
-            TypeError, r"The value of state variable must be.*Get sum=1.0 instead."
-        ):
-            metric.to("cuda")

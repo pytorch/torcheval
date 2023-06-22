@@ -15,7 +15,7 @@ import torch
 TSelf = TypeVar("TSelf", bound="Metric")
 TComputeReturn = TypeVar("TComputeReturn")
 # pyre-ignore[33]: Flexible key data type for dictionary
-TState = Union[torch.Tensor, List[torch.Tensor], Dict[Any, torch.Tensor]]
+TState = Union[torch.Tensor, List[torch.Tensor], Dict[Any, torch.Tensor], int, float]
 
 
 class Metric(Generic[TComputeReturn], ABC):
@@ -166,6 +166,10 @@ class Metric(Generic[TComputeReturn], ABC):
                 state_dict[state_name] = {
                     key: tensor.detach().clone() for key, tensor in value.items()
                 }
+            elif isinstance(value, int):
+                state_dict[state_name] = value
+            elif isinstance(value, float):
+                state_dict[state_name] = value
         return state_dict
 
     def load_state_dict(
@@ -267,9 +271,11 @@ def _check_state_variable_type(name: str, value: Any) -> None:
             isinstance(value, dict)
             and all(isinstance(x, torch.Tensor) for x in value.values())
         )
+        and not isinstance(value, int)
+        and not isinstance(value, float)
     ):
         raise TypeError(
             "The value of state variable must be a ``torch.Tensor``, a list of ``torch.Tensor``, "
-            f"or a dictionary with ``torch.Tensor`` as values."
+            f"a dictionary with ``torch.Tensor``, int, or float as values."
             f"Get {name}={value} instead."
         )
