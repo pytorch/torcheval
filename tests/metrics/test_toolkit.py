@@ -333,12 +333,10 @@ class MetricCollectionToolkitTest(unittest.TestCase):
         }
 
         self.assertDictEqual(
-            # pyre-ignore: Incompatible parameter type [6]: In call `unittest.case.TestCase.assertDictEqual`, for 1st positional only parameter expected `Mapping[typing.Any, object]` but got `Optional[Dict[str, Dict[str, typing.Any]]]`.
             get_synced_state_dict_collection(metric_collection),
             state_dict_collection,
         )
         self.assertDictEqual(
-            # pyre-ignore: Incompatible parameter type [6]: In call `unittest.case.TestCase.assertDictEqual`, for 1st positional only parameter expected `Mapping[typing.Any, object]` but got `Optional[Dict[str, Dict[str, typing.Any]]]`.
             get_synced_state_dict_collection(metric_collection),
             state_dict_collection,
         )
