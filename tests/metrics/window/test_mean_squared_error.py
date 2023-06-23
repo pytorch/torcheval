@@ -91,6 +91,8 @@ class TestMeanSquaredError(MetricClassTester):
             }
             if enable_lifetime
             else {
+                "max_num_updates",
+                "total_updates",
                 "windowed_sum_squared_error",
                 "windowed_sum_weight",
             }
