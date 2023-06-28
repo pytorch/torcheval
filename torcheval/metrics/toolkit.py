@@ -257,12 +257,11 @@ def get_synced_metric(
         world_size,
     )
 
-    local_rank = PGWrapper(process_group).get_rank()
-    other_rank_metrics: List[Metric] = [
-        gathered_metric_list[rank] for rank in range(world_size) if rank != local_rank
-    ]
-
-    return clone_metric(metric).to(metric.device).merge_state(other_rank_metrics)
+    return (
+        clone_metric(gathered_metric_list[0])
+        .to(metric.device)
+        .merge_state(gathered_metric_list[1:])
+    )
 
 
 def get_synced_metric_collection(
@@ -314,21 +313,28 @@ def get_synced_metric_collection(
         world_size,
     )
 
-    if isinstance(list_of_metric_collections[0], MutableMapping):
-        local_rank = dist.get_rank(process_group)
-
-        # metric bundles are dicts.
+    if isinstance(
+        list_of_metric_collections[0], MutableMapping
+    ):  # metric bundles are dicts.
         synced_metric_dict: Dict[str, Metric] = {}
+        # we use rank 0 metric to clone regardless
+        rank_0_dict = list_of_metric_collections[0]
 
-        for metric_key in metric_collection.keys():
-            base_metric = metric_collection[metric_key]
-            base_metric = clone_metric(base_metric).to(base_metric.device)
+        for metric_key in rank_0_dict.keys():
+            base_metric = rank_0_dict[metric_key]
             other_rank_metrics: List[Metric] = [
                 list_of_metric_collections[rank][metric_key]
-                for rank in range(world_size)
-                if rank != local_rank
+                for rank in range(1, world_size)
             ]
-            synced_metric_dict[metric_key] = base_metric.merge_state(other_rank_metrics)
+
+            synced_metric = (
+                clone_metric(base_metric)
+                .to(base_metric.device)
+                .merge_state(other_rank_metrics)
+            )
+
+            synced_metric_dict[metric_key] = synced_metric
+
         return synced_metric_dict
 
 
@@ -405,26 +411,18 @@ def _sync_metric_object(
         # if users passed in one metric, read it from the "tmp" key and return a list of metrics.
         gathered_data_list = []
         for rank_data in world_metric_data:
-            gathered_data_list.append(_convert_to_psuedo_metric(rank_data[_TMP]))
+            gathered_data_list.append(copy.deepcopy(local_metric_data[_TMP]))
+            gathered_data_list[-1].load_state_dict(rank_data[_TMP])
     else:
         # if users passed in a dict[str, metric], return a list of dict[str, metric] populated with the gathered state dicts.
         gathered_data_list = []
         for rank_data in world_metric_data:
             rank_dict = {}
             for metric_name in local_metric_data.keys():
-                rank_dict[metric_name] = _convert_to_psuedo_metric(
-                    rank_data[metric_name]
-                )
+                rank_dict[metric_name] = copy.deepcopy(local_metric_data[metric_name])
+                rank_dict[metric_name].load_state_dict(rank_data[metric_name])
             gathered_data_list.append(rank_dict)
     return gathered_data_list
-
-
-# pyre-ignore: Missing return annotation [3]
-def _convert_to_psuedo_metric(metric_state_dict: Dict[str, Any]) -> Any:
-    """
-    Converts dictionary to object with attributes set according to key-value.
-    """
-    return type("", (), metric_state_dict)
 
 
 def reset_metrics(metrics: _TMetrics) -> _TMetrics:
