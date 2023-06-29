@@ -6,29 +6,6 @@ import torch
 def wasserstein_1d(x: torch.Tensor, y: torch.Tensor,
                    x_weights: Optional[torch.Tensor]=None, y_weights: Optional[torch.Tensor]=None
 ) -> torch.Tensor:
-    return _cdf_distribution(1, x, y, x_weights, y_weights)
-
-def _validate_distribution(values: torch.Tensor, weights: torch.Tensor
-) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
-
-    if values.nelement() == 0:
-        raise ValueError("Distribution cannot be empty.")
-
-    if weights is None:
-        return values, None
-    else:
-        if weights.nelement() != values.nelement():
-            raise ValueError("Value and weight tensor must be of the same size.")
-        if torch.all(weights < 0):
-            raise ValueError("All weights must be non-negative.")
-        if not ( 0 < torch.sum(weights) < torch.inf ):
-            raise ValueError("Weight tensor sum must be positive-finite.")
-        
-        return values, weights
-
-def _cdf_distribution(p: int, x: torch.Tensor, y: torch.Tensor,
-                   x_weights: Optional[torch.Tensor]=None, y_weights: Optional[torch.Tensor]=None
-) -> torch.Tensor:
     # Ensuring values are from a valid distribution
     x, x_weights = _validate_distribution(x, x_weights)
     y, y_weights = _validate_distribution(y, y_weights)
@@ -65,4 +42,26 @@ def _cdf_distribution(p: int, x: torch.Tensor, y: torch.Tensor,
     
     # Compute the value of integral based on p = 1
     return torch.sum(torch.multiply(torch.abs(x_cdf - y_cdf), deltas))
-    
+
+def _validate_distribution(values: torch.Tensor, weights: torch.Tensor
+) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
+
+    if values.nelement() == 0:
+        raise ValueError("Distribution cannot be empty.")
+
+    if weights is None:
+        return values, None
+    else:
+        if weights.nelement() != values.nelement():
+            raise ValueError("Value and weight tensor must be of the same size.")
+        if torch.all(weights < 0):
+            raise ValueError("All weights must be non-negative.")
+        if not ( 0 < torch.sum(weights) < torch.inf ):
+            raise ValueError("Weight tensor sum must be positive-finite.")
+        
+        return values, weights
+
+def _cdf_distribution(p: int, x: torch.Tensor, y: torch.Tensor,
+                   x_weights: Optional[torch.Tensor]=None, y_weights: Optional[torch.Tensor]=None
+) -> torch.Tensor:
+    pass
