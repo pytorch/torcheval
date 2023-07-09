@@ -4,15 +4,16 @@ import torch
 
 @torch.inference_mode()
 def wasserstein_1d(x: torch.Tensor, y: torch.Tensor,
-                   x_weights: Optional[torch.Tensor]=None, y_weights: Optional[torch.Tensor]=None
+                   x_weights: Optional[torch.Tensor]=None,
+                   y_weights: Optional[torch.Tensor]=None
 ) -> torch.Tensor:
     """
-    Compute the first Wasserstein distance between two 1D distributions.
+    The Wasserstein distance, also called the Earth Mover's Distance, is a 
+    measure of the similarity between two distributions.
 
-    This distance is also known as the earth mover's distance, since it can be
-    seen as the minimum amount of "work" required to transform :math:`u` into
-    :math:`v`, where "work" is measured as the amount of distribution weight
-    that must be moved, multiplied by the distance it has to be moved.
+    The Wasserstein distance between two distributions is intuitively the 
+    minimum weight of soil (times distance moved) that would need to be moved 
+    if the two distributions were represented by two piles of soil.
 
     Args
     ----------
@@ -26,29 +27,29 @@ def wasserstein_1d(x: torch.Tensor, y: torch.Tensor,
 
     Returns
     -------
-    distance : float
+    distance : Tensor value
         The computed distance between the distributions.
 
     Notes
     -----
-    The first Wasserstein distance between the distributions :math:`u` and
-    :math:`v` is:
+    The first Wasserstein distance between the distributions :math:`x` and
+    :math:`x` is:
 
     .. math::
 
-        l_1 (u, v) = \inf_{\pi \in \Gamma (u, v)} \int_{\mathbb{R} \times
-        \mathbb{R}} |x-y| \mathrm{d} \pi (x, y)
+        W_1 (x, y) = \inf_{\pi \in \Gamma (x, y)} \int_{\mathbb{R} \times
+        \mathbb{R}} |p-q| \mathrm{d} \pi (p, q)
 
-    where :math:`\Gamma (u, v)` is the set of (probability) distributions on
-    :math:`\mathbb{R} \times \mathbb{R}` whose marginals are :math:`u` and
-    :math:`v` on the first and second factors respectively.
+    where :math:`\Gamma (x, y)` is the set of (probability) distributions on
+    :math:`\mathbb{R} \times \mathbb{R}` whose marginals are :math:`x` and
+    :math:`y` on the first and second factors respectively.
 
-    If :math:`U` and :math:`V` are the respective CDFs of :math:`u` and
-    :math:`v`, this distance also equals to:
+    If :math:`X` and :math:`Y` are the respective CDFs of :math:`x` and
+    :math:`y`, this distance also equals to:
 
     .. math::
 
-        l_1(u, v) = \int_{-\infty}^{+\infty} |U-V|
+        W_1(x, y) = \int_{-\infty}^{+\infty} |X-Y|
 
     See [2]_ for a proof of the equivalence of both definitions.
 
@@ -65,14 +66,13 @@ def wasserstein_1d(x: torch.Tensor, y: torch.Tensor,
 
     Examples
     --------
-    >>> from scipy.stats import wasserstein_distance
-    >>> wasserstein_distance([0, 1, 3], [5, 6, 8])
-    5.0
-    >>> wasserstein_distance([0, 1], [0, 1], [3, 1], [2, 2])
-    0.25
-    >>> wasserstein_distance([3.4, 3.9, 7.5, 7.8], [4.5, 1.4],
-    ...                      [1.4, 0.9, 3.1, 7.2], [3.2, 3.5])
-    4.0781331438047861
+    >>> from torcheval.metrics.functional import wasserstein_1d
+    >>> wasserstein_1d(torch.tensor([0,1,2]), torch.tensor([0,1,1]))
+    torch.tensor([0.33333333333333337])
+    >>> wasserstein_1d(torch.tensor([0,1,2]), torch.tensor([0,1,1]), torch.tensor([1,2,0]), torch.tensor([1,1,1]))
+    torch.tensor([0.0])
+    >>> wasserstein_1d(torch.tensor([0,1,2,2]), torch.tensor([0,1]))
+    torch.tensor([0.75])
 
     """
     _wasserstein_param_check(x, x_weights)
@@ -106,6 +106,8 @@ def _wasserstein_param_check(
 ) -> None:
     if values.nelement() == 0:
         raise ValueError("Distribution cannot be empty.")
+    if weights is not None and weights.nelement() == 0:
+        raise ValueError("Weights cannot be empty.")
 
 def _wasserstein_update_input_check(
         values: torch.Tensor,
@@ -119,6 +121,7 @@ def _wasserstein_update_input_check(
         if not ( 0 < torch.sum(weights) < torch.inf ):
             raise ValueError("Weight tensor sum must be positive-finite.")
 
+@torch.jit.script
 def _wasserstein_compute(
         x: torch.Tensor,
         y: torch.Tensor,
@@ -155,5 +158,5 @@ def _wasserstein_compute(
                                          torch.cumsum(y[y_sorter])))
         y_cdf = y_sorted_cum_weights[y_cdf_indices] / y_sorted_cum_weights[-1]
     
-    # Compute the value of integral based on p = 1
+
     return torch.sum(torch.multiply(torch.abs(x_cdf - y_cdf), deltas))
