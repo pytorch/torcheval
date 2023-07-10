@@ -366,6 +366,20 @@ def _sync_metric_object(
     ...
 
 
+def _apply_device_to_tensor_states(
+    state_dict: Dict[str, Any], device: torch.device
+) -> None:
+    for state_name, state_value in state_dict.items():
+        if isinstance(state_value, torch.Tensor):
+            state_dict[state_name] = state_value.to(device)
+        elif isinstance(state_value, list):
+            state_dict[state_name] = [tensor.to(device) for tensor in state_value]
+        elif isinstance(state_value, dict):
+            state_dict[state_name] = {
+                key: tensor.to(device) for key, tensor in state_value.items()
+            }
+
+
 def _sync_metric_object(
     local_metric_data: Union[Metric, MutableMapping[str, Metric]],
     process_group: dist.ProcessGroup,
@@ -385,9 +399,25 @@ def _sync_metric_object(
     # create a dict of state dicts for each metric in the collection, i.e. extract the state dicts from the Metric objects
     metric_state_data: Dict[str, Dict[str, TState]] = {}
     metric_to_device: Dict[str, torch.device] = {}
+    backend = dist.get_backend(group=process_group)
     for metric_name, metric in local_metric_data.items():
         metric_state_data[metric_name] = metric.state_dict()
-        metric_to_device[metric_name] = metric.device
+        if backend == "nccl" and metric.device.type == "cpu":
+            log.warning(
+                "Metric tensor states are on CPU, but NCCL process group detected. "
+                "These tensors will be moved to GPU prior to syncing. "
+                "It is recommended for efficiency reasons to either use a gloo process group to sync metrics on CPU, or move the metrics to GPU and use the NCCL process group."
+            )
+            # move tensors to gpu since on nccl
+            _apply_device_to_tensor_states(
+                metric_state_data[metric_name],
+                # pyre-ignore: Incompatible parameter type [6]
+                torch.cuda.current_device(),
+            )
+            # pyre-ignore: Incompatible parameter type [6]
+            metric_to_device[metric_name] = torch.cuda.current_device()
+        else:
+            metric_to_device[metric_name] = metric.device
 
     metric_state_traversal_order = metrics_traversal_order(metric_state_data)
 
