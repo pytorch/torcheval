@@ -4,7 +4,6 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-import copy
 import logging
 from copy import deepcopy
 from typing import (
@@ -428,9 +427,7 @@ def _sync_metric_object(
         process_group=process_group,
     )
 
-    ##============================================================
-    ## Repack states into Metrics or Dict[str, Metric]s
-    ##============================================================
+    # Repack states into Metrics or Dict[str, Metric]s
     if unpack:
         # if users passed in one metric, read it from the "tmp" key and return a list of metrics.
         gathered_data_list = []
