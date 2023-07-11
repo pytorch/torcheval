@@ -58,8 +58,8 @@ class FrechetInceptionDistance(Metric[torch.Tensor]):
         device: Optional[torch.device] = None,
     ) -> None:
         """
-        This class computes the Frechet Inception Distance (FID)
-        between two distributions of images (real and fake/generated).
+        Computes the Frechet Inception Distance (FID) between two distributions of images (real and generated).
+
         The original paper: https://arxiv.org/pdf/1706.08500.pdf
 
         Args:
@@ -80,6 +80,7 @@ class FrechetInceptionDistance(Metric[torch.Tensor]):
         # Set the model and put it in evaluation mode
         self.model = model.to(device)
         self.model.eval()
+        self.model.requires_grad_(False)
 
         # Initialize state variables used to compute FID
         self._add_state("real_sum", torch.zeros(feature_dim, device=device))
@@ -111,8 +112,7 @@ class FrechetInceptionDistance(Metric[torch.Tensor]):
         images = images.to(self.device)
 
         # Compute activations for images using the given model
-        with torch.no_grad():
-            activations = self.model(images)
+        activations = self.model(images)
 
         batch_size = images.shape[0]
 

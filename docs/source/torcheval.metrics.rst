@@ -54,6 +54,16 @@ Classification Metrics
    MultilabelRecallAtFixedPrecision
    TopKMultilabelAccuracy
 
+Image Metrics
+-------------------------------------------------------------------
+
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+
+   FrechetInceptionDistance
+   PeakSignalNoiseRatio
+
 Ranking Metrics
 -------------------------------------------------------------------
 
@@ -101,4 +111,3 @@ Windowed Metrics
    WindowedClickThroughRate
    WindowedMeanSquaredError
    WindowedWeightedCalibration
-
