@@ -13,7 +13,35 @@ from torcheval.metrics.metric import Metric
 TWasserstein = TypeVar("TWasserstein")
 
 class Wasserstein1D(Metric[torch.Tensor]):
+    """
+    The Wasserstein distance, also called the Earth Mover's Distance, is a 
+    measure of the similarity between two distributions.
 
+    The Wasserstein distance between two distributions is intuitively the 
+    minimum weight of soil (times distance moved) that would need to be moved 
+    if the two distributions were represented by two piles of soil.
+
+    Its functional version is :func:'torcheval.metrics.functional.statistical.wasserstein'.
+
+    Examples
+    --------
+    >>> from torcheval.metrics import Wasserstein1D
+    >>> metric = Wasserstein1D()
+    >>> metric.update(torch.tensor([0,1,2,2]), torch.tensor([0,1]))
+    >>> metric.compute()
+    0.75
+    >>> metric = Wasserstein1D()
+    >>> metric.update(torch.tensor([0,1,2]), torch.tensor([0,1,1]), torch.tensor([1,2,0]), torch.tensor([1,1,1]))
+    >>> metric.compute()
+    0
+    >>> metric = Wasserstein1D()
+    >>> metric.update(torch.tensor([0,1,2]), torch.tensor([0,1,1]))
+    >>> metric.compute()
+    0.33333333333333337
+    >>> metric.update(torch.tensor([1,1,1]), torch.tensor([1,1,1]))
+    >>> metric.compute()
+    0.16666666666666663
+    """
     def __init__(
         self: TWasserstein,
         *,
@@ -24,10 +52,10 @@ class Wasserstein1D(Metric[torch.Tensor]):
         self._add_state("dist_1_samples",
                         torch.Tensor([], device = self.device)
         )
-        self._add_state("dist_2_samples",
+        self._add_state("dist_1_weights",
                         torch.Tensor([], device = self.device)
         )
-        self._add_state("dist_1_weights",
+        self._add_state("dist_2_samples",
                         torch.Tensor([], device = self.device)
         )
         self._add_state("dist_2_weights",
