@@ -10,6 +10,7 @@ import warnings
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from enum import Enum
+from time import perf_counter
 from typing import (
     Any,
     Callable,
@@ -28,7 +29,6 @@ from torch.nn.parameter import UninitializedParameter
 from torch.utils._pytree import PyTree, tree_flatten
 from torch.utils.hooks import RemovableHandle
 
-from torchtnt.utils import Timer
 from torchtnt.utils.version import is_torch_version_geq_1_13
 from typing_extensions import Literal
 
@@ -223,7 +223,7 @@ def _get_module_flops_and_activation_sizes(
         module, [(_activation_size_hook(activation_sizes), _HookType.FORWARD_HOOK)]
     )
 
-    forward_timer_mapping: Dict[str, Timer] = {}
+    forward_timer_mapping: Dict[str, float] = {}
     forward_elapsed_times_sec: Dict[str, float] = {}
     forward_elapsed_time_handles = _register_hooks(
         module,
@@ -689,7 +689,7 @@ def _activation_size_hook(
 
 
 def _forward_time_pre_hook(
-    timer_mapping: Dict[str, Timer]
+    timer_mapping: Dict[str, float]
     # pyre-ignore: Invalid type parameters [24]
 ) -> Callable[[str], Callable]:
     # pyre-ignore: Missing parameter annotation [2]
@@ -697,8 +697,7 @@ def _forward_time_pre_hook(
         module_name: str,
     ) -> Callable[[torch.nn.Module, Any], None]:
         def hook(_module: torch.nn.Module, _inp: Any) -> None:
-            timer_mapping[module_name] = Timer()
-            timer_mapping[module_name].start()
+            timer_mapping[module_name] = perf_counter()
 
         return hook
 
@@ -706,7 +705,7 @@ def _forward_time_pre_hook(
 
 
 def _forward_time_hook(
-    timer_mapping: Dict[str, Timer],
+    timer_mapping: Dict[str, float],
     elapsed_times: Dict[str, float],
     # pyre-ignore: Invalid type parameters [24]
 ) -> Callable[[str], Callable]:
@@ -715,10 +714,9 @@ def _forward_time_hook(
         module_name: str,
     ) -> Callable[[torch.nn.Module, Any, Any], None]:
         def hook(_module: torch.nn.Module, _inp: Any, _out: Any) -> None:
-            timer_mapping[module_name].stop()
-            elapsed_times[module_name] = timer_mapping[
-                module_name
-            ].interval_time_seconds
+            if torch.cuda.is_available():
+                torch.cuda.synchronize()
+            elapsed_times[module_name] = perf_counter() - timer_mapping[module_name]
 
         return hook
 
