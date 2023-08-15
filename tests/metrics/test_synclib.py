@@ -6,6 +6,7 @@
 
 import unittest
 import uuid
+from typing import Optional
 
 import torch
 import torch.distributed as dist
@@ -15,9 +16,11 @@ from pyre_extensions import none_throws
 from torcheval.metrics.synclib import (
     _sync_dtype_and_shape,
     _sync_list_length,
+    all_gather_tensors,
     metrics_traversal_order,
     sync_states,
 )
+from torchtnt.utils.device import get_device_from_env
 from torchtnt.utils.env import init_from_env
 
 _METRIC_NAME = "tmp"
@@ -69,6 +72,74 @@ class SynclibTest(unittest.TestCase):
     def test_numeric_sync_state(self) -> None:
         lc = _get_launch_config(num_processes=3)
         pet.elastic_launch(lc, entrypoint=_test_numeric_sync_state)()
+
+    # pyre-ignore[56]
+    @unittest.skipUnless(
+        torch.distributed.is_available(), reason="Torch distributed is needed to run"
+    )
+    def test_gather_uneven(self, world_size: Optional[int] = 4) -> None:
+        config = _get_launch_config(2)
+        pet.elastic_launch(config, entrypoint=self._test_ddp_gather_uneven_tensors)()
+
+    @staticmethod
+    def _test_ddp_gather_uneven_tensors() -> None:
+        dist.init_process_group("gloo")
+        rank = dist.get_rank()
+        world_size = dist.get_world_size()
+
+        tensor = torch.ones(rank)
+        result = all_gather_tensors(tensor)
+        assert len(result) == world_size
+        for idx in range(world_size):
+            assert len(result[idx]) == idx
+            assert (result[idx] == torch.ones_like(result[idx])).all()
+
+    # pyre-ignore[56]
+    @unittest.skipUnless(
+        torch.distributed.is_available(), reason="Torch distributed is needed to run"
+    )
+    def test_gather_uneven_multidim(self) -> None:
+        config = _get_launch_config(2)
+        pet.elastic_launch(
+            config, entrypoint=self._test_ddp_gather_uneven_tensors_multidim
+        )()
+
+    @staticmethod
+    def _test_ddp_gather_uneven_tensors_multidim() -> None:
+        dist.init_process_group("gloo")
+        rank = dist.get_rank()
+        world_size = dist.get_world_size()
+        tensor = torch.ones(rank + 1, 4 - rank)
+        result = all_gather_tensors(tensor)
+        assert len(result) == world_size
+        for idx in range(world_size):
+            val = result[idx]
+            assert val.shape == (idx + 1, 4 - idx)
+            assert (val == torch.ones_like(val)).all()
+
+    # pyre-ignore[56]
+    @unittest.skipUnless(
+        condition=torch.cuda.is_available(),
+        reason="This test should only run on a GPU host.",
+    )
+    def test_gather_uneven_multidim_nccl(self) -> None:
+        config = _get_launch_config(2)
+        pet.elastic_launch(
+            config, entrypoint=self._test_ddp_gather_uneven_tensors_multidim_nccl
+        )()
+
+    @staticmethod
+    def _test_ddp_gather_uneven_tensors_multidim_nccl() -> None:
+        dist.init_process_group("nccl")
+        rank = dist.get_rank()
+        world_size = dist.get_world_size()
+        tensor = torch.ones(rank + 1, 4 - rank, device=get_device_from_env())
+        result = all_gather_tensors(tensor)
+        assert len(result) == world_size
+        for idx in range(world_size):
+            val = result[idx]
+            assert val.shape == (idx + 1, 4 - idx)
+            assert (val == 1).all()
 
 
 def _test_sync_list_length() -> None:
