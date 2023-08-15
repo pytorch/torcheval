@@ -8,8 +8,10 @@
 # pyre-ignore-all-errors[56]: Pyre was not able to infer the type of argument
 
 import unittest
+from typing import Iterable, Tuple, TypeVar
 
 import torch
+from torcheval.metrics.metric import Metric
 from torcheval.utils.test_utils.dummy_metric import (
     DummySumDictStateMetric,
     DummySumListStateMetric,
@@ -84,7 +86,7 @@ class MetricBaseClassTest(unittest.TestCase):
         metric = DummySumMetric()
         with self.assertRaisesRegex(
             TypeError,
-            r"The value of state variable must be.*Get x2=\[\[tensor\(0.\)\]\] instead.",
+            r"The value of state variable must be.*Got x2=\[\[tensor\(0.\)\]\] instead.",
         ):
             # pyre-ignore[6]: Incompatible parameter type
             metric._add_state("x2", [[torch.tensor(0.0)]])
@@ -165,6 +167,37 @@ class MetricBaseClassTest(unittest.TestCase):
         torch.testing.assert_close(
             metric.x, {"doc1": torch.tensor(0.0), "doc2": torch.tensor(1.0)}
         )
+
+    def test_reset_primitive_type(self) -> None:
+
+        TDummyMetric = TypeVar("TDummyMetric")
+
+        class DummyMetric(Metric[Tuple[float, int]]):
+            def __init__(self: TDummyMetric) -> None:
+                super().__init__()
+                self._add_state("sum", 10.0)
+                self._add_state("count", 20)
+
+            def update(self: TDummyMetric) -> None:
+                self.sum += 1.0
+                self.count += 1
+
+            def compute(self: TDummyMetric) -> Tuple[float, int]:
+                return (self.sum, self.count)
+
+            def merge_state(self, metrics: Iterable[TDummyMetric]) -> TDummyMetric:
+                for metric in metrics:
+                    self.sum += metric.sum
+                    self.count += metric.count
+                return self
+
+        metric = DummyMetric()
+        metric.update()
+        self.assertEqual(metric.sum, 11.0)
+        self.assertEqual(metric.count, 21)
+        metric.reset()
+        self.assertEqual(metric.sum, 10.0)
+        self.assertEqual(metric.count, 20)
 
     def test_save_load_state_dict_state_tensor(self) -> None:
         metric = DummySumMetric()
@@ -255,7 +288,7 @@ class MetricBaseClassTest(unittest.TestCase):
         metric.sum = "1.0"
 
         with self.assertRaisesRegex(
-            TypeError, r"The value of state variable must be.*Get sum=1.0 instead."
+            TypeError, r"The value of state variable must be.*Got sum=1.0 instead."
         ):
             metric.state_dict()
 
@@ -293,7 +326,7 @@ class MetricBaseClassTest(unittest.TestCase):
     def test_load_state_dict_invalid_value_type(self) -> None:
         metric = DummySumMetric()
         with self.assertRaisesRegex(
-            TypeError, r"The value of state variable must be.*Get sum=1.0 instead."
+            TypeError, r"The value of state variable must be.*Got sum=1.0 instead."
         ):
             metric.load_state_dict({"sum": "1.0"})
 

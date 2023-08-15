@@ -144,6 +144,13 @@ class Metric(Generic[TComputeReturn], ABC):
                         },
                     ),
                 )
+            elif isinstance(default, (int, float)):
+                setattr(self, state_name, default)
+            else:
+                raise TypeError(
+                    f"Invalid type for default value for {state_name}. Received {type(default)}, but expected ``torch.Tensor``, a list of ``torch.Tensor``,"
+                    f"a dictionary with ``torch.Tensor``, int, or float."
+                )
         return self
 
     def state_dict(self: TSelf) -> Dict[str, TState]:
@@ -277,5 +284,5 @@ def _check_state_variable_type(name: str, value: Any) -> None:
         raise TypeError(
             "The value of state variable must be a ``torch.Tensor``, a list of ``torch.Tensor``, "
             f"a dictionary with ``torch.Tensor``, int, or float as values."
-            f"Get {name}={value} instead."
+            f"Got {name}={value} instead."
         )
