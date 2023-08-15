@@ -159,3 +159,33 @@ def get_rand_data_binned_binary(
     threshold, _ = torch.sort(threshold)
     threshold = torch.unique(threshold)
     return input, target, threshold.to(device)
+
+def get_rand_data_wasserstein1d(
+    num_updates: int,
+    num_classes: int,
+    batch_size: int,
+    device: Optional[torch.device] = None,
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    """
+    Generates a random multiclass dataset.
+
+    Notes:
+        - If num_updates is 1, the update dimension will be omitted; input tensors will have shape (batch_size, num_classes) and target tensor will have shape (batch_size, ).
+
+    Args:
+        num_updates: the number of calls to update on each rank.
+        num_classes: the number of classes for the dataset.
+        batch_size: batch size of the dataset.
+        device: device for the returned Tensors
+
+    Returns:
+        torch.Tensor: random feature data
+        torch.Tensor: random targets
+    """
+    if device is None:
+        device = torch.device("cpu")
+    
+    x, y, x_weights, y_weights = torch.Tensor([1]), torch.Tensor([1]), torch.Tensor([1]), torch.Tensor([1])
+
+    return x, y, x_weights, y_weights
+

@@ -17,7 +17,7 @@ def wasserstein_1d(x: torch.Tensor, y: torch.Tensor,
 
     Args
     ----------
-    x, y (Tensor) : Tensor values observed in the distribution.
+    x, y (Tensor) : 1D Tensor values observed in the distribution.
     x_weights, y_weights (Tensor): Optional tensor weights for each value.
         If unspecified, each value is assigned the same value.
         `x_weights` (resp. `y_weights`) must have the same length as
@@ -75,32 +75,58 @@ def wasserstein_1d(x: torch.Tensor, y: torch.Tensor,
     torch.tensor([0.75])
 
     """
-    _wasserstein_param_check(x, x_weights)
-    _wasserstein_param_check(y, y_weights)
-    _wasserstein_update_input_check(x, x_weights)
-    _wasserstein_update_input_check(y, y_weights)
+    _wasserstein_param_check(x, x_weights, y, y_weights)
+    _wasserstein_update_input_check(x, x_weights, y, y_weights)
     return _wasserstein_compute(x, x_weights, y, y_weights)
 
 def _wasserstein_param_check(
-        values: torch.Tensor,
-        weights: torch.Tensor
+        x: torch.Tensor, y: torch.Tensor,
+        x_weights: Optional[torch.Tensor]=None,
+        y_weights: Optional[torch.Tensor]=None
 ) -> None:
-    if values.nelement() == 0:
-        raise ValueError("Distribution cannot be empty.")
-    if weights is not None and weights.nelement() == 0:
-        raise ValueError("Weights cannot be empty.")
+    if x_weights is not None:
+        if torch.all(x_weights < 0):
+            raise ValueError("All weights must be non-negative.")
+        if not ( 0 < torch.sum(x_weights) < torch.inf ):
+            raise ValueError("Weight tensor sum must be positive-finite.")
+    if y_weights is not None:
+        if torch.all(y_weights < 0):
+            raise ValueError("All weights must be non-negative.")
+        if not ( 0 < torch.sum(y_weights) < torch.inf ):
+            raise ValueError("Weight tensor sum must be positive-finite.")
 
 def _wasserstein_update_input_check(
-        values: torch.Tensor,
-        weights: torch.Tensor
+        x: torch.Tensor, y: torch.Tensor,
+        x_weights: Optional[torch.Tensor]=None,
+        y_weights: Optional[torch.Tensor]=None
 ) -> None:
-    if weights is not None:
-        if weights.nelement() != values.nelement():
-            raise ValueError("Value and weight tensor must be of the same size.")
-        if torch.all(weights < 0):
-            raise ValueError("All weights must be non-negative.")
-        if not ( 0 < torch.sum(weights) < torch.inf ):
-            raise ValueError("Weight tensor sum must be positive-finite.")
+    if x.nelement() == 0 or y.nelement() == 0:
+        raise ValueError(
+            "Distribution cannot be empty."
+        )
+    if x.shape != y.shape:
+        raise ValueError(
+            "The two distributions should have same shape, "
+            f"got shapes {x.shape} and {y.shape}."
+        )
+    if x_weights is not None and x_weights.nelement() == 0:
+        raise ValueError(
+            "Weights cannot be empty."
+        )
+    if x_weights is not None and x_weights.shape != x.shape:
+        raise ValueError(
+            "Distribution values and weight tensors must be of the same shape, "
+            f"got shapes {x.shape} and {x_weights.shape}."
+        )
+    if y_weights is not None and y_weights.nelement() == 0:
+        raise ValueError(
+            "Weights cannot be empty."
+        )
+    if y_weights is not None and y_weights.shape != y.shape:
+        raise ValueError(
+            "Distribution values and weight tensors must be of the same shape, "
+            f"got shapes {y.shape} and {y_weights.shape}."
+        )
 
 @torch.jit.script
 def _wasserstein_compute(
@@ -121,19 +147,19 @@ def _wasserstein_compute(
     deltas = torch.diff(all_values)
 
     # Obtain respective positions of the x and y values among all_values
-    x_cdf_indices = torch.searchsorted(x[x_sorter], all_values)
-    y_cdf_indices = torch.searchsorted(y[y_sorter], all_values)
+    x_cdf_indices = torch.searchsorted(x[x_sorter], all_values, right=True)
+    y_cdf_indices = torch.searchsorted(y[y_sorter], all_values, right=True)
 
     # Calculate the CDF of x and y using their weights, if specified
     if x_weights is None:
-        x_cdf = x_cdf_indices / x.size()[0]
+        x_cdf = x_cdf_indices / x.size(0)
     else:
         x_sorted_cum_weights = torch.cat(([0],
                                          torch.cumsum(x[x_sorter])))
         x_cdf = x_sorted_cum_weights[x_cdf_indices] / x_sorted_cum_weights[-1]
     
     if y_weights is None:
-        y_cdf = y_cdf_indices / y.size()[0]
+        y_cdf = y_cdf_indices / y.size(0)
     else:
         y_sorted_cum_weights = torch.cat(([0],
                                          torch.cumsum(y[y_sorter])))
