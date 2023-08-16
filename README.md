@@ -14,7 +14,7 @@
 A library that contains a rich collection of performant PyTorch model metrics, a simple interface to create new metrics, a toolkit to facilitate metric computation in distributed training and tools for PyTorch model evaluations.
 
 ## Installing TorchEval
-Requires Python >= 3.7 and PyTorch >= 1.11
+Requires Python >= 3.8 and PyTorch >= 1.11
 
 From pip:
 
