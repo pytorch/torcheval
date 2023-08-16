@@ -22,11 +22,97 @@ import logging
 from typing import Any, Dict, List, Optional, Tuple
 
 import torch
-from torch import distributed as dist
+from torch import distributed as dist, Tensor
+from torch.nn import functional as F
 from torcheval.metrics.metric import TState
-from torchtnt.utils.distributed import all_gather_tensors
 
 _logger: logging.Logger = logging.getLogger(__name__)
+
+
+def _simple_all_gather_tensors(
+    result: Tensor, group: Optional[dist.ProcessGroup], world_size: int
+) -> List[Tensor]:
+    stacked_result_sizes = [world_size] + list(result.size())
+    gathered_result = list(
+        torch.zeros(stacked_result_sizes, dtype=result.dtype, device=result.device)
+    )
+    dist.all_gather(gathered_result, result, group)
+    return gathered_result
+
+
+# @jsenthil TODO: remove all_gather for sizes of all tensors:
+def all_gather_tensors(
+    result: Tensor, group: Optional[dist.ProcessGroup] = None
+) -> List[Tensor]:
+    """Function to gather tensors from several distributed processes onto a list that is broadcasted to all processes.
+    Works on tensors that have the same number of dimensions, but where each dimension may differ. In this case
+    tensors are padded, gathered and then trimmed to secure equal workload for all processes.
+
+    Args:
+        result: the value to sync
+        group: the process group to gather results from. Defaults to all processes (world)
+
+    Return:
+        gathered_result: list with size equal to the process group where
+            gathered_result[i] corresponds to result tensor from process i
+    """
+    # if torch.distributed is not available or not initialized
+    # return single-item list containing the result
+    if not dist.is_available() or not dist.is_initialized():
+        return [result]
+
+    # convert tensors to contiguous format
+    result = result.contiguous()
+    world_size = dist.get_world_size(group)
+
+    # if the tensor is scalar, things are easy
+    if result.ndim == 0:
+        return _simple_all_gather_tensors(result, group, world_size)
+
+    # gather sizes of all tensors
+    local_size = torch.tensor(result.shape, device=result.device)
+    stacked_local_size = [world_size] + list(local_size.size())
+    local_sizes = list(
+        torch.zeros(
+            stacked_local_size, dtype=local_size.dtype, device=local_size.device
+        )
+    )
+    dist.all_gather(local_sizes, local_size, group=group)
+
+    # if the backend is NCCL, we can gather the differently sized tensors without padding
+    if dist.get_backend(group) == "nccl":
+        gathered_result = [result.new_empty(size.tolist()) for size in local_sizes]
+        dist.all_gather(gathered_result, result, group)
+        return gathered_result
+
+    # if shapes are all the same, then do a simple gather:
+    stacked_sizes = torch.stack(local_sizes)
+    max_size = stacked_sizes.max(dim=0).values
+    min_size = stacked_sizes.min(dim=0).values
+    all_sizes_equal = torch.equal(max_size, min_size)
+    if all_sizes_equal:
+        return _simple_all_gather_tensors(result, group, world_size)
+
+    # if not, we need to pad each local tensor to maximum size, gather and then truncate
+    pad_dims = []
+    pad_by = (max_size - local_size).detach().cpu()
+    for val in reversed(pad_by):
+        pad_dims.append(0)
+        pad_dims.append(val.item())
+    result_padded = F.pad(result, pad_dims)
+    stacked_result_padded = [world_size] + list(result_padded.size())
+    gathered_result = list(
+        torch.zeros(
+            stacked_result_padded,
+            dtype=result_padded.dtype,
+            device=result_padded.device,
+        )
+    )
+    dist.all_gather(gathered_result, result_padded, group)
+    for idx, item_size in enumerate(local_sizes):
+        slice_param = [slice(dim_size) for dim_size in item_size]
+        gathered_result[idx] = gathered_result[idx][slice_param]
+    return gathered_result
 
 
 def metrics_traversal_order(

@@ -25,13 +25,25 @@ from torcheval.metrics import Metric
 from torcheval.metrics.metric import TComputeReturn, TState
 from torcheval.metrics.synclib import metrics_traversal_order, sync_states
 
-from torchtnt.utils import PGWrapper
-
 log: logging.Logger = logging.getLogger(__name__)
 
 _TMetrics = TypeVar("_TMetrics", bound=Iterable[Metric])
 
 _TMP: str = "tmp"
+
+
+def _get_world_size(process_group: Optional[dist.ProcessGroup]) -> int:
+    if not dist.is_available() or not dist.is_initialized():
+        # dist is not initialized or available, return 1 for world size
+        return 1
+    return dist.get_world_size(group=process_group)
+
+
+def _get_rank(process_group: Optional[dist.ProcessGroup]) -> int:
+    if not dist.is_available() or not dist.is_initialized():
+        # dist is not initialized or available, return 0 for rank
+        return 0
+    return dist.get_rank(group=process_group)
 
 
 def sync_and_compute(
@@ -242,7 +254,7 @@ def get_synced_metric(
         tensor(2.) # Rank 1
         tensor(2.) # Rank 2
     """
-    world_size = PGWrapper(process_group).get_world_size()
+    world_size = _get_world_size(process_group)
     _validate_rank_and_world_size(world_size)
 
     if world_size == 1:
@@ -256,7 +268,7 @@ def get_synced_metric(
         world_size,
     )
 
-    local_rank = PGWrapper(process_group).get_rank()
+    local_rank = _get_rank(process_group)
     other_rank_metrics: List[Metric] = [
         gathered_metric_list[rank] for rank in range(world_size) if rank != local_rank
     ]
@@ -299,7 +311,7 @@ def get_synced_metric_collection(
         tensor(0.) # Rank 1
         tensor(0.) # Rank 2
     """
-    world_size = PGWrapper(process_group).get_world_size()
+    world_size = _get_world_size(process_group)
     _validate_rank_and_world_size(world_size)
 
     if world_size == 1:
