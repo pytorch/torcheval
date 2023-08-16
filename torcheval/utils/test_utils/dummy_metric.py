@@ -57,7 +57,7 @@ class DummySumListStateMetric(Metric[torch.Tensor]):
     def update(
         self: TDummySumListStateMetric, x: torch.Tensor
     ) -> TDummySumListStateMetric:
-        self.x.append(x)
+        self.x.append(x.to(self.device))
         return self
 
     @torch.inference_mode()

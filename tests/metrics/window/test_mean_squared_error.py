@@ -385,7 +385,7 @@ class TestMeanSquaredError(MetricClassTester):
                     mean_squared_error(
                         torch.cat(update_target[-2:], dim=0),
                         torch.cat(update_input[-2:], dim=0),
-                        torch.cat(update_weight[-2:], dim=0),
+                        sample_weight=torch.cat(update_weight[-2:], dim=0),
                         multioutput=multioutput,
                     )
                 )
@@ -397,7 +397,7 @@ class TestMeanSquaredError(MetricClassTester):
                     mean_squared_error(
                         torch.cat(update_target, dim=0),
                         torch.cat(update_input, dim=0),
-                        torch.cat(update_weight, dim=0),
+                        sample_weight=torch.cat(update_weight, dim=0),
                         multioutput=multioutput,
                     )
                 )
