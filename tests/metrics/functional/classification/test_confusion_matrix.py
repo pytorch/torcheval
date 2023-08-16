@@ -134,9 +134,6 @@ class TestMultiClassConfusionMatrix(unittest.TestCase):
 
         # test normalizations
         self._test_multiclass_confusion_matrix_with_input(
-            input, target, num_classes, normalize="none"
-        )
-        self._test_multiclass_confusion_matrix_with_input(
             input, target, num_classes, normalize=None
         )
         self._test_multiclass_confusion_matrix_with_input(
