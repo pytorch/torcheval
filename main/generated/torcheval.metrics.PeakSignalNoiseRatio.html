@@ -35,9 +35,13 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="torcheval.metrics.ClickThroughRate" href="torcheval.metrics.ClickThroughRate.html" />
     <link rel="prev" title="torcheval.metrics.FrechetInceptionDistance" href="torcheval.metrics.FrechetInceptionDistance.html" />
-  <!-- Google Analytics -->
-  
-  <!-- End Google Analytics -->
+  <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','');</script>
+    <!-- End Google Tag Manager -->
   
 
   
@@ -330,6 +334,10 @@
         <div class="pytorch-content-left">
 
         
+          <!-- Google Tag Manager (noscript) -->
+          <noscript><iframe src="https://www.googletagmanager.com/ns.html?id="
+          height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+          <!-- End Google Tag Manager (noscript) -->
           
           <div class="rst-content">
           
@@ -369,8 +377,7 @@ If <code class="docutils literal notranslate"><span class="pre">None</span></cod
 <dd><p>Initialize a metric object and its internal states.</p>
 <p>Use <code class="docutils literal notranslate"><span class="pre">self._add_state()</span></code> to initialize state variables of your metric class.
 The state variables should be either <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, a list of
-<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, a dictionary with <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> as values,
-or a deque of <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code>, or a dictionary with <code class="docutils literal notranslate"><span class="pre">torch.Tensor</span></code> as values</p>
 </dd></dl>
 
 <p class="rubric">Methods</p>

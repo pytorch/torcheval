@@ -34,9 +34,13 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Metric Toolkit" href="torcheval.metrics.toolkit.html" />
-  <!-- Google Analytics -->
-  
-  <!-- End Google Analytics -->
+  <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','');</script>
+    <!-- End Google Tag Manager -->
   
 
   
@@ -327,180 +331,18 @@
         <div class="pytorch-content-left">
 
         
+          <!-- Google Tag Manager (noscript) -->
+          <noscript><iframe src="https://www.googletagmanager.com/ns.html?id="
+          height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+          <!-- End Google Tag Manager (noscript) -->
           
           <div class="rst-content">
           
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
               
-  <div class="section" id="module-torcheval.tools">
-<span id="module-tools"></span><h1>Module Tools<a class="headerlink" href="#module-torcheval.tools" title="Permalink to this heading">¶</a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="torcheval.tools.ModuleSummary">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><code class="sig-prename descclassname"><span class="pre">torcheval.tools.</span></code><code class="sig-name descname"><span class="pre">ModuleSummary</span></code><a class="headerlink" href="#torcheval.tools.ModuleSummary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Summary of module and its submodules. It collects the following information:</p>
-<ul class="simple">
-<li>Name</li>
-<li>Type</li>
-<li>Number of parameters</li>
-<li>Number of trainable parameters</li>
-<li>Estimated size in bytes</li>
-<li>Whether this module contains uninitialized parameters</li>
-<li>FLOPs for forward (“?” meaning not calculated)</li>
-<li>FLOPs for backward (“?” meaning not calculated)</li>
-<li>Input shape (“?” meaning not calculated)</li>
-<li>Output shape (“?” meaning not calculated)</li>
-<li>Forward elapsed time in ms (“?” meaning not calculated)</li>
-</ul>
-<dl class="py property">
-<dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.flops_backward">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><code class="sig-name descname"><span class="pre">flops_backward</span></code><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'?'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.flops_backward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the total FLOPs for backward calculation using this module.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.flops_forward">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><code class="sig-name descname"><span class="pre">flops_forward</span></code><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'?'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.flops_forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the total FLOPs for forward calculation using this module.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.forward_elapsed_time_ms">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><code class="sig-name descname"><span class="pre">forward_elapsed_time_ms</span></code><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'?'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.forward_elapsed_time_ms" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the forward time of the module in ms.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.has_uninitialized_param">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><code class="sig-name descname"><span class="pre">has_uninitialized_param</span></code><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.has_uninitialized_param" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns if a parameter in this module is uninitialized</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.in_size">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><code class="sig-name descname"><span class="pre">in_size</span></code><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'?'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.in_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the input size of the module</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.module_name">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><code class="sig-name descname"><span class="pre">module_name</span></code><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.module_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the name of this module</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.module_type">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><code class="sig-name descname"><span class="pre">module_type</span></code><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.module_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the type of this module.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.num_parameters">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><code class="sig-name descname"><span class="pre">num_parameters</span></code><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.num_parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the total number of parameters in this module.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.num_trainable_parameters">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><code class="sig-name descname"><span class="pre">num_trainable_parameters</span></code><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.num_trainable_parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the total number of trainable parameters (requires_grad=True)
-in this module.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.out_size">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><code class="sig-name descname"><span class="pre">out_size</span></code><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'?'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.out_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the output size of the module</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.size_bytes">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><code class="sig-name descname"><span class="pre">size_bytes</span></code><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.size_bytes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the total estimated size in bytes of a module.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="torcheval.tools.ModuleSummary.submodule_summaries">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><code class="sig-name descname"><span class="pre">submodule_summaries</span></code><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#torcheval.tools.ModuleSummary" title="torcheval.tools.module_summary.ModuleSummary"><span class="pre">ModuleSummary</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#torcheval.tools.ModuleSummary.submodule_summaries" title="Permalink to this definition">¶</a></dt>
-<dd><p>A Dict with the names of submodules as keys and corresponding <a class="reference internal" href="#torcheval.tools.ModuleSummary" title="torcheval.tools.ModuleSummary"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleSummary</span></code></a>
-objects as values. These can be traversed for visualization.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="torcheval.tools.get_module_summary">
-<code class="sig-prename descclassname"><span class="pre">torcheval.tools.</span></code><code class="sig-name descname"><span class="pre">get_module_summary</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">module</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Module.html#torch.nn.Module" target="_blank" title="(in PyTorch v2.0)"><span class="pre">Module</span></a></span></em>, <em><span class="n"><span class="pre">module_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em><span class="n"><span class="pre">module_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">MutableMapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#torcheval.tools.ModuleSummary" title="torcheval.tools.module_summary.ModuleSummary"><span class="pre">ModuleSummary</span></a></span></span><a class="headerlink" href="#torcheval.tools.get_module_summary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate a <a class="reference internal" href="#torcheval.tools.ModuleSummary" title="torcheval.tools.ModuleSummary"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModuleSummary</span></code></a> object, then assign its values and generate submodule tree.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module</strong> – The module to be summarized.</li>
-<li><strong>module_args</strong> – A tuple of arguments for the module to run and calculate FLOPs and activation sizes.</li>
-<li><strong>module_kwargs</strong> – <p>Any kwarg arguments to be passed into the module’s forward function.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">To calculate FLOPs, you must use PyTorch 1.13 or greater.</p>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If module contains any lazy submodule, we will NOT calculate FLOPs.</p>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Currently only modules that output a single tensor are supported.
-TODO: to support more flexible output for module.</p>
-</div>
-</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="torcheval.tools.get_summary_table">
-<code class="sig-prename descclassname"><span class="pre">torcheval.tools.</span></code><code class="sig-name descname"><span class="pre">get_summary_table</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">module_summary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#torcheval.tools.ModuleSummary" title="torcheval.tools.module_summary.ModuleSummary"><span class="pre">ModuleSummary</span></a></span></em>, <em><span class="n"><span class="pre">human_readable_nums</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#torcheval.tools.get_summary_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a string summary_table, tabularizing the information in module_summary.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>module_summary</strong> – module_summary to be printed/tabularized</li>
-<li><strong>human_readable_nums</strong> – set to False for exact (e.g. 1234 vs 1.2 K)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="torcheval.tools.prune_module_summary">
-<code class="sig-prename descclassname"><span class="pre">torcheval.tools.</span></code><code class="sig-name descname"><span class="pre">prune_module_summary</span></code><span class="sig-paren">(</span><em><span class="n"><span class="pre">module_summary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#torcheval.tools.ModuleSummary" title="torcheval.tools.module_summary.ModuleSummary"><span class="pre">ModuleSummary</span></a></span></em>, <em><span class="o"><span class="pre">*</span></span></em>, <em><span class="n"><span class="pre">max_depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#torcheval.tools.prune_module_summary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prune the module summaries that are deeper than max_depth in the module
-summary tree. The ModuleSummary object is prunned inplace.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>module_summary</strong> – Root module summary to prune.</li>
-<li><strong>max_depth</strong> – The maximum depth of module summaries to keep.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><strong>ValueError</strong> – If <cite>max_depth</cite> is an int less than 1</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+  <div class="section" id="module-tools">
+<h1>Module Tools<a class="headerlink" href="#module-tools" title="Permalink to this heading">¶</a></h1>
 </div>
 
 
