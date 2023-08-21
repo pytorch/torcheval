@@ -6,6 +6,7 @@
 
 from torcheval.metrics import functional
 from torcheval.metrics.aggregation import AUC, Cat, Max, Mean, Min, Sum, Throughput
+from torcheval.metrics.audio import FrechetAudioDistance
 from torcheval.metrics.classification import (
     BinaryAccuracy,
     BinaryAUPRC,
@@ -90,6 +91,7 @@ __all__ = [
     "BLEUScore",
     "Cat",
     "ClickThroughRate",
+    "FrechetAudioDistance",
     "FrechetInceptionDistance",
     "HitRate",
     "Max",
