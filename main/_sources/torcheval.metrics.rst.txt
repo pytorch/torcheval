@@ -19,6 +19,15 @@ Aggregation Metrics
    Sum
    Throughput
 
+None
+-------------------------------------------------------------------
+
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+
+   FrechetAudioDistance
+
 Classification Metrics
 -------------------------------------------------------------------
 
