@@ -15,14 +15,21 @@ from torcheval.metrics.metric import Metric
 
 if find_spec("torchvision") is not None:
     from torchvision import models
+
+    _TORCHVISION_AVAILABLE = True
 else:
-    raise ImportError(
-        "You must have torchvision installed to use FID, please install torcheval[image]"
-    )
+    _TORCHVISION_AVAILABLE = False
 
 TFrechetInceptionDistance = TypeVar("TFrechetInceptionDistance")
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
+
+
+def _validate_torchvision_available() -> None:
+    if not _TORCHVISION_AVAILABLE:
+        raise RuntimeError(
+            "You must have torchvision installed to use FID, please install torcheval[image]"
+        )
 
 
 class FIDInceptionV3(nn.Module):
@@ -70,6 +77,8 @@ class FrechetInceptionDistance(Metric[torch.Tensor]):
             device (torch.device): The device where the computations will be performed.
                 If None, the default device will be used.
         """
+        _validate_torchvision_available()
+
         super().__init__(device=device)
 
         self._FID_parameter_check(model=model, feature_dim=feature_dim)
