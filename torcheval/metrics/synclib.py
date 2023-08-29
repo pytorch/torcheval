@@ -353,15 +353,13 @@ def sync_states(
                 gathered_states,
                 process_group=process_group,
             )
-        elif isinstance(my_state_data, int):
-            _sync_obj_states(
-                metric_name,
-                state_name,
-                my_state_data,
-                gathered_states,
-                process_group=process_group,
-            )
-        elif isinstance(my_state_data, float):
+        elif isinstance(
+            my_state_data,
+            (
+                int,
+                float,
+            ),
+        ):
             _sync_obj_states(
                 metric_name,
                 state_name,
