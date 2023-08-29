@@ -221,7 +221,7 @@ def _sync_list_tensor_states(
     gathered_list_lengths = _sync_list_length(
         my_state_data, process_group=process_group
     )
-    if any([length == 0 for length in gathered_list_lengths]):
+    if any((length == 0 for length in gathered_list_lengths)):
         # one or more ranks has empty list, need to sync dtype and shape
         # so it can send appropriate dummy tensor for allgather
 
