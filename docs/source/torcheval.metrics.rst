@@ -20,7 +20,7 @@ Aggregation Metrics
    Throughput
 
 Audio Metrics
--------------
+-------------------------------------------------------------------
 
 .. autosummary::
    :toctree: generated
