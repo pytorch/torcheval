@@ -16,8 +16,8 @@ from pyre_extensions import none_throws
 from torcheval.metrics.synclib import (
     _sync_dtype_and_shape,
     _sync_list_length,
-    all_gather_tensors,
     metrics_traversal_order,
+    send_tensors,
     sync_states,
 )
 from torchtnt.utils.device import get_device_from_env
@@ -80,19 +80,26 @@ class SynclibTest(unittest.TestCase):
     def test_gather_uneven(self, world_size: Optional[int] = 4) -> None:
         config = _get_launch_config(2)
         pet.elastic_launch(config, entrypoint=self._test_ddp_gather_uneven_tensors)()
+        # rank 0 gather test
+        pet.elastic_launch(config, entrypoint=self._test_ddp_gather_uneven_tensors)(0)
 
     @staticmethod
-    def _test_ddp_gather_uneven_tensors() -> None:
+    def _test_ddp_gather_uneven_tensors(dst_rank: Optional[int] = None) -> None:
         dist.init_process_group("gloo")
         rank = dist.get_rank()
         world_size = dist.get_world_size()
 
         tensor = torch.ones(rank)
-        result = all_gather_tensors(tensor)
-        assert len(result) == world_size
-        for idx in range(world_size):
-            assert len(result[idx]) == idx
-            assert (result[idx] == torch.ones_like(result[idx])).all()
+        result = send_tensors(tensor, rank=dst_rank)
+        if dst_rank is None or rank == dst_rank:
+            assert result is not None
+            assert len(result) == world_size
+            for idx in range(world_size):
+                assert len(result[idx]) == idx
+                assert (result[idx] == torch.ones_like(result[idx])).all()
+        else:
+            assert dst_rank == 0
+            assert result is None
 
     # pyre-ignore[56]
     @unittest.skipUnless(
@@ -103,19 +110,29 @@ class SynclibTest(unittest.TestCase):
         pet.elastic_launch(
             config, entrypoint=self._test_ddp_gather_uneven_tensors_multidim
         )()
+        pet.elastic_launch(
+            config, entrypoint=self._test_ddp_gather_uneven_tensors_multidim
+        )(1)
 
     @staticmethod
-    def _test_ddp_gather_uneven_tensors_multidim() -> None:
+    def _test_ddp_gather_uneven_tensors_multidim(
+        dst_rank: Optional[int] = None,
+    ) -> None:
         dist.init_process_group("gloo")
         rank = dist.get_rank()
         world_size = dist.get_world_size()
         tensor = torch.ones(rank + 1, 4 - rank)
-        result = all_gather_tensors(tensor)
-        assert len(result) == world_size
-        for idx in range(world_size):
-            val = result[idx]
-            assert val.shape == (idx + 1, 4 - idx)
-            assert (val == torch.ones_like(val)).all()
+        result = send_tensors(tensor, rank=dst_rank)
+
+        if dst_rank is None or rank == dst_rank:
+            assert result is not None
+            assert len(result) == world_size
+            for idx in range(world_size):
+                val = result[idx]
+                assert val.shape == (idx + 1, 4 - idx)
+                assert (val == torch.ones_like(val)).all()
+        else:
+            assert result is None
 
     # pyre-ignore[56]
     @unittest.skipUnless(
@@ -127,19 +144,29 @@ class SynclibTest(unittest.TestCase):
         pet.elastic_launch(
             config, entrypoint=self._test_ddp_gather_uneven_tensors_multidim_nccl
         )()
+        pet.elastic_launch(
+            config, entrypoint=self._test_ddp_gather_uneven_tensors_multidim_nccl
+        )(0)
 
     @staticmethod
-    def _test_ddp_gather_uneven_tensors_multidim_nccl() -> None:
+    def _test_ddp_gather_uneven_tensors_multidim_nccl(
+        dst_rank: Optional[int] = None,
+    ) -> None:
         dist.init_process_group("nccl")
         rank = dist.get_rank()
         world_size = dist.get_world_size()
         tensor = torch.ones(rank + 1, 4 - rank, device=get_device_from_env())
-        result = all_gather_tensors(tensor)
-        assert len(result) == world_size
-        for idx in range(world_size):
-            val = result[idx]
-            assert val.shape == (idx + 1, 4 - idx)
-            assert (val == 1).all()
+        result = send_tensors(tensor, rank=dst_rank)
+
+        if dst_rank is None or rank == dst_rank:
+            assert result is not None
+            assert len(result) == world_size
+            for idx in range(world_size):
+                val = result[idx]
+                assert val.shape == (idx + 1, 4 - idx)
+                assert (val == 1).all()
+        else:
+            assert result is None
 
 
 def _test_sync_list_length() -> None:

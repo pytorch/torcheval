@@ -29,28 +29,104 @@ from torcheval.metrics.metric import TState
 _logger: logging.Logger = logging.getLogger(__name__)
 
 
-def _simple_all_gather_tensors(
-    result: Tensor, group: Optional[dist.ProcessGroup], world_size: int
-) -> List[Tensor]:
-    stacked_result_sizes = [world_size] + list(result.size())
-    gathered_result = list(
-        torch.zeros(stacked_result_sizes, dtype=result.dtype, device=result.device)
-    )
-    dist.all_gather(gathered_result, result, group)
+def _simple_send_tensors(
+    tensor: Tensor,
+    world_size: int,
+    group: Optional[dist.ProcessGroup],
+    rank: Optional[int],
+) -> Optional[List[Tensor]]:
+    """
+    Helper function that sends tensor to specified rank (or all ranks), and
+    returns the received results. Assumes tensors have same dimensions.
+
+    Return:
+        gathered_result: list with size equal to the process group where
+            gathered_result[i] corresponds to result tensor from process i
+    """
+    gathered_result = None
+    local_rank = dist.get_rank(group=group)
+
+    if rank is None or local_rank == rank:
+        # only construct ``gathered_result`` if rank is going to receive data
+        stacked_result_sizes = [world_size] + list(tensor.size())
+        gathered_result = list(
+            torch.empty(stacked_result_sizes, dtype=tensor.dtype, device=tensor.device)
+        )
+
+    if rank is None:
+        # sync tensors to all ranks
+        dist.all_gather(gathered_result, tensor, group=group)
+    else:
+        # sync tensors only to specified rank
+        dist.gather(tensor, gathered_result, dst=rank, group=group)
+
     return gathered_result
 
 
-# @jsenthil TODO: remove all_gather for sizes of all tensors:
-def all_gather_tensors(
-    result: Tensor, group: Optional[dist.ProcessGroup] = None
-) -> List[Tensor]:
-    """Function to gather tensors from several distributed processes onto a list that is broadcasted to all processes.
+def _send_uneven_tensors(
+    tensor: Tensor,
+    world_size: int,
+    group: Optional[dist.ProcessGroup],
+    rank: Optional[int],
+) -> Optional[List[Tensor]]:
+    """
+    Helper function that sends tensor to specified rank (or all ranks), and
+    returns the received results. If tensor dimensions differ across ranks,
+    tensors are padded, gathered and then trimmed to secure equal workload
+    for all processes.
+
+    Return:
+        gathered_result: list with size equal to the process group where
+            gathered_result[i] corresponds to result tensor from process i
+    """
+    # if the backend is NCCL, we can gather the differently sized tensors without padding
+    if dist.get_backend(group) == "nccl":
+        return _simple_send_tensors(tensor, world_size, group, rank=rank)
+
+    # gather sizes of all tensors on all ranks
+    local_size = torch.tensor(tensor.shape, device=tensor.device)
+    local_sizes = _simple_send_tensors(local_size, world_size, group, rank=None)
+    assert local_sizes is not None
+
+    # if shapes are all the same, then do a simple gather:
+    stacked_sizes = torch.stack(local_sizes)
+    max_size = stacked_sizes.max(dim=0).values
+    min_size = stacked_sizes.min(dim=0).values
+    all_sizes_equal = torch.equal(max_size, min_size)
+    if all_sizes_equal:
+        return _simple_send_tensors(tensor, world_size, group, rank=rank)
+
+    # if not, we need to pad each local tensor to maximum size, gather and then truncate
+    pad_dims = []
+    pad_by = (max_size - local_size).detach().cpu()
+    for val in reversed(pad_by):
+        pad_dims.append(0)
+        pad_dims.append(val.item())
+    result_padded = F.pad(tensor, pad_dims)
+
+    gathered_result = _simple_send_tensors(result_padded, world_size, group, rank=rank)
+
+    if gathered_result:
+        for idx, item_size in enumerate(local_sizes):
+            slice_param = [slice(dim_size) for dim_size in item_size]
+            gathered_result[idx] = gathered_result[idx][slice_param]
+
+    return gathered_result
+
+
+def send_tensors(
+    result: Tensor,
+    group: Optional[dist.ProcessGroup] = None,
+    rank: Optional[int] = None,
+) -> Optional[List[Tensor]]:
+    """Function to gather tensors from several distributed processes onto a list that is broadcasted to specified processes.
     Works on tensors that have the same number of dimensions, but where each dimension may differ. In this case
     tensors are padded, gathered and then trimmed to secure equal workload for all processes.
 
     Args:
         result: the value to sync
         group: the process group to gather results from. Defaults to all processes (world)
+        rank: the rank to gather results from. If none, gathers on all ranks
 
     Return:
         gathered_result: list with size equal to the process group where
@@ -67,52 +143,9 @@ def all_gather_tensors(
 
     # if the tensor is scalar, things are easy
     if result.ndim == 0:
-        return _simple_all_gather_tensors(result, group, world_size)
+        return _simple_send_tensors(result, world_size, group, rank=rank)
 
-    # gather sizes of all tensors
-    local_size = torch.tensor(result.shape, device=result.device)
-    stacked_local_size = [world_size] + list(local_size.size())
-    local_sizes = list(
-        torch.zeros(
-            stacked_local_size, dtype=local_size.dtype, device=local_size.device
-        )
-    )
-    dist.all_gather(local_sizes, local_size, group=group)
-
-    # if the backend is NCCL, we can gather the differently sized tensors without padding
-    if dist.get_backend(group) == "nccl":
-        gathered_result = [result.new_empty(size.tolist()) for size in local_sizes]
-        dist.all_gather(gathered_result, result, group)
-        return gathered_result
-
-    # if shapes are all the same, then do a simple gather:
-    stacked_sizes = torch.stack(local_sizes)
-    max_size = stacked_sizes.max(dim=0).values
-    min_size = stacked_sizes.min(dim=0).values
-    all_sizes_equal = torch.equal(max_size, min_size)
-    if all_sizes_equal:
-        return _simple_all_gather_tensors(result, group, world_size)
-
-    # if not, we need to pad each local tensor to maximum size, gather and then truncate
-    pad_dims = []
-    pad_by = (max_size - local_size).detach().cpu()
-    for val in reversed(pad_by):
-        pad_dims.append(0)
-        pad_dims.append(val.item())
-    result_padded = F.pad(result, pad_dims)
-    stacked_result_padded = [world_size] + list(result_padded.size())
-    gathered_result = list(
-        torch.zeros(
-            stacked_result_padded,
-            dtype=result_padded.dtype,
-            device=result_padded.device,
-        )
-    )
-    dist.all_gather(gathered_result, result_padded, group)
-    for idx, item_size in enumerate(local_sizes):
-        slice_param = [slice(dim_size) for dim_size in item_size]
-        gathered_result[idx] = gathered_result[idx][slice_param]
-    return gathered_result
+    return _send_uneven_tensors(result, world_size, group, rank=rank)
 
 
 def metrics_traversal_order(
@@ -151,7 +184,8 @@ def _sync_tensor_states(
     gathered_states: List[Dict[str, Dict[str, Any]]],
     process_group: Optional[dist.ProcessGroup],
 ) -> None:
-    gathered_state_data = all_gather_tensors(my_state_data, group=process_group)
+    gathered_state_data = send_tensors(my_state_data, group=process_group)
+    assert gathered_state_data is not None
     for i, state_tensor in enumerate(gathered_state_data):
         gathered_states[i][metric_name][state_name] = state_tensor
 
@@ -247,14 +281,13 @@ def _sync_list_tensor_states(
     # go through each element in list and sync the tensors
     for i in range(max_length):
         if i < len(my_state_data):
-            gathered_state_data = all_gather_tensors(
-                my_state_data[i], group=process_group
-            )
+            gathered_state_data = send_tensors(my_state_data[i], group=process_group)
         else:
             # local rank exceeded length of its list, send dummy tensor instead
             dummy_tensor = _generate_dummy_tensor(shape, dtype, device)
-            gathered_state_data = all_gather_tensors(dummy_tensor, group=process_group)
+            gathered_state_data = send_tensors(dummy_tensor, group=process_group)
 
+        assert gathered_state_data is not None
         for rank, state_tensor in enumerate(gathered_state_data):
             if len(gathered_states[rank][metric_name][state_name]) == 0:
                 # initialize to list
