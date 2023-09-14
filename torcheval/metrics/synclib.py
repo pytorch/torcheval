@@ -22,6 +22,7 @@ import logging
 from typing import Any, Dict, List, Optional, Tuple
 
 import torch
+from pyre_extensions import none_throws
 from torch import distributed as dist, Tensor
 from torch.nn import functional as F
 from torcheval.metrics.metric import TState
@@ -183,9 +184,13 @@ def _sync_tensor_states(
     my_state_data: torch.Tensor,
     gathered_states: List[Dict[str, Dict[str, Any]]],
     process_group: Optional[dist.ProcessGroup],
+    rank: Optional[int],
 ) -> None:
-    gathered_state_data = send_tensors(my_state_data, group=process_group)
-    assert gathered_state_data is not None
+    gathered_state_data = send_tensors(my_state_data, group=process_group, rank=rank)
+
+    if gathered_state_data is None:
+        return
+
     for i, state_tensor in enumerate(gathered_state_data):
         gathered_states[i][metric_name][state_name] = state_tensor
 
@@ -223,7 +228,8 @@ def _sync_dtype_and_shape(
 
 
 def _sync_list_length(
-    state_data: List[torch.Tensor], process_group: Optional[dist.ProcessGroup]
+    state_data: List[torch.Tensor],
+    process_group: Optional[dist.ProcessGroup],
 ) -> List[int]:
     my_length = len(state_data)
     world_size = dist.get_world_size(group=process_group)
@@ -250,6 +256,7 @@ def _sync_list_tensor_states(
     device: torch.device,
     gathered_states: List[Dict[str, Dict[str, Any]]],
     process_group: Optional[dist.ProcessGroup],
+    rank: Optional[int],
 ) -> None:
     # get length of lists across all ranks
     gathered_list_lengths = _sync_list_length(
@@ -257,16 +264,14 @@ def _sync_list_tensor_states(
     )
     if any((length == 0 for length in gathered_list_lengths)):
         # one or more ranks has empty list, need to sync dtype and shape
-        # so it can send appropriate dummy tensor for allgather
+        # so those ranks can send appropriate dummy tensor for allgather
 
-        if len(my_state_data) > 0:
-            # if at least one element, send your tensor dtype and shape
-            result = _sync_dtype_and_shape(
-                my_state_data[0], process_group=process_group
-            )
-        else:
-            # otherwise send None to indicate your list is empty
-            result = _sync_dtype_and_shape(None, process_group=process_group)
+        # if at least one element, send your tensor dtype and shape
+        # otherwise send None to indicate your list is empty
+        result = _sync_dtype_and_shape(
+            my_state_data[0] if len(my_state_data) > 0 else None,
+            process_group=process_group,
+        )
         if result is None:
             # all ranks state_data is empty, no need to sync
             return
@@ -280,21 +285,27 @@ def _sync_list_tensor_states(
 
     # go through each element in list and sync the tensors
     for i in range(max_length):
-        if i < len(my_state_data):
-            gathered_state_data = send_tensors(my_state_data[i], group=process_group)
-        else:
-            # local rank exceeded length of its list, send dummy tensor instead
-            dummy_tensor = _generate_dummy_tensor(shape, dtype, device)
-            gathered_state_data = send_tensors(dummy_tensor, group=process_group)
+        # if local rank exceeded length of its list, send dummy tensor instead
+        tensor_to_send = (
+            _generate_dummy_tensor(shape, dtype, device)
+            if i >= len(my_state_data)
+            else my_state_data[i]
+        )
 
-        assert gathered_state_data is not None
-        for rank, state_tensor in enumerate(gathered_state_data):
-            if len(gathered_states[rank][metric_name][state_name]) == 0:
+        gathered_state_data = send_tensors(
+            tensor_to_send, group=process_group, rank=rank
+        )
+
+        if gathered_state_data is None:
+            continue
+
+        for _rank, state_tensor in enumerate(gathered_state_data):
+            if len(gathered_states[_rank][metric_name][state_name]) == 0:
                 # initialize to list
-                gathered_states[rank][metric_name][state_name] = []
+                gathered_states[_rank][metric_name][state_name] = []
             # append the received state tensor to rank unless its list length is reached
-            if i < gathered_list_lengths[rank]:
-                gathered_states[rank][metric_name][state_name].append(state_tensor)
+            if i < gathered_list_lengths[_rank]:
+                gathered_states[_rank][metric_name][state_name].append(state_tensor)
 
 
 def _sync_dict_tensor_states(
@@ -304,19 +315,30 @@ def _sync_dict_tensor_states(
     device: torch.device,
     gathered_states: List[Dict[str, Dict[str, Any]]],
     process_group: Optional[dist.ProcessGroup],
+    rank: Optional[int],
 ) -> None:
     sorted_keys = sorted(my_state_data.keys())
     tensor_list = [my_state_data[key] for key in sorted_keys]
     _sync_list_tensor_states(
-        metric_name, state_name, tensor_list, device, gathered_states, process_group
+        metric_name,
+        state_name,
+        tensor_list,
+        device,
+        gathered_states,
+        process_group,
+        rank,
     )
-    for rank in range(len(gathered_states)):
-        tensor_list = gathered_states[rank][metric_name][state_name]
-        gathered_states[rank][metric_name][state_name] = dict(
-            zip(sorted_keys, tensor_list)
-        )
+
+    if rank is None or dist.get_rank(group=process_group) == rank:
+        # pack ``gathered_states`` into dictionary
+        for rank in range(len(gathered_states)):
+            tensor_list = gathered_states[rank][metric_name][state_name]
+            gathered_states[rank][metric_name][state_name] = dict(
+                zip(sorted_keys, tensor_list)
+            )
 
 
+# TODO: Remove use of gather_object and use tensors instead to avoid unnecessary gpu -> cpu
 def _sync_obj_states(
     metric_name: str,
     state_name: str,
@@ -324,12 +346,27 @@ def _sync_obj_states(
     my_state_data: Any,
     gathered_states: List[Dict[str, Dict[str, Any]]],
     process_group: Optional[dist.ProcessGroup],
+    rank: Optional[int],
 ) -> None:
+    local_rank = dist.get_rank(group=process_group)
     world_size = dist.get_world_size(group=process_group)
-    gathered_obj_data = [None for _ in range(world_size)]
-    dist.all_gather_object(gathered_obj_data, my_state_data, group=process_group)
-    for i, obj in enumerate(gathered_obj_data):
-        gathered_states[i][metric_name][state_name] = obj
+
+    create_obj_gather_list = rank is None or rank == local_rank
+    gathered_obj_data = [None] * world_size if create_obj_gather_list else None
+
+    if rank is None:
+        # if rank not specified, sync all ranks
+        dist.all_gather_object(gathered_obj_data, my_state_data, group=process_group)
+    else:
+        # if rank is specified, send object only to that rank
+        dist.gather_object(
+            my_state_data, gathered_obj_data, dst=rank, group=process_group
+        )
+
+    if create_obj_gather_list:
+        gathered_obj_data = none_throws(gathered_obj_data)
+        for i, obj in enumerate(gathered_obj_data):
+            gathered_states[i][metric_name][state_name] = obj
 
 
 def sync_states(
@@ -337,7 +374,8 @@ def sync_states(
     devices: Dict[str, torch.device],
     metrics_traversal_order: List[Tuple[str, str]],
     process_group: Optional[dist.ProcessGroup] = None,
-) -> List[Dict[str, Dict[str, Any]]]:
+    rank: Optional[int] = None,
+) -> Optional[List[Dict[str, Dict[str, Any]]]]:
     """
     Retrieves metric states across all ranks.
 
@@ -345,6 +383,7 @@ def sync_states(
         states: local metric state dict
         devices: mapping from metric name to device on which metric resides
         metrics_traversal_order: list of tuple (metric_name, state_name) defining the order of traversal through the metric state dicts
+        rank: The rank to sync and compute metric values on. If None, all ranks will be synced on
 
     Returns:
         Metric state dict data from all ranks.
@@ -367,6 +406,7 @@ def sync_states(
                 my_state_data,
                 gathered_states,
                 process_group=process_group,
+                rank=rank,
             )
         elif isinstance(my_state_data, list):
             _sync_list_tensor_states(
@@ -376,6 +416,7 @@ def sync_states(
                 devices[metric_name],
                 gathered_states,
                 process_group=process_group,
+                rank=rank,
             )
         elif isinstance(my_state_data, dict):
             _sync_dict_tensor_states(
@@ -385,6 +426,7 @@ def sync_states(
                 devices[metric_name],
                 gathered_states,
                 process_group=process_group,
+                rank=rank,
             )
         elif isinstance(
             my_state_data,
@@ -399,10 +441,13 @@ def sync_states(
                 my_state_data,
                 gathered_states,
                 process_group=process_group,
+                rank=rank,
             )
         else:
             raise RuntimeError(
                 f"Do not know how to sync state of type: {type(my_state_data)} for state {metric_name} {state_name}"
             )
 
-    return gathered_states
+    if rank is None or dist.get_rank(group=process_group) == rank:
+        return gathered_states
+    return None
