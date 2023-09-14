@@ -41,7 +41,7 @@ def mean_squared_error(
     Examples::
 
         >>> import torch
-        >>> from torcheval.metrics.function import mean_squared_error
+        >>> from torcheval.metrics.functional import mean_squared_error
         >>> input = torch.tensor([0.9, 0.5, 0.3, 0.5])
         >>> target = torch.tensor([0.5, 0.8, 0.2, 0.8])
         >>> mean_squared_error(input, target)
