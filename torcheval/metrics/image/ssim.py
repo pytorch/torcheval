@@ -11,24 +11,12 @@ from typing import Iterable, Optional, TypeVar
 
 import torch
 
-try:
-    from skimage.metrics import structural_similarity
-
-    _SKIMAGE_AVAILABLE = True
-except ImportError:
-    _SKIMAGE_AVAILABLE = False
+from skimage.metrics import structural_similarity
 
 from torcheval.metrics.metric import Metric
 
 
 TStructuralSimilarity = TypeVar("TStructuralSimilarity")
-
-
-def _validate_skimage_available() -> None:
-    if not _SKIMAGE_AVAILABLE:
-        raise RuntimeError(
-            "scikit-image is required. Please make sure ``scikit-image`` is installed."
-        )
 
 
 class StructuralSimilarity(Metric[torch.Tensor]):
@@ -44,8 +32,6 @@ class StructuralSimilarity(Metric[torch.Tensor]):
         self: TStructuralSimilarity,
         device: Optional[torch.device] = None,
     ) -> None:
-        _validate_skimage_available()
-
         super().__init__(device=device)
 
         self._add_state("mssim_sum", torch.tensor(0, device=device, dtype=torch.float))
