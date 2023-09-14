@@ -72,6 +72,7 @@ Image Metrics
 
    FrechetInceptionDistance
    PeakSignalNoiseRatio
+   StructuralSimilarity
 
 Ranking Metrics
 -------------------------------------------------------------------

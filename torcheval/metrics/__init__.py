@@ -41,7 +41,11 @@ from torcheval.metrics.classification import (
     TopKMultilabelAccuracy,
 )
 
-from torcheval.metrics.image import FrechetInceptionDistance, PeakSignalNoiseRatio
+from torcheval.metrics.image import (
+    FrechetInceptionDistance,
+    PeakSignalNoiseRatio,
+    StructuralSimilarity,
+)
 from torcheval.metrics.metric import Metric
 
 from torcheval.metrics.ranking import (
@@ -121,6 +125,7 @@ __all__ = [
     "R2Score",
     "ReciprocalRank",
     "RetrievalPrecision",
+    "StructuralSimilarity",
     "Sum",
     "Throughput",
     "WeightedCalibration",
