@@ -1,0 +1,35 @@
+﻿torcheval.metrics.StructuralSimilarity
+======================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: StructuralSimilarity
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~StructuralSimilarity.__init__
+      ~StructuralSimilarity.compute
+      ~StructuralSimilarity.load_state_dict
+      ~StructuralSimilarity.merge_state
+      ~StructuralSimilarity.reset
+      ~StructuralSimilarity.state_dict
+      ~StructuralSimilarity.to
+      ~StructuralSimilarity.update
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~StructuralSimilarity.device
+   
+   
