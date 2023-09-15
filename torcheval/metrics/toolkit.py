@@ -20,6 +20,7 @@ from typing import (
 
 import torch
 import torch.distributed as dist
+from pyre_extensions import none_throws
 
 from torcheval.metrics import Metric
 from torcheval.metrics.metric import TComputeReturn, TState
@@ -438,6 +439,7 @@ def _sync_metric_object(
         metric_state_traversal_order,
         process_group=process_group,
     )
+    world_metric_data = none_throws(world_metric_data)
 
     # Repack states into Metrics or Dict[str, Metric]s
     if unpack:

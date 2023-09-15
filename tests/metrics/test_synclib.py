@@ -52,26 +52,32 @@ class SynclibTest(unittest.TestCase):
     def test_tensor_sync_states(self) -> None:
         lc = _get_launch_config(num_processes=3)
         pet.elastic_launch(lc, entrypoint=_test_tensor_sync_state)()
+        pet.elastic_launch(lc, entrypoint=_test_tensor_sync_state)(0)
 
     def test_tensor_list_sync_states(self) -> None:
         lc = _get_launch_config(num_processes=3)
         pet.elastic_launch(lc, entrypoint=_test_tensor_list_sync_state)()
+        pet.elastic_launch(lc, entrypoint=_test_tensor_list_sync_state)(0)
 
     def test_tensor_dict_sync_states(self) -> None:
         lc = _get_launch_config(num_processes=2)
         pet.elastic_launch(lc, entrypoint=_test_tensor_dict_sync_state)()
+        pet.elastic_launch(lc, entrypoint=_test_tensor_dict_sync_state)(0)
 
     def test_complex_mixed_state_sync(self) -> None:
         lc = _get_launch_config(num_processes=2)
         pet.elastic_launch(lc, entrypoint=_test_complex_mixed_state)()
+        pet.elastic_launch(lc, entrypoint=_test_complex_mixed_state)(0)
 
     def test_empty_tensor_list_sync_state(self) -> None:
         lc = _get_launch_config(num_processes=2)
         pet.elastic_launch(lc, entrypoint=_test_empty_tensor_list_sync_state)()
+        pet.elastic_launch(lc, entrypoint=_test_empty_tensor_list_sync_state)(0)
 
     def test_numeric_sync_state(self) -> None:
         lc = _get_launch_config(num_processes=3)
         pet.elastic_launch(lc, entrypoint=_test_numeric_sync_state)()
+        pet.elastic_launch(lc, entrypoint=_test_numeric_sync_state)(0)
 
     # pyre-ignore[56]
     @unittest.skipUnless(
@@ -215,7 +221,7 @@ def _test_sync_dtype_and_shape() -> None:
     tc.assertIsNone(synced_dtype)
 
 
-def _test_tensor_sync_state() -> None:
+def _test_tensor_sync_state(dst_rank: Optional[int] = None) -> None:
     device = init_from_env()
 
     if dist.get_rank() == 0:
@@ -242,41 +248,54 @@ def _test_tensor_sync_state() -> None:
 
     # pyre-ignore: Incompatible parameter type [6]:
     dict_items = metrics_traversal_order(state_data)
-    synced_states = sync_states(state_data, {_METRIC_NAME: device}, dict_items)
+    synced_states = sync_states(
+        state_data, {_METRIC_NAME: device}, dict_items, rank=dst_rank
+    )
 
     tc = unittest.TestCase()
-    tc.assertEqual(len(synced_states), 3)
-    tc.assertTrue(all([len(synced_states[i]) == 1 for i in range(3)]))
-    tc.assertTrue(all([_METRIC_NAME in synced_states[i] for i in range(3)]))
-    tc.assertTrue(all([len(synced_states[i][_METRIC_NAME]) == 2 for i in range(3)]))
-    tc.assertTrue(
-        all(["num_correct" in synced_states[i][_METRIC_NAME] for i in range(3)])
-    )
-    tc.assertTrue(
-        all(["num_total" in synced_states[i][_METRIC_NAME] for i in range(3)])
-    )
 
-    torch.testing.assert_close(
-        synced_states[0][_METRIC_NAME]["num_correct"], torch.tensor(11.0, device=device)
-    )
-    torch.testing.assert_close(
-        synced_states[0][_METRIC_NAME]["num_total"], torch.tensor(80.0, device=device)
-    )
-    torch.testing.assert_close(
-        synced_states[1][_METRIC_NAME]["num_correct"], torch.tensor(43.0, device=device)
-    )
-    torch.testing.assert_close(
-        synced_states[1][_METRIC_NAME]["num_total"], torch.tensor(50.0, device=device)
-    )
-    torch.testing.assert_close(
-        synced_states[2][_METRIC_NAME]["num_correct"], torch.tensor(51.0, device=device)
-    )
-    torch.testing.assert_close(
-        synced_states[2][_METRIC_NAME]["num_total"], torch.tensor(60.0, device=device)
-    )
+    if dst_rank is None or dist.get_rank() == dst_rank:
+        tc.assertIsNotNone(synced_states)
+        tc.assertEqual(len(synced_states), 3)
+        tc.assertTrue(all((len(synced_states[i]) == 1 for i in range(3))))
+        tc.assertTrue(all((_METRIC_NAME in synced_states[i] for i in range(3))))
+        tc.assertTrue(all((len(synced_states[i][_METRIC_NAME]) == 2 for i in range(3))))
+        tc.assertTrue(
+            all(("num_correct" in synced_states[i][_METRIC_NAME] for i in range(3)))
+        )
+        tc.assertTrue(
+            all(("num_total" in synced_states[i][_METRIC_NAME] for i in range(3)))
+        )
+
+        torch.testing.assert_close(
+            synced_states[0][_METRIC_NAME]["num_correct"],
+            torch.tensor(11.0, device=device),
+        )
+        torch.testing.assert_close(
+            synced_states[0][_METRIC_NAME]["num_total"],
+            torch.tensor(80.0, device=device),
+        )
+        torch.testing.assert_close(
+            synced_states[1][_METRIC_NAME]["num_correct"],
+            torch.tensor(43.0, device=device),
+        )
+        torch.testing.assert_close(
+            synced_states[1][_METRIC_NAME]["num_total"],
+            torch.tensor(50.0, device=device),
+        )
+        torch.testing.assert_close(
+            synced_states[2][_METRIC_NAME]["num_correct"],
+            torch.tensor(51.0, device=device),
+        )
+        torch.testing.assert_close(
+            synced_states[2][_METRIC_NAME]["num_total"],
+            torch.tensor(60.0, device=device),
+        )
+    else:
+        tc.assertIsNone(synced_states)
 
 
-def _test_tensor_list_sync_state() -> None:
+def _test_tensor_list_sync_state(dst_rank: Optional[int] = None) -> None:
     device = init_from_env()
 
     if dist.get_rank() == 0:
@@ -306,38 +325,47 @@ def _test_tensor_list_sync_state() -> None:
 
     # pyre-ignore: Incompatible parameter type [6]:
     dict_items = metrics_traversal_order(state_data)
-    synced_states = sync_states(state_data, {_METRIC_NAME: device}, dict_items)
+    synced_states = sync_states(
+        state_data, {_METRIC_NAME: device}, dict_items, rank=dst_rank
+    )
 
     tc = unittest.TestCase()
-    tc.assertEqual(len(synced_states), 3)
-    tc.assertTrue(all([len(synced_states[i]) == 1 for i in range(3)]))
-    tc.assertTrue(all([_METRIC_NAME in synced_states[i] for i in range(3)]))
-    tc.assertTrue(all([len(synced_states[i][_METRIC_NAME]) == 2 for i in range(3)]))
-    tc.assertTrue(all(["seen" in synced_states[i][_METRIC_NAME] for i in range(3)]))
-    tc.assertTrue(all(["total" in synced_states[i][_METRIC_NAME] for i in range(3)]))
 
-    torch.testing.assert_close(
-        synced_states[0][_METRIC_NAME]["seen"],
-        [torch.tensor(1, device=device), torch.tensor(3, device=device)],
-    )
-    torch.testing.assert_close(
-        synced_states[0][_METRIC_NAME]["total"], [torch.tensor(1, device=device)]
-    )
-    torch.testing.assert_close(
-        synced_states[1][_METRIC_NAME]["seen"], [torch.tensor(1, device=device)]
-    )
-    torch.testing.assert_close(
-        synced_states[1][_METRIC_NAME]["total"], [torch.tensor(1, device=device)]
-    )
-    torch.testing.assert_close(
-        synced_states[2][_METRIC_NAME]["seen"], [torch.tensor(1, device=device)]
-    )
-    torch.testing.assert_close(
-        synced_states[2][_METRIC_NAME]["total"], [torch.tensor(1, device=device)]
-    )
+    if dst_rank is None or dist.get_rank() == dst_rank:
+        tc.assertIsNotNone(synced_states)
+        tc.assertEqual(len(synced_states), 3)
+        tc.assertTrue(all((len(synced_states[i]) == 1 for i in range(3))))
+        tc.assertTrue(all((_METRIC_NAME in synced_states[i] for i in range(3))))
+        tc.assertTrue(all((len(synced_states[i][_METRIC_NAME]) == 2 for i in range(3))))
+        tc.assertTrue(all(("seen" in synced_states[i][_METRIC_NAME] for i in range(3))))
+        tc.assertTrue(
+            all(("total" in synced_states[i][_METRIC_NAME] for i in range(3)))
+        )
+
+        torch.testing.assert_close(
+            synced_states[0][_METRIC_NAME]["seen"],
+            [torch.tensor(1, device=device), torch.tensor(3, device=device)],
+        )
+        torch.testing.assert_close(
+            synced_states[0][_METRIC_NAME]["total"], [torch.tensor(1, device=device)]
+        )
+        torch.testing.assert_close(
+            synced_states[1][_METRIC_NAME]["seen"], [torch.tensor(1, device=device)]
+        )
+        torch.testing.assert_close(
+            synced_states[1][_METRIC_NAME]["total"], [torch.tensor(1, device=device)]
+        )
+        torch.testing.assert_close(
+            synced_states[2][_METRIC_NAME]["seen"], [torch.tensor(1, device=device)]
+        )
+        torch.testing.assert_close(
+            synced_states[2][_METRIC_NAME]["total"], [torch.tensor(1, device=device)]
+        )
+    else:
+        tc.assertIsNone(synced_states)
 
 
-def _test_tensor_dict_sync_state() -> None:
+def _test_tensor_dict_sync_state(dst_rank: Optional[int] = None) -> None:
     device = init_from_env()
 
     if dist.get_rank() == 0:
@@ -361,31 +389,37 @@ def _test_tensor_dict_sync_state() -> None:
 
     # pyre-ignore: Incompatible parameter type [6]:
     dict_items = metrics_traversal_order(state_data)
-    synced_states = sync_states(state_data, {_METRIC_NAME: device}, dict_items)
+    synced_states = sync_states(
+        state_data, {_METRIC_NAME: device}, dict_items, rank=dst_rank
+    )
 
     tc = unittest.TestCase()
-    tc.assertEqual(len(synced_states), 2)
+    if dst_rank is None or dist.get_rank() == dst_rank:
+        tc.assertIsNotNone(synced_states)
+        tc.assertEqual(len(synced_states), 2)
 
-    torch.testing.assert_close(
-        synced_states[0][_METRIC_NAME]["mapping"]["a"],
-        torch.tensor(1, device=device),
-    )
-    torch.testing.assert_close(
-        synced_states[1][_METRIC_NAME]["mapping"]["a"],
-        torch.tensor(2, device=device),
-    )
+        torch.testing.assert_close(
+            synced_states[0][_METRIC_NAME]["mapping"]["a"],
+            torch.tensor(1, device=device),
+        )
+        torch.testing.assert_close(
+            synced_states[1][_METRIC_NAME]["mapping"]["a"],
+            torch.tensor(2, device=device),
+        )
 
-    torch.testing.assert_close(
-        synced_states[0][_METRIC_NAME]["mapping"]["b"],
-        torch.tensor(10, device=device),
-    )
-    torch.testing.assert_close(
-        synced_states[1][_METRIC_NAME]["mapping"]["b"],
-        torch.tensor(20, device=device),
-    )
+        torch.testing.assert_close(
+            synced_states[0][_METRIC_NAME]["mapping"]["b"],
+            torch.tensor(10, device=device),
+        )
+        torch.testing.assert_close(
+            synced_states[1][_METRIC_NAME]["mapping"]["b"],
+            torch.tensor(20, device=device),
+        )
+    else:
+        tc.assertIsNone(synced_states)
 
 
-def _test_complex_mixed_state() -> None:
+def _test_complex_mixed_state(dst_rank: Optional[int] = None) -> None:
     device = init_from_env()
 
     if dist.get_rank() == 0:
@@ -412,27 +446,36 @@ def _test_complex_mixed_state() -> None:
 
     # pyre-ignore: Incompatible parameter type [6]:
     dict_items = metrics_traversal_order(state_data)
-    synced_states = sync_states(state_data, {_METRIC_NAME: device}, dict_items)
+    synced_states = sync_states(
+        state_data, {_METRIC_NAME: device}, dict_items, rank=dst_rank
+    )
     tc = unittest.TestCase()
-    tc.assertEqual(len(synced_states), 2)
-    tc.assertTrue(all([len(synced_states[i]) == 1 for i in range(2)]))
-    tc.assertTrue(all([_METRIC_NAME in synced_states[i] for i in range(2)]))
-    tc.assertTrue(all([len(synced_states[i][_METRIC_NAME]) == 2 for i in range(2)]))
-    tc.assertTrue(all(["seen" in synced_states[i][_METRIC_NAME] for i in range(2)]))
-    tc.assertTrue(all(["total" in synced_states[i][_METRIC_NAME] for i in range(2)]))
 
-    tc.assertEquals(len(synced_states[0][_METRIC_NAME]["seen"]), 2)
-    tc.assertEquals(len(synced_states[1][_METRIC_NAME]["seen"]), 3)
+    if dst_rank is None or dist.get_rank() == dst_rank:
+        tc.assertIsNotNone(synced_states)
+        tc.assertEqual(len(synced_states), 2)
+        tc.assertTrue(all((len(synced_states[i]) == 1 for i in range(2))))
+        tc.assertTrue(all((_METRIC_NAME in synced_states[i] for i in range(2))))
+        tc.assertTrue(all((len(synced_states[i][_METRIC_NAME]) == 2 for i in range(2))))
+        tc.assertTrue(all(("seen" in synced_states[i][_METRIC_NAME] for i in range(2))))
+        tc.assertTrue(
+            all(("total" in synced_states[i][_METRIC_NAME] for i in range(2)))
+        )
 
-    torch.testing.assert_close(
-        synced_states[0][_METRIC_NAME]["total"], torch.tensor(1, device=device)
-    )
-    torch.testing.assert_close(
-        synced_states[1][_METRIC_NAME]["total"], torch.tensor(2, device=device)
-    )
+        tc.assertEquals(len(synced_states[0][_METRIC_NAME]["seen"]), 2)
+        tc.assertEquals(len(synced_states[1][_METRIC_NAME]["seen"]), 3)
+
+        torch.testing.assert_close(
+            synced_states[0][_METRIC_NAME]["total"], torch.tensor(1, device=device)
+        )
+        torch.testing.assert_close(
+            synced_states[1][_METRIC_NAME]["total"], torch.tensor(2, device=device)
+        )
+    else:
+        tc.assertIsNone(synced_states)
 
 
-def _test_empty_tensor_list_sync_state() -> None:
+def _test_empty_tensor_list_sync_state(dst_rank: Optional[int] = None) -> None:
     device = init_from_env()
 
     if dist.get_rank() == 0:
@@ -442,33 +485,41 @@ def _test_empty_tensor_list_sync_state() -> None:
                     torch.randn((2, 3), device=device),
                     torch.randn((2, 3), device=device),
                 ],
-                "total": [torch.tensor(1, device=device)],
+                "total": torch.tensor(1, device=device),
             }
         }
     else:
         state_data = {
             _METRIC_NAME: {
                 "seen": [],
-                "total": [torch.tensor(1, device=device)],
+                "total": torch.tensor(1, device=device),
             }
         }
 
     # pyre-ignore: Incompatible parameter type [6]:
     dict_items = metrics_traversal_order(state_data)
-    synced_states = sync_states(state_data, {_METRIC_NAME: device}, dict_items)
+    synced_states = sync_states(
+        state_data, {_METRIC_NAME: device}, dict_items, rank=dst_rank
+    )
     tc = unittest.TestCase()
-    tc.assertEqual(len(synced_states), 2)
-    tc.assertTrue(all([len(synced_states[i]) == 1 for i in range(2)]))
-    tc.assertTrue(all([_METRIC_NAME in synced_states[i] for i in range(2)]))
-    tc.assertTrue(all([len(synced_states[i][_METRIC_NAME]) == 2 for i in range(2)]))
-    tc.assertTrue(all(["seen" in synced_states[i][_METRIC_NAME] for i in range(2)]))
-    tc.assertTrue(all(["total" in synced_states[i][_METRIC_NAME] for i in range(2)]))
+    if dst_rank is None or dist.get_rank() == dst_rank:
+        tc.assertIsNotNone(synced_states)
+        tc.assertEqual(len(synced_states), 2)
+        tc.assertTrue(all((len(synced_states[i]) == 1 for i in range(2))))
+        tc.assertTrue(all((_METRIC_NAME in synced_states[i] for i in range(2))))
+        tc.assertTrue(all((len(synced_states[i][_METRIC_NAME]) == 2 for i in range(2))))
+        tc.assertTrue(all(("seen" in synced_states[i][_METRIC_NAME] for i in range(2))))
+        tc.assertTrue(
+            all(("total" in synced_states[i][_METRIC_NAME] for i in range(2)))
+        )
 
-    tc.assertEquals(len(synced_states[0][_METRIC_NAME]["seen"]), 2)
-    tc.assertEquals(len(synced_states[1][_METRIC_NAME]["seen"]), 0)
+        tc.assertEquals(len(synced_states[0][_METRIC_NAME]["seen"]), 2)
+        tc.assertEquals(len(synced_states[1][_METRIC_NAME]["seen"]), 0)
+    else:
+        tc.assertIsNone(synced_states)
 
 
-def _test_numeric_sync_state() -> None:
+def _test_numeric_sync_state(dst_rank: Optional[int] = None) -> None:
     device = init_from_env()
 
     if dist.get_rank() == 0:
@@ -495,23 +546,29 @@ def _test_numeric_sync_state() -> None:
 
     # pyre-ignore: Incompatible parameter type [6]:
     dict_items = metrics_traversal_order(state_data)
-    synced_states = sync_states(state_data, {_METRIC_NAME: device}, dict_items)
+    synced_states = sync_states(
+        state_data, {_METRIC_NAME: device}, dict_items, rank=dst_rank
+    )
 
     tc = unittest.TestCase()
-    tc.assertEqual(len(synced_states), 3)
-    tc.assertTrue(all([len(synced_states[i]) == 1 for i in range(3)]))
-    tc.assertTrue(all([_METRIC_NAME in synced_states[i] for i in range(3)]))
-    tc.assertTrue(all([len(synced_states[i][_METRIC_NAME]) == 2 for i in range(3)]))
-    tc.assertTrue(
-        all(["num_correct" in synced_states[i][_METRIC_NAME] for i in range(3)])
-    )
-    tc.assertTrue(
-        all(["num_total" in synced_states[i][_METRIC_NAME] for i in range(3)])
-    )
+    if dst_rank is None or dist.get_rank() == dst_rank:
+        tc.assertIsNotNone(synced_states)
+        tc.assertEqual(len(synced_states), 3)
+        tc.assertTrue(all((len(synced_states[i]) == 1 for i in range(3))))
+        tc.assertTrue(all((_METRIC_NAME in synced_states[i] for i in range(3))))
+        tc.assertTrue(all((len(synced_states[i][_METRIC_NAME]) == 2 for i in range(3))))
+        tc.assertTrue(
+            all(("num_correct" in synced_states[i][_METRIC_NAME] for i in range(3)))
+        )
+        tc.assertTrue(
+            all(("num_total" in synced_states[i][_METRIC_NAME] for i in range(3)))
+        )
 
-    torch.testing.assert_close(synced_states[0][_METRIC_NAME]["num_correct"], 11)
-    torch.testing.assert_close(synced_states[0][_METRIC_NAME]["num_total"], 80)
-    torch.testing.assert_close(synced_states[1][_METRIC_NAME]["num_correct"], 43)
-    torch.testing.assert_close(synced_states[1][_METRIC_NAME]["num_total"], 50)
-    torch.testing.assert_close(synced_states[2][_METRIC_NAME]["num_correct"], 51.0)
-    torch.testing.assert_close(synced_states[2][_METRIC_NAME]["num_total"], 60.0)
+        torch.testing.assert_close(synced_states[0][_METRIC_NAME]["num_correct"], 11)
+        torch.testing.assert_close(synced_states[0][_METRIC_NAME]["num_total"], 80)
+        torch.testing.assert_close(synced_states[1][_METRIC_NAME]["num_correct"], 43)
+        torch.testing.assert_close(synced_states[1][_METRIC_NAME]["num_total"], 50)
+        torch.testing.assert_close(synced_states[2][_METRIC_NAME]["num_correct"], 51.0)
+        torch.testing.assert_close(synced_states[2][_METRIC_NAME]["num_total"], 60.0)
+    else:
+        tc.assertIsNone(synced_states)
