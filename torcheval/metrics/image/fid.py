@@ -174,6 +174,7 @@ class FrechetInceptionDistance(Metric[torch.Tensor]):
                 f"but currently running with {self.num_real_images} real images and {self.num_fake_images} fake images."
                 "Returning 0.0",
                 RuntimeWarning,
+                stacklevel=2,
             )
 
             return torch.tensor(0.0)
