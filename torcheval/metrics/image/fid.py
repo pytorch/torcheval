@@ -168,9 +168,9 @@ class FrechetInceptionDistance(Metric[torch.Tensor]):
 
         # If the user has not already updated with at lease one
         # image from each distribution, then we raise an Error.
-        if (self.num_real_images == 0) or (self.num_fake_images == 0):
+        if (self.num_real_images < 2) or (self.num_fake_images < 2):
             warnings.warn(
-                "Computing FID requires at least 1 real image and 1 fake image,"
+                "Computing FID requires at least 2 real images and 2 fake images,"
                 f"but currently running with {self.num_real_images} real images and {self.num_fake_images} fake images."
                 "Returning 0.0",
                 RuntimeWarning,
