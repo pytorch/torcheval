@@ -1,0 +1,1211 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>torcheval.metrics.toolkit &mdash; TorchEval main documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> -->
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/torcheval.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/torcheval.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','');</script>
+    <!-- End Google Tag Manager -->
+  
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://pytorch.org/" aria-label="PyTorch"></a>
+
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pytorch.org/get-started">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://pytorch.org/ecosystem">Ecosystem</a>
+          </li>
+
+          <li>
+            <a href="https://pytorch.org/mobile">Mobile</a>
+          </li>
+
+          <li>
+            <a href="https://pytorch.org/blog/">Blog</a>
+          </li>
+
+          <li>
+            <a href="https://pytorch.org/tutorials">Tutorials</a>
+          </li>
+
+          <li>
+            <div id="resourcesDropdownButton" data-toggle="resources-dropdown" class="resources-dropdown">
+              <a class="resource-option with-down-orange-arrow">
+                Docs
+              </a>
+              <div class="resources-dropdown-menu">
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/docs/stable/index.html">
+                  <span class="dropdown-title">PyTorch</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/audio/stable/index.html">
+                  <span class="dropdown-title">torchaudio</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/text/stable/index.html">
+                  <span class="dropdown-title">torchtext</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/vision/stable/index.html">
+                  <span class="dropdown-title">torchvision</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/torcharrow">
+                  <span class="dropdown-title">torcharrow</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/data">
+                  <span class="dropdown-title">TorchData</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/torchrec">
+                  <span class="dropdown-title">TorchRec</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/serve/">
+                  <span class="dropdown-title">TorchServe</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/torchx/">
+                  <span class="dropdown-title">TorchX</span>
+                  <p></p>
+                </a>
+                <a class="doc-dropdown-option nav-dropdown-item" href="https://pytorch.org/xla">
+                  <span class="dropdown-title">PyTorch on XLA Devices</span>
+                  <p></p>
+                </a>
+            </div>
+          </li>
+
+          <li>
+            <div id="resourcesDropdownButton" data-toggle="resources-dropdown" class="resources-dropdown">
+              <a class="resource-option with-down-arrow">
+                Resources
+              </a>
+              <div class="resources-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://pytorch.org/features">
+                  <span class="dropdown-title">About</span>
+                  <p>Learn about PyTorch’s features and capabilities</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://pytorch.org/foundation">
+                  <span class="dropdown-title">PyTorch Foundation</span>
+                  <p>Learn about the PyTorch foundation</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://pytorch.org/#community-module">
+                  <span class="dropdown-title">Community</span>
+                  <p>Join the PyTorch developer community to contribute, learn, and get your questions answered.</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://pytorch.org/community-stories">
+                  <span class="dropdown-title">Community Stories</span>
+                  <p>Learn how our community solves real, everyday machine learning problems with PyTorch.</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://pytorch.org/resources">
+                  <span class="dropdown-title">Developer Resources</span>
+                  <p>Find resources and get questions answered</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://pytorch.org/events">
+                  <span class="dropdown-title">Events</span>
+                  <p>Find events, webinars, and podcasts</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://discuss.pytorch.org/" target="_blank">
+                  <span class="dropdown-title">Forums</span>
+                  <p>A place to discuss PyTorch code, issues, install, research</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://pytorch.org/hub">
+                  <span class="dropdown-title">Models (Beta)</span>
+                  <p>Discover, publish, and reuse pre-trained models</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/pytorch/pytorch">GitHub</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+  </div>
+</div>
+
+<body class="pytorch-body">
+
+  
+  
+    <div id="redirect-banner" style="display: none">
+      <p>
+        This is the public documentation. There is internal documentation for Meta employees at
+        <a href="https://www.internalfb.com/intern/staticdocs/torcheval/">https://www.internalfb.com/intern/staticdocs/torcheval/</a>
+      </p>
+    </div>
+  
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="pytorch-left-menu" id="pytorch-left-menu">
+      <div class="pytorch-side-scroll">
+        <div class="pytorch-menu pytorch-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="pytorch-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  main (unstable)
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Examples:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/pytorch/torcheval/blob/main/examples/Introducing_TorchEval.ipynb" target="_blank">QuickStart Notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../metric_example.html">Use Metrics in TorchEval</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../torcheval.metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../torcheval.metrics.functional.html">Functional Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../torcheval.metrics.toolkit.html">Metric Toolkit</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="pytorch-container">
+      <div class="pytorch-page-level-bar" id="pytorch-page-level-bar">
+        <div class="pytorch-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="pytorch-breadcrumbs">
+    
+      <li>
+        <a href="../../../index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../index.html">Module code</a> &gt;</li>
+        
+      <li>torcheval.metrics.toolkit</li>
+    
+    
+      <li class="pytorch-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="pytorch-shortcuts-wrapper" id="pytorch-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="pytorch-content-wrap" class="pytorch-content-wrap">
+        <div class="pytorch-content-left">
+
+        
+          <!-- Google Tag Manager (noscript) -->
+          <noscript><iframe src="https://www.googletagmanager.com/ns.html?id="
+          height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+          <!-- End Google Tag Manager (noscript) -->
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="pytorch-article" class="pytorch-article">
+              
+  <h1>Source code for torcheval.metrics.toolkit</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (c) Meta Platforms, Inc. and affiliates.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># This source code is licensed under the BSD-style license found in the</span>
+<span class="c1"># LICENSE file in the root directory of this source tree.</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">List</span><span class="p">,</span>
+    <span class="n">MutableMapping</span><span class="p">,</span>
+    <span class="n">Optional</span><span class="p">,</span>
+    <span class="n">overload</span><span class="p">,</span>
+    <span class="n">TypeVar</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.distributed</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="kn">from</span> <span class="nn">pyre_extensions</span> <span class="kn">import</span> <span class="n">none_throws</span>
+
+<span class="kn">from</span> <span class="nn">torcheval.metrics</span> <span class="kn">import</span> <span class="n">Metric</span>
+<span class="kn">from</span> <span class="nn">torcheval.metrics.metric</span> <span class="kn">import</span> <span class="n">TComputeReturn</span><span class="p">,</span> <span class="n">TState</span>
+<span class="kn">from</span> <span class="nn">torcheval.metrics.synclib</span> <span class="kn">import</span> <span class="n">metrics_traversal_order</span><span class="p">,</span> <span class="n">sync_states</span>
+
+<span class="n">log</span><span class="p">:</span> <span class="n">logging</span><span class="o">.</span><span class="n">Logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">_TMetrics</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_TMetrics&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Iterable</span><span class="p">[</span><span class="n">Metric</span><span class="p">])</span>
+
+<span class="n">_TMP</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;tmp&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_get_world_size</span><span class="p">(</span><span class="n">process_group</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">dist</span><span class="o">.</span><span class="n">ProcessGroup</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dist</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">dist</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">():</span>
+        <span class="c1"># dist is not initialized or available, return 1 for world size</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">dist</span><span class="o">.</span><span class="n">get_world_size</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="n">process_group</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_rank</span><span class="p">(</span><span class="n">process_group</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">dist</span><span class="o">.</span><span class="n">ProcessGroup</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dist</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">dist</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">():</span>
+        <span class="c1"># dist is not initialized or available, return 0 for rank</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">dist</span><span class="o">.</span><span class="n">get_rank</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="n">process_group</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="sync_and_compute"><a class="viewcode-back" href="../../../torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.sync_and_compute">[docs]</a><span class="k">def</span> <span class="nf">sync_and_compute</span><span class="p">(</span>
+    <span class="n">metric</span><span class="p">:</span> <span class="n">Metric</span><span class="p">[</span><span class="n">TComputeReturn</span><span class="p">],</span>
+    <span class="n">process_group</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">dist</span><span class="o">.</span><span class="n">ProcessGroup</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TComputeReturn</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sync metric states and returns the ``metric.compute()`` result of</span>
+<span class="sd">    synced metric on all ranks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metric: The metric object to be synced and computed.</span>
+<span class="sd">        process_group: The process group on which the metric states are</span>
+<span class="sd">            gathered. default: ``None`` (the entire world)</span>
+
+<span class="sd">    Examples::</span>
+
+<span class="sd">        &gt;&gt;&gt; # Assumes world_size of 3.</span>
+<span class="sd">        &gt;&gt;&gt; # Process group initialization omitted on each rank.</span>
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; import torch.distributed as dist</span>
+<span class="sd">        &gt;&gt;&gt; from torcheval.metrics import Max</span>
+<span class="sd">        &gt;&gt;&gt; max = Max()</span>
+<span class="sd">        &gt;&gt;&gt; max.update(torch.tensor(dist.get_rank())).compute()</span>
+<span class="sd">        tensor(0.) # Rank 0</span>
+<span class="sd">        tensor(1.) # Rank 1</span>
+<span class="sd">        tensor(2.) # Rank 2</span>
+<span class="sd">        &gt;&gt;&gt; sync_and_compute(max)</span>
+<span class="sd">        tensor(2.) # Rank 0</span>
+<span class="sd">        tensor(2.) # Rank 1</span>
+<span class="sd">        tensor(2.) # Rank 2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">synced_metric</span> <span class="o">=</span> <span class="n">get_synced_metric</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">process_group</span><span class="p">)</span>
+    <span class="n">compute_result</span> <span class="o">=</span> <span class="n">synced_metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">compute_result</span></div>
+
+
+<div class="viewcode-block" id="sync_and_compute_collection"><a class="viewcode-back" href="../../../torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.sync_and_compute_collection">[docs]</a><span class="k">def</span> <span class="nf">sync_and_compute_collection</span><span class="p">(</span>
+    <span class="n">metrics</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metric</span><span class="p">],</span>
+    <span class="n">process_group</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">dist</span><span class="o">.</span><span class="n">ProcessGroup</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sync metric states across a dict of metrics and returns the</span>
+<span class="sd">    ``metric.compute()`` result of synced metrics on all ranks</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metrics: The dict of metric objects to be synced and computed.</span>
+<span class="sd">        process_group: The process group on which the metric states are</span>
+<span class="sd">            gathered. default: ``None`` (the entire world)</span>
+
+<span class="sd">    Examples::</span>
+
+<span class="sd">        &gt;&gt;&gt; # Assumes world_size of 3.</span>
+<span class="sd">        &gt;&gt;&gt; # Process group initialization omitted on each rank.</span>
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; import torch.distributed as dist</span>
+<span class="sd">        &gt;&gt;&gt; from torcheval.metrics import Max, Min</span>
+<span class="sd">        &gt;&gt;&gt; metrics = {&quot;max&quot; : Max(), &quot;min&quot;: Min()}</span>
+<span class="sd">        &gt;&gt;&gt; metrics[&quot;max&quot;].update(torch.tensor(dist.get_rank())).compute()</span>
+<span class="sd">        tensor(0.) # Rank 0</span>
+<span class="sd">        tensor(1.) # Rank 1</span>
+<span class="sd">        tensor(2.) # Rank 2</span>
+<span class="sd">        &gt;&gt;&gt; metrics[&quot;min&quot;].update(torch.tensor(dist.get_rank())).compute()</span>
+<span class="sd">        tensor(0.) # Rank 0</span>
+<span class="sd">        tensor(1.) # Rank 1</span>
+<span class="sd">        tensor(2.) # Rank 2</span>
+<span class="sd">        &gt;&gt;&gt; sync_and_compute_collection(metrics)</span>
+<span class="sd">        {&quot;max&quot; : tensor(2.), &quot;min&quot;: tensor(0.)} # Rank 0</span>
+<span class="sd">        {&quot;max&quot; : tensor(2.), &quot;min&quot;: tensor(0.)} # Rank 1</span>
+<span class="sd">        {&quot;max&quot; : tensor(2.), &quot;min&quot;: tensor(0.)} # Rank 2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">synced_metrics</span> <span class="o">=</span> <span class="n">get_synced_metric_collection</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="n">process_group</span><span class="p">)</span>
+    <span class="n">compute_result</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">synced_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="k">return</span> <span class="n">compute_result</span></div>
+
+
+<div class="viewcode-block" id="get_synced_state_dict"><a class="viewcode-back" href="../../../torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.get_synced_state_dict">[docs]</a><span class="k">def</span> <span class="nf">get_synced_state_dict</span><span class="p">(</span>
+    <span class="n">metric</span><span class="p">:</span> <span class="n">Metric</span><span class="p">,</span>
+    <span class="n">process_group</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">dist</span><span class="o">.</span><span class="n">ProcessGroup</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the state dict of a metric after syncing on all ranks.</span>
+<span class="sd">    Return an empty dict on other ranks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metric: The metric object to sync and get ``state_dict()``</span>
+<span class="sd">        process_group: The process group on which the metric states are</span>
+<span class="sd">            gathered. default: ``None`` (the entire world)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        state dict of synced metric</span>
+
+<span class="sd">    Examples::</span>
+
+<span class="sd">        &gt;&gt;&gt; # Assumes world_size of 3.</span>
+<span class="sd">        &gt;&gt;&gt; # Process group initialization omitted on each rank.</span>
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; import torch.distributed as dist</span>
+<span class="sd">        &gt;&gt;&gt; from torcheval import Max</span>
+<span class="sd">        &gt;&gt;&gt; max = Max()</span>
+<span class="sd">        &gt;&gt;&gt; max.update(torch.tensor(dist.get_rank()))</span>
+<span class="sd">        &gt;&gt;&gt; get_synced_state_dict(max)</span>
+<span class="sd">        {&quot;max&quot;, tensor(2.)} # Rank 0</span>
+<span class="sd">        {&quot;max&quot;, tensor(2.)} # Rank 1</span>
+<span class="sd">        {&quot;max&quot;, tensor(2.)} # Rank 2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">synced_metric</span> <span class="o">=</span> <span class="n">get_synced_metric</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">process_group</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">synced_metric</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">synced_metric</span> <span class="k">else</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="get_synced_state_dict_collection"><a class="viewcode-back" href="../../../torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.get_synced_state_dict_collection">[docs]</a><span class="k">def</span> <span class="nf">get_synced_state_dict_collection</span><span class="p">(</span>
+    <span class="n">metric_collection</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metric</span><span class="p">],</span>
+    <span class="n">process_group</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">dist</span><span class="o">.</span><span class="n">ProcessGroup</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the state dict of a collection of metrics after syncing on all ranks.</span>
+<span class="sd">    Return an None on other ranks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metric_collection (Dict[str, Metric]): The metric objects to sync and get ``state_dict()``</span>
+<span class="sd">        process_group: The process group on which the metric states are</span>
+<span class="sd">            gathered. default: ``None`` (the entire world)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Bundle of state dicts of for the synced metrics</span>
+
+<span class="sd">    Examples::</span>
+
+<span class="sd">        &gt;&gt;&gt; # Assumes world_size of 3.</span>
+<span class="sd">        &gt;&gt;&gt; # Process group initialization omitted on each rank.</span>
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; import torch.distributed as dist</span>
+<span class="sd">        &gt;&gt;&gt; from torcheval import Max, Min</span>
+<span class="sd">        &gt;&gt;&gt; maximum = Max()</span>
+<span class="sd">        &gt;&gt;&gt; maximum.update(torch.tensor(dist.get_rank()))</span>
+<span class="sd">        &gt;&gt;&gt; minimum = Min()</span>
+<span class="sd">        &gt;&gt;&gt; minimum.update(torch.tensor(dist.get_rank()))</span>
+<span class="sd">        &gt;&gt;&gt; get_synced_state_dict({&quot;max rank&quot;: maximum, &quot;min rank&quot;: minimum})</span>
+<span class="sd">        {&quot;max rank&quot;: {&quot;max&quot;, tensor(2.)}, &quot;min rank&quot;: {&quot;min&quot;, tensor(0.)}} # Rank 0</span>
+<span class="sd">        {&quot;max rank&quot;: {&quot;max&quot;, tensor(2.)}, &quot;min rank&quot;: {&quot;min&quot;, tensor(0.)}} # Rank 1</span>
+<span class="sd">        {&quot;max rank&quot;: {&quot;max&quot;, tensor(2.)}, &quot;min rank&quot;: {&quot;min&quot;, tensor(0.)}} # Rank 2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">synced_metrics</span> <span class="o">=</span> <span class="n">get_synced_metric_collection</span><span class="p">(</span>
+        <span class="n">metric_collection</span><span class="p">,</span>
+        <span class="n">process_group</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">metric</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">synced_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+
+<div class="viewcode-block" id="clone_metric"><a class="viewcode-back" href="../../../torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.clone_metric">[docs]</a><span class="k">def</span> <span class="nf">clone_metric</span><span class="p">(</span><span class="n">metric</span><span class="p">:</span> <span class="n">Metric</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Metric</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a new metric instance which is cloned from the input metric.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metric: The metric object to clone</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A new metric instance from cloning</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="clone_metrics"><a class="viewcode-back" href="../../../torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.clone_metrics">[docs]</a><span class="k">def</span> <span class="nf">clone_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">:</span> <span class="n">_TMetrics</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Metric</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a list of new metric instances which are cloned from the input metrics.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metrics: The metric objects to clone</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of metric instances from cloning</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">clone_metric</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span> <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="get_synced_metric"><a class="viewcode-back" href="../../../torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.get_synced_metric">[docs]</a><span class="k">def</span> <span class="nf">get_synced_metric</span><span class="p">(</span>
+    <span class="n">metric</span><span class="p">:</span> <span class="n">Metric</span><span class="p">,</span>
+    <span class="n">process_group</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">dist</span><span class="o">.</span><span class="n">ProcessGroup</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Metric</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a metric object on all ranks whose internal state</span>
+<span class="sd">    variables are synced across processes in the process_group.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metric: The metric object to sync.</span>
+<span class="sd">        process_group: The process group on which the metric states are</span>
+<span class="sd">            gathered. default: ``None`` (the entire world)</span>
+
+<span class="sd">    Examples::</span>
+
+<span class="sd">        &gt;&gt;&gt; # Assumes world_size of 3.</span>
+<span class="sd">        &gt;&gt;&gt; # Process group initialization omitted on each rank.</span>
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; import torch.distributed as dist</span>
+<span class="sd">        &gt;&gt;&gt; from torcheval import Max</span>
+<span class="sd">        &gt;&gt;&gt; max = Max()</span>
+<span class="sd">        &gt;&gt;&gt; max.update(torch.tensor(dist.get_rank())).compute()</span>
+<span class="sd">        tensor(0.) # Rank 0</span>
+<span class="sd">        tensor(1.) # Rank 1</span>
+<span class="sd">        tensor(2.) # Rank 2</span>
+<span class="sd">        &gt;&gt;&gt; synced_metric = get_synced_metric(max)  # by default sync metric states to Rank 0</span>
+<span class="sd">        &gt;&gt;&gt; synced_metric.compute() if synced_metric else None</span>
+<span class="sd">        tensor(2.)     # Rank 0</span>
+<span class="sd">        None # Rank 1 -- synced_metric is None</span>
+<span class="sd">        None # Rank 2 -- synced_metric is None</span>
+<span class="sd">        &gt;&gt;&gt; synced_metric = get_synced_metric(max)</span>
+<span class="sd">        &gt;&gt;&gt; synced_metric.compute()</span>
+<span class="sd">        tensor(2.) # Rank 0</span>
+<span class="sd">        tensor(2.) # Rank 1</span>
+<span class="sd">        tensor(2.) # Rank 2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">world_size</span> <span class="o">=</span> <span class="n">_get_world_size</span><span class="p">(</span><span class="n">process_group</span><span class="p">)</span>
+    <span class="n">_validate_rank_and_world_size</span><span class="p">(</span><span class="n">world_size</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">world_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">metric</span>
+
+    <span class="n">gathered_metric_list</span> <span class="o">=</span> <span class="n">_sync_metric_object</span><span class="p">(</span>
+        <span class="n">metric</span><span class="p">,</span>
+        <span class="c1"># pyre-fixme[6]: For 2nd param expected `ProcessGroup` but got `Union[None,</span>
+        <span class="c1">#  dist.ProcessGroup, _distributed_c10d.ProcessGroup]`.</span>
+        <span class="n">process_group</span> <span class="k">if</span> <span class="n">process_group</span> <span class="k">else</span> <span class="n">dist</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class="n">WORLD</span><span class="p">,</span>
+        <span class="n">world_size</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">local_rank</span> <span class="o">=</span> <span class="n">_get_rank</span><span class="p">(</span><span class="n">process_group</span><span class="p">)</span>
+    <span class="n">other_rank_metrics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Metric</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">gathered_metric_list</span><span class="p">[</span><span class="n">rank</span><span class="p">]</span> <span class="k">for</span> <span class="n">rank</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">world_size</span><span class="p">)</span> <span class="k">if</span> <span class="n">rank</span> <span class="o">!=</span> <span class="n">local_rank</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">clone_metric</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">metric</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">merge_state</span><span class="p">(</span><span class="n">other_rank_metrics</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_synced_metric_collection"><a class="viewcode-back" href="../../../torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.get_synced_metric_collection">[docs]</a><span class="k">def</span> <span class="nf">get_synced_metric_collection</span><span class="p">(</span>
+    <span class="n">metric_collection</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metric</span><span class="p">],</span>
+    <span class="n">process_group</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">dist</span><span class="o">.</span><span class="n">ProcessGroup</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metric</span><span class="p">],</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metric</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a dict of metric objects to all ranks whose</span>
+<span class="sd">    internal state variables are synced across processes in the process_group.</span>
+
+<span class="sd">    The data transfer is batched to maximize efficiency.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metric_collection (Dict[str, Metric]): The dict of metric objects to sync.</span>
+<span class="sd">        process_group (int): The process group on which the metric states are</span>
+<span class="sd">            gathered. default: ``None`` (the entire world)</span>
+
+<span class="sd">    Examples::</span>
+
+<span class="sd">        &gt;&gt;&gt; # Assumes world_size of 3.</span>
+<span class="sd">        &gt;&gt;&gt; # Process group initialization omitted on each rank.</span>
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; import torch.distributed as dist</span>
+<span class="sd">        &gt;&gt;&gt; from torcheval.metrics import Max, Min</span>
+<span class="sd">        &gt;&gt;&gt; metrics = {&quot;max&quot; : Max(), &quot;min&quot;: Min()}</span>
+<span class="sd">        &gt;&gt;&gt; metrics[&quot;max&quot;].update(torch.tensor(dist.get_rank()))</span>
+<span class="sd">        &gt;&gt;&gt; metrics[&quot;min&quot;].update(torch.tensor(dist.get_rank()))</span>
+<span class="sd">        &gt;&gt;&gt; synced_metrics = get_synced_metric_collection(metrics)</span>
+<span class="sd">        &gt;&gt;&gt; synced_metrics[&quot;max&quot;].compute()</span>
+<span class="sd">        tensor(2.) # Rank 0</span>
+<span class="sd">        tensor(2.) # Rank 1</span>
+<span class="sd">        tensor(2.) # Rank 2</span>
+<span class="sd">        &gt;&gt;&gt; synced_metrics[&quot;min&quot;].compute()</span>
+<span class="sd">        tensor(0.) # Rank 0</span>
+<span class="sd">        tensor(0.) # Rank 1</span>
+<span class="sd">        tensor(0.) # Rank 2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">world_size</span> <span class="o">=</span> <span class="n">_get_world_size</span><span class="p">(</span><span class="n">process_group</span><span class="p">)</span>
+    <span class="n">_validate_rank_and_world_size</span><span class="p">(</span><span class="n">world_size</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">world_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">metric_collection</span>
+
+    <span class="n">list_of_metric_collections</span> <span class="o">=</span> <span class="n">_sync_metric_object</span><span class="p">(</span>
+        <span class="n">metric_collection</span><span class="p">,</span>
+        <span class="c1"># pyre-fixme[6]: For 2nd param expected `ProcessGroup` but got `Union[None,</span>
+        <span class="c1">#  dist.ProcessGroup, _distributed_c10d.ProcessGroup]`.</span>
+        <span class="n">process_group</span> <span class="k">if</span> <span class="n">process_group</span> <span class="k">else</span> <span class="n">dist</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class="n">WORLD</span><span class="p">,</span>
+        <span class="n">world_size</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">list_of_metric_collections</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">MutableMapping</span><span class="p">):</span>
+        <span class="n">local_rank</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">get_rank</span><span class="p">(</span><span class="n">process_group</span><span class="p">)</span>
+
+        <span class="c1"># metric bundles are dicts.</span>
+        <span class="n">synced_metric_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metric</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">metric_key</span> <span class="ow">in</span> <span class="n">metric_collection</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">base_metric</span> <span class="o">=</span> <span class="n">metric_collection</span><span class="p">[</span><span class="n">metric_key</span><span class="p">]</span>
+            <span class="n">base_metric</span> <span class="o">=</span> <span class="n">clone_metric</span><span class="p">(</span><span class="n">base_metric</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">base_metric</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">other_rank_metrics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Metric</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">list_of_metric_collections</span><span class="p">[</span><span class="n">rank</span><span class="p">][</span><span class="n">metric_key</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">rank</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">world_size</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">rank</span> <span class="o">!=</span> <span class="n">local_rank</span>
+            <span class="p">]</span>
+            <span class="n">synced_metric_dict</span><span class="p">[</span><span class="n">metric_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_metric</span><span class="o">.</span><span class="n">merge_state</span><span class="p">(</span><span class="n">other_rank_metrics</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">synced_metric_dict</span></div>
+
+
+<span class="k">def</span> <span class="nf">_validate_rank_and_world_size</span><span class="p">(</span>
+    <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">world_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;World size is 1, and metric(s) not synced. &quot;</span>
+            <span class="s2">&quot;returning the input metric(s).&quot;</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">world_size</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The current process is not part of the process group&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">world_size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unexpected world_size </span><span class="si">{</span><span class="n">world_size</span><span class="si">}</span><span class="s2"> is seen when syncing metrics!&quot;</span>
+        <span class="p">)</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">_sync_metric_object</span><span class="p">(</span>
+    <span class="n">local_metric_data</span><span class="p">:</span> <span class="n">Metric</span><span class="p">,</span>
+    <span class="n">process_group</span><span class="p">:</span> <span class="n">dist</span><span class="o">.</span><span class="n">ProcessGroup</span><span class="p">,</span>
+    <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Metric</span><span class="p">]:</span>
+    <span class="o">...</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span> <span class="nf">_sync_metric_object</span><span class="p">(</span>
+    <span class="n">local_metric_data</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metric</span><span class="p">],</span>
+    <span class="n">process_group</span><span class="p">:</span> <span class="n">dist</span><span class="o">.</span><span class="n">ProcessGroup</span><span class="p">,</span>
+    <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metric</span><span class="p">]]:</span>
+    <span class="o">...</span>
+
+
+<span class="k">def</span> <span class="nf">_apply_device_to_tensor_states</span><span class="p">(</span>
+    <span class="n">state_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">state_name</span><span class="p">,</span> <span class="n">state_value</span> <span class="ow">in</span> <span class="n">state_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_value</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="n">state_dict</span><span class="p">[</span><span class="n">state_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">state_value</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">state_dict</span><span class="p">[</span><span class="n">state_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">tensor</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="k">for</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="n">state_value</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">state_dict</span><span class="p">[</span><span class="n">state_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">tensor</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="n">state_value</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_sync_metric_object</span><span class="p">(</span>
+    <span class="n">local_metric_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Metric</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metric</span><span class="p">]],</span>
+    <span class="n">process_group</span><span class="p">:</span> <span class="n">dist</span><span class="o">.</span><span class="n">ProcessGroup</span><span class="p">,</span>
+    <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Metric</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Metric</span><span class="p">]]]:</span>
+
+    <span class="n">unpack</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># unpack the dictionary into a single metric when returned. Only used when metric_data is a metric and not a dict of metrics.</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">local_metric_data</span><span class="p">,</span> <span class="n">Metric</span><span class="p">):</span>
+        <span class="n">local_metric_data</span> <span class="o">=</span> <span class="p">{</span><span class="n">_TMP</span><span class="p">:</span> <span class="n">local_metric_data</span><span class="p">}</span>
+        <span class="n">unpack</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Allow metrics to run some pre-processing before syncing states</span>
+    <span class="c1"># for example, a common optimization is to concat tensors in a list into a single tensor</span>
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">local_metric_data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">_prepare_for_merge_state</span><span class="p">()</span>
+
+    <span class="c1"># create a dict of state dicts for each metric in the collection, i.e. extract the state dicts from the Metric objects</span>
+    <span class="n">metric_state_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TState</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">metric_to_device</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">backend</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">get_backend</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="n">process_group</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">metric_name</span><span class="p">,</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">local_metric_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">metric_state_data</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;nccl&quot;</span> <span class="ow">and</span> <span class="n">metric</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;cpu&quot;</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Metric tensor states are on CPU, but NCCL process group detected. &quot;</span>
+                <span class="s2">&quot;These tensors will be moved to GPU prior to syncing. &quot;</span>
+                <span class="s2">&quot;It is recommended for efficiency reasons to either use a gloo process group to sync metrics on CPU, or move the metrics to GPU and use the NCCL process group.&quot;</span>
+            <span class="p">)</span>
+            <span class="c1"># move tensors to gpu since on nccl</span>
+            <span class="n">_apply_device_to_tensor_states</span><span class="p">(</span>
+                <span class="n">metric_state_data</span><span class="p">[</span><span class="n">metric_name</span><span class="p">],</span>
+                <span class="c1"># pyre-ignore: Incompatible parameter type [6]</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">current_device</span><span class="p">(),</span>
+            <span class="p">)</span>
+            <span class="c1"># pyre-ignore: Incompatible parameter type [6]</span>
+            <span class="n">metric_to_device</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">current_device</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">metric_to_device</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">device</span>
+
+    <span class="n">metric_state_traversal_order</span> <span class="o">=</span> <span class="n">metrics_traversal_order</span><span class="p">(</span><span class="n">metric_state_data</span><span class="p">)</span>
+
+    <span class="n">world_metric_data</span> <span class="o">=</span> <span class="n">sync_states</span><span class="p">(</span>
+        <span class="n">metric_state_data</span><span class="p">,</span>
+        <span class="n">metric_to_device</span><span class="p">,</span>
+        <span class="n">metric_state_traversal_order</span><span class="p">,</span>
+        <span class="n">process_group</span><span class="o">=</span><span class="n">process_group</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">world_metric_data</span> <span class="o">=</span> <span class="n">none_throws</span><span class="p">(</span><span class="n">world_metric_data</span><span class="p">)</span>
+
+    <span class="c1"># Repack states into Metrics or Dict[str, Metric]s</span>
+    <span class="k">if</span> <span class="n">unpack</span><span class="p">:</span>
+        <span class="c1"># if users passed in one metric, read it from the &quot;tmp&quot; key and return a list of metrics.</span>
+        <span class="n">gathered_data_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">rank_data</span> <span class="ow">in</span> <span class="n">world_metric_data</span><span class="p">:</span>
+            <span class="n">gathered_data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_convert_to_psuedo_metric</span><span class="p">(</span><span class="n">rank_data</span><span class="p">[</span><span class="n">_TMP</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># if users passed in a dict[str, metric], return a list of dict[str, metric] populated with the gathered state dicts.</span>
+        <span class="n">gathered_data_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">rank_data</span> <span class="ow">in</span> <span class="n">world_metric_data</span><span class="p">:</span>
+            <span class="n">rank_dict</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">metric_name</span> <span class="ow">in</span> <span class="n">local_metric_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">rank_dict</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_convert_to_psuedo_metric</span><span class="p">(</span>
+                    <span class="n">rank_data</span><span class="p">[</span><span class="n">metric_name</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="n">gathered_data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rank_dict</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">gathered_data_list</span>
+
+
+<span class="c1"># pyre-ignore: Missing return annotation [3]</span>
+<span class="k">def</span> <span class="nf">_convert_to_psuedo_metric</span><span class="p">(</span><span class="n">metric_state_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts dictionary to object with attributes set according to key-value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="p">(),</span> <span class="n">metric_state_dict</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="reset_metrics"><a class="viewcode-back" href="../../../torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.reset_metrics">[docs]</a><span class="k">def</span> <span class="nf">reset_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">:</span> <span class="n">_TMetrics</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TMetrics</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reset input metrics and returns the reset collection back to users.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metrics: The metrics to be reset</span>
+
+<span class="sd">    Examples::</span>
+
+<span class="sd">        &gt;&gt;&gt; from torcheval.metrics import Max, Min</span>
+<span class="sd">        &gt;&gt;&gt; max = Max()</span>
+<span class="sd">        &gt;&gt;&gt; min = Min()</span>
+<span class="sd">        &gt;&gt;&gt; max.update(torch.tensor(1)).compute()</span>
+<span class="sd">        &gt;&gt;&gt; min.update(torch.tensor(2)).compute()</span>
+<span class="sd">        &gt;&gt;&gt; max, min = reset_metrics((max, min))</span>
+<span class="sd">        &gt;&gt;&gt; max.compute()</span>
+<span class="sd">        tensor(0.)</span>
+<span class="sd">        &gt;&gt;&gt; min.compute()</span>
+<span class="sd">        tensor(0.)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+        <span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">metrics</span></div>
+
+
+<div class="viewcode-block" id="to_device"><a class="viewcode-back" href="../../../torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.to_device">[docs]</a><span class="k">def</span> <span class="nf">to_device</span><span class="p">(</span>
+    <span class="n">metrics</span><span class="p">:</span> <span class="n">_TMetrics</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TMetrics</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Moves input metrics to the target device and returns the moved metrics back to users.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metrics: The metrics to be moved to the device</span>
+<span class="sd">        device: the device to move te metrics to</span>
+<span class="sd">        *args: Variadic arguments forwarded to ``Metric.to``</span>
+<span class="sd">        **kwargs: Named arguments forwarded to ``Metric.to``</span>
+
+<span class="sd">    Examples::</span>
+
+<span class="sd">        &gt;&gt;&gt; from torcheval.metrics import Max, Min</span>
+<span class="sd">        &gt;&gt;&gt; max = Max()</span>
+<span class="sd">        &gt;&gt;&gt; min = Min()</span>
+<span class="sd">        &gt;&gt;&gt; max, min = to_device((max, min), torch.device(&quot;cuda&quot;))</span>
+<span class="sd">        &gt;&gt;&gt; max.device</span>
+<span class="sd">        torch.device(&quot;cuda&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; min.device</span>
+<span class="sd">        torch.device(&quot;cuda&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics</span><span class="p">:</span>
+        <span class="n">metric</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">metrics</span></div>
+
+
+<div class="viewcode-block" id="classwise_converter"><a class="viewcode-back" href="../../../torcheval.metrics.toolkit.html#torcheval.metrics.toolkit.classwise_converter">[docs]</a><span class="k">def</span> <span class="nf">classwise_converter</span><span class="p">(</span>
+    <span class="nb">input</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts an unaveraged metric result tensor into a dictionary with</span>
+<span class="sd">    each key being &#39;metricname_classlabel&#39; and value being the data</span>
+<span class="sd">    associated with that class.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input (torch.Tensor): The tensor to be split along its first dimension.</span>
+<span class="sd">        name (str): Name of the metric.</span>
+<span class="sd">        labels (List[str], Optional): Optional list of strings indicating the different classes.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: When the length of `labels` is not equal to the number of classes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">input</span><span class="p">)}</span>
+
+    <span class="k">if</span> <span class="nb">input</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Number of labels </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="si">}</span><span class="s2"> must be equal to the number of classes </span><span class="si">{</span><span class="nb">input</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="si">}</span><span class="s2">!&quot;</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="nb">input</span><span class="p">)}</span></div>
+</pre></div>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  
+
+    <hr>
+
+  
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2023, Meta.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="pytorch-content-right" id="pytorch-content-right">
+          <div class="pytorch-right-menu" id="pytorch-right-menu">
+            <div class="pytorch-side-scroll" id="pytorch-side-scroll-right">
+              
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+         <script src="../../../_static/jquery.js"></script>
+         <script src="../../../_static/underscore.js"></script>
+         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+         <script src="../../../_static/doctools.js"></script>
+         <script src="../../../_static/js/torcheval.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <div class="container-fluid docs-tutorials-resources" id="docs-tutorials-resources">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 text-center">
+          <h2>Docs</h2>
+          <p>Access comprehensive developer documentation for PyTorch</p>
+          <a class="with-right-arrow" href="https://pytorch.org/docs/stable/index.html">View Docs</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Tutorials</h2>
+          <p>Get in-depth tutorials for beginners and advanced developers</p>
+          <a class="with-right-arrow" href="https://pytorch.org/tutorials">View Tutorials</a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h2>Resources</h2>
+          <p>Find development resources and get your questions answered</p>
+          <a class="with-right-arrow" href="https://pytorch.org/resources">View Resources</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://pytorch.org/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pytorch.org/">PyTorch</a></li>
+            <li><a href="https://pytorch.org/get-started">Get Started</a></li>
+            <li><a href="https://pytorch.org/features">Features</a></li>
+            <li><a href="https://pytorch.org/ecosystem">Ecosystem</a></li>
+            <li><a href="https://pytorch.org/blog/">Blog</a></li>
+            <li><a href="https://github.com/pytorch/pytorch/blob/master/CONTRIBUTING.md">Contributing</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://pytorch.org/resources">Resources</a></li>
+            <li><a href="https://pytorch.org/tutorials">Tutorials</a></li>
+            <li><a href="https://pytorch.org/docs/stable/index.html">Docs</a></li>
+            <li><a href="https://discuss.pytorch.org" target="_blank">Discuss</a></li>
+            <li><a href="https://github.com/pytorch/pytorch/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://pytorch.org/assets/brand-guidelines/PyTorch-Brand-Guidelines.pdf" target="_blank">Brand Guidelines</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title">Stay up to date</li>
+            <li><a href="https://www.facebook.com/pytorch" target="_blank">Facebook</a></li>
+            <li><a href="https://twitter.com/pytorch" target="_blank">Twitter</a></li>
+            <li><a href="https://www.youtube.com/pytorch" target="_blank">YouTube</a></li>
+            <li><a href="https://www.linkedin.com/company/pytorch" target="_blank">LinkedIn</a></li>
+          </ul>  
+          </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title">PyTorch Podcasts</li>
+            <li><a href="https://open.spotify.com/show/6UzHKeiy368jKfQMKKvJY5" target="_blank">Spotify</a></li>
+            <li><a href="https://podcasts.apple.com/us/podcast/pytorch-developer-podcast/id1566080008" target="_blank">Apple</a></li>
+            <li><a href="https://www.google.com/podcasts?feed=aHR0cHM6Ly9mZWVkcy5zaW1wbGVjYXN0LmNvbS9PQjVGa0lsOA%3D%3D" target="_blank">Google</a></li>
+            <li><a href="https://music.amazon.com/podcasts/7a4e6f0e-26c2-49e9-a478-41bd244197d0/PyTorch-Developer-Podcast?" target="_blank">Amazon</a></li>
+          </ul>
+         </div>
+        </div>
+        
+        <div class="privacy-policy">
+          <ul>
+            <li class="privacy-policy-links"><a href="https://www.linuxfoundation.org/terms/" target="_blank">Terms</a></li>
+            <li class="privacy-policy-links">|</li>
+            <li class="privacy-policy-links"><a href="https://www.linuxfoundation.org/privacy-policy/" target="_blank">Privacy</a></li>
+          </ul>
+        </div>
+        <div class="copyright">
+        <p>© Copyright The Linux Foundation. The PyTorch Foundation is a project of The Linux Foundation.
+          For web site terms of use, trademark policy and other policies applicable to The PyTorch Foundation please see
+          <a href="www.linuxfoundation.org/policies/">www.linuxfoundation.org/policies/</a>. The PyTorch Foundation supports the PyTorch open source
+          project, which has been established as PyTorch Project a Series of LF Projects, LLC. For policies applicable to the PyTorch Project a Series of LF Projects, LLC,
+          please see <a href="www.lfprojects.org/policies/">www.lfprojects.org/policies/</a>.</p>
+      </div>
+     </div>
+
+  </footer>
+
+  <div class="cookie-banner-wrapper">
+  <div class="container">
+    <p class="gdpr-notice">To analyze traffic and optimize your experience, we serve cookies on this site. By clicking or navigating, you agree to allow our usage of cookies. As the current maintainers of this site, Facebook’s Cookies Policy applies. Learn more, including about available controls: <a href="https://www.facebook.com/policies/cookies/">Cookies Policy</a>.</p>
+    <img class="close-button" src="../../../_static/images/pytorch-x.svg">
+  </div>
+</div>
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://pytorch.org/" aria-label="PyTorch"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="https://pytorch.org/get-started">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://pytorch.org/ecosystem">Ecosystem</a>
+          </li>
+            
+          <li>
+            <a href="https://pytorch.org/mobile">Mobile</a>
+          </li>
+
+          <li>
+            <a href="https://pytorch.org/blog/">Blog</a>
+          </li>
+
+          <li>
+            <a href="https://pytorch.org/tutorials">Tutorials</a>
+          </li>
+
+          <li class="resources-mobile-menu-title">
+            Docs
+          </li>
+
+          <ul class="resources-mobile-menu-items">
+            <li>
+              <a href="https://pytorch.org/docs/stable/index.html">PyTorch</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/audio/stable/index.html">torchaudio</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/text/stable/index.html">torchtext</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/vision/stable/index.html">torchvision</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/torcharrow">torcharrow</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/data">TorchData</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/torchrec">TorchRec</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/serve/">TorchServe</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/torchx/">TorchX</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/xla">PyTorch on XLA Devices</a>
+            </li>
+          </ul>
+
+          <li class="resources-mobile-menu-title">
+            Resources
+          </li>
+            
+           <ul class="resources-mobile-menu-items">
+
+            <li>
+              <a href="https://pytorch.org/features">About</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/foundation">PyTorch Foundation</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/#community-module">Community</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/community-stories">Community Stories</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/resources">Developer Resources</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/events">Events</a>
+            </li>
+
+            <li>
+              <a href="https://discuss.pytorch.org/">Forums</a>
+            </li>
+
+            <li>
+              <a href="https://pytorch.org/hub">Models (Beta)</a>
+            </li>
+          </ul>
+
+          <li>
+            <a href="https://github.com/pytorch/pytorch">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      pytorchAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+      filterTags.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.pytorch-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
