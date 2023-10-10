@@ -78,8 +78,8 @@ class Wasserstein1D(Metric[torch.Tensor]):
                                  new_samples_dist_2, new_weights_dist_2
         )
 
-        _wasserstein_update_input_check(new_samples_dist_1, new_weights_dist_1, 
-                                        new_samples_dist_2, new_weights_dist_2
+        _wasserstein_update_input_check(new_samples_dist_1, new_samples_dist_2, 
+                                        new_weights_dist_1, new_weights_dist_2
         )
 
         # When new data comes in, just add them to the list of samples

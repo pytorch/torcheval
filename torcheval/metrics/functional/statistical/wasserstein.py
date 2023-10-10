@@ -3,7 +3,8 @@ from typing import Tuple, Optional, Union
 import torch
 
 @torch.inference_mode()
-def wasserstein_1d(x: torch.Tensor, y: torch.Tensor,
+def wasserstein_1d(x: torch.Tensor,
+                   y: torch.Tensor,
                    x_weights: Optional[torch.Tensor]=None,
                    y_weights: Optional[torch.Tensor]=None
 ) -> torch.Tensor:
@@ -75,12 +76,15 @@ def wasserstein_1d(x: torch.Tensor, y: torch.Tensor,
     torch.tensor([0.75])
 
     """
-    _wasserstein_param_check(x, x_weights, y, y_weights)
-    _wasserstein_update_input_check(x, x_weights, y, y_weights)
-    return _wasserstein_compute(x, x_weights, y, y_weights)
+    _wasserstein_param_check(x, y, x_weights, y_weights)
+    print("Pass param check.")
+    _wasserstein_update_input_check(x, y, x_weights, y_weights)
+    print("Pass input check.")
+    return _wasserstein_compute(x, y, x_weights, y_weights)
 
 def _wasserstein_param_check(
-        x: torch.Tensor, y: torch.Tensor,
+        x: torch.Tensor,
+        y: torch.Tensor,
         x_weights: Optional[torch.Tensor]=None,
         y_weights: Optional[torch.Tensor]=None
 ) -> None:
@@ -89,14 +93,21 @@ def _wasserstein_param_check(
             raise ValueError("All weights must be non-negative.")
         if not ( 0 < torch.sum(x_weights) < torch.inf ):
             raise ValueError("Weight tensor sum must be positive-finite.")
+        if not x_weights.device == x.device:
+            raise ValueError("Expected values and weights to be on the same device.")
     if y_weights is not None:
         if torch.all(y_weights < 0):
             raise ValueError("All weights must be non-negative.")
         if not ( 0 < torch.sum(y_weights) < torch.inf ):
             raise ValueError("Weight tensor sum must be positive-finite.")
+        if not y_weights.device == y.device:
+            raise ValueError("Expected values and weights to be on the same device.")
+    if not x.device == y.device:
+        raise ValueError("Expected all the tensors to be on the same device.")
 
 def _wasserstein_update_input_check(
-        x: torch.Tensor, y: torch.Tensor,
+        x: torch.Tensor,
+        y: torch.Tensor,
         x_weights: Optional[torch.Tensor]=None,
         y_weights: Optional[torch.Tensor]=None
 ) -> None:
@@ -128,42 +139,43 @@ def _wasserstein_update_input_check(
             f"got shapes {y.shape} and {y_weights.shape}."
         )
 
-@torch.jit.script
 def _wasserstein_compute(
         x: torch.Tensor,
         y: torch.Tensor,
         x_weights: Optional[torch.Tensor],
         y_weights: Optional[torch.Tensor]
 ) -> torch.Tensor:
+    # Assigning device per input
+    device = x.device
+
     # Finding the sorted values
     x_sorter = torch.argsort(x)
     y_sorter = torch.argsort(y)
 
     # Bringing all the values on a central number line
     all_values = torch.concatenate((x, y))
-    all_values = torch.sort(all_values)
+    all_values, _ = torch.sort(all_values)
 
     # Compute the differences between successive values of x and y
     deltas = torch.diff(all_values)
 
     # Obtain respective positions of the x and y values among all_values
-    x_cdf_indices = torch.searchsorted(x[x_sorter], all_values, right=True)
-    y_cdf_indices = torch.searchsorted(y[y_sorter], all_values, right=True)
+    x_cdf_indices = torch.searchsorted(x[x_sorter], all_values[:-1], right=True)
+    y_cdf_indices = torch.searchsorted(y[y_sorter], all_values[:-1], right=True)
 
     # Calculate the CDF of x and y using their weights, if specified
     if x_weights is None:
-        x_cdf = x_cdf_indices / x.size(0)
+        x_cdf = x_cdf_indices.to(device) / x.size(0)
     else:
-        x_sorted_cum_weights = torch.cat(([0],
-                                         torch.cumsum(x[x_sorter])))
+        x_sorted_cum_weights = torch.cat((torch.Tensor([0]).to(device),
+                                         torch.cumsum(x_weights[x_sorter], dim=0)))
         x_cdf = x_sorted_cum_weights[x_cdf_indices] / x_sorted_cum_weights[-1]
     
     if y_weights is None:
-        y_cdf = y_cdf_indices / y.size(0)
+        y_cdf = y_cdf_indices.to(device) / y.size(0)
     else:
-        y_sorted_cum_weights = torch.cat(([0],
-                                         torch.cumsum(y[y_sorter])))
+        y_sorted_cum_weights = torch.cat((torch.Tensor([0]).to(device),
+                                         torch.cumsum(y_weights[y_sorter], dim=0)))
         y_cdf = y_sorted_cum_weights[y_cdf_indices] / y_sorted_cum_weights[-1]
-    
 
-    return torch.sum(torch.multiply(torch.abs(x_cdf - y_cdf), deltas))
+    return torch.sum(torch.multiply(torch.abs(x_cdf - y_cdf), deltas)).to(device)

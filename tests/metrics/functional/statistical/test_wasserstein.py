@@ -7,18 +7,52 @@
 import unittest
 from typing import List, Optional, Tuple, Union
 
+from scipy.stats import wasserstein_distance as sp_wasserstein
+import numpy as np
+
 import torch
 from torcheval.metrics.functional.statistical.wasserstein import wasserstein_1d
 from torcheval.utils import random_data as rd
 
 class TestWasserstein1D(unittest.TestCase):
+    def _get_scipy_equivalent(
+        self,
+        x: torch.Tensor,
+        y: torch.Tensor,
+        x_weights: Optional[torch.Tensor]=None,
+        y_weights: Optional[torch.Tensor]=None,
+        device: str="cpu"
+    ) -> torch.Tensor:
+
+        # Convert inputs to scipy style inputs
+        sp_x = x.numpy()
+        sp_y = y.numpy()
+        if x_weights is not None and y_weights is not None:
+            sp_x_weights = x_weights.numpy()
+            sp_y_weights = y_weights.numpy()
+            sp_wd = []
+            for i in range(sp_x.shape[0]):
+                sp_x_i = sp_x[i, :]
+                sp_y_i = sp_y[i, :]
+                sp_x_w_i = sp_x_weights[i, :]
+                sp_y_w_i = sp_y_weights[i, :]
+                sp_wd.append(np.nan_to_num(sp_wasserstein(sp_x_i, sp_y_i, sp_x_w_i, sp_y_w_i)))
+            return torch.tensor(sp_wd, device=device).to(torch.float32)
+    
+        for i in range(sp_x.shape[0]):
+            sp_x_i = sp_x[i, :]
+            sp_y_i = sp_y[i, :]
+            sp_wd.append(np.nan_to_num(sp_wasserstein(sp_x_i, sp_y_i)))
+        return torch.tensor(sp_wd, device=device).to(torch.float32)
+    
+
     def _test_wasserstein1d_with_input(
-            self,
-            compute_result: torch.Tensor,
-            x: torch.Tensor,
-            y: torch.Tensor,
-            x_weights: Optional[torch.Tensor]=None,
-            y_weights: Optional[torch.Tensor]=None
+        self,
+        compute_result: torch.Tensor,
+        x: torch.Tensor,
+        y: torch.Tensor,
+        x_weights: Optional[torch.Tensor]=None,
+        y_weights: Optional[torch.Tensor]=None
     ) -> None:
         my_compute_result = wasserstein_1d(x, y, x_weights, y_weights)
 
@@ -59,11 +93,26 @@ class TestWasserstein1D(unittest.TestCase):
         )
 
     def test_wasserstein1d_randomized_data_getter(self) -> None:
-        # Define function in random_data.py
-        # Define variables with inputs
-        # Define compute_result
-        # pass to _test_**        
-        pass
+        num_updates = 1
+        batch_size = 32
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+
+        for _ in range(100):
+            x, y, x_weights, y_weights = rd.get_rand_data_wasserstein1d(
+                num_updates,
+                batch_size,
+                device
+            )
+
+            compute_result = self._get_scipy_equivalent(x, y, x_weights, y_weights, device)
+
+            self._test_wasserstein1d_with_input(
+                compute_result,
+                x,
+                y,
+                x_weights,
+                y_weights)
+
 
     def test_wasserstein1d_invalid_input(self) -> None:
         with self.assertRaisesRegex(
