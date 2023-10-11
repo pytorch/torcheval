@@ -27,22 +27,30 @@ class TestWasserstein1D(unittest.TestCase):
         # Convert inputs to scipy style inputs
         sp_x = x.numpy()
         sp_y = y.numpy()
+        shape = x.shape
+
         if x_weights is not None and y_weights is not None:
             sp_x_weights = x_weights.numpy()
             sp_y_weights = y_weights.numpy()
             sp_wd = []
-            for i in range(sp_x.shape[0]):
-                sp_x_i = sp_x[i, :]
-                sp_y_i = sp_y[i, :]
-                sp_x_w_i = sp_x_weights[i, :]
-                sp_y_w_i = sp_y_weights[i, :]
-                sp_wd.append(np.nan_to_num(sp_wasserstein(sp_x_i, sp_y_i, sp_x_w_i, sp_y_w_i)))
+            if len(shape) > 1:
+                for i in range(sp_x.shape[0]):
+                    sp_x_i = sp_x[i, :]
+                    sp_y_i = sp_y[i, :]
+                    sp_x_w_i = sp_x_weights[i, :]
+                    sp_y_w_i = sp_y_weights[i, :]
+                    sp_wd.append(np.nan_to_num(sp_wasserstein(sp_x_i, sp_y_i, sp_x_w_i, sp_y_w_i)))
+            else:
+                sp_wd.append(np.nan_to_num(sp_wasserstein(sp_x, sp_y, sp_x_weights, sp_y_weights)))
             return torch.tensor(sp_wd, device=device).to(torch.float32)
-    
-        for i in range(sp_x.shape[0]):
-            sp_x_i = sp_x[i, :]
-            sp_y_i = sp_y[i, :]
-            sp_wd.append(np.nan_to_num(sp_wasserstein(sp_x_i, sp_y_i)))
+        else:
+            if len(shape) > 1:
+                for i in range(sp_x.shape[0]):
+                    sp_x_i = sp_x[i, :]
+                    sp_y_i = sp_y[i, :]
+                    sp_wd.append(np.nan_to_num(sp_wasserstein(sp_x_i, sp_y_i)))
+            else:
+                sp_wd.append(np.nan_to_num(sp_wasserstein(sp_x, sp_y, sp_x_weights, sp_y_weights)))
         return torch.tensor(sp_wd, device=device).to(torch.float32)
     
 
@@ -55,7 +63,6 @@ class TestWasserstein1D(unittest.TestCase):
         y_weights: Optional[torch.Tensor]=None
     ) -> None:
         my_compute_result = wasserstein_1d(x, y, x_weights, y_weights)
-
         torch.testing.assert_allclose(
             my_compute_result,
             compute_result,
@@ -64,11 +71,13 @@ class TestWasserstein1D(unittest.TestCase):
             rtol=1e-5,
         )
 
+        ## TODO: Add CUDA check
+
     def test_wasserstein1d_distribution_values_only(self) -> None:
         x = torch.Tensor([5, -5, -7, 9, -3])
         y = torch.Tensor([9, -7, 5, -4, -2])
         self._test_wasserstein1d_with_input(
-            torch.Tensor(0.39999999999999997),
+            torch.Tensor([0.39999999999999997]),
             x, y
         )
 
@@ -78,7 +87,7 @@ class TestWasserstein1D(unittest.TestCase):
         x_weights = torch.Tensor([3, 3, 1, 2, 2, 3, 2, 2, 2, 3])
         y_weights = torch.Tensor([2, 2, 1, 1, 2, 2, 1, 1, 1, 1])
         self._test_wasserstein1d_with_input(
-            torch.Tensor(8.149068322981368),
+            torch.Tensor([8.149068322981368]),
             x, y,
             x_weights, y_weights
         )
@@ -87,7 +96,7 @@ class TestWasserstein1D(unittest.TestCase):
         x = torch.Tensor([-13, -9, -19, 11, -18, -20, 8, 2, -8, -18])
         x_weights = torch.Tensor([3, 3, 1, 2, 2, 3, 2, 2, 2, 3])
         self._test_wasserstein1d_with_input(
-            torch.Tensor(0.0),
+            torch.Tensor([0.0]),
             x, x,
             x_weights, x_weights
         )
@@ -137,7 +146,7 @@ class TestWasserstein1D(unittest.TestCase):
 
         with self.assertRaisesRegex(
             ValueError,
-            "Weights cannot be empty."
+            "Weight tensor sum must be positive-finite."
         ):
             wasserstein_1d(torch.rand(4), torch.rand(4),
                            torch.Tensor([]), torch.rand(4)
@@ -145,7 +154,7 @@ class TestWasserstein1D(unittest.TestCase):
 
         with self.assertRaisesRegex(
             ValueError,
-            "Weights cannot be empty."
+            "Weight tensor sum must be positive-finite."
         ):
             wasserstein_1d(torch.rand(4), torch.rand(4),
                            torch.rand(4), torch.Tensor([])
@@ -176,7 +185,7 @@ class TestWasserstein1D(unittest.TestCase):
             "All weights must be non-negative."
         ):
             wasserstein_1d(torch.rand(4), torch.rand(4),
-                           torch.Tensor([1, -1, 2, 3], torch.rand(4))
+                           torch.Tensor([1, -1, 2, 3]), torch.rand(4)
             )
 
         with self.assertRaisesRegex(
@@ -189,16 +198,16 @@ class TestWasserstein1D(unittest.TestCase):
 
         with self.assertRaisesRegex(
             ValueError,
-            "Weight tensor sum must be positive-finite."
+            "All weights must be non-negative."
         ):
             wasserstein_1d(torch.rand(4), torch.rand(4),
-                           torch.rand([-1.0, -2.0, 0.0, 1.0]), torch.rand(4)
+                           torch.Tensor([-1.0, -2.0, 0.0, 1.0]), torch.rand(4)
             )
 
         with self.assertRaisesRegex(
             ValueError,
-            "Weight tensor sum must be positive-finite."
+            "All weights must be non-negative."
         ):
             wasserstein_1d(torch.rand(4), torch.rand(4),
-                           torch.rand(4), torch.rand([-1.5, -1.0, 0.5, 0.75])
+                           torch.rand(4), torch.Tensor([-1.5, -1.0, 0.5, 0.75])
             )

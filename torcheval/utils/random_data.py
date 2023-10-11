@@ -191,8 +191,8 @@ def get_rand_data_wasserstein1d(
 
     x = torch.rand(size=shape)
     y = torch.rand(size=shape)
-    x_weights = torch.randint(low=0, size=shape)
-    y_weights = torch.randint(low=0, size=shape)
+    x_weights = torch.randint(low=1, high=10, size=shape)
+    y_weights = torch.randint(low=1, high=10, size=shape)
     
     return x.to(device), y.to(device), x_weights.to(device), y_weights.to(device)
 

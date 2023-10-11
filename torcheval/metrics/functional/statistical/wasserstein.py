@@ -77,9 +77,7 @@ def wasserstein_1d(x: torch.Tensor,
 
     """
     _wasserstein_param_check(x, y, x_weights, y_weights)
-    print("Pass param check.")
     _wasserstein_update_input_check(x, y, x_weights, y_weights)
-    print("Pass input check.")
     return _wasserstein_compute(x, y, x_weights, y_weights)
 
 def _wasserstein_param_check(
@@ -89,14 +87,14 @@ def _wasserstein_param_check(
         y_weights: Optional[torch.Tensor]=None
 ) -> None:
     if x_weights is not None:
-        if torch.all(x_weights < 0):
+        if not torch.all(x_weights > 0):
             raise ValueError("All weights must be non-negative.")
         if not ( 0 < torch.sum(x_weights) < torch.inf ):
             raise ValueError("Weight tensor sum must be positive-finite.")
         if not x_weights.device == x.device:
             raise ValueError("Expected values and weights to be on the same device.")
     if y_weights is not None:
-        if torch.all(y_weights < 0):
+        if not torch.all(y_weights > 0):
             raise ValueError("All weights must be non-negative.")
         if not ( 0 < torch.sum(y_weights) < torch.inf ):
             raise ValueError("Weight tensor sum must be positive-finite.")
@@ -178,4 +176,4 @@ def _wasserstein_compute(
                                          torch.cumsum(y_weights[y_sorter], dim=0)))
         y_cdf = y_sorted_cum_weights[y_cdf_indices] / y_sorted_cum_weights[-1]
 
-    return torch.sum(torch.multiply(torch.abs(x_cdf - y_cdf), deltas)).to(device)
+    return torch.sum(torch.multiply(torch.abs(x_cdf - y_cdf), deltas), dim=0, keepdim=True).to(device)
