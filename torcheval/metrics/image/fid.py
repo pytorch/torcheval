@@ -15,14 +15,21 @@ from torcheval.metrics.metric import Metric
 
 if find_spec("torchvision") is not None:
     from torchvision import models
+
+    _TORCHVISION_AVAILABLE = True
 else:
-    raise ImportError(
-        "You must have torchvision installed to use FID, please install torcheval[image]"
-    )
+    _TORCHVISION_AVAILABLE = False
 
 TFrechetInceptionDistance = TypeVar("TFrechetInceptionDistance")
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
+
+
+def _validate_torchvision_available() -> None:
+    if not _TORCHVISION_AVAILABLE:
+        raise RuntimeError(
+            "You must have torchvision installed to use FID, please install torcheval[image]"
+        )
 
 
 class FIDInceptionV3(nn.Module):
@@ -58,8 +65,8 @@ class FrechetInceptionDistance(Metric[torch.Tensor]):
         device: Optional[torch.device] = None,
     ) -> None:
         """
-        This class computes the Frechet Inception Distance (FID)
-        between two distributions of images (real and fake/generated).
+        Computes the Frechet Inception Distance (FID) between two distributions of images (real and generated).
+
         The original paper: https://arxiv.org/pdf/1706.08500.pdf
 
         Args:
@@ -70,6 +77,8 @@ class FrechetInceptionDistance(Metric[torch.Tensor]):
             device (torch.device): The device where the computations will be performed.
                 If None, the default device will be used.
         """
+        _validate_torchvision_available()
+
         super().__init__(device=device)
 
         self._FID_parameter_check(model=model, feature_dim=feature_dim)
@@ -80,6 +89,7 @@ class FrechetInceptionDistance(Metric[torch.Tensor]):
         # Set the model and put it in evaluation mode
         self.model = model.to(device)
         self.model.eval()
+        self.model.requires_grad_(False)
 
         # Initialize state variables used to compute FID
         self._add_state("real_sum", torch.zeros(feature_dim, device=device))
@@ -111,8 +121,7 @@ class FrechetInceptionDistance(Metric[torch.Tensor]):
         images = images.to(self.device)
 
         # Compute activations for images using the given model
-        with torch.no_grad():
-            activations = self.model(images)
+        activations = self.model(images)
 
         batch_size = images.shape[0]
 
@@ -159,12 +168,13 @@ class FrechetInceptionDistance(Metric[torch.Tensor]):
 
         # If the user has not already updated with at lease one
         # image from each distribution, then we raise an Error.
-        if (self.num_real_images == 0) or (self.num_fake_images == 0):
+        if (self.num_real_images < 2) or (self.num_fake_images < 2):
             warnings.warn(
-                "Computing FID requires at least 1 real image and 1 fake image,"
+                "Computing FID requires at least 2 real images and 2 fake images,"
                 f"but currently running with {self.num_real_images} real images and {self.num_fake_images} fake images."
                 "Returning 0.0",
                 RuntimeWarning,
+                stacklevel=2,
             )
 
             return torch.tensor(0.0)

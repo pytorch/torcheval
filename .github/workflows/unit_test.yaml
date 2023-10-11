@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        python-version: [3.8, 3.9]
     steps:
       - name: Check out repo
         uses: actions/checkout@v2
@@ -25,7 +25,7 @@ jobs:
         run: |
           set -eux
           conda activate test
-          conda install pytorch cpuonly -c pytorch-nightly
+          conda install pytorch torchaudio torchvision cpuonly -c pytorch-nightly
           pip install -r requirements.txt
           pip install -r dev-requirements.txt
           pip install --no-build-isolation -e ".[dev]"
@@ -74,7 +74,7 @@ jobs:
         run: |
           set -eux
           conda activate test
-          pip install torch --extra-index-url https://download.pytorch.org/whl/cu117
+          pip install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu117
           # Use stable fbgemm-gpu
           pip uninstall -y fbgemm-gpu-nightly
           pip install fbgemm-gpu==0.2.0

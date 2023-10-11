@@ -6,9 +6,11 @@
 
 from torcheval.metrics.image.fid import FrechetInceptionDistance
 from torcheval.metrics.image.psnr import PeakSignalNoiseRatio
+from torcheval.metrics.image.ssim import StructuralSimilarity
 
 __all__ = [
     "FrechetInceptionDistance",
     "PeakSignalNoiseRatio",
+    "StructuralSimilarity",
 ]
 __doc_name__ = "Image Metrics"

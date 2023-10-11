@@ -82,6 +82,8 @@ class TestMeanSquaredError(MetricClassTester):
         ).squeeze()
         state_names = (
             {
+                "max_num_updates",
+                "total_updates",
                 "sum_squared_error",
                 "sum_weight",
                 "windowed_sum_squared_error",
@@ -89,6 +91,8 @@ class TestMeanSquaredError(MetricClassTester):
             }
             if enable_lifetime
             else {
+                "max_num_updates",
+                "total_updates",
                 "windowed_sum_squared_error",
                 "windowed_sum_weight",
             }
@@ -297,6 +301,8 @@ class TestMeanSquaredError(MetricClassTester):
                 multioutput=multioutput,
             ),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "windowed_sum_squared_error",
                 "windowed_sum_weight",
             },
@@ -364,6 +370,8 @@ class TestMeanSquaredError(MetricClassTester):
                 multioutput=multioutput,
             ),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "windowed_sum_squared_error",
                 "windowed_sum_weight",
             },
@@ -377,7 +385,7 @@ class TestMeanSquaredError(MetricClassTester):
                     mean_squared_error(
                         torch.cat(update_target[-2:], dim=0),
                         torch.cat(update_input[-2:], dim=0),
-                        torch.cat(update_weight[-2:], dim=0),
+                        sample_weight=torch.cat(update_weight[-2:], dim=0),
                         multioutput=multioutput,
                     )
                 )
@@ -389,7 +397,7 @@ class TestMeanSquaredError(MetricClassTester):
                     mean_squared_error(
                         torch.cat(update_target, dim=0),
                         torch.cat(update_input, dim=0),
-                        torch.cat(update_weight, dim=0),
+                        sample_weight=torch.cat(update_weight, dim=0),
                         multioutput=multioutput,
                     )
                 )

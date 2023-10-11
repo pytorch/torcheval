@@ -50,6 +50,15 @@ Classification Metrics
    multilabel_recall_at_fixed_precision
    topk_multilabel_accuracy
 
+Image Metrics
+-------------------------------------------------------------------
+
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+
+   peak_signal_noise_ratio
+
 Ranking Metrics
 -------------------------------------------------------------------
 
@@ -86,4 +95,3 @@ Text Metrics
    word_error_rate
    word_information_preserved
    word_information_lost
-

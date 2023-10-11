@@ -370,6 +370,14 @@ def assert_result_close(
         tc.assertEqual(len(result), len(expected_result))
         for element, expected_element in zip(result, expected_result):
             assert_result_close(element, expected_element, atol, rtol)
+    elif isinstance(result, int):
+        tc.assertTrue(isinstance(expected_result, int))
+        tc.assertEqual(result, expected_result)
+    elif isinstance(result, float):
+        tc.assertTrue(isinstance(expected_result, float))
+        torch.testing.assert_close(
+            result, expected_result, atol=atol, rtol=rtol, equal_nan=True
+        )
     else:
         # add more supported type to result comparision if needed
         raise ValueError("Compute result comparision is not supported.")

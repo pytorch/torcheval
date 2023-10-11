@@ -59,6 +59,10 @@ class TestWindowedBinaryNormalizedEntropy(MetricClassTester):
                 max_num_updates=2, enable_lifetime=False
             ),
             state_names={
+                "max_num_updates",
+                "total_updates",
+                "max_num_updates",
+                "total_updates",
                 "windowed_total_entropy",
                 "windowed_num_examples",
                 "windowed_num_positive",
@@ -73,6 +77,8 @@ class TestWindowedBinaryNormalizedEntropy(MetricClassTester):
         self.run_class_implementation_tests(
             metric=WindowedBinaryNormalizedEntropy(max_num_updates=2),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "total_entropy",
                 "num_examples",
                 "num_positive",
@@ -96,6 +102,8 @@ class TestWindowedBinaryNormalizedEntropy(MetricClassTester):
         self.run_class_implementation_tests(
             metric=WindowedBinaryNormalizedEntropy(max_num_updates=2),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "total_entropy",
                 "num_examples",
                 "num_positive",
@@ -162,6 +170,8 @@ class TestWindowedBinaryNormalizedEntropy(MetricClassTester):
         self.run_class_implementation_tests(
             metric=WindowedBinaryNormalizedEntropy(max_num_updates=2, from_logits=True),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "total_entropy",
                 "num_examples",
                 "num_positive",
@@ -185,6 +195,8 @@ class TestWindowedBinaryNormalizedEntropy(MetricClassTester):
         self.run_class_implementation_tests(
             metric=WindowedBinaryNormalizedEntropy(max_num_updates=2, from_logits=True),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "total_entropy",
                 "num_examples",
                 "num_positive",
@@ -280,6 +292,8 @@ class TestWindowedBinaryNormalizedEntropy(MetricClassTester):
         self.run_class_implementation_tests(
             metric=WindowedBinaryNormalizedEntropy(max_num_updates=2, num_tasks=2),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "total_entropy",
                 "num_examples",
                 "num_positive",
@@ -303,6 +317,8 @@ class TestWindowedBinaryNormalizedEntropy(MetricClassTester):
         self.run_class_implementation_tests(
             metric=WindowedBinaryNormalizedEntropy(max_num_updates=2, num_tasks=2),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "total_entropy",
                 "num_examples",
                 "num_positive",
@@ -387,6 +403,8 @@ class TestWindowedBinaryNormalizedEntropy(MetricClassTester):
                 max_num_updates=2, num_tasks=2, from_logits=True
             ),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "total_entropy",
                 "num_examples",
                 "num_positive",
@@ -415,6 +433,8 @@ class TestWindowedBinaryNormalizedEntropy(MetricClassTester):
                 max_num_updates=2, num_tasks=2, from_logits=True
             ),
             state_names={
+                "max_num_updates",
+                "total_updates",
                 "total_entropy",
                 "num_examples",
                 "num_positive",
