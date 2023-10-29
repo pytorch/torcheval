@@ -77,10 +77,10 @@ class WindowedWeightedCalibration(
                 "`num_tasks` value should be greater than and equal to 1, but received {num_tasks}. "
             )
         self.num_tasks = num_tasks
-        self.max_num_updates = max_num_updates
+        self._add_state("max_num_updates", max_num_updates)
         self.enable_lifetime = enable_lifetime
         self.next_inserted = 0
-        self.total_updates = 0
+        self._add_state("total_updates", 0)
         if self.enable_lifetime:
             self._add_state(
                 "weighted_input_sum",

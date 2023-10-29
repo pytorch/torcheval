@@ -18,7 +18,7 @@ TThroughput = TypeVar("TThroughput")
 _logger: logging.Logger = logging.getLogger(__name__)
 
 
-class Throughput(Metric[torch.Tensor]):
+class Throughput(Metric[float]):
     """
     Calculate the throughput value which is the number of elements processed per second.
 
@@ -48,13 +48,8 @@ class Throughput(Metric[torch.Tensor]):
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)
-        self._add_state(
-            "num_total", torch.tensor(0.0, device=self.device, dtype=torch.float64)
-        )
-        self._add_state(
-            "elapsed_time_sec",
-            torch.tensor(0.0, device=self.device, dtype=torch.float64),
-        )
+        self._add_state("num_total", 0.0)
+        self._add_state("elapsed_time_sec", 0.0)
 
     @torch.inference_mode()
     # pyre-ignore[14]: inconsistent override on *_:Any, **__:Any
@@ -83,32 +78,26 @@ class Throughput(Metric[torch.Tensor]):
                 f"Expected elapsed_time_sec to be a positive number, but received {elapsed_time_sec}."
             )
 
-        self.elapsed_time_sec += torch.tensor(
-            elapsed_time_sec, device=self.device, dtype=torch.float64
-        )
-        self.num_total += torch.tensor(
-            num_processed, device=self.device, dtype=torch.float64
-        )
+        self.elapsed_time_sec += elapsed_time_sec
+        self.num_total += num_processed
         return self
 
     @torch.inference_mode()
-    def compute(self: TThroughput) -> torch.Tensor:
+    def compute(self: TThroughput) -> float:
         if not self.elapsed_time_sec:
             _logger.warning("No calls to update() have been made - returning 0.0")
-            return torch.tensor(0.0, device=self.device, dtype=torch.float64)
+            return 0.0
 
         return self.num_total / self.elapsed_time_sec
 
     @torch.inference_mode()
     def merge_state(self: TThroughput, metrics: Iterable[TThroughput]) -> TThroughput:
         for metric in metrics:
-            self.num_total += metric.num_total.to(self.device)
+            self.num_total += metric.num_total
             # this assumes the metric is used within a fully-synchronous program.
             # In this scenario, the slowest process becomes the bottleneck for the
             # program's execution. As a result, we use the max, as the overall throughput
             # is gated based on the rank that takes the longest to complete.
             # TODO: should this be configurable?
-            self.elapsed_time_sec = torch.max(
-                self.elapsed_time_sec, metric.elapsed_time_sec.to(self.device)
-            )
+            self.elapsed_time_sec = max(self.elapsed_time_sec, metric.elapsed_time_sec)
         return self

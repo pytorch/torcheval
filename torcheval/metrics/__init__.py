@@ -6,6 +6,7 @@
 
 from torcheval.metrics import functional
 from torcheval.metrics.aggregation import AUC, Cat, Max, Mean, Min, Sum, Throughput
+from torcheval.metrics.audio import FrechetAudioDistance
 from torcheval.metrics.classification import (
     BinaryAccuracy,
     BinaryAUPRC,
@@ -40,13 +41,18 @@ from torcheval.metrics.classification import (
     TopKMultilabelAccuracy,
 )
 
-from torcheval.metrics.image import FrechetInceptionDistance, PeakSignalNoiseRatio
+from torcheval.metrics.image import (
+    FrechetInceptionDistance,
+    PeakSignalNoiseRatio,
+    StructuralSimilarity,
+)
 from torcheval.metrics.metric import Metric
 
 from torcheval.metrics.ranking import (
     ClickThroughRate,
     HitRate,
     ReciprocalRank,
+    RetrievalPrecision,
     WeightedCalibration,
 )
 from torcheval.metrics.regression import MeanSquaredError, R2Score
@@ -89,6 +95,7 @@ __all__ = [
     "BLEUScore",
     "Cat",
     "ClickThroughRate",
+    "FrechetAudioDistance",
     "FrechetInceptionDistance",
     "HitRate",
     "Max",
@@ -117,6 +124,8 @@ __all__ = [
     "TopKMultilabelAccuracy",
     "R2Score",
     "ReciprocalRank",
+    "RetrievalPrecision",
+    "StructuralSimilarity",
     "Sum",
     "Throughput",
     "WeightedCalibration",

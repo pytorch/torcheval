@@ -212,30 +212,30 @@ def topk_multilabel_accuracy(
     Examples::
 
         >>> import torch
-        >>> from torcheval.metrics.functional import topkmultilabel_accuracy
+        >>> from torcheval.metrics.functional import topk_multilabel_accuracy
         >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])
         >>> target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
-        >>> topkmultilabel_accuracy(input, target, k = 2)
+        >>> topk_multilabel_accuracy(input, target, k = 2)
         tensor(0)  # 0 / 4
 
         >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])
         >>> target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
-        >>> topkmultilabel_accuracy(input, target, criteria="hamming", k = 2)
+        >>> topk_multilabel_accuracy(input, target, criteria="hamming", k = 2)
         tensor(0.583)  # 7 / 12
 
         >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])
         >>> target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
-        >>> topkmultilabel_accuracy(input, target, criteria="overlap", k = 2)
+        >>> topk_multilabel_accuracy(input, target, criteria="overlap", k = 2)
         tensor(1)  # 4 / 4
 
         >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])
         >>> target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
-        >>> topkmultilabel_accuracy(input, target, criteria="contain", k = 2)
+        >>> topk_multilabel_accuracy(input, target, criteria="contain", k = 2)
         tensor(0.5)  # 2 / 4
 
         >>> input = torch.tensor([[0.1, 0.5, 0.2], [0.3, 0.2, 0.1], [0.2, 0.4, 0.5], [0, 0.1, 0.9]])
         >>> target = torch.tensor([[1, 1, 0], [0, 1, 0], [1, 1, 1], [0, 1, 0]])
-        >>> topkmultilabel_accuracy(input, target, criteria="belong", k = 2)
+        >>> topk_multilabel_accuracy(input, target, criteria="belong", k = 2)
         tensor(0.25)  # 1 / 4
 
     """
@@ -404,7 +404,7 @@ def _topk_multilabel_accuracy_update(
 ) -> Tuple[torch.Tensor, torch.Tensor]:
     _topk_multilabel_accuracy_update_input_check(input, target, k)
     input_label = torch.zeros(input.size(), device=input.device).scatter_(
-        -1, input.topk(k=2, dim=-1).indices, 1.0
+        -1, input.topk(k=k, dim=-1).indices, 1.0
     )
     return _multilabel_update(input_label, target, criteria)
 

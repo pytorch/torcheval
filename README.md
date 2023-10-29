@@ -14,7 +14,7 @@
 A library that contains a rich collection of performant PyTorch model metrics, a simple interface to create new metrics, a toolkit to facilitate metric computation in distributed training and tools for PyTorch model evaluations.
 
 ## Installing TorchEval
-Requires Python >= 3.7 and PyTorch >= 1.11
+Requires Python >= 3.8 and PyTorch >= 1.11
 
 From pip:
 
@@ -163,13 +163,10 @@ for epoch in range(num_epochs):
         # all seen data on the local process since last reset()
         local_compute_result = metric.compute()
 
-        # sync_and_compute(metric) sends metric data across all processes to the process with rank 0,
-        # the output on rank 0 is the computed metric for the entire process group, on other ranks None is returned.
+        # sync_and_compute(metric) syncs metric data across all ranks and computes the metric value
         global_compute_result = sync_and_compute(metric)
         if global_rank == 0:
             print(global_compute_result)
-        # if sync_and_compute(metric, recipient_rank="all") is called, the computation is done on rank 0, and the output is synced
-        # across processes so that each rank returns the computed metric.
 
     # metric.reset() clears the data on each process so that subsequent
     # calls to compute() only act on new data

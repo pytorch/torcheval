@@ -7,7 +7,6 @@
 import random
 from typing import List
 
-import torch
 from torcheval.metrics import Throughput
 from torcheval.utils.test_utils.metric_class_tester import (
     MetricClassTester,
@@ -23,23 +22,23 @@ class TestThroughput(MetricClassTester):
         elapsed_time_sec: List[float],
     ) -> None:
         num_individual_update = NUM_TOTAL_UPDATES // NUM_PROCESSES
-        expected_num_total = torch.sum(torch.tensor(num_processed)).to(torch.float64)
-        max_elapsed_time_sec = torch.max(
-            torch.tensor(
-                [
-                    sum(
-                        elapsed_time_sec[
-                            i * num_individual_update : (i + 1) * num_individual_update
-                        ]
-                    )
-                    for i in range(NUM_PROCESSES)
-                ]
-            )
+        expected_num_total = sum(num_processed)
+        max_elapsed_time_sec = max(
+            [
+                sum(
+                    elapsed_time_sec[
+                        i * num_individual_update : (i + 1) * num_individual_update
+                    ]
+                )
+                for i in range(NUM_PROCESSES)
+            ]
         )
-        total_elapsed_time_sec = torch.sum(torch.tensor(elapsed_time_sec))
+        total_elapsed_time_sec = sum(elapsed_time_sec)
 
-        expected_compute_result = expected_num_total / total_elapsed_time_sec
-        expected_merge_and_compute_result = expected_num_total / max_elapsed_time_sec
+        expected_compute_result = (1.0 * expected_num_total) / total_elapsed_time_sec
+        expected_merge_and_compute_result = (
+            1.0 * expected_num_total
+        ) / max_elapsed_time_sec
         self.run_class_implementation_tests(
             metric=Throughput(),
             state_names={"num_total", "elapsed_time_sec"},
@@ -79,4 +78,4 @@ class TestThroughput(MetricClassTester):
 
     def test_throughput_class_compute_without_update(self) -> None:
         metric = Throughput()
-        self.assertEqual(metric.compute(), torch.tensor(0.0, dtype=torch.float64))
+        self.assertEqual(metric.compute(), 0.0)

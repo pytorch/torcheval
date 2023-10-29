@@ -113,4 +113,3 @@ TorchEval API
    torcheval.metrics.rst
    torcheval.metrics.functional.rst
    torcheval.metrics.toolkit.rst
-   torcheval.tools.rst

@@ -19,6 +19,15 @@ Aggregation Metrics
    Sum
    Throughput
 
+Audio Metrics
+-------------------------------------------------------------------
+
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+
+   FrechetAudioDistance
+
 Classification Metrics
 -------------------------------------------------------------------
 
@@ -53,6 +62,17 @@ Classification Metrics
    MultilabelPrecisionRecallCurve
    MultilabelRecallAtFixedPrecision
    TopKMultilabelAccuracy
+
+Image Metrics
+-------------------------------------------------------------------
+
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+
+   FrechetInceptionDistance
+   PeakSignalNoiseRatio
+   StructuralSimilarity
 
 Ranking Metrics
 -------------------------------------------------------------------
@@ -101,4 +121,3 @@ Windowed Metrics
    WindowedClickThroughRate
    WindowedMeanSquaredError
    WindowedWeightedCalibration
-
