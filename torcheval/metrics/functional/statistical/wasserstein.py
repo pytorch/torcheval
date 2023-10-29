@@ -113,10 +113,9 @@ def _wasserstein_update_input_check(
         raise ValueError(
             "Distribution cannot be empty."
         )
-    if x.shape != y.shape:
+    if x.dim() > 1 or y.dim() > 1:
         raise ValueError(
-            "The two distributions should have same shape, "
-            f"got shapes {x.shape} and {y.shape}."
+            "Distribution has to be one dimensional."
         )
     if x_weights is not None and x_weights.nelement() == 0:
         raise ValueError(
