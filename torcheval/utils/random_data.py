@@ -160,6 +160,7 @@ def get_rand_data_binned_binary(
     threshold = torch.unique(threshold)
     return input, target, threshold.to(device)
 
+
 def get_rand_data_wasserstein1d(
     num_updates: int,
     batch_size: int,
@@ -184,7 +185,7 @@ def get_rand_data_wasserstein1d(
     """
     if device is None:
         device = torch.device("cpu")
-    
+
     shape = [num_updates, batch_size]
     if num_updates == 1:
         shape = [batch_size]
@@ -193,6 +194,5 @@ def get_rand_data_wasserstein1d(
     y = torch.rand(size=shape)
     x_weights = torch.randint(low=1, high=10, size=shape)
     y_weights = torch.randint(low=1, high=10, size=shape)
-    
-    return x.to(device), y.to(device), x_weights.to(device), y_weights.to(device)
 
+    return x.to(device), y.to(device), x_weights.to(device), y_weights.to(device)

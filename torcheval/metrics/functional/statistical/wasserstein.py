@@ -1,19 +1,27 @@
-from typing import Tuple, Optional, Union
+# Copyright (c) Meta Platforms, Inc. and affiliates.
+# All rights reserved.
+#
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree.
+
+from typing import Optional, Tuple, Union
 
 import torch
 
+
 @torch.inference_mode()
-def wasserstein_1d(x: torch.Tensor,
-                   y: torch.Tensor,
-                   x_weights: Optional[torch.Tensor]=None,
-                   y_weights: Optional[torch.Tensor]=None
+def wasserstein_1d(
+    x: torch.Tensor,
+    y: torch.Tensor,
+    x_weights: Optional[torch.Tensor] = None,
+    y_weights: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     """
-    The Wasserstein distance, also called the Earth Mover's Distance, is a 
+    The Wasserstein distance, also called the Earth Mover's Distance, is a
     measure of the similarity between two distributions.
 
-    The Wasserstein distance between two distributions is intuitively the 
-    minimum weight of soil (times distance moved) that would need to be moved 
+    The Wasserstein distance between two distributions is intuitively the
+    minimum weight of soil (times distance moved) that would need to be moved
     if the two distributions were represented by two piles of soil.
 
     Args
@@ -80,67 +88,62 @@ def wasserstein_1d(x: torch.Tensor,
     _wasserstein_update_input_check(x, y, x_weights, y_weights)
     return _wasserstein_compute(x, y, x_weights, y_weights)
 
+
 def _wasserstein_param_check(
-        x: torch.Tensor,
-        y: torch.Tensor,
-        x_weights: Optional[torch.Tensor]=None,
-        y_weights: Optional[torch.Tensor]=None
+    x: torch.Tensor,
+    y: torch.Tensor,
+    x_weights: Optional[torch.Tensor] = None,
+    y_weights: Optional[torch.Tensor] = None,
 ) -> None:
     if x_weights is not None:
         if not torch.all(x_weights > 0):
             raise ValueError("All weights must be non-negative.")
-        if not ( 0 < torch.sum(x_weights) < torch.inf ):
+        if not (0 < torch.sum(x_weights) < torch.inf):
             raise ValueError("Weight tensor sum must be positive-finite.")
         if not x_weights.device == x.device:
             raise ValueError("Expected values and weights to be on the same device.")
     if y_weights is not None:
         if not torch.all(y_weights > 0):
             raise ValueError("All weights must be non-negative.")
-        if not ( 0 < torch.sum(y_weights) < torch.inf ):
+        if not (0 < torch.sum(y_weights) < torch.inf):
             raise ValueError("Weight tensor sum must be positive-finite.")
         if not y_weights.device == y.device:
             raise ValueError("Expected values and weights to be on the same device.")
     if not x.device == y.device:
         raise ValueError("Expected all the tensors to be on the same device.")
 
+
 def _wasserstein_update_input_check(
-        x: torch.Tensor,
-        y: torch.Tensor,
-        x_weights: Optional[torch.Tensor]=None,
-        y_weights: Optional[torch.Tensor]=None
+    x: torch.Tensor,
+    y: torch.Tensor,
+    x_weights: Optional[torch.Tensor] = None,
+    y_weights: Optional[torch.Tensor] = None,
 ) -> None:
     if x.nelement() == 0 or y.nelement() == 0:
-        raise ValueError(
-            "Distribution cannot be empty."
-        )
+        raise ValueError("Distribution cannot be empty.")
     if x.dim() > 1 or y.dim() > 1:
-        raise ValueError(
-            "Distribution has to be one dimensional."
-        )
+        raise ValueError("Distribution has to be one dimensional.")
     if x_weights is not None and x_weights.nelement() == 0:
-        raise ValueError(
-            "Weights cannot be empty."
-        )
+        raise ValueError("Weights cannot be empty.")
     if x_weights is not None and x_weights.shape != x.shape:
         raise ValueError(
             "Distribution values and weight tensors must be of the same shape, "
             f"got shapes {x.shape} and {x_weights.shape}."
         )
     if y_weights is not None and y_weights.nelement() == 0:
-        raise ValueError(
-            "Weights cannot be empty."
-        )
+        raise ValueError("Weights cannot be empty.")
     if y_weights is not None and y_weights.shape != y.shape:
         raise ValueError(
             "Distribution values and weight tensors must be of the same shape, "
             f"got shapes {y.shape} and {y_weights.shape}."
         )
 
+
 def _wasserstein_compute(
-        x: torch.Tensor,
-        y: torch.Tensor,
-        x_weights: Optional[torch.Tensor],
-        y_weights: Optional[torch.Tensor]
+    x: torch.Tensor,
+    y: torch.Tensor,
+    x_weights: Optional[torch.Tensor],
+    y_weights: Optional[torch.Tensor],
 ) -> torch.Tensor:
     # Assigning device per input
     device = x.device
@@ -164,15 +167,19 @@ def _wasserstein_compute(
     if x_weights is None:
         x_cdf = x_cdf_indices.to(device) / x.size(0)
     else:
-        x_sorted_cum_weights = torch.cat((torch.Tensor([0]).to(device),
-                                         torch.cumsum(x_weights[x_sorter], dim=0)))
+        x_sorted_cum_weights = torch.cat(
+            (torch.Tensor([0]).to(device), torch.cumsum(x_weights[x_sorter], dim=0))
+        )
         x_cdf = x_sorted_cum_weights[x_cdf_indices] / x_sorted_cum_weights[-1]
-    
+
     if y_weights is None:
         y_cdf = y_cdf_indices.to(device) / y.size(0)
     else:
-        y_sorted_cum_weights = torch.cat((torch.Tensor([0]).to(device),
-                                         torch.cumsum(y_weights[y_sorter], dim=0)))
+        y_sorted_cum_weights = torch.cat(
+            (torch.Tensor([0]).to(device), torch.cumsum(y_weights[y_sorter], dim=0))
+        )
         y_cdf = y_sorted_cum_weights[y_cdf_indices] / y_sorted_cum_weights[-1]
 
-    return torch.sum(torch.multiply(torch.abs(x_cdf - y_cdf), deltas), dim=0, keepdim=True).to(device)
+    return torch.sum(
+        torch.multiply(torch.abs(x_cdf - y_cdf), deltas), dim=0, keepdim=True
+    ).to(device)

@@ -6,9 +6,7 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from torcheval.metrics.statistical.wasserstein import (
-    Wasserstein1D,
-)
+from torcheval.metrics.statistical.wasserstein import Wasserstein1D
 
 __all__ = ["Wasserstein1D"]
 __doc_name__ = "Statistical Metrics"

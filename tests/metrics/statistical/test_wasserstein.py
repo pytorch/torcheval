@@ -7,10 +7,11 @@
 import unittest
 from typing import List, Optional, Tuple, Union
 
-from scipy.stats import wasserstein_distance as sp_wasserstein
 import numpy as np
 
 import torch
+
+from scipy.stats import wasserstein_distance as sp_wasserstein
 from torcheval.metrics.functional.statistical.wasserstein import wasserstein_1d
 from torcheval.metrics.statistical.wasserstein import Wasserstein1D
 from torcheval.utils.random_data import get_rand_data_wasserstein1d
@@ -22,14 +23,15 @@ from torcheval.utils.test_utils.metric_class_tester import (
 
 NUM_TOTAL_UPDATES = 8
 
+
 class TestWasserstein1D(MetricClassTester):
     def _get_scipy_equivalent(
         self,
         x: torch.Tensor,
         y: torch.Tensor,
-        x_weights: Optional[torch.Tensor]=None,
-        y_weights: Optional[torch.Tensor]=None,
-        device: str="cpu"
+        x_weights: Optional[torch.Tensor] = None,
+        y_weights: Optional[torch.Tensor] = None,
+        device: str = "cpu",
     ) -> torch.Tensor:
         # Convert inputs to scipy style inputs
         x_np = x.numpy().flatten()
@@ -38,38 +40,47 @@ class TestWasserstein1D(MetricClassTester):
             x_weights_np = x_weights.numpy().flatten()
         if y_weights is not None:
             y_weights_np = y_weights.numpy().flatten()
-        
+
         scipy_result = np.stack(
-            [sp_wasserstein(sp_x, sp_y, sp_x_w, sp_y_w)
-            for sp_x, sp_y, sp_x_w, sp_y_w 
-            in zip([x_np], [y_np], [x_weights_np], [y_weights_np])]
-            )
+            [
+                sp_wasserstein(sp_x, sp_y, sp_x_w, sp_y_w)
+                for sp_x, sp_y, sp_x_w, sp_y_w in zip(
+                    [x_np], [y_np], [x_weights_np], [y_weights_np]
+                )
+            ]
+        )
 
         return torch.tensor(scipy_result, device=device).to(torch.float)
 
-    
     def _check_against_scipy(
         self,
         x: torch.Tensor,
         y: torch.Tensor,
-        x_weights: Optional[torch.Tensor]=None,
-        y_weights: Optional[torch.Tensor]=None,
-        device: str="cpu"
+        x_weights: Optional[torch.Tensor] = None,
+        y_weights: Optional[torch.Tensor] = None,
+        device: str = "cpu",
     ) -> None:
-        compute_result = self._get_scipy_equivalent(x.to("cpu"), y.to("cpu"), x_weights.to("cpu"), y_weights.to("cpu"), device)
+        compute_result = self._get_scipy_equivalent(
+            x.to("cpu"), y.to("cpu"), x_weights.to("cpu"), y_weights.to("cpu"), device
+        )
 
         self.run_class_implementation_tests(
             metric=Wasserstein1D(device=device),
-            state_names={"dist_1_samples", "dist_2_samples", "dist_1_weights", "dist_2_weights"},
+            state_names={
+                "dist_1_samples",
+                "dist_2_samples",
+                "dist_1_weights",
+                "dist_2_weights",
+            },
             update_kwargs={
                 "new_samples_dist_1": x,
                 "new_samples_dist_2": y,
                 "new_weights_dist_1": x_weights,
-                "new_weights_dist_2": y_weights
+                "new_weights_dist_2": y_weights,
             },
             compute_result=compute_result,
             num_total_updates=NUM_TOTAL_UPDATES,
-            num_processes=NUM_PROCESSES
+            num_processes=NUM_PROCESSES,
         )
 
     def test_wasserstein1d_valid_input(self) -> None:
@@ -138,8 +149,7 @@ class TestWasserstein1D(MetricClassTester):
     def test_wasserstein1d_random_data_getter(self) -> None:
         for _ in range(10):
             x, y, x_weights, y_weights = get_rand_data_wasserstein1d(
-                num_updates=NUM_TOTAL_UPDATES,
-                batch_size=BATCH_SIZE
+                num_updates=NUM_TOTAL_UPDATES, batch_size=BATCH_SIZE
             )
 
             self._check_against_scipy(x, y, x_weights, y_weights)
@@ -147,93 +157,69 @@ class TestWasserstein1D(MetricClassTester):
     def test_wasserstein1d_invalid_input(self) -> None:
         metric = Wasserstein1D()
         with self.assertRaisesRegex(
-            ValueError,
-            "Distribution has to be one dimensional."
+            ValueError, "Distribution has to be one dimensional."
         ):
             metric.update(torch.rand(4, 2), torch.rand(7))
-        
+
         with self.assertRaisesRegex(
-            ValueError,
-            "Distribution has to be one dimensional."
+            ValueError, "Distribution has to be one dimensional."
         ):
-            metric.update(torch.rand(4), torch.rand(7,3))
-   
-        with self.assertRaisesRegex(
-            ValueError,
-            "Distribution cannot be empty."
-        ):
+            metric.update(torch.rand(4), torch.rand(7, 3))
+
+        with self.assertRaisesRegex(ValueError, "Distribution cannot be empty."):
             metric.update(torch.rand(4), torch.Tensor([]))
-        
-        with self.assertRaisesRegex(
-            ValueError,
-            "Distribution cannot be empty."
-        ):
+
+        with self.assertRaisesRegex(ValueError, "Distribution cannot be empty."):
             metric.update(torch.Tensor([]), torch.rand(5))
 
         with self.assertRaisesRegex(
-            ValueError,
-            "Weight tensor sum must be positive-finite."
+            ValueError, "Weight tensor sum must be positive-finite."
         ):
-            metric.update(torch.rand(4), torch.rand(4),
-                           torch.Tensor([]), torch.rand(4)
-            )
+            metric.update(torch.rand(4), torch.rand(4), torch.Tensor([]), torch.rand(4))
 
         with self.assertRaisesRegex(
-            ValueError,
-            "Weight tensor sum must be positive-finite."
+            ValueError, "Weight tensor sum must be positive-finite."
         ):
-            metric.update(torch.rand(4), torch.rand(4),
-                           torch.rand(4), torch.Tensor([])
-            )
-        
-        with self.assertRaisesRegex(
-            ValueError,
-            "Distribution values and weight tensors must be of the same shape, "
-            "got shapes "
-            r"torch.Size\(\[4\]\) and torch.Size\(\[7\]\)."
-        ):
-            metric.update(torch.rand(4), torch.rand(4),
-                           torch.rand(7), torch.rand(4)
-            )
+            metric.update(torch.rand(4), torch.rand(4), torch.rand(4), torch.Tensor([]))
 
         with self.assertRaisesRegex(
             ValueError,
             "Distribution values and weight tensors must be of the same shape, "
             "got shapes "
-            r"torch.Size\(\[6\]\) and torch.Size\(\[10\]\)."
+            r"torch.Size\(\[4\]\) and torch.Size\(\[7\]\).",
         ):
-            metric.update(torch.rand(6), torch.rand(6),
-                           torch.rand(6), torch.rand(10)
-            )
-        
-        with self.assertRaisesRegex(
-            ValueError,
-            "All weights must be non-negative."
-        ):
-            metric.update(torch.rand(4), torch.rand(4),
-                           torch.Tensor([1, -1, 2, 3]), torch.rand(4)
-            )
+            metric.update(torch.rand(4), torch.rand(4), torch.rand(7), torch.rand(4))
 
         with self.assertRaisesRegex(
             ValueError,
-            "All weights must be non-negative."
+            "Distribution values and weight tensors must be of the same shape, "
+            "got shapes "
+            r"torch.Size\(\[6\]\) and torch.Size\(\[10\]\).",
         ):
-            metric.update(torch.rand(4), torch.rand(4),
-                           torch.rand(4), torch.Tensor([1, -1, 2, 3])
+            metric.update(torch.rand(6), torch.rand(6), torch.rand(6), torch.rand(10))
+
+        with self.assertRaisesRegex(ValueError, "All weights must be non-negative."):
+            metric.update(
+                torch.rand(4), torch.rand(4), torch.Tensor([1, -1, 2, 3]), torch.rand(4)
             )
 
-        with self.assertRaisesRegex(
-            ValueError,
-            "All weights must be non-negative."
-        ):
-            metric.update(torch.rand(4), torch.rand(4),
-                           torch.Tensor([-1.0, -2.0, 0.0, 1.0]), torch.rand(4)
+        with self.assertRaisesRegex(ValueError, "All weights must be non-negative."):
+            metric.update(
+                torch.rand(4), torch.rand(4), torch.rand(4), torch.Tensor([1, -1, 2, 3])
             )
 
-        with self.assertRaisesRegex(
-            ValueError,
-            "All weights must be non-negative."
-        ):
-            metric.update(torch.rand(4), torch.rand(4),
-                           torch.rand(4), torch.Tensor([-1.5, -1.0, 0.5, 0.75])
+        with self.assertRaisesRegex(ValueError, "All weights must be non-negative."):
+            metric.update(
+                torch.rand(4),
+                torch.rand(4),
+                torch.Tensor([-1.0, -2.0, 0.0, 1.0]),
+                torch.rand(4),
+            )
+
+        with self.assertRaisesRegex(ValueError, "All weights must be non-negative."):
+            metric.update(
+                torch.rand(4),
+                torch.rand(4),
+                torch.rand(4),
+                torch.Tensor([-1.5, -1.0, 0.5, 0.75]),
             )
