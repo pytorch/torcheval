@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-from typing import List, Optional, Tuple, Union
+from typing import Optional
 
 import numpy as np
 

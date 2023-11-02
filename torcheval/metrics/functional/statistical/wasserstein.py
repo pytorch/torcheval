@@ -4,7 +4,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import Optional, Tuple, Union
+from typing import Optional
 
 import torch
 
@@ -16,7 +16,7 @@ def wasserstein_1d(
     x_weights: Optional[torch.Tensor] = None,
     y_weights: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
-    """
+    r"""
     The Wasserstein distance, also called the Earth Mover's Distance, is a
     measure of the similarity between two distributions.
 

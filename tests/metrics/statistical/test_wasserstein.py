@@ -4,15 +4,13 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-import unittest
-from typing import List, Optional, Tuple, Union
+from typing import Optional
 
 import numpy as np
 
 import torch
 
 from scipy.stats import wasserstein_distance as sp_wasserstein
-from torcheval.metrics.functional.statistical.wasserstein import wasserstein_1d
 from torcheval.metrics.statistical.wasserstein import Wasserstein1D
 from torcheval.utils.random_data import get_rand_data_wasserstein1d
 from torcheval.utils.test_utils.metric_class_tester import (
