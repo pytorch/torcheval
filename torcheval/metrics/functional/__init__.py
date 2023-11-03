@@ -46,6 +46,7 @@ from torcheval.metrics.functional.ranking import (
     num_collisions,
     reciprocal_rank,
     retrieval_precision,
+    retrieval_recall,
     weighted_calibration,
 )
 from torcheval.metrics.functional.regression import mean_squared_error, r2_score
@@ -101,6 +102,7 @@ __all__ = [
     "r2_score",
     "reciprocal_rank",
     "retrieval_precision",
+    "retrieval_recall",
     "sum",
     "throughput",
     "topk_multilabel_accuracy",
