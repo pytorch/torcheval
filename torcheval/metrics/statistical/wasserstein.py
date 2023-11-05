@@ -10,7 +10,6 @@ import torch
 
 from torcheval.metrics.functional.statistical.wasserstein import (
     _wasserstein_compute,
-    _wasserstein_param_check,
     _wasserstein_update_input_check,
 )
 from torcheval.metrics.metric import Metric
@@ -73,13 +72,6 @@ class Wasserstein1D(Metric[torch.Tensor]):
         new_weights_dist_1, new_weights_dist_2 (Tensor): Optional tensor weights for each value.
             If unspecified, each value is assigned the same value (1.0).
         """
-        _wasserstein_param_check(
-            new_samples_dist_1,
-            new_samples_dist_2,
-            new_weights_dist_1,
-            new_weights_dist_2,
-        )
-
         _wasserstein_update_input_check(
             new_samples_dist_1,
             new_samples_dist_2,

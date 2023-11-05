@@ -84,33 +84,8 @@ def wasserstein_1d(
     torch.tensor([0.75])
 
     """
-    _wasserstein_param_check(x, y, x_weights, y_weights)
     _wasserstein_update_input_check(x, y, x_weights, y_weights)
     return _wasserstein_compute(x, y, x_weights, y_weights)
-
-
-def _wasserstein_param_check(
-    x: torch.Tensor,
-    y: torch.Tensor,
-    x_weights: Optional[torch.Tensor] = None,
-    y_weights: Optional[torch.Tensor] = None,
-) -> None:
-    if x_weights is not None:
-        if not torch.all(x_weights > 0):
-            raise ValueError("All weights must be non-negative.")
-        if not (0 < torch.sum(x_weights) < torch.inf):
-            raise ValueError("Weight tensor sum must be positive-finite.")
-        if not x_weights.device == x.device:
-            raise ValueError("Expected values and weights to be on the same device.")
-    if y_weights is not None:
-        if not torch.all(y_weights > 0):
-            raise ValueError("All weights must be non-negative.")
-        if not (0 < torch.sum(y_weights) < torch.inf):
-            raise ValueError("Weight tensor sum must be positive-finite.")
-        if not y_weights.device == y.device:
-            raise ValueError("Expected values and weights to be on the same device.")
-    if not x.device == y.device:
-        raise ValueError("Expected all the tensors to be on the same device.")
 
 
 def _wasserstein_update_input_check(
@@ -123,20 +98,36 @@ def _wasserstein_update_input_check(
         raise ValueError("Distribution cannot be empty.")
     if x.dim() > 1 or y.dim() > 1:
         raise ValueError("Distribution has to be one dimensional.")
-    if x_weights is not None and x_weights.nelement() == 0:
-        raise ValueError("Weights cannot be empty.")
-    if x_weights is not None and x_weights.shape != x.shape:
-        raise ValueError(
-            "Distribution values and weight tensors must be of the same shape, "
-            f"got shapes {x.shape} and {x_weights.shape}."
-        )
-    if y_weights is not None and y_weights.nelement() == 0:
-        raise ValueError("Weights cannot be empty.")
-    if y_weights is not None and y_weights.shape != y.shape:
-        raise ValueError(
-            "Distribution values and weight tensors must be of the same shape, "
-            f"got shapes {y.shape} and {y_weights.shape}."
-        )
+    if not x.device == y.device:
+        raise ValueError("Expected all the tensors to be on the same device.")
+    if x_weights is not None:
+        if x_weights.nelement() == 0:
+            raise ValueError("Weights cannot be empty.")
+        if not torch.all(x_weights > 0):
+            raise ValueError("All weights must be non-negative.")
+        if not (0 < torch.sum(x_weights) < torch.inf):
+            raise ValueError("Weight tensor sum must be positive-finite.")
+        if not x_weights.device == x.device:
+            raise ValueError("Expected values and weights to be on the same device.")
+        if x_weights.shape != x.shape:
+            raise ValueError(
+                "Distribution values and weight tensors must be of the same shape, "
+                f"got shapes {x.shape} and {x_weights.shape}."
+            )
+    if y_weights is not None:
+        if y_weights.nelement() == 0:
+            raise ValueError("Weights cannot be empty.")
+        if not torch.all(y_weights > 0):
+            raise ValueError("All weights must be non-negative.")
+        if not (0 < torch.sum(y_weights) < torch.inf):
+            raise ValueError("Weight tensor sum must be positive-finite.")
+        if not y_weights.device == y.device:
+            raise ValueError("Expected values and weights to be on the same device.")
+        if y_weights.shape != y.shape:
+            raise ValueError(
+                "Distribution values and weight tensors must be of the same shape, "
+                f"got shapes {y.shape} and {y_weights.shape}."
+            )
 
 
 def _wasserstein_compute(
