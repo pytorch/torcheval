@@ -1,0 +1,36 @@
+﻿torcheval.metrics.RetrievalRecall
+=================================
+
+.. currentmodule:: torcheval.metrics
+
+.. autoclass:: RetrievalRecall
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~RetrievalRecall.__init__
+      ~RetrievalRecall.compute
+      ~RetrievalRecall.load_state_dict
+      ~RetrievalRecall.merge_state
+      ~RetrievalRecall.reset
+      ~RetrievalRecall.state_dict
+      ~RetrievalRecall.to
+      ~RetrievalRecall.update
+      ~RetrievalRecall.update_single_query
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~RetrievalRecall.device
+   
+   

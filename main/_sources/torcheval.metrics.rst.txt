@@ -89,6 +89,7 @@ Ranking Metrics
    HitRate
    ReciprocalRank
    RetrievalPrecision
+   RetrievalRecall
    WeightedCalibration
 
 Regression Metrics
