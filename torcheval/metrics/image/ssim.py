@@ -55,6 +55,9 @@ class StructuralSimilarity(Metric[torch.Tensor]):
         """
         if images_1.shape != images_2.shape:
             raise RuntimeError("The two sets of images must have the same shape.")
+        # convert to fp32, mostly for bf16 types
+        images_1 = images_1.to(dtype=torch.float32)
+        images_2 = images_2.to(dtype=torch.float32)
 
         batch_size = images_1.shape[0]
 
