@@ -89,6 +89,15 @@ Regression Metrics
    mean_squared_error
    r2_score
 
+Statistical Metrics
+-------------------------------------------------------------------
+
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+
+   wasserstein_1d
+
 Text Metrics
 -------------------------------------------------------------------
 

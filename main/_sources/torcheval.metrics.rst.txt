@@ -102,6 +102,15 @@ Regression Metrics
    MeanSquaredError
    R2Score
 
+Statistical Metrics
+-------------------------------------------------------------------
+
+.. autosummary::
+   :toctree: generated
+   :nosignatures:
+
+   Wasserstein1D
+
 Text Metrics
 -------------------------------------------------------------------
 
