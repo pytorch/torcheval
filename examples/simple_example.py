@@ -40,7 +40,7 @@ def prepare_dataloader() -> torch.utils.data.DataLoader:
     )
 
 
-if __name__ == "__main__":
+def main() -> None:
     torch.random.manual_seed(42)
 
     model = Model()
@@ -91,3 +91,7 @@ if __name__ == "__main__":
         metric.reset()
 
         num_epochs_completed += 1
+
+
+if __name__ == "__main__":
+    main()  # pragma: no cover

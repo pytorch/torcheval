@@ -159,7 +159,7 @@ def train() -> None:
     dist.destroy_process_group()
 
 
-if __name__ == "__main__":
+def main() -> None:
     lc = pet.LaunchConfig(
         min_nodes=1,
         max_nodes=1,
@@ -172,6 +172,10 @@ if __name__ == "__main__":
     )
 
     pet.elastic_launch(lc, entrypoint=train)()
+
+
+if __name__ == "__main__":
+    main()  # pragma: no cover
 
 
 ######################################################################
