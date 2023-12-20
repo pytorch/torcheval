@@ -54,6 +54,10 @@ class TestMean(MetricClassTester):
         metric = Mean()
         self.assertEqual(metric.compute(), torch.tensor(0.0, dtype=torch.float64))
 
+        metric = Mean()
+        metric.update(torch.tensor([0.0, 0.0]), weight=0)
+        self.assertEqual(metric.compute(), torch.tensor(0.0, dtype=torch.float64))
+
     def test_mean_class_update_input_valid_weight(self) -> None:
         update_value = [
             torch.rand(BATCH_SIZE),

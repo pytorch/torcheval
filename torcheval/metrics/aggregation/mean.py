@@ -55,9 +55,11 @@ class Mean(Metric[torch.Tensor]):
         device: Optional[torch.device] = None,
     ) -> None:
         super().__init__(device=device)
+        # weighted sum of values over the entire state
         self._add_state(
             "weighted_sum", torch.tensor(0.0, device=self.device, dtype=torch.float64)
         )
+        # sum total of weights over the entire state
         self._add_state(
             "weights", torch.tensor(0.0, device=self.device, dtype=torch.float64)
         )
@@ -82,9 +84,9 @@ class Mean(Metric[torch.Tensor]):
             ValueError: If value of weight is neither a ``float`` nor a ``int'' nor a ``torch.Tensor`` that matches the input tensor size.
         """
 
-        weighted_sum, weights = _mean_update(input, weight)
+        weighted_sum, net_weight = _mean_update(input, weight)
         self.weighted_sum += weighted_sum
-        self.weights += weights
+        self.weights += net_weight
         return self
 
     @torch.inference_mode()
@@ -93,8 +95,10 @@ class Mean(Metric[torch.Tensor]):
         If no calls to ``update()`` are made before ``compute()`` is called,
         the function throws a warning and returns 0.0.
         """
-        if not self.weighted_sum:
-            logging.warning("No calls to update() have been made - returning 0.0")
+        if not torch.is_nonzero(self.weights):
+            logging.warning(
+                "There is no weight for the average, no samples with weight have been added (did you ever run update()?)- returning 0.0"
+            )
             return torch.tensor(0.0, dtype=torch.float64)
         return self.weighted_sum / self.weights
 
