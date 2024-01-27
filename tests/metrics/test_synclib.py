@@ -462,7 +462,6 @@ def _test_complex_mixed_state(dst_rank: Optional[int] = None) -> None:
             all(("total" in synced_states[i][_METRIC_NAME] for i in range(2)))
         )
 
-        # pyre-fixme[16]: `TestCase` has no attribute `assertEquals`.
         tc.assertEquals(len(synced_states[0][_METRIC_NAME]["seen"]), 2)
         tc.assertEquals(len(synced_states[1][_METRIC_NAME]["seen"]), 3)
 
@@ -514,7 +513,6 @@ def _test_empty_tensor_list_sync_state(dst_rank: Optional[int] = None) -> None:
             all(("total" in synced_states[i][_METRIC_NAME] for i in range(2)))
         )
 
-        # pyre-fixme[16]: `TestCase` has no attribute `assertEquals`.
         tc.assertEquals(len(synced_states[0][_METRIC_NAME]["seen"]), 2)
         tc.assertEquals(len(synced_states[1][_METRIC_NAME]["seen"]), 0)
     else:
