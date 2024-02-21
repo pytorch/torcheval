@@ -123,11 +123,17 @@ class BinaryAUROC(Metric[torch.Tensor]):
     ) -> torch.Tensor:
         """
         Return AUROC.  If no ``update()`` calls are made before
-        ``compute()`` is called, return an empty tensor.
+        ``compute()`` is called, a runtime error is thrown as
+        computing AUROC over 0 samples is undefined.
 
         Returns:
             Tensor: The return value of AUROC for each task (num_tasks,).
         """
+        if len(self.inputs) == 0:
+            raise AssertionError(
+                "No samples to compute auroc with. Did you call update?"
+            )
+
         return _binary_auroc_compute(
             torch.cat(self.inputs, -1),
             torch.cat(self.targets, -1),
@@ -247,6 +253,11 @@ class MulticlassAUROC(Metric[torch.Tensor]):
     def compute(
         self: TMulticlasslAUROC,
     ) -> torch.Tensor:
+        if len(self.inputs) == 0:
+            raise AssertionError(
+                "No samples to compute auroc with. Did you call update?"
+            )
+
         return _multiclass_auroc_compute(
             torch.cat(self.inputs),
             torch.cat(self.targets),
