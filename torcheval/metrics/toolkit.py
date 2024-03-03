@@ -365,8 +365,7 @@ def _sync_metric_object(
     local_metric_data: Metric,
     process_group: dist.ProcessGroup,
     world_size: int,
-) -> List[Metric]:
-    ...
+) -> List[Metric]: ...
 
 
 @overload
@@ -374,8 +373,7 @@ def _sync_metric_object(
     local_metric_data: MutableMapping[str, Metric],
     process_group: dist.ProcessGroup,
     world_size: int,
-) -> List[MutableMapping[str, Metric]]:
-    ...
+) -> List[MutableMapping[str, Metric]]: ...
 
 
 def _apply_device_to_tensor_states(

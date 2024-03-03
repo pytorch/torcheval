@@ -232,12 +232,12 @@ class WindowedMeanSquaredError(
                     self.sum_squared_error += metric.sum_squared_error.to(self.device)
                 self.sum_weight += metric.sum_weight.to(self.device)
             cur_size = min(metric.total_updates, metric.max_num_updates)
-            self.windowed_sum_squared_error[
-                :, idx : idx + cur_size
-            ] = metric.windowed_sum_squared_error[:, :cur_size]
-            self.windowed_sum_weight[
-                :, idx : idx + cur_size
-            ] = metric.windowed_sum_weight[:, :cur_size]
+            self.windowed_sum_squared_error[:, idx : idx + cur_size] = (
+                metric.windowed_sum_squared_error[:, :cur_size]
+            )
+            self.windowed_sum_weight[:, idx : idx + cur_size] = (
+                metric.windowed_sum_weight[:, :cur_size]
+            )
             idx += cur_size
             self.total_updates += metric.total_updates
 

@@ -34,12 +34,8 @@ class TestMeanSquaredError(MetricClassTester):
             -1, int(torch.numel(target) / (NUM_TOTAL_UPDATES * BATCH_SIZE))
         ).squeeze()
 
-        target_window = target[
-            (-1) * max_num_updates :,
-        ]
-        input_window = input[
-            (-1) * max_num_updates :,
-        ]
+        target_window = target[(-1) * max_num_updates :,]
+        input_window = input[(-1) * max_num_updates :,]
 
         target_window_np = target_window.reshape(
             -1, int(torch.numel(target_window) / (max_num_updates * BATCH_SIZE))
@@ -54,9 +50,7 @@ class TestMeanSquaredError(MetricClassTester):
             sample_weight_np = sample_weight.reshape(
                 -1, int(torch.numel(sample_weight) / (NUM_TOTAL_UPDATES * BATCH_SIZE))
             ).squeeze()
-            sample_weight_window = sample_weight[
-                (-1) * max_num_updates :,
-            ]
+            sample_weight_window = sample_weight[(-1) * max_num_updates :,]
             sample_weight_window_np = sample_weight_window.reshape(
                 -1,
                 int(torch.numel(sample_weight_window) / (max_num_updates * BATCH_SIZE)),

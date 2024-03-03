@@ -279,15 +279,15 @@ class WindowedBinaryNormalizedEntropy(
                 self.num_examples += metric.num_examples.to(self.device)
                 self.num_positive += metric.num_positive.to(self.device)
             cur_size = min(metric.total_updates, metric.max_num_updates)
-            self.windowed_total_entropy[
-                :, idx : idx + cur_size
-            ] = metric.windowed_total_entropy[:, :cur_size]
-            self.windowed_num_examples[
-                :, idx : idx + cur_size
-            ] = metric.windowed_num_examples[:, :cur_size]
-            self.windowed_num_positive[
-                :, idx : idx + cur_size
-            ] = metric.windowed_num_positive[:, :cur_size]
+            self.windowed_total_entropy[:, idx : idx + cur_size] = (
+                metric.windowed_total_entropy[:, :cur_size]
+            )
+            self.windowed_num_examples[:, idx : idx + cur_size] = (
+                metric.windowed_num_examples[:, :cur_size]
+            )
+            self.windowed_num_positive[:, idx : idx + cur_size] = (
+                metric.windowed_num_positive[:, :cur_size]
+            )
             idx += cur_size
             self.total_updates += metric.total_updates
 

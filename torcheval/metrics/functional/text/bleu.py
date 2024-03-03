@@ -81,7 +81,7 @@ def _bleu_score_update(
     matches_by_order = torch.zeros(n_gram, device=device)
     possible_matches_by_order = torch.zeros(n_gram, device=device)
 
-    for (candidate, references) in zip(input_, target_):
+    for candidate, references in zip(input_, target_):
         candidate_tokenized = candidate.split()
         references_tokenized = [ref.split() for ref in references]
 
