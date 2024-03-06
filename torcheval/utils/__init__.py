@@ -4,6 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+# pyre-strict
+
 from torcheval.utils.random_data import (
     get_rand_data_binary,
     get_rand_data_binned_binary,

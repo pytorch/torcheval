@@ -4,6 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+# pyre-strict
+
 from torcheval.metrics.functional.aggregation import auc, mean, sum, throughput
 from torcheval.metrics.functional.classification import (
     binary_accuracy,

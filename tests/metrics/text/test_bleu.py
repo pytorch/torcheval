@@ -5,6 +5,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+# pyre-strict
+
 import torch
 from torcheval.metrics.text import BLEUScore
 from torcheval.utils.test_utils.metric_class_tester import MetricClassTester

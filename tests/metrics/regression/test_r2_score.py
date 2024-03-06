@@ -4,6 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
+# pyre-strict
+
 import torch
 from sklearn.metrics import r2_score
 from torcheval.metrics import R2Score
