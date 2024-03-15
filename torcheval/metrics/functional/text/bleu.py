@@ -127,7 +127,7 @@ def _bleu_score_compute(
         )
 
     if weights is None:
-        weights = torch.tensor([1 / n_gram] * n_gram)
+        weights = torch.tensor([1 / n_gram] * n_gram, device=input_len.device)
 
     precisions = matches_by_order / possible_matches_by_order
     geometric_mean = torch.exp(torch.sum(weights * torch.log(precisions)))
