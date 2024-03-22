@@ -6,13 +6,32 @@
 
 # pyre-strict
 
+# pyre-fixme[21]: Could not find module
+#  `torcheval.metrics.functional.ranking.click_through_rate`.
 from torcheval.metrics.functional.ranking.click_through_rate import click_through_rate
 from torcheval.metrics.functional.ranking.frequency import frequency_at_k
+
+# pyre-fixme[21]: Could not find module `torcheval.metrics.functional.ranking.hit_rate`.
 from torcheval.metrics.functional.ranking.hit_rate import hit_rate
+
+# pyre-fixme[21]: Could not find module
+#  `torcheval.metrics.functional.ranking.num_collisions`.
 from torcheval.metrics.functional.ranking.num_collisions import num_collisions
+
+# pyre-fixme[21]: Could not find module
+#  `torcheval.metrics.functional.ranking.reciprocal_rank`.
 from torcheval.metrics.functional.ranking.reciprocal_rank import reciprocal_rank
+
+# pyre-fixme[21]: Could not find module
+#  `torcheval.metrics.functional.ranking.retrieval_precision`.
 from torcheval.metrics.functional.ranking.retrieval_precision import retrieval_precision
+
+# pyre-fixme[21]: Could not find module
+#  `torcheval.metrics.functional.ranking.retrieval_recall`.
 from torcheval.metrics.functional.ranking.retrieval_recall import retrieval_recall
+
+# pyre-fixme[21]: Could not find module
+#  `torcheval.metrics.functional.ranking.weighted_calibration`.
 from torcheval.metrics.functional.ranking.weighted_calibration import (
     weighted_calibration,
 )

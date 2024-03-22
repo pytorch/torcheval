@@ -6,9 +6,17 @@
 
 # pyre-strict
 
+# pyre-fixme[21]: Could not find module `torcheval.metrics.functional.aggregation.auc`.
 from torcheval.metrics.functional.aggregation.auc import auc
+
+# pyre-fixme[21]: Could not find module `torcheval.metrics.functional.aggregation.mean`.
 from torcheval.metrics.functional.aggregation.mean import mean
+
+# pyre-fixme[21]: Could not find module `torcheval.metrics.functional.aggregation.sum`.
 from torcheval.metrics.functional.aggregation.sum import sum
+
+# pyre-fixme[21]: Could not find module
+#  `torcheval.metrics.functional.aggregation.throughput`.
 from torcheval.metrics.functional.aggregation.throughput import throughput
 
 

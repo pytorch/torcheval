@@ -12,6 +12,8 @@ from typing import Iterable, Optional, TypeVar
 
 import torch
 
+# pyre-fixme[21]: Could not find module
+#  `torcheval.metrics.functional.regression.mean_squared_error`.
 from torcheval.metrics.functional.regression.mean_squared_error import (
     _mean_squared_error_compute,
     _mean_squared_error_param_check,

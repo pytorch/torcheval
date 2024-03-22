@@ -22,6 +22,9 @@ from torcheval.metrics.functional.classification.auroc import (
     binary_auroc,
     multiclass_auroc,
 )
+
+# pyre-fixme[21]: Could not find module
+#  `torcheval.metrics.functional.classification.binary_normalized_entropy`.
 from torcheval.metrics.functional.classification.binary_normalized_entropy import (
     binary_normalized_entropy,
 )

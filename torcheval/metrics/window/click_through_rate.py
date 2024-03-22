@@ -12,6 +12,8 @@ from typing import Iterable, Optional, Tuple, TypeVar, Union
 
 import torch
 
+# pyre-fixme[21]: Could not find module
+#  `torcheval.metrics.functional.ranking.click_through_rate`.
 from torcheval.metrics.functional.ranking.click_through_rate import (
     _click_through_rate_compute,
     _click_through_rate_update,

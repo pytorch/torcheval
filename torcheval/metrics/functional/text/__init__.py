@@ -7,11 +7,22 @@
 # pyre-strict
 
 from torcheval.metrics.functional.text.bleu import bleu_score
+
+# pyre-fixme[21]: Could not find module `torcheval.metrics.functional.text.perplexity`.
 from torcheval.metrics.functional.text.perplexity import perplexity
+
+# pyre-fixme[21]: Could not find module
+#  `torcheval.metrics.functional.text.word_error_rate`.
 from torcheval.metrics.functional.text.word_error_rate import word_error_rate
+
+# pyre-fixme[21]: Could not find module
+#  `torcheval.metrics.functional.text.word_information_lost`.
 from torcheval.metrics.functional.text.word_information_lost import (
     word_information_lost,
 )
+
+# pyre-fixme[21]: Could not find module
+#  `torcheval.metrics.functional.text.word_information_preserved`.
 from torcheval.metrics.functional.text.word_information_preserved import (
     word_information_preserved,
 )

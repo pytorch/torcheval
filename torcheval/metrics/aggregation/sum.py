@@ -12,6 +12,7 @@ from typing import Iterable, Optional, TypeVar, Union
 
 import torch
 
+# pyre-fixme[21]: Could not find module `torcheval.metrics.functional.aggregation.sum`.
 from torcheval.metrics.functional.aggregation.sum import _sum_update
 from torcheval.metrics.metric import Metric
 

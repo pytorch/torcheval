@@ -12,6 +12,8 @@ from typing import Iterable, Optional, TypeVar, Union
 
 import torch
 
+# pyre-fixme[21]: Could not find module
+#  `torcheval.metrics.functional.ranking.retrieval_precision`.
 from torcheval.metrics.functional.ranking.retrieval_precision import (
     _retrieval_precision_param_check,
     _retrieval_precision_update_input_check,

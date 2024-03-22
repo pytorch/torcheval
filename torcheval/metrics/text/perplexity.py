@@ -12,6 +12,7 @@ from typing import Iterable, Optional, TypeVar
 
 import torch
 
+# pyre-fixme[21]: Could not find module `torcheval.metrics.functional.text.perplexity`.
 from torcheval.metrics.functional.text.perplexity import (
     _perplexity_compute,
     _perplexity_update,
