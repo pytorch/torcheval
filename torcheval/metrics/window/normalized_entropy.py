@@ -12,8 +12,6 @@ from typing import Iterable, Optional, Tuple, TypeVar, Union
 
 import torch
 
-# pyre-fixme[21]: Could not find module
-#  `torcheval.metrics.functional.classification.binary_normalized_entropy`.
 from torcheval.metrics.functional.classification.binary_normalized_entropy import (
     _baseline_update,
     _binary_normalized_entropy_update,

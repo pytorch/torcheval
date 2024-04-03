@@ -12,8 +12,6 @@ from typing import Iterable, List, Optional, TypeVar, Union
 
 import torch
 
-# pyre-fixme[21]: Could not find module
-#  `torcheval.metrics.functional.text.word_information_lost`.
 from torcheval.metrics.functional.text.word_information_lost import (
     _wil_compute,
     _wil_update,

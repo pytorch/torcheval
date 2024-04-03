@@ -12,8 +12,6 @@ from typing import Iterable, List, Optional, TypeVar, Union
 
 import torch
 
-# pyre-fixme[21]: Could not find module
-#  `torcheval.metrics.functional.text.word_error_rate`.
 from torcheval.metrics.functional.text.word_error_rate import (
     _word_error_rate_compute,
     _word_error_rate_update,

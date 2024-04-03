@@ -13,7 +13,6 @@ from typing import Iterable, Optional, TypeVar, Union
 
 import torch
 
-# pyre-fixme[21]: Could not find module `torcheval.metrics.functional.aggregation.mean`.
 from torcheval.metrics.functional.aggregation.mean import _mean_update
 from torcheval.metrics.metric import Metric
 

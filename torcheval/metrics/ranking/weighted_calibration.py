@@ -12,8 +12,6 @@ from typing import Iterable, Optional, TypeVar, Union
 
 import torch
 
-# pyre-fixme[21]: Could not find module
-#  `torcheval.metrics.functional.ranking.weighted_calibration`.
 from torcheval.metrics.functional.ranking.weighted_calibration import (
     _weighted_calibration_update,
 )

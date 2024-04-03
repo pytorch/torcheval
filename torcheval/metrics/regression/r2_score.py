@@ -12,8 +12,6 @@ from typing import Iterable, Optional, TypeVar
 
 import torch
 
-# pyre-fixme[21]: Could not find module
-#  `torcheval.metrics.functional.regression.r2_score`.
 from torcheval.metrics.functional.regression.r2_score import (
     _r2_score_compute,
     _r2_score_param_check,

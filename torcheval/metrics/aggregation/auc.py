@@ -12,7 +12,6 @@ from typing import Iterable, Optional, TypeVar
 
 import torch
 
-# pyre-fixme[21]: Could not find module `torcheval.metrics.functional.aggregation.auc`.
 from torcheval.metrics.functional.aggregation.auc import (
     _auc_compute,
     _auc_update_input_check,
