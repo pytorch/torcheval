@@ -13,6 +13,7 @@ from typing import Any, Iterable, Optional, TypeVar, Union
 import torch
 import torch.nn.functional as F
 from torch import nn, Tensor
+from torcheval.metrics.functional.frechet import gaussian_frechet_distance
 from torcheval.metrics.metric import Metric
 
 if find_spec("torchvision") is not None:
@@ -196,49 +197,9 @@ class FrechetInceptionDistance(Metric[torch.Tensor]):
         fake_cov = fake_cov_num / (self.num_fake_images - 1)
 
         # Compute the Frechet Distance between the distributions
-        fid = self._calculate_frechet_distance(
+        fid = gaussian_frechet_distance(
             real_mean.squeeze(), real_cov, fake_mean.squeeze(), fake_cov
         )
-        return fid
-
-    def _calculate_frechet_distance(
-        self: TFrechetInceptionDistance,
-        mu1: Tensor,
-        sigma1: Tensor,
-        mu2: Tensor,
-        sigma2: Tensor,
-    ) -> Tensor:
-        """
-        Calculate the Frechet Distance between two multivariate Gaussian distributions.
-
-        Args:
-            mu1 (Tensor): The mean of the first distribution.
-            sigma1 (Tensor): The covariance matrix of the first distribution.
-            mu2 (Tensor): The mean of the second distribution.
-            sigma2 (Tensor): The covariance matrix of the second distribution.
-
-        Returns:
-            tensor: The Frechet Distance between the two distributions.
-        """
-
-        # Compute the squared distance between the means
-        mean_diff = mu1 - mu2
-        mean_diff_squared = mean_diff.square().sum(dim=-1)
-
-        # Calculate the sum of the traces of both covariance matrices
-        trace_sum = sigma1.trace() + sigma2.trace()
-
-        # Compute the eigenvalues of the matrix product of the real and fake covariance matrices
-        sigma_mm = torch.matmul(sigma1, sigma2)
-        eigenvals = torch.linalg.eigvals(sigma_mm)
-
-        # Take the square root of each eigenvalue and take its sum
-        sqrt_eigenvals_sum = eigenvals.sqrt().real.sum(dim=-1)
-
-        # Calculate the FID using the squared distance between the means,
-        # the sum of the traces of the covariance matrices, and the sum of the square roots of the eigenvalues
-        fid = mean_diff_squared + trace_sum - 2 * sqrt_eigenvals_sum
-
         return fid
 
     def _FID_parameter_check(

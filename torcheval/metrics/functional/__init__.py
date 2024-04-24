@@ -40,6 +40,7 @@ from torcheval.metrics.functional.classification import (
     multilabel_recall_at_fixed_precision,
     topk_multilabel_accuracy,
 )
+from torcheval.metrics.functional.frechet import gaussian_frechet_distance
 from torcheval.metrics.functional.image import peak_signal_noise_ratio
 from torcheval.metrics.functional.ranking import (
     click_through_rate,
@@ -78,6 +79,7 @@ __all__ = [
     "bleu_score",
     "click_through_rate",
     "frequency_at_k",
+    "gaussian_frechet_distance",
     "hit_rate",
     "mean",
     "mean_squared_error",

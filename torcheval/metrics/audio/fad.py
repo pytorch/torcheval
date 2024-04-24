@@ -10,24 +10,10 @@ import copy
 from typing import Any, Callable, Iterable, Optional, Union
 
 import torch
-
-try:
-    from torchaudio.functional import frechet_distance
-
-    _TORCHAUDIO_AVAILABLE = True
-except ImportError:
-    _TORCHAUDIO_AVAILABLE = False
-
+from torcheval.metrics.functional.frechet import gaussian_frechet_distance
 from torcheval.metrics.metric import Metric
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
-
-
-def _validate_torchaudio_available() -> None:
-    if not _TORCHAUDIO_AVAILABLE:
-        raise RuntimeError(
-            "TorchAudio is required. Please make sure ``torchaudio`` is installed."
-        )
 
 
 class FrechetAudioDistance(Metric[torch.Tensor]):
@@ -50,8 +36,6 @@ class FrechetAudioDistance(Metric[torch.Tensor]):
         embedding_dim: int,
         device: Optional[torch.device] = None,
     ) -> None:
-        _validate_torchaudio_available()
-
         super().__init__(device=device)
 
         self.preproc = preproc
@@ -120,8 +104,13 @@ class FrechetAudioDistance(Metric[torch.Tensor]):
         pred_cov = self.pred_cov_partial / (self.pred_n - 1) - pred_mean.T @ (
             pred_mean
         ) * self.pred_n / (self.pred_n - 1)
-        return frechet_distance(
-            pred_mean.squeeze(0), pred_cov, target_mean.squeeze(0), target_cov
+        return gaussian_frechet_distance(
+            pred_mean.squeeze(0),
+            # pyre-fixme[6]: For 2nd argument expected `Tensor` but got `float`.
+            pred_cov,
+            target_mean.squeeze(0),
+            # pyre-fixme[6]: For 4th argument expected `Tensor` but got `float`.
+            target_cov,
         )
 
     @torch.inference_mode()
@@ -165,7 +154,6 @@ class FrechetAudioDistance(Metric[torch.Tensor]):
         Returns:
             FrechetAudioDistance: Instance of FrechetAudioDistance preloaded with TorchAudio's pretrained VGGish model.
         """
-        _validate_torchaudio_available()
         try:
             from torchaudio.prototype.pipelines import VGGISH
         except ImportError:
