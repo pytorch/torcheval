@@ -224,12 +224,12 @@ class WindowedWeightedCalibration(
                 self.weighted_input_sum += metric.weighted_input_sum.to(self.device)
                 self.weighted_target_sum += metric.weighted_target_sum.to(self.device)
             cur_size = min(metric.total_updates, metric.max_num_updates)
-            self.windowed_weighted_input_sum[:, idx : idx + cur_size] = (
-                metric.windowed_weighted_input_sum[:, :cur_size]
-            )
-            self.windowed_weighted_target_sum[:, idx : idx + cur_size] = (
-                metric.windowed_weighted_target_sum[:, :cur_size]
-            )
+            self.windowed_weighted_input_sum[
+                :, idx : idx + cur_size
+            ] = metric.windowed_weighted_input_sum[:, :cur_size]
+            self.windowed_weighted_target_sum[
+                :, idx : idx + cur_size
+            ] = metric.windowed_weighted_target_sum[:, :cur_size]
             idx += cur_size
             self.total_updates += metric.total_updates
         self.next_inserted = idx
