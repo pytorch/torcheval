@@ -107,3 +107,32 @@ class TestBleu(MetricClassTester):
             num_total_updates=2,
             num_processes=2,
         )
+
+    def test_bleu_brevity(self) -> None:
+        candidates = [["the squirrel is eating the nut"], ["the cat is on mat"]]
+        references = [
+            [
+                [
+                    "a squirrel is eating a nut",
+                    "the squirrel is eating a tasty nut",
+                    "hi",
+                ]
+            ],
+            [["there is a cat on the mat", "a cat is on the mat"]],
+        ]
+        self.run_class_implementation_tests(
+            metric=BLEUScore(n_gram=4),
+            state_names={
+                "input_len",
+                "target_len",
+                "matches_by_order",
+                "possible_matches_by_order",
+            },
+            update_kwargs={
+                "input": candidates,
+                "target": references,
+            },
+            compute_result=torch.tensor(0.41650065, dtype=torch.float64),
+            num_total_updates=2,
+            num_processes=2,
+        )

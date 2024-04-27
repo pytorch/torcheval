@@ -88,7 +88,10 @@ def _bleu_score_update(
         references_tokenized = [ref.split() for ref in references]
 
         len_candidate = len(candidate_tokenized)
-        len_reference = min([len(ref) for ref in references_tokenized])
+        len_reference = min(
+            [len(ref) for ref in references_tokenized],
+            key=lambda ref_len: (abs(ref_len - len_candidate), ref_len),
+        )
         input_len += len_candidate
         target_len += len_reference
 
