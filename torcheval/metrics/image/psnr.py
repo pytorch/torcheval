@@ -26,7 +26,7 @@ TPeakSignalNoiseRatio = TypeVar("TPeakSignalNoiseRatio")
 class PeakSignalNoiseRatio(Metric[torch.Tensor]):
     """
     Compute the PSNR (Peak Signal to Noise Ratio) between two images.
-    Its functional version is `torcheval.metrics.functional.psnr`
+    Its functional version is `torcheval.metrics.functional.peak_signal_noise_ratio`
 
     Args:
         data_range (float): the range of the input images. Default: None.
