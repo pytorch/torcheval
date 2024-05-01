@@ -82,9 +82,10 @@ def _send_uneven_tensors(
         gathered_result: list with size equal to the process group where
             gathered_result[i] corresponds to result tensor from process i
     """
+    # TODO investigate why this stopped working (can cause hangs)
     # if the backend is NCCL, we can gather the differently sized tensors without padding
-    if dist.get_backend(group) == "nccl":
-        return _simple_send_tensors(tensor, world_size, group, rank=rank)
+    # if dist.get_backend(group) == "nccl":
+    #     return _simple_send_tensors(tensor, world_size, group, rank=rank)
 
     # gather sizes of all tensors on all ranks
     local_size = torch.tensor(tensor.shape, device=tensor.device)
