@@ -209,12 +209,12 @@ class WindowedClickThroughRate(
                 self.click_total += metric.click_total.to(self.device)
                 self.weight_total += metric.weight_total.to(self.device)
             cur_size = min(metric.total_updates, metric.max_num_updates)
-            self.windowed_click_total[
-                :, idx : idx + cur_size
-            ] = metric.windowed_click_total[:, :cur_size]
-            self.windowed_weight_total[
-                :, idx : idx + cur_size
-            ] = metric.windowed_weight_total[:, :cur_size]
+            self.windowed_click_total[:, idx : idx + cur_size] = (
+                metric.windowed_click_total[:, :cur_size]
+            )
+            self.windowed_weight_total[:, idx : idx + cur_size] = (
+                metric.windowed_weight_total[:, :cur_size]
+            )
             idx += cur_size
             self.total_updates += metric.total_updates
 
