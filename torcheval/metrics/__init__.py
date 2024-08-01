@@ -7,7 +7,16 @@
 # pyre-strict
 
 from torcheval.metrics import functional
-from torcheval.metrics.aggregation import AUC, Cat, Max, Mean, Min, Sum, Throughput
+from torcheval.metrics.aggregation import (
+    AUC,
+    Cat,
+    Covariance,
+    Max,
+    Mean,
+    Min,
+    Sum,
+    Throughput,
+)
 from torcheval.metrics.audio import FrechetAudioDistance
 from torcheval.metrics.classification import (
     BinaryAccuracy,
@@ -97,6 +106,7 @@ __all__ = [
     "BinaryRecallAtFixedPrecision",
     "BLEUScore",
     "Cat",
+    "Covariance",
     "ClickThroughRate",
     "FrechetAudioDistance",
     "FrechetInceptionDistance",
