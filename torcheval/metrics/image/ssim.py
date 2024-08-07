@@ -9,16 +9,30 @@
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
 import warnings
+from importlib.util import find_spec
 from typing import Iterable, Optional, TypeVar
 
 import torch
 
-from skimage.metrics import structural_similarity
+if find_spec("torchvision") is not None:
+    from skimage.metrics import structural_similarity
+
+    _SKIMAGE_AVAILABLE = True
+else:
+    _SKIMAGE_AVAILABLE = False
+
 
 from torcheval.metrics.metric import Metric
 
 
 TStructuralSimilarity = TypeVar("TStructuralSimilarity")
+
+
+def _validate_torchvision_available() -> None:
+    if not _SKIMAGE_AVAILABLE:
+        raise RuntimeError(
+                "You must have skimage installed to use SSIM, please install torcheval[image]"
+        )
 
 
 class StructuralSimilarity(Metric[torch.Tensor]):
