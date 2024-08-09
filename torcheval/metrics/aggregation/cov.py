@@ -31,7 +31,7 @@ class Covariance(Metric[_Output]):
         )
         self.n: int = self._add_state_and_return("n", default=0)
 
-    # pyre-ignore[11]: Q708723
+    # pyre-fixme[31]: Expression `_T` is not a valid type.
     def _add_state_and_return(self, name: str, default: _T) -> _T:
         # Helper funcction for pyre
         self._add_state(name, default)
