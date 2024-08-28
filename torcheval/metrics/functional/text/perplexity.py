@@ -114,7 +114,7 @@ def _perplexity_compute(
     num_total: torch.Tensor,
 ) -> torch.Tensor:
 
-    return torch.exp(sum_log_probs / num_total).double()
+    return torch.exp(sum_log_probs / num_total)
 
 
 def _perplexity_input_check(
