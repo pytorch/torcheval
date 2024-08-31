@@ -193,6 +193,7 @@ def _recall_compute(
         # Ignore classes which have no samples in `target` and `input`
         mask = (num_labels != 0) | (num_predictions != 0)
         num_tp = num_tp[mask]
+        num_labels = num_labels[mask]
 
     recall = num_tp / num_labels
 
