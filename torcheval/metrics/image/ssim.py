@@ -14,7 +14,7 @@ from typing import Iterable, Optional, TypeVar
 
 import torch
 
-if find_spec("torchvision") is not None:
+if find_spec("skimage") is not None:
     from skimage.metrics import structural_similarity
 
     _SKIMAGE_AVAILABLE = True
@@ -31,7 +31,7 @@ TStructuralSimilarity = TypeVar("TStructuralSimilarity")
 def _validate_torchvision_available() -> None:
     if not _SKIMAGE_AVAILABLE:
         raise RuntimeError(
-                "You must have skimage installed to use SSIM, please install torcheval[image]"
+            "You must have skimage installed to use SSIM, please install torcheval[image]"
         )
 
 
