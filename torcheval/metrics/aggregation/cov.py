@@ -6,22 +6,21 @@
 
 # pyre-strict
 
-from collections.abc import Iterable
-from typing import Tuple, TypeVar
+from typing import Iterable, Optional, Tuple, TypeVar, Union
 
 import torch
 from torcheval.metrics.metric import Metric
 from typing_extensions import Self, TypeAlias
 
 # TODO: use a NamedTuple?
-_T = TypeVar("_T", bound=torch.Tensor | int)
+_T = TypeVar("_T", bound=Union[torch.Tensor, int])
 _Output: TypeAlias = Tuple[torch.Tensor, torch.Tensor]  # mean, cov
 
 
 class Covariance(Metric[_Output]):
     """Fit sample mean + covariance to empirical distribution"""
 
-    def __init__(self, *, device: torch.device | None = None) -> None:
+    def __init__(self, *, device: Optional[torch.device] = None) -> None:
         super().__init__(device=device)
         self.sum: torch.Tensor = self._add_state_and_return(
             "sum", default=torch.as_tensor(0.0)
@@ -31,9 +30,8 @@ class Covariance(Metric[_Output]):
         )
         self.n: int = self._add_state_and_return("n", default=0)
 
-    # pyre-fixme[31]: Expression `_T` is not a valid type.
     def _add_state_and_return(self, name: str, default: _T) -> _T:
-        # Helper funcction for pyre
+        # Helper function for pyre
         self._add_state(name, default)
         return getattr(self, name)
 
