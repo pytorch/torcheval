@@ -6,13 +6,15 @@
 
 # pyre-strict
 
+from typing import List
+
 import torch
 from torcheval.metrics import Covariance
 from torcheval.utils.test_utils.metric_class_tester import MetricClassTester
 
 
 class TestCovariance(MetricClassTester):
-    def _test_covariance_with_input(self, batching: list[int]) -> None:
+    def _test_covariance_with_input(self, batching: List[int]) -> None:
         gen = torch.Generator()
         gen.manual_seed(3)
         X = torch.randn(sum(batching), 4, generator=gen)

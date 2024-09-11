@@ -24,8 +24,7 @@ jobs:
         shell: bash -l {0}
         run: |
           set -eux
-          conda activate test
-          conda install pytorch torchaudio torchvision cpuonly -c pytorch-nightly
+          pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cpu
           pip install -r requirements.txt
           pip install -r dev-requirements.txt
           pip install --no-build-isolation -e ".[dev]"
@@ -33,7 +32,6 @@ jobs:
         shell: bash -l {0}
         run: |
           set -eux
-          conda activate test
           pytest --cov=. --cov-report xml tests -vv
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v2
