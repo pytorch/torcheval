@@ -33,7 +33,7 @@ def binary_normalized_entropy(
         weight (Tensor): Optional. A manual rescaling weight to match input tensor shape (num_tasks, num_samples).
         num_tasks (int): Number of tasks that need BinaryNormalizedEntropy calculation. Default value
                     is 1.
-        from_logit  (bool): A boolean indicator whether the predicted value `y_pred` is
+        from_logits (bool): A boolean indicator whether the predicted value `y_pred` is
                 a floating-point logit value (i.e., value in [-inf, inf] when `from_logits=True`)
                 or a probablity value (i.e., value in [0., 1.] when `from_logits=False`)
                 Default value is False.
