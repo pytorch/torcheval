@@ -14,6 +14,7 @@ import torch
 from torcheval.metrics import FrechetAudioDistance
 
 
+# pyre-fixme[24]: Generic type `np.ndarray` expects 2 type parameters.
 def add_noise(x: np.ndarray, std_dev: float) -> np.ndarray:
     """Adds Gaussian noise to the samples.
     Args:
