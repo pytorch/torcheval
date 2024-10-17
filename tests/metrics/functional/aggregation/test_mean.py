@@ -41,6 +41,7 @@ class TestMean(unittest.TestCase):
         def _compute_result(
             val: torch.Tensor, weights: Union[float, torch.Tensor]
         ) -> torch.Tensor:
+            # pyre-fixme[9]: val has type `Tensor`; used as `ndarray[Any, Any]`.
             val = val.numpy().flatten()
             if isinstance(weights, torch.Tensor):
                 weights = weights.numpy().flatten()
