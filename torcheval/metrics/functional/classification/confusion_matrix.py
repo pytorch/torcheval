@@ -270,6 +270,8 @@ def _confusion_matrix_update_input_check(
                 f"got {input.shape}."
             )
     else:
+        # pyre-fixme[58]: `>=` is not supported for operand types `Tensor` and
+        #  `Optional[int]`.
         if torch.max(input) >= num_classes:
             raise ValueError(
                 "Got `input` prediction class which is too large for the number of classes, "
@@ -277,6 +279,8 @@ def _confusion_matrix_update_input_check(
             )
 
     # check if num classes is high enough to cover targets.
+    # pyre-fixme[58]: `>=` is not supported for operand types `Tensor` and
+    #  `Optional[int]`.
     if torch.max(target) >= num_classes:
         raise ValueError(
             "Got `target` class which is larger than the number of classes, "
