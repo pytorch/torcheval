@@ -68,7 +68,6 @@ def _binary_recall_compute(
     num_tp: torch.Tensor,
     num_true_labels: torch.Tensor,
 ) -> torch.Tensor:
-
     recall = num_tp / num_true_labels
 
     if torch.isnan(recall):

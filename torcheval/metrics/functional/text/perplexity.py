@@ -113,7 +113,6 @@ def _perplexity_compute(
     sum_log_probs: torch.Tensor,
     num_total: torch.Tensor,
 ) -> torch.Tensor:
-
     return torch.exp(sum_log_probs / num_total).double()
 
 
@@ -122,7 +121,6 @@ def _perplexity_input_check(
     target: torch.Tensor,
     ignore_index: Optional[int] = None,
 ) -> None:
-
     if target.ndim != 2:
         raise ValueError(
             f"target should be a two-dimensional tensor, got shape {target.shape}."

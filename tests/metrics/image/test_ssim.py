@@ -37,7 +37,6 @@ class TestStructuralSimilarity(MetricClassTester):
         height: int,
         width: int,
     ) -> Dict[str, Tensor]:
-
         images = {
             "images_1": torch.rand(
                 size=(num_updates, batch_size, num_channels, height, width)
@@ -52,7 +51,6 @@ class TestStructuralSimilarity(MetricClassTester):
     def test_ssim(
         self,
     ) -> None:
-
         images = self._get_input_data(
             NUM_TOTAL_UPDATES, BATCH_SIZE, IMG_CHANNELS, IMG_HEIGHT, IMG_WIDTH
         )

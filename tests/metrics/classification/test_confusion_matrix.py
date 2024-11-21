@@ -26,7 +26,6 @@ class TestBinaryConfusionMatrix(MetricClassTester):
         target: torch.Tensor,
         normalize: Optional[str] = None,
     ) -> None:
-
         input_np = input.flatten().numpy()
         target_np = target.flatten().numpy()
 
@@ -145,7 +144,6 @@ class TestBinaryConfusionMatrix(MetricClassTester):
         )
 
     def test_binary_confusion_matrix_invalid_input(self) -> None:
-
         metric = BinaryConfusionMatrix()
 
         with self.assertRaisesRegex(
@@ -189,7 +187,6 @@ class TestMulticlassConfusionMatrix(MetricClassTester):
         num_classes: int,
         normalize: Optional[str] = None,
     ) -> None:
-
         if input.ndim == 3:
             input_np = input.argmax(dim=2).flatten().numpy()
         else:

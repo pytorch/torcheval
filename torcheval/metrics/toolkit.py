@@ -397,7 +397,6 @@ def _sync_metric_object(
     process_group: dist.ProcessGroup,
     world_size: int,
 ) -> Union[List[Metric], List[MutableMapping[str, Metric]]]:
-
     unpack = False  # unpack the dictionary into a single metric when returned. Only used when metric_data is a metric and not a dict of metrics.
     if isinstance(local_metric_data, Metric):
         local_metric_data = {_TMP: local_metric_data}

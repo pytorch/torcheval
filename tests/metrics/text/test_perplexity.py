@@ -67,7 +67,6 @@ class TestPerplexity(MetricClassTester):
         )
 
     def test_perplexity_with_invalid_input(self) -> None:
-
         metric = Perplexity()
         with self.assertRaisesRegex(
             ValueError, "target should be a two-dimensional tensor"

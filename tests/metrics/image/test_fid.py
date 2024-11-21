@@ -63,7 +63,6 @@ class TestFrechetInceptionDistance(MetricClassTester):
         height: int,
         width: int,
     ) -> torch.Tensor:
-
         imgs = torch.rand(
             size=(num_updates, batch_size, num_channels, height, width),
         )
@@ -107,7 +106,6 @@ class TestFrechetInceptionDistance(MetricClassTester):
         expected_result: torch.Tensor,
         model: Optional[torch.nn.Module] = None,
     ) -> None:
-
         # create an alternating list of boolean values to
         # simulate a sequence of alternating real and generated images
         real_or_gen = [idx % 2 == 0 for idx in range(NUM_TOTAL_UPDATES)]

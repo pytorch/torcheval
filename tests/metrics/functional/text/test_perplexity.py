@@ -14,7 +14,6 @@ from torcheval.metrics.functional import perplexity
 
 class Perplexity(unittest.TestCase):
     def test_perplexity(self) -> None:
-
         input = torch.tensor([[[0.3659, 0.7025, 0.3104]], [[0.0097, 0.6577, 0.1947]]])
         target = torch.tensor([[2], [1]])
         torch.testing.assert_close(
@@ -43,7 +42,6 @@ class Perplexity(unittest.TestCase):
         )
 
     def test_perplexity_with_ignore_index(self) -> None:
-
         input = torch.tensor([[[0.3659, 0.7025, 0.3104]], [[0.0097, 0.6577, 0.1947]]])
         target = torch.tensor([[2], [100]])
         torch.testing.assert_close(
@@ -72,7 +70,6 @@ class Perplexity(unittest.TestCase):
         )
 
     def test_perplexity_with_invalid_input(self) -> None:
-
         with self.assertRaisesRegex(
             ValueError, "target should be a two-dimensional tensor"
         ):

@@ -27,7 +27,6 @@ class TestBinaryPrecision(unittest.TestCase):
         target: torch.Tensor,
         threshold: float = 0.5,
     ) -> None:
-
         input_np = np.where(input.numpy() < threshold, 0, 1)
         target_np = target.squeeze().numpy()
         sklearn_result = torch.tensor(precision_score(target_np, input_np)).to(
@@ -71,7 +70,6 @@ class TestBinaryPrecision(unittest.TestCase):
         self._test_binary_precision_with_input(input, target)
 
     def test_binary_precision_invalid_input(self) -> None:
-
         with self.assertRaisesRegex(
             ValueError,
             "The `input` and `target` should have the same dimensions, "

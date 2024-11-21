@@ -70,7 +70,6 @@ class TestBinaryConfusionMatrix(unittest.TestCase):
         )
 
     def test_binary_confusion_matrix_invalid_input(self) -> None:
-
         with self.assertRaisesRegex(
             ValueError,
             "input should be a one-dimensional tensor for binary confusion matrix, "

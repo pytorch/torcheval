@@ -23,7 +23,6 @@ class TestBinaryAUPRC(unittest.TestCase):
     def _get_sklearn_equivalent(
         self, input: torch.Tensor, target: torch.Tensor, device: str = "cpu"
     ) -> torch.Tensor:
-
         # Convert input/target to sklearn style inputs
         # run each task once at a time since no multi-task/multiclass
         # available for sklearn
@@ -43,7 +42,6 @@ class TestBinaryAUPRC(unittest.TestCase):
         num_tasks: int = 1,
         compute_result: Optional[torch.Tensor] = None,
     ) -> None:
-
         device = "cpu"
         if torch.cuda.is_available():
             device = "cuda"
@@ -175,7 +173,6 @@ class TestMulticlassAUPRC(unittest.TestCase):
         num_classes: int,
         compute_result: Optional[torch.Tensor] = None,
     ) -> None:
-
         device = "cpu"
         if torch.cuda.is_available():
             device = "cuda"
@@ -372,7 +369,6 @@ class TestMultilabelAUPRC(unittest.TestCase):
         average: Optional[str] = "macro",
         compute_result: Optional[torch.Tensor] = None,
     ) -> None:
-
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
         # get sklearn compute result if none given

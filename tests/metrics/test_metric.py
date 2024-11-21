@@ -171,7 +171,6 @@ class MetricBaseClassTest(unittest.TestCase):
         )
 
     def test_reset_primitive_type(self) -> None:
-
         TDummyMetric = TypeVar("TDummyMetric")
 
         class DummyMetric(Metric[Tuple[float, int]]):

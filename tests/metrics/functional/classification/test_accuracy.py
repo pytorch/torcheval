@@ -64,7 +64,6 @@ class TestBinaryAccuracy(unittest.TestCase):
         self._test_binary_accuracy_with_input(input, target)
 
     def test_binary_accuracy_invalid_input(self) -> None:
-
         with self.assertRaisesRegex(
             ValueError,
             "The `input` and `target` should have the same dimensions, "

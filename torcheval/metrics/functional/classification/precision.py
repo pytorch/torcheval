@@ -147,7 +147,6 @@ def _precision_compute(
     num_label: torch.Tensor,
     average: Optional[str],
 ) -> torch.Tensor:
-
     if average in ("macro", "weighted"):
         # Ignore the class that has no samples in both `input` and `target`
         mask = (num_label != 0) | ((num_tp + num_fp) != 0)
@@ -225,7 +224,6 @@ def _binary_precision_update(
     target: torch.Tensor,
     threshold: float = 0.5,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-
     _binary_precision_update_input_check(input, target)
 
     input = torch.where(input < threshold, 0, 1)

@@ -36,7 +36,6 @@ class TestBinaryBinnedPrecisionRecallCurve(MetricClassTester):
         target: torch.Tensor,
         threshold: Union[int, List[float], torch.Tensor],
     ) -> None:
-
         compute_result = binary_binned_precision_recall_curve(
             input.reshape(-1), target.reshape(-1), threshold=threshold
         )

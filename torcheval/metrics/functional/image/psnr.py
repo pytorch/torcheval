@@ -48,7 +48,6 @@ def peak_signal_noise_ratio(
 
 
 def _psnr_param_check(data_range: Optional[float]) -> None:
-
     # Check matching shapes
     if data_range is not None:
         if type(data_range) is not float:
@@ -58,7 +57,6 @@ def _psnr_param_check(data_range: Optional[float]) -> None:
 
 
 def _psnr_input_check(input: torch.Tensor, target: torch.Tensor) -> None:
-
     # Check matching shapes
     if input.shape != target.shape:
         raise ValueError(

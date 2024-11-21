@@ -179,7 +179,6 @@ class TestBinaryRecall(unittest.TestCase):
         target: torch.Tensor,
         threshold: float = 0.5,
     ) -> None:
-
         my_compute_result = my_binary_recall_score(input, target, threshold=threshold)
 
         input_np = np.where(input.numpy() < threshold, 0, 1)

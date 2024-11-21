@@ -88,7 +88,6 @@ class TestBinaryF1Score(unittest.TestCase):
         )
 
     def test_binary_f1_score_invalid_input(self) -> None:
-
         with self.assertRaisesRegex(
             ValueError,
             "input should be a one-dimensional tensor for binary f1 score, "

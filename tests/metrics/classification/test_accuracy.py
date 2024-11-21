@@ -283,7 +283,6 @@ class TestMultilabelAccuracy(MetricClassTester):
 
 class TestTopKAccuracy(MetricClassTester):
     def test_accuracy_class_base(self) -> None:
-
         input = torch.tensor(
             [
                 [
@@ -315,7 +314,6 @@ class TestTopKAccuracy(MetricClassTester):
         )
 
     def test_accuracy_class_macro(self) -> None:
-
         input = torch.tensor(
             [
                 [
@@ -347,7 +345,6 @@ class TestTopKAccuracy(MetricClassTester):
         )
 
     def test_accuracy_class_no_average(self) -> None:
-
         input = torch.tensor(
             [
                 [

@@ -91,7 +91,6 @@ class TestPeakSignalNoiseRatio(MetricClassTester):
             metric.update(torch.rand(4, 3, 4, 4), torch.rand(4, 3, 4, 6))
 
     def test_psnr_class_invalid_data_range(self) -> None:
-
         with self.assertRaisesRegex(
             ValueError, "`data_range needs to be either `None` or `float`."
         ):

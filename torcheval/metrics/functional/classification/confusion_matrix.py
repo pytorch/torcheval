@@ -169,7 +169,6 @@ def _binary_confusion_matrix_update(
     target: torch.Tensor,
     threshold: float = 0.5,
 ) -> torch.Tensor:
-
     _binary_confusion_matrix_update_input_check(input, target)
 
     input = torch.where(input < threshold, 0, 1)
@@ -200,7 +199,6 @@ def _confusion_matrix_compute(
     confusion_matrix: torch.Tensor,
     normalize: Optional[str],
 ) -> torch.Tensor:
-
     if normalize == "pred":
         return norm(confusion_matrix.to(torch.float), p=1, dim=0)
     elif normalize == "true":

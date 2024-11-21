@@ -14,7 +14,6 @@ from torcheval.metrics.functional import word_information_lost
 
 class TestWordInformationLost(unittest.TestCase):
     def test_word_information_lost(self) -> None:
-
         input = ["hello world", "welcome to the facebook"]
         target = ["hello metaverse", "welcome to meta"]
         torch.testing.assert_close(

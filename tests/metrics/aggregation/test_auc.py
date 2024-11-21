@@ -142,8 +142,9 @@ class TestAUC(MetricClassTester):
         ]
 
         # Build sklearn metrics
-        sk_x, sk_y = torch.cat([tx.unsqueeze(0) for tx in x], dim=1), torch.cat(
-            [ty.unsqueeze(0) for ty in y], dim=1
+        sk_x, sk_y = (
+            torch.cat([tx.unsqueeze(0) for tx in x], dim=1),
+            torch.cat([ty.unsqueeze(0) for ty in y], dim=1),
         )
         compute_result = torch.tensor(
             [sklearn_auc(temp_x, temp_y) for temp_x, temp_y in zip(sk_x, sk_y)],

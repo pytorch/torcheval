@@ -153,7 +153,7 @@ def send_tensors(
 
 
 def metrics_traversal_order(
-    state_dict: Dict[str, Dict[str, TState]]
+    state_dict: Dict[str, Dict[str, TState]],
 ) -> List[Tuple[str, str]]:
     """
     Args:

@@ -14,7 +14,6 @@ from torcheval.utils.test_utils.metric_class_tester import MetricClassTester
 
 
 class TestRetrievalPrecision(MetricClassTester):
-
     # test update and compute functions
 
     def test_retrieval_precision_single_updates_1_query_avg_none(self) -> None:

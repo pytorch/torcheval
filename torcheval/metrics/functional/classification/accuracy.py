@@ -256,7 +256,6 @@ def _multiclass_accuracy_update(
     num_classes: Optional[int],
     k: int,
 ) -> Tuple[torch.Tensor, torch.Tensor]:
-
     _accuracy_update_input_check(input, target, num_classes, k)
 
     if k == 1:
@@ -353,7 +352,6 @@ def _binary_accuracy_update(
     target: torch.Tensor,
     threshold: float = 0.5,
 ) -> Tuple[torch.Tensor, torch.Tensor]:
-
     _binary_accuracy_update_input_check(input, target)
 
     input = torch.where(input < threshold, 0, 1)
@@ -417,7 +415,6 @@ def _multilabel_update(
     target: torch.Tensor,
     criteria: str = "exact_match",
 ) -> Tuple[torch.Tensor, torch.Tensor]:
-
     if criteria == "exact_match":
         num_correct = torch.all(input == target, dim=1).sum()
         num_total = torch.tensor(target.shape[0], device=target.device)

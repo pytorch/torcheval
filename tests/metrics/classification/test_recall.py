@@ -238,7 +238,6 @@ class TestBinaryRecall(MetricClassTester):
         target: torch.Tensor,
         threshold: float = 0.5,
     ) -> None:
-
         input_np = np.where(input.numpy() < threshold, 0, 1)
         target_np = target.squeeze().numpy()
 

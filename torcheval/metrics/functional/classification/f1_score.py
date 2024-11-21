@@ -124,7 +124,6 @@ def _binary_f1_score_update(
     target: torch.Tensor,
     threshold: float = 0.5,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-
     _binary_f1_score_update_input_check(input, target)
 
     input = torch.where(input < threshold, 0, 1)
