@@ -9,8 +9,9 @@
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
 import warnings
+from collections.abc import Iterable
 from importlib.util import find_spec
-from typing import Iterable, Optional, TypeVar
+from typing import TypeVar
 
 import torch
 
@@ -46,7 +47,7 @@ class StructuralSimilarity(Metric[torch.Tensor]):
 
     def __init__(
         self: TStructuralSimilarity,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
 

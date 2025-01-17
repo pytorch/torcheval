@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, Tuple, TypeVar, Union
+from collections.abc import Iterable
+from typing import TypeVar, Union
 
 import torch
 
@@ -23,7 +24,7 @@ TWindowedMeanSquaredError = TypeVar("TWindowedMeanSquaredError")
 
 
 class WindowedMeanSquaredError(
-    Metric[Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]]
+    Metric[Union[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]]
 ):
     r"""
     The windowed version of Mean Squared Error that provides both windowed and liftime values.
@@ -77,7 +78,7 @@ class WindowedMeanSquaredError(
         max_num_updates: int = 100,
         enable_lifetime: bool = True,
         multioutput: str = "uniform_average",
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         _mean_squared_error_param_check(multioutput)
@@ -126,7 +127,7 @@ class WindowedMeanSquaredError(
         input: torch.Tensor,
         target: torch.Tensor,
         *,
-        sample_weight: Optional[torch.Tensor] = None,
+        sample_weight: torch.Tensor | None = None,
     ) -> TWindowedMeanSquaredError:
         """
         Update states with the ground truth values and predictions.
@@ -161,7 +162,7 @@ class WindowedMeanSquaredError(
     @torch.inference_mode()
     def compute(
         self: TWindowedMeanSquaredError,
-    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+    ) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
         """
         Return the Mean Squared Error.
 
@@ -251,7 +252,7 @@ class WindowedMeanSquaredError(
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        sample_weight: Optional[torch.Tensor],
+        sample_weight: torch.Tensor | None,
         num_tasks: int = 1,
     ) -> None:
         if num_tasks == 1:

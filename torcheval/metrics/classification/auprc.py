@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -89,7 +90,7 @@ class BinaryAUPRC(Metric[torch.Tensor]):
         self: TBinaryAUPRC,
         *,
         num_tasks: int = 1,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         if num_tasks < 1:
@@ -233,8 +234,8 @@ class MulticlassAUPRC(Metric[torch.Tensor]):
         self: TMulticlassAUPRC,
         *,
         num_classes: int,
-        average: Optional[str] = "macro",
-        device: Optional[torch.device] = None,
+        average: str | None = "macro",
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         _multiclass_auprc_param_check(num_classes, average)
@@ -377,8 +378,8 @@ class MultilabelAUPRC(Metric[torch.Tensor]):
         self: TMultilabelAUPRC,
         *,
         num_labels: int,
-        average: Optional[str] = "macro",
-        device: Optional[torch.device] = None,
+        average: str | None = "macro",
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         _multilabel_auprc_param_check(num_labels, average)

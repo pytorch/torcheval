@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Union
 
 import torch
 
@@ -14,7 +13,7 @@ import torch
 @torch.inference_mode()
 def sum(
     input: torch.Tensor,
-    weight: Union[float, torch.Tensor] = 1.0,
+    weight: float | torch.Tensor = 1.0,
 ) -> torch.Tensor:
     """
     Compute weighted sum. When weight is not provided, it calculates the unweighted sum.
@@ -43,7 +42,7 @@ def sum(
 
 
 def _sum_update(
-    input: torch.Tensor, weight: Union[float, int, torch.Tensor]
+    input: torch.Tensor, weight: float | int | torch.Tensor
 ) -> torch.Tensor:
     if (
         isinstance(weight, float)

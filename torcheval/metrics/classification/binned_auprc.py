@@ -9,7 +9,8 @@
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
 
-from typing import Iterable, List, Optional, TypeVar, Union
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 from torcheval.metrics.functional.classification.binned_auprc import (
@@ -82,8 +83,8 @@ class BinaryBinnedAUPRC(Metric[torch.Tensor]):
         self: TBinaryBinnedAUPRC,
         *,
         num_tasks: int = 1,
-        threshold: Union[int, List[float], torch.Tensor] = DEFAULT_NUM_THRESHOLD,
-        device: Optional[torch.device] = None,
+        threshold: int | list[float] | torch.Tensor = DEFAULT_NUM_THRESHOLD,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         threshold = _create_threshold_tensor(
@@ -236,10 +237,10 @@ class MulticlassBinnedAUPRC(Metric[torch.Tensor]):
         self: TMulticlassBinnedAUPRC,
         *,
         num_classes: int,
-        threshold: Union[int, List[float], torch.Tensor] = DEFAULT_NUM_THRESHOLD,
-        average: Optional[str] = "macro",
+        threshold: int | list[float] | torch.Tensor = DEFAULT_NUM_THRESHOLD,
+        average: str | None = "macro",
         optimization: str = "vectorized",
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         _optimization_param_check(optimization)
@@ -386,10 +387,10 @@ class MultilabelBinnedAUPRC(Metric[torch.Tensor]):
         self: TMultilabelBinnedAUPRC,
         *,
         num_labels: int,
-        threshold: Union[int, List[float], torch.Tensor] = DEFAULT_NUM_THRESHOLD,
-        average: Optional[str] = "macro",
+        threshold: int | list[float] | torch.Tensor = DEFAULT_NUM_THRESHOLD,
+        average: str | None = "macro",
         optimization: str = "vectorized",
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         _optimization_param_check(optimization)

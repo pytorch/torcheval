@@ -6,14 +6,13 @@
 
 # pyre-strict
 
-from typing import List, Tuple, Union
 
 import torch
 
 
 def _edit_distance(
-    prediction_tokens: List[str],
-    reference_tokens: List[str],
+    prediction_tokens: list[str],
+    reference_tokens: list[str],
 ) -> int:
     """
     Dynamic programming algorithm to compute the edit distance between two word sequences.
@@ -37,9 +36,9 @@ def _edit_distance(
 
 
 def _get_errors_and_totals(
-    input: Union[str, List[str]],
-    target: Union[str, List[str]],
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    input: str | list[str],
+    target: str | list[str],
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Calculate the edit distance, max length and lengths of predicted and reference word sequences.
 

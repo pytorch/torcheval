@@ -7,8 +7,6 @@
 # pyre-strict
 
 
-from typing import List, Tuple
-
 import torch
 from torcheval.metrics.functional.classification.precision_recall_curve import (
     _binary_precision_recall_curve_compute,
@@ -25,7 +23,7 @@ This file contains binary_recall_at_fixed_precision and multilabel_recall_at_fix
 @torch.inference_mode()
 def binary_recall_at_fixed_precision(
     input: torch.Tensor, target: torch.Tensor, *, min_precision: float
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Returns the highest possible recall value given the minimum precision
     for binary classification tasks.
@@ -70,7 +68,7 @@ def _binary_recall_at_fixed_precision_update_input_check(
 
 def _binary_recall_at_fixed_precision_compute(
     input: torch.Tensor, target: torch.Tensor, min_precision: float
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     precision, recall, threshold = _binary_precision_recall_curve_compute(input, target)
     return _recall_at_precision(precision, recall, threshold, min_precision)
 
@@ -78,7 +76,7 @@ def _binary_recall_at_fixed_precision_compute(
 @torch.inference_mode()
 def multilabel_recall_at_fixed_precision(
     input: torch.Tensor, target: torch.Tensor, *, num_labels: int, min_precision: float
-) -> Tuple[List[torch.Tensor], List[torch.Tensor]]:
+) -> tuple[list[torch.Tensor], list[torch.Tensor]]:
     """
     Returns the highest possible recall value give the minimum precision
     for each label and their corresponding thresholds for multi-label
@@ -136,7 +134,7 @@ def _recall_at_precision(
     recall: torch.Tensor,
     thresholds: torch.Tensor,
     min_precision: float,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     max_recall = torch.max(recall[precision >= min_precision])
     thresholds = torch.cat((thresholds, torch.tensor([-1.0], device=thresholds.device)))
     best_threshold = torch.max(thresholds[recall == max_recall])
@@ -146,7 +144,7 @@ def _recall_at_precision(
 @torch.jit.script
 def _multilabel_recall_at_fixed_precision_compute(
     input: torch.Tensor, target: torch.Tensor, num_labels: int, min_precision: float
-) -> Tuple[List[torch.Tensor], List[torch.Tensor]]:
+) -> tuple[list[torch.Tensor], list[torch.Tensor]]:
     precision, recall, thresholds = _multilabel_precision_recall_curve_compute(
         input, target, num_labels
     )

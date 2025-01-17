@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Tuple, Union
 
 import torch
 
@@ -14,7 +13,7 @@ import torch
 @torch.inference_mode()
 def mean(
     input: torch.Tensor,
-    weight: Union[float, int, torch.Tensor] = 1.0,
+    weight: float | int | torch.Tensor = 1.0,
 ) -> torch.Tensor:
     """
     Compute weighted mean. When weight is not provided, it calculates the unweighted mean.
@@ -45,8 +44,8 @@ def mean(
 
 
 def _mean_update(
-    input: torch.Tensor, weight: Union[float, int, torch.Tensor]
-) -> Tuple[torch.Tensor, torch.Tensor]:
+    input: torch.Tensor, weight: float | int | torch.Tensor
+) -> tuple[torch.Tensor, torch.Tensor]:
     if isinstance(weight, float) or isinstance(weight, int):
         weighted_sum = weight * torch.sum(input)
         weights = torch.tensor(float(weight) * torch.numel(input))
@@ -61,7 +60,7 @@ def _mean_update(
 
 
 def _mean_compute(
-    input: torch.Tensor, weight: Union[float, int, torch.Tensor]
+    input: torch.Tensor, weight: float | int | torch.Tensor
 ) -> torch.Tensor:
     weighted_sum, weights = _mean_update(input, weight)
     return weighted_sum / weights

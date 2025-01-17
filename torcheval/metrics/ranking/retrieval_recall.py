@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, TypeVar, Union
+from collections.abc import Iterable
+from typing import Literal, TypeVar
 
 import torch
 
@@ -19,7 +20,6 @@ from torcheval.metrics.functional.ranking.retrieval_recall import (
     retrieval_recall,
 )
 from torcheval.metrics.metric import Metric
-from typing_extensions import Literal
 
 
 TRetrievalRecall = TypeVar("RetrievalRecall")
@@ -85,14 +85,14 @@ class RetrievalRecall(Metric[torch.Tensor]):
     def __init__(
         self: TRetrievalRecall,
         *,
-        empty_target_action: Union[
-            Literal["neg"], Literal["pos"], Literal["skip"], Literal["err"]
-        ] = "neg",
-        k: Optional[int] = None,
+        empty_target_action: (
+            Literal["neg"] | Literal["pos"] | Literal["skip"] | Literal["err"]
+        ) = "neg",
+        k: int | None = None,
         limit_k_to_size: bool = False,
         num_queries: int = 1,
-        avg: Optional[Union[Literal["macro"], Literal["none"]]] = None,
-        device: Optional[torch.device] = None,
+        avg: Literal["macro"] | Literal["none"] | None = None,
+        device: torch.device | None = None,
     ) -> None:
         _retrieval_recall_param_check(k, limit_k_to_size)
         super().__init__(device=device)
@@ -110,7 +110,7 @@ class RetrievalRecall(Metric[torch.Tensor]):
         self: TRetrievalRecall,
         input: torch.Tensor,
         target: torch.Tensor,
-        indexes: Optional[torch.Tensor] = None,
+        indexes: torch.Tensor | None = None,
     ) -> TRetrievalRecall:
         """
         Update the metric state with ground truth labels and predictions.

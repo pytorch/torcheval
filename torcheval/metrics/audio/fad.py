@@ -7,7 +7,8 @@
 # pyre-strict
 
 import copy
-from typing import Any, Callable, Iterable, Optional, Union
+from collections.abc import Callable, Iterable
+from typing import Any
 
 import torch
 from torcheval.metrics.functional.frechet import gaussian_frechet_distance
@@ -34,7 +35,7 @@ class FrechetAudioDistance(Metric[torch.Tensor]):
         preproc: Callable[[torch.Tensor], torch.Tensor],
         model: torch.nn.Module,
         embedding_dim: int,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
 
@@ -134,7 +135,7 @@ class FrechetAudioDistance(Metric[torch.Tensor]):
 
     def to(
         self,
-        device: Union[str, torch.device],
+        device: str | torch.device,
         *args: Any,
         **kwargs: Any,
     ) -> "FrechetAudioDistance":
@@ -143,7 +144,7 @@ class FrechetAudioDistance(Metric[torch.Tensor]):
         return self
 
     @staticmethod
-    def with_vggish(device: Optional[torch.device] = None) -> "FrechetAudioDistance":
+    def with_vggish(device: torch.device | None = None) -> "FrechetAudioDistance":
         """Builds an instance of FrechetAudioDistance with TorchAudio's pretrained VGGish model.
         The returned instance expects batches of waveforms of shape `(B, T)` and sampled at a rate of 16KHZ.
 

@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Dict
 
 import torch
 from torch import Tensor
@@ -26,7 +25,7 @@ from torcheval.utils.test_utils.metric_class_tester import (
 
 class TestStructuralSimilarity(MetricClassTester):
     def setUp(self) -> None:
-        super(TestStructuralSimilarity, self).setUp()
+        super().setUp()
         torch.manual_seed(0)
 
     def _get_input_data(
@@ -36,7 +35,7 @@ class TestStructuralSimilarity(MetricClassTester):
         num_channels: int,
         height: int,
         width: int,
-    ) -> Dict[str, Tensor]:
+    ) -> dict[str, Tensor]:
         images = {
             "images_1": torch.rand(
                 size=(num_updates, batch_size, num_channels, height, width)

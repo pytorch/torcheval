@@ -6,18 +6,18 @@
 
 # pyre-strict
 
-from collections import Counter as counter
-from typing import Counter, Optional, Sequence, Tuple, Union
+from collections import Counter, Counter as counter
+from collections.abc import Sequence
 
 import torch
 
 
 def bleu_score(
-    input: Union[str, Sequence[str]],
-    target: Sequence[Union[str, Sequence[str]]],
+    input: str | Sequence[str],
+    target: Sequence[str | Sequence[str]],
     n_gram: int = 4,
-    weights: Optional[torch.Tensor] = None,
-    device: Optional[torch.device] = None,
+    weights: torch.Tensor | None = None,
+    device: torch.device | None = None,
 ) -> torch.Tensor:
     """
     Compute BLEU score given translations and references for each translation.
@@ -65,11 +65,11 @@ def bleu_score(
 
 
 def _bleu_score_update(
-    input: Union[str, Sequence[str]],
-    target: Sequence[Union[str, Sequence[str]]],
+    input: str | Sequence[str],
+    target: Sequence[str | Sequence[str]],
     n_gram: int,
-    device: Optional[torch.device] = None,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    device: torch.device | None = None,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     input_ = [input] if isinstance(input, str) else input
     target_ = [[tgt] if isinstance(tgt, str) else tgt for tgt in target]
 
@@ -122,7 +122,7 @@ def _bleu_score_compute(
     matches_by_order: torch.Tensor,
     possible_matches_by_order: torch.Tensor,
     n_gram: int,
-    weights: Optional[torch.Tensor] = None,
+    weights: torch.Tensor | None = None,
 ) -> torch.Tensor:
     if weights is not None and n_gram != weights.size(dim=0):
         raise ValueError(

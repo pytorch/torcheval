@@ -6,21 +6,22 @@
 
 # pyre-strict
 
-from typing import Iterable, Optional, Tuple, TypeVar, Union
+from collections.abc import Iterable
+from typing import TypeAlias, TypeVar, Union
 
 import torch
 from torcheval.metrics.metric import Metric
-from typing_extensions import Self, TypeAlias
+from typing_extensions import Self
 
 # TODO: use a NamedTuple?
 _T = TypeVar("_T", bound=Union[torch.Tensor, int])
-_Output: TypeAlias = Tuple[torch.Tensor, torch.Tensor]  # mean, cov
+_Output: TypeAlias = tuple[torch.Tensor, torch.Tensor]  # mean, cov
 
 
 class Covariance(Metric[_Output]):
     """Fit sample mean + covariance to empirical distribution"""
 
-    def __init__(self, *, device: Optional[torch.device] = None) -> None:
+    def __init__(self, *, device: torch.device | None = None) -> None:
         super().__init__(device=device)
         self.sum: torch.Tensor = self._add_state_and_return(
             "sum", default=torch.as_tensor(0.0)

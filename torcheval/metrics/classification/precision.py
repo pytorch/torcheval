@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -81,9 +82,9 @@ class MulticlassPrecision(Metric[torch.Tensor]):
     def __init__(
         self: TPrecision,
         *,
-        num_classes: Optional[int] = None,
-        average: Optional[str] = "micro",
-        device: Optional[torch.device] = None,
+        num_classes: int | None = None,
+        average: str | None = "micro",
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         _precision_param_check(num_classes, average)
@@ -194,7 +195,7 @@ class BinaryPrecision(MulticlassPrecision):
         self: TBinaryPrecision,
         *,
         threshold: float = 0.5,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(num_classes=2, device=device)
         self.threshold = threshold

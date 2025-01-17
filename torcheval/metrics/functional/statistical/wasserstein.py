@@ -4,7 +4,6 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import Optional
 
 import torch
 
@@ -13,8 +12,8 @@ import torch
 def wasserstein_1d(
     x: torch.Tensor,
     y: torch.Tensor,
-    x_weights: Optional[torch.Tensor] = None,
-    y_weights: Optional[torch.Tensor] = None,
+    x_weights: torch.Tensor | None = None,
+    y_weights: torch.Tensor | None = None,
 ) -> torch.Tensor:
     r"""
     The Wasserstein distance, also called the Earth Mover's Distance, is a
@@ -91,8 +90,8 @@ def wasserstein_1d(
 def _wasserstein_update_input_check(
     x: torch.Tensor,
     y: torch.Tensor,
-    x_weights: Optional[torch.Tensor] = None,
-    y_weights: Optional[torch.Tensor] = None,
+    x_weights: torch.Tensor | None = None,
+    y_weights: torch.Tensor | None = None,
 ) -> None:
     if x.nelement() == 0 or y.nelement() == 0:
         raise ValueError("Distribution cannot be empty.")
@@ -133,8 +132,8 @@ def _wasserstein_update_input_check(
 def _wasserstein_compute(
     x: torch.Tensor,
     y: torch.Tensor,
-    x_weights: Optional[torch.Tensor],
-    y_weights: Optional[torch.Tensor],
+    x_weights: torch.Tensor | None,
+    y_weights: torch.Tensor | None,
 ) -> torch.Tensor:
     # Assigning device per input
     device = x.device

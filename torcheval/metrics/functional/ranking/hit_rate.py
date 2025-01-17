@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional
 
 import torch
 
@@ -16,7 +15,7 @@ def hit_rate(
     input: torch.Tensor,
     target: torch.Tensor,
     *,
-    k: Optional[int] = None,
+    k: int | None = None,
 ) -> torch.Tensor:
     """
     Compute the hit rate of the correct class among the top predicted classes.
@@ -48,7 +47,7 @@ def hit_rate(
 
 
 def _hit_rate_input_check(
-    input: torch.Tensor, target: torch.Tensor, k: Optional[int] = None
+    input: torch.Tensor, target: torch.Tensor, k: int | None = None
 ) -> None:
     if target.ndim != 1:
         raise ValueError(

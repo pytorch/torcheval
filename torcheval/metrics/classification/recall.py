@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -68,7 +69,7 @@ class BinaryRecall(Metric[torch.Tensor]):
         self: TBinaryRecall,
         *,
         threshold: float = 0.5,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         self.threshold = threshold
@@ -178,9 +179,9 @@ class MulticlassRecall(Metric[torch.Tensor]):
     def __init__(
         self: TRecall,
         *,
-        num_classes: Optional[int] = None,
-        average: Optional[str] = "micro",
-        device: Optional[torch.device] = None,
+        num_classes: int | None = None,
+        average: str | None = "micro",
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         _recall_param_check(num_classes, average)

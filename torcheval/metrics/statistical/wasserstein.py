@@ -4,7 +4,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import Iterable, Optional, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -48,7 +49,7 @@ class Wasserstein1D(Metric[torch.Tensor]):
     0.16666666666666663
     """
 
-    def __init__(self: TWasserstein, *, device: Optional[torch.device] = None) -> None:
+    def __init__(self: TWasserstein, *, device: torch.device | None = None) -> None:
         super().__init__(device=device)
         # Keeping record of samples
         self._add_state("dist_1_samples", [])
@@ -61,8 +62,8 @@ class Wasserstein1D(Metric[torch.Tensor]):
         self,
         new_samples_dist_1: torch.Tensor,
         new_samples_dist_2: torch.Tensor,
-        new_weights_dist_1: Optional[torch.Tensor] = None,
-        new_weights_dist_2: Optional[torch.Tensor] = None,
+        new_weights_dist_1: torch.Tensor | None = None,
+        new_weights_dist_2: torch.Tensor | None = None,
     ) -> None:
         r"""
         Update states with distribution values and corresponding weights.

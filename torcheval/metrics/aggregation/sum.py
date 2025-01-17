@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, TypeVar, Union
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -51,7 +52,7 @@ class Sum(Metric[torch.Tensor]):
     def __init__(
         self: TSum,
         *,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         self._add_state(
@@ -64,7 +65,7 @@ class Sum(Metric[torch.Tensor]):
         self: TSum,
         input: torch.Tensor,
         *,
-        weight: Union[float, int, torch.Tensor] = 1.0,
+        weight: float | int | torch.Tensor = 1.0,
     ) -> TSum:
         """
         Update states with the values and weights.

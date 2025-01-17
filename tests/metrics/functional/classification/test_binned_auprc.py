@@ -7,7 +7,6 @@
 # pyre-strict
 
 import unittest
-from typing import List, Optional, Tuple, Union
 
 import torch
 from torcheval.metrics.functional.classification.auprc import (
@@ -29,8 +28,8 @@ class TestBinaryBinnedAUPRC(unittest.TestCase):
         input: torch.Tensor,
         target: torch.Tensor,
         num_tasks: int,
-        threshold: Union[torch.Tensor, int],
-        compute_result: Tuple[torch.Tensor, torch.Tensor],
+        threshold: torch.Tensor | int,
+        compute_result: tuple[torch.Tensor, torch.Tensor],
     ) -> None:
         my_compute_result = binary_binned_auprc(
             input,
@@ -243,9 +242,9 @@ class TestMulticlassBinnedAUPRC(unittest.TestCase):
         input: torch.Tensor,
         target: torch.Tensor,
         num_classes: int,
-        threshold: Union[int, List[float], torch.Tensor],
-        average: Optional[str],
-        compute_result: Tuple[torch.Tensor, torch.Tensor],
+        threshold: int | list[float] | torch.Tensor,
+        average: str | None,
+        compute_result: tuple[torch.Tensor, torch.Tensor],
     ) -> None:
         for optimization in ("vectorized", "memory"):
             my_compute_result = multiclass_binned_auprc(
@@ -493,9 +492,9 @@ class TestMultilabelBinnedAUPRC(unittest.TestCase):
         input: torch.Tensor,
         target: torch.Tensor,
         num_labels: int,
-        threshold: Union[int, List[float], torch.Tensor],
-        average: Optional[str],
-        compute_result: Tuple[torch.Tensor, torch.Tensor],
+        threshold: int | list[float] | torch.Tensor,
+        average: str | None,
+        compute_result: tuple[torch.Tensor, torch.Tensor],
     ) -> None:
         for optimization in ["vectorized", "memory"]:
             my_compute_result = multilabel_binned_auprc(

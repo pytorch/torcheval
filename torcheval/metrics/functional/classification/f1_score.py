@@ -9,7 +9,6 @@
 # pyre-ignore-all-errors[6]: expect int got Optional[int] for num_classes
 
 import logging
-from typing import Optional, Tuple
 
 import torch
 
@@ -56,8 +55,8 @@ def multiclass_f1_score(
     input: torch.Tensor,
     target: torch.Tensor,
     *,
-    num_classes: Optional[int] = None,
-    average: Optional[str] = "micro",
+    num_classes: int | None = None,
+    average: str | None = "micro",
 ) -> torch.Tensor:
     """
     Compute f1 score, which is defined as the harmonic mean of precision and recall.
@@ -123,7 +122,7 @@ def _binary_f1_score_update(
     input: torch.Tensor,
     target: torch.Tensor,
     threshold: float = 0.5,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     _binary_f1_score_update_input_check(input, target)
 
     input = torch.where(input < threshold, 0, 1)
@@ -157,9 +156,9 @@ def _binary_f1_score_update_input_check(
 def _f1_score_update(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int],
-    average: Optional[str],
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    num_classes: int | None,
+    average: str | None,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     _f1_score_update_input_check(input, target, num_classes)
     return _update(input, target, num_classes, average)
 
@@ -168,9 +167,9 @@ def _f1_score_update(
 def _update(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int],
-    average: Optional[str],
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    num_classes: int | None,
+    average: str | None,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     if input.ndim == 2:
         input = torch.argmax(input, dim=1)
 
@@ -198,7 +197,7 @@ def _f1_score_compute(
     num_tp: torch.Tensor,
     num_label: torch.Tensor,
     num_prediction: torch.Tensor,
-    average: Optional[str],
+    average: str | None,
 ) -> torch.Tensor:
     # Check if all classes exist in either ``target``.
     num_label_is_zero = num_label == 0
@@ -234,8 +233,8 @@ def _f1_score_compute(
 
 
 def _f1_score_param_check(
-    num_classes: Optional[int],
-    average: Optional[str],
+    num_classes: int | None,
+    average: str | None,
 ) -> None:
     average_options = ("micro", "macro", "weighted", None)
     if average not in average_options:
@@ -252,7 +251,7 @@ def _f1_score_param_check(
 def _f1_score_update_input_check(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int],
+    num_classes: int | None,
 ) -> None:
     if input.size(0) != target.size(0):
         raise ValueError(

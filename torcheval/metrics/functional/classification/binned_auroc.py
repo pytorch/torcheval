@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import List, Optional, Tuple, Union
 
 import torch
 from torch.nn import functional as F
@@ -21,8 +20,8 @@ def binary_binned_auroc(
     target: torch.Tensor,
     *,
     num_tasks: int = 1,
-    threshold: Union[int, List[float], torch.Tensor] = DEFAULT_NUM_THRESHOLD,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+    threshold: int | list[float] | torch.Tensor = DEFAULT_NUM_THRESHOLD,
+) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Compute AUROC, which is the area under the ROC Curve, for binary classification.
     Its class version is ``torcheval.metrics.BinaryBinnedAUROC``.
@@ -115,7 +114,7 @@ def _binary_binned_auroc_compute(
     input: torch.Tensor,
     target: torch.Tensor,
     threshold: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     pred_label = input >= threshold[:, None, None]
     input_target = pred_label * target
 
@@ -145,9 +144,9 @@ def multiclass_binned_auroc(
     target: torch.Tensor,
     *,
     num_classes: int,
-    threshold: Union[int, List[float], torch.Tensor] = DEFAULT_NUM_THRESHOLD,
-    average: Optional[str] = "macro",
-) -> Tuple[torch.Tensor, torch.Tensor]:
+    threshold: int | list[float] | torch.Tensor = DEFAULT_NUM_THRESHOLD,
+    average: str | None = "macro",
+) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Compute AUROC, which is the area under the ROC Curve, for multiclass classification.
     Its class version is :obj:`torcheval.metrics.MulticlassAUROC`.
@@ -193,8 +192,8 @@ def _multiclass_binned_auroc_compute(
     target: torch.Tensor,
     num_classes: int,
     threshold: torch.Tensor,
-    average: Optional[str] = "macro",
-) -> Tuple[torch.Tensor, torch.Tensor]:
+    average: str | None = "macro",
+) -> tuple[torch.Tensor, torch.Tensor]:
     pred_label = input >= threshold[:, None, None]
     target = F.one_hot(target, num_classes)
     input_target = pred_label * target
@@ -218,7 +217,7 @@ def _multiclass_binned_auroc_compute(
 def _multiclass_binned_auroc_param_check(
     num_classes: int,
     threshold: torch.Tensor,
-    average: Optional[str],
+    average: str | None,
 ) -> None:
     average_options = ("macro", "none", None)
     if average not in average_options:

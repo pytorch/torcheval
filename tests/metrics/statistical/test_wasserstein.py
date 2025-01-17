@@ -4,7 +4,6 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import Optional
 
 import torch
 
@@ -25,8 +24,8 @@ class TestWasserstein1D(MetricClassTester):
         self,
         x: torch.Tensor,
         y: torch.Tensor,
-        x_weights: Optional[torch.Tensor] = None,
-        y_weights: Optional[torch.Tensor] = None,
+        x_weights: torch.Tensor | None = None,
+        y_weights: torch.Tensor | None = None,
         device: str = "cpu",
     ) -> torch.Tensor:
         # Convert inputs to scipy style inputs
@@ -45,8 +44,8 @@ class TestWasserstein1D(MetricClassTester):
         self,
         x: torch.Tensor,
         y: torch.Tensor,
-        x_weights: Optional[torch.Tensor] = None,
-        y_weights: Optional[torch.Tensor] = None,
+        x_weights: torch.Tensor | None = None,
+        y_weights: torch.Tensor | None = None,
         device: str = "cpu",
     ) -> None:
         compute_result = self._get_scipy_equivalent(

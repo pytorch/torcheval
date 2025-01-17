@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-from typing import Optional
 
 import numpy as np
 
@@ -21,8 +20,8 @@ class TestWasserstein1D(unittest.TestCase):
         self,
         x: torch.Tensor,
         y: torch.Tensor,
-        x_weights: Optional[torch.Tensor] = None,
-        y_weights: Optional[torch.Tensor] = None,
+        x_weights: torch.Tensor | None = None,
+        y_weights: torch.Tensor | None = None,
         device: str = "cpu",
     ) -> torch.Tensor:
         # Convert inputs to scipy style inputs
@@ -52,8 +51,8 @@ class TestWasserstein1D(unittest.TestCase):
         compute_result: torch.Tensor,
         x: torch.Tensor,
         y: torch.Tensor,
-        x_weights: Optional[torch.Tensor] = None,
-        y_weights: Optional[torch.Tensor] = None,
+        x_weights: torch.Tensor | None = None,
+        y_weights: torch.Tensor | None = None,
     ) -> None:
         if x.ndim == 1:
             my_compute_result = wasserstein_1d(x, y, x_weights, y_weights)

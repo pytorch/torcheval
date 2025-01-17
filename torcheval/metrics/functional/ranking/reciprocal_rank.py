@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional
 
 import torch
 
@@ -16,7 +15,7 @@ def reciprocal_rank(
     input: torch.Tensor,
     target: torch.Tensor,
     *,
-    k: Optional[int] = None,
+    k: int | None = None,
 ) -> torch.Tensor:
     """
     Compute the reciprocal rank of the correct class among the top predicted classes.

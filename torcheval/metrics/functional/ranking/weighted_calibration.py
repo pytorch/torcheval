@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Tuple, Union
 
 import torch
 
@@ -15,7 +14,7 @@ import torch
 def weighted_calibration(
     input: torch.Tensor,
     target: torch.Tensor,
-    weight: Union[float, int, torch.Tensor] = 1.0,
+    weight: float | int | torch.Tensor = 1.0,
     *,
     num_tasks: int = 1,
 ) -> torch.Tensor:
@@ -62,10 +61,10 @@ def weighted_calibration(
 def _weighted_calibration_update(
     input: torch.Tensor,
     target: torch.Tensor,
-    weight: Union[float, int, torch.Tensor],
+    weight: float | int | torch.Tensor,
     *,
     num_tasks: int,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     _weighted_calibration_input_check(input, target, weight, num_tasks=num_tasks)
     if isinstance(weight, float) or isinstance(weight, int):
         weighted_input_sum = weight * torch.sum(input, dim=-1)
@@ -83,7 +82,7 @@ def _weighted_calibration_update(
 def _weighted_calibration_compute(
     input: torch.Tensor,
     target: torch.Tensor,
-    weight: Union[float, int, torch.Tensor],
+    weight: float | int | torch.Tensor,
     *,
     num_tasks: int,
 ) -> torch.Tensor:
@@ -96,7 +95,7 @@ def _weighted_calibration_compute(
 def _weighted_calibration_input_check(
     input: torch.Tensor,
     target: torch.Tensor,
-    weight: Union[float, int, torch.Tensor],
+    weight: float | int | torch.Tensor,
     num_tasks: int,
 ) -> None:
     if input.shape != target.shape:

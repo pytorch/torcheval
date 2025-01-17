@@ -7,7 +7,7 @@
 # pyre-strict
 
 import unittest
-from typing import Any, Dict
+from typing import Any
 
 import torch
 from torcheval.metrics.functional import retrieval_recall
@@ -78,7 +78,7 @@ class TestRetrievalRecall(unittest.TestCase):
         )
 
     def test_retrieval_recall_with_invalid_parameters(self) -> None:
-        def prec(args: Dict[str, Any]) -> None:
+        def prec(args: dict[str, Any]) -> None:
             retrieval_recall(
                 input=torch.tensor([1]),
                 target=torch.tensor([1]),
@@ -100,7 +100,7 @@ class TestRetrievalRecall(unittest.TestCase):
             prec({"k": None, "limit_k_to_size": True})
 
     def test_retrieval_recall_invalid_input(self) -> None:
-        def prec(args: Dict[str, Any]) -> None:
+        def prec(args: dict[str, Any]) -> None:
             retrieval_recall(
                 k=1,
                 limit_k_to_size=False,

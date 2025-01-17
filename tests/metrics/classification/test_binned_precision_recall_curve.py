@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import List, Tuple, Union
 
 import torch
 
@@ -34,7 +33,7 @@ class TestBinaryBinnedPrecisionRecallCurve(MetricClassTester):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        threshold: Union[int, List[float], torch.Tensor],
+        threshold: int | list[float] | torch.Tensor,
     ) -> None:
         compute_result = binary_binned_precision_recall_curve(
             input.reshape(-1), target.reshape(-1), threshold=threshold
@@ -159,9 +158,9 @@ class TestMulticlassBinnedPrecisionRecallCurve(MetricClassTester):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        compute_result: Tuple[List[torch.Tensor], List[torch.Tensor], torch.Tensor],
+        compute_result: tuple[list[torch.Tensor], list[torch.Tensor], torch.Tensor],
         num_classes: int,
-        threshold: Union[int, List[float], torch.Tensor],
+        threshold: int | list[float] | torch.Tensor,
     ) -> None:
         for optimization in ("vectorized", "memory"):
             self.run_class_implementation_tests(
@@ -406,9 +405,9 @@ class TestMultilabelBinnedPrecisionRecallCurve(MetricClassTester):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        compute_result: Tuple[List[torch.Tensor], List[torch.Tensor], torch.Tensor],
+        compute_result: tuple[list[torch.Tensor], list[torch.Tensor], torch.Tensor],
         num_labels: int,
-        threshold: Union[int, torch.Tensor],
+        threshold: int | torch.Tensor,
     ) -> None:
         for optimization in ["vectorized", "memory"]:
             self.run_class_implementation_tests(

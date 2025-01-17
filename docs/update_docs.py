@@ -8,10 +8,9 @@
 import ast
 import os
 from pathlib import Path
-from typing import List, Tuple
 
 
-def get_submodule_vars(filename) -> Tuple[str, List[str]]:
+def get_submodule_vars(filename) -> tuple[str, list[str]]:
     """This function reads the init files which are inside of the metrics/ and functional/ subdirectories.
     Each subdirectory within these two folders are associated with a domain of metrics, e.g. classification or regression.
     This function assumes that each of the init files has two variables defined.
@@ -27,7 +26,7 @@ def get_submodule_vars(filename) -> Tuple[str, List[str]]:
         doc_name (str): defined above
         all_modules (List[str]): defined above
     """
-    with open(filename, "r") as file:
+    with open(filename) as file:
         tree = ast.parse(file.read())
 
     doc_name = None

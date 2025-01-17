@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, Tuple, TypeVar, Union
+from collections.abc import Iterable
+from typing import TypeVar, Union
 
 import torch
 
@@ -22,7 +23,7 @@ TWindowedNormalizedEntropy = TypeVar("TWindowedNormalizedEntropy")
 
 
 class WindowedBinaryNormalizedEntropy(
-    Metric[Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]]
+    Metric[Union[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]]
 ):
     """
     The windowed version of BinaryNormalizedEntropy that provides both windowed and liftime values.
@@ -85,7 +86,7 @@ class WindowedBinaryNormalizedEntropy(
         num_tasks: int = 1,
         max_num_updates: int = 100,
         enable_lifetime: bool = True,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         self.from_logits = from_logits
@@ -152,7 +153,7 @@ class WindowedBinaryNormalizedEntropy(
         input: torch.Tensor,
         target: torch.Tensor,
         *,
-        weight: Optional[torch.Tensor] = None,
+        weight: torch.Tensor | None = None,
     ) -> TWindowedNormalizedEntropy:
         """
         Update the metric state with the total entropy, total number of examples and total number of
@@ -183,7 +184,7 @@ class WindowedBinaryNormalizedEntropy(
     @torch.inference_mode()
     def compute(
         self: TWindowedNormalizedEntropy,
-    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+    ) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
         """
         Return the normalized binary cross entropy.  If no ``update()`` calls are made before
         ``compute()`` is called, return an empty tensor.

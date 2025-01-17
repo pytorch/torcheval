@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional, Tuple
 
 import torch
 
@@ -53,8 +52,8 @@ def multiclass_accuracy(
     input: torch.Tensor,
     target: torch.Tensor,
     *,
-    average: Optional[str] = "micro",
-    num_classes: Optional[int] = None,
+    average: str | None = "micro",
+    num_classes: int | None = None,
     k: int = 1,
 ) -> torch.Tensor:
     """
@@ -252,10 +251,10 @@ def topk_multilabel_accuracy(
 def _multiclass_accuracy_update(
     input: torch.Tensor,
     target: torch.Tensor,
-    average: Optional[str],
-    num_classes: Optional[int],
+    average: str | None,
+    num_classes: int | None,
     k: int,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     _accuracy_update_input_check(input, target, num_classes, k)
 
     if k == 1:
@@ -283,7 +282,7 @@ def _multiclass_accuracy_update(
 def _accuracy_compute(
     num_correct: torch.Tensor,
     num_total: torch.Tensor,
-    average: Optional[str],
+    average: str | None,
 ) -> torch.Tensor:
     if isinstance(average, str) and average == "macro":
         mask = num_total != 0
@@ -293,8 +292,8 @@ def _accuracy_compute(
 
 
 def _accuracy_param_check(
-    average: Optional[str],
-    num_classes: Optional[int],
+    average: str | None,
+    num_classes: int | None,
     k: int,
 ) -> None:
     average_options = ("micro", "macro", "none", None)
@@ -318,7 +317,7 @@ def _accuracy_param_check(
 def _accuracy_update_input_check(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int],
+    num_classes: int | None,
     k: int,
 ) -> None:
     if input.size(0) != target.size(0):
@@ -351,7 +350,7 @@ def _binary_accuracy_update(
     input: torch.Tensor,
     target: torch.Tensor,
     threshold: float = 0.5,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     _binary_accuracy_update_input_check(input, target)
 
     input = torch.where(input < threshold, 0, 1)
@@ -390,7 +389,7 @@ def _multilabel_accuracy_update(
     target: torch.Tensor,
     threshold: float = 0.5,
     criteria: str = "exact_match",
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     _multilabel_accuracy_update_input_check(input, target)
     input_label = torch.where(input < threshold, 0, 1)
     return _multilabel_update(input_label, target, criteria)
@@ -401,7 +400,7 @@ def _topk_multilabel_accuracy_update(
     target: torch.Tensor,
     criteria: str = "exact_match",
     k: int = 2,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     _topk_multilabel_accuracy_update_input_check(input, target, k)
     input_label = torch.zeros(input.size(), device=input.device).scatter_(
         -1, input.topk(k=k, dim=-1).indices, 1.0
@@ -414,7 +413,7 @@ def _multilabel_update(
     input: torch.Tensor,
     target: torch.Tensor,
     criteria: str = "exact_match",
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     if criteria == "exact_match":
         num_correct = torch.all(input == target, dim=1).sum()
         num_total = torch.tensor(target.shape[0], device=target.device)

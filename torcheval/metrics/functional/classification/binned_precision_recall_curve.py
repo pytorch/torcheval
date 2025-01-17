@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
@@ -23,8 +22,8 @@ def binary_binned_precision_recall_curve(
     input: torch.Tensor,
     target: torch.Tensor,
     *,
-    threshold: Union[int, List[float], torch.Tensor] = 100,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    threshold: int | list[float] | torch.Tensor = 100,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Compute precision recall curve with given thresholds.
     Its class version is ``torcheval.metrics.BinaryBinnedPrecisionRecallCurve``.
@@ -78,7 +77,7 @@ def _binary_binned_precision_recall_curve_update(
     input: torch.Tensor,
     target: torch.Tensor,
     threshold: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     _binary_precision_recall_curve_update_input_check(input, target)
     return _update(input, target, threshold)
 
@@ -88,7 +87,7 @@ def _update(
     input: torch.Tensor,
     target: torch.Tensor,
     threshold: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     num_thresholds = len(threshold)
 
     # (index, target) values, stored as 2 * index + target
@@ -118,7 +117,7 @@ def _binary_binned_precision_recall_curve_compute(
     num_fp: torch.Tensor,
     num_fn: torch.Tensor,
     threshold: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     # Set precision to 1.0 if all predictions are zeros.
     precision = torch.nan_to_num(num_tp / (num_tp + num_fp), 1.0)
     recall = num_tp / (num_tp + num_fn)
@@ -135,10 +134,10 @@ def _binary_binned_precision_recall_curve_compute(
 def multiclass_binned_precision_recall_curve(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int] = None,
-    threshold: Union[int, List[float], torch.Tensor] = 100,
+    num_classes: int | None = None,
+    threshold: int | list[float] | torch.Tensor = 100,
     optimization: str = "vectorized",
-) -> Tuple[List[torch.Tensor], List[torch.Tensor], torch.Tensor]:
+) -> tuple[list[torch.Tensor], list[torch.Tensor], torch.Tensor]:
     """
     Compute precision recall curve with given thresholds.
     Its class version is ``torcheval.metrics.MulticlassBinnedPrecisionRecallCurve``.
@@ -216,9 +215,9 @@ def multiclass_binned_precision_recall_curve(
 def _multiclass_binned_precision_recall_curve_update_vectorized(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int],
+    num_classes: int | None,
     threshold: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Vectorized version for the update function on multiclass binned precision curve.
     This function uses O(num_thresholds * num_samples * num_classes) memory but compared with `_multiclass_binned_precision_recall_curve_update_memory`
@@ -241,9 +240,9 @@ def _multiclass_binned_precision_recall_curve_update_vectorized(
 def _multiclass_binned_precision_recall_curve_update_memory(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int],
+    num_classes: int | None,
     threshold: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Memory-optimized version for the update function on multiclass binned precision curve.
     This function uses O(num_samples * num_classes) memory but is slower *on GPU*, as
@@ -296,10 +295,10 @@ def _multiclass_binned_precision_recall_curve_update_memory(
 def _multiclass_binned_precision_recall_curve_update(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int],
+    num_classes: int | None,
     threshold: torch.Tensor,
     optimization: str = "vectorized",
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     _optimization_param_check(optimization)
     if optimization == "vectorized":
         return _multiclass_binned_precision_recall_curve_update_vectorized(
@@ -315,9 +314,9 @@ def _multiclass_binned_precision_recall_curve_compute(
     num_tp: torch.Tensor,
     num_fp: torch.Tensor,
     num_fn: torch.Tensor,
-    num_classes: Optional[int],
+    num_classes: int | None,
     threshold: torch.Tensor,
-) -> Tuple[List[torch.Tensor], List[torch.Tensor], torch.Tensor]:
+) -> tuple[list[torch.Tensor], list[torch.Tensor], torch.Tensor]:
     # Set precision to 1.0 if all predictions are zeros.
     precision = torch.nan_to_num(num_tp / (num_tp + num_fp), 1.0)
     recall = num_tp / (num_tp + num_fn)
@@ -339,10 +338,10 @@ def _multiclass_binned_precision_recall_curve_compute(
 def multilabel_binned_precision_recall_curve(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_labels: Optional[int] = None,
-    threshold: Union[int, List[float], torch.Tensor] = 100,
+    num_labels: int | None = None,
+    threshold: int | list[float] | torch.Tensor = 100,
     optimization: str = "vectorized",
-) -> Tuple[List[torch.Tensor], List[torch.Tensor], torch.Tensor]:
+) -> tuple[list[torch.Tensor], list[torch.Tensor], torch.Tensor]:
     """
     Compute precision recall curve with given thresholds.
     Its class version is ``torcheval.metrics.MultilabelBinnedPrecisionRecallCurve``.
@@ -410,7 +409,7 @@ def _multilabel_binned_precision_recall_curve_update_vectorized(
     target: torch.Tensor,
     num_labels: int,
     threshold: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Vectorized version for the update function on multilabel binned precision curve.
     This function uses O(num_thresholds * num_samples * num_labels) memory but compared with `_multilabel_binned_precision_recall_curve_update_memory`
@@ -438,7 +437,7 @@ def _multilabel_binned_precision_recall_curve_update_memory(
     target: torch.Tensor,
     num_labels: int,
     threshold: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Memory-optimized version for the update function on multilabel binned precision-recall curve.
     This function uses O(num_samples * num_labels) memory but is slower *on GPU*, as
@@ -494,7 +493,7 @@ def _multilabel_binned_precision_recall_curve_update(
     num_labels: int,
     threshold: torch.Tensor,
     optimization: str = "vectorized",
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     _optimization_param_check(optimization)
     if optimization == "vectorized":
         return _multilabel_binned_precision_recall_curve_update_vectorized(
@@ -513,7 +512,7 @@ def _multilabel_binned_precision_recall_curve_compute(
     num_fn: torch.Tensor,
     num_labels: int,
     threshold: torch.Tensor,
-) -> Tuple[List[torch.Tensor], List[torch.Tensor], torch.Tensor]:
+) -> tuple[list[torch.Tensor], list[torch.Tensor], torch.Tensor]:
     # Set precision to 1.0 if all predictions are zeros.
     precision = torch.nan_to_num(num_tp / (num_tp + num_fp), 1.0)
     recall = num_tp / (num_tp + num_fn)

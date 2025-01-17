@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, List, Optional, Tuple, TypeVar, Union
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -30,7 +31,7 @@ TBinaryBinnedAUROC = TypeVar("TBinaryBinnedAUROC")
 TMulticlassBinnedAUROC = TypeVar("TMulticlassBinnedAUROC")
 
 
-class BinaryBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
+class BinaryBinnedAUROC(Metric[tuple[torch.Tensor, torch.Tensor]]):
     """
     Compute AUROC, which is the area under the ROC Curve, for binary classification.
     Its functional version is :func:`torcheval.metrics.functional.binary_binned_auroc`.
@@ -76,8 +77,8 @@ class BinaryBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
         self: TBinaryBinnedAUROC,
         *,
         num_tasks: int = 1,
-        threshold: Union[int, List[float], torch.Tensor] = DEFAULT_NUM_THRESHOLD,
-        device: Optional[torch.device] = None,
+        threshold: int | list[float] | torch.Tensor = DEFAULT_NUM_THRESHOLD,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         # TODO: @ningli move `_create_threshold_tensor()` to utils
@@ -119,7 +120,7 @@ class BinaryBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
     @torch.inference_mode()
     def compute(
         self: TBinaryBinnedAUROC,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """
         Return Binned_AUROC.  If no ``update()`` calls are made before
         ``compute()`` is called, return an empty tensor.
@@ -152,7 +153,7 @@ class BinaryBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
             self.targets = [torch.cat(self.targets, -1)]
 
 
-class MulticlassBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
+class MulticlassBinnedAUROC(Metric[tuple[torch.Tensor, torch.Tensor]]):
     """
     Compute AUROC, which is the area under the ROC Curve, for multiclass classification.
     Its functional version is :func:`torcheval.metrics.functional.multiclass_binned_auroc`.
@@ -189,9 +190,9 @@ class MulticlassBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
         self: TMulticlassBinnedAUROC,
         *,
         num_classes: int,
-        threshold: Union[int, List[float], torch.Tensor] = 200,
-        average: Optional[str] = "macro",
-        device: Optional[torch.device] = None,
+        threshold: int | list[float] | torch.Tensor = 200,
+        average: str | None = "macro",
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         # TODO: @ningli move `_create_threshold_tensor()` to utils
@@ -232,7 +233,7 @@ class MulticlassBinnedAUROC(Metric[Tuple[torch.Tensor, torch.Tensor]]):
     @torch.inference_mode()
     def compute(
         self: TMulticlassBinnedAUROC,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         return _multiclass_binned_auroc_compute(
             torch.cat(self.inputs),
             torch.cat(self.targets),

@@ -7,18 +7,9 @@
 # pyre-strict
 
 import logging
+from collections.abc import Iterable, MutableMapping
 from copy import deepcopy
-from typing import (
-    Any,
-    Dict,
-    Iterable,
-    List,
-    MutableMapping,
-    Optional,
-    overload,
-    TypeVar,
-    Union,
-)
+from typing import Any, overload, TypeVar
 
 import torch
 import torch.distributed as dist
@@ -35,14 +26,14 @@ _TMetrics = TypeVar("_TMetrics", bound=Iterable[Metric])
 _TMP: str = "tmp"
 
 
-def _get_world_size(process_group: Optional[dist.ProcessGroup]) -> int:
+def _get_world_size(process_group: dist.ProcessGroup | None) -> int:
     if not dist.is_available() or not dist.is_initialized():
         # dist is not initialized or available, return 1 for world size
         return 1
     return dist.get_world_size(group=process_group)
 
 
-def _get_rank(process_group: Optional[dist.ProcessGroup]) -> int:
+def _get_rank(process_group: dist.ProcessGroup | None) -> int:
     if not dist.is_available() or not dist.is_initialized():
         # dist is not initialized or available, return 0 for rank
         return 0
@@ -51,7 +42,7 @@ def _get_rank(process_group: Optional[dist.ProcessGroup]) -> int:
 
 def sync_and_compute(
     metric: Metric[TComputeReturn],
-    process_group: Optional[dist.ProcessGroup] = None,
+    process_group: dist.ProcessGroup | None = None,
 ) -> TComputeReturn:
     """
     Sync metric states and returns the ``metric.compute()`` result of
@@ -87,8 +78,8 @@ def sync_and_compute(
 
 def sync_and_compute_collection(
     metrics: MutableMapping[str, Metric],
-    process_group: Optional[dist.ProcessGroup] = None,
-) -> Dict[str, Any]:
+    process_group: dist.ProcessGroup | None = None,
+) -> dict[str, Any]:
     """
     Sync metric states across a dict of metrics and returns the
     ``metric.compute()`` result of synced metrics on all ranks
@@ -127,8 +118,8 @@ def sync_and_compute_collection(
 
 def get_synced_state_dict(
     metric: Metric,
-    process_group: Optional[dist.ProcessGroup] = None,
-) -> Dict[str, Any]:
+    process_group: dist.ProcessGroup | None = None,
+) -> dict[str, Any]:
     """
     Return the state dict of a metric after syncing on all ranks.
     Return an empty dict on other ranks.
@@ -160,8 +151,8 @@ def get_synced_state_dict(
 
 def get_synced_state_dict_collection(
     metric_collection: MutableMapping[str, Metric],
-    process_group: Optional[dist.ProcessGroup] = None,
-) -> Dict[str, Dict[str, Any]]:
+    process_group: dist.ProcessGroup | None = None,
+) -> dict[str, dict[str, Any]]:
     """
     Return the state dict of a collection of metrics after syncing on all ranks.
     Return an None on other ranks.
@@ -209,7 +200,7 @@ def clone_metric(metric: Metric) -> Metric:
     return deepcopy(metric)
 
 
-def clone_metrics(metrics: _TMetrics) -> List[Metric]:
+def clone_metrics(metrics: _TMetrics) -> list[Metric]:
     """
     Return a list of new metric instances which are cloned from the input metrics.
 
@@ -223,7 +214,7 @@ def clone_metrics(metrics: _TMetrics) -> List[Metric]:
 
 def get_synced_metric(
     metric: Metric,
-    process_group: Optional[dist.ProcessGroup] = None,
+    process_group: dist.ProcessGroup | None = None,
 ) -> Metric:
     """
     Returns a metric object on all ranks whose internal state
@@ -272,7 +263,7 @@ def get_synced_metric(
     )
 
     local_rank = _get_rank(process_group)
-    other_rank_metrics: List[Metric] = [
+    other_rank_metrics: list[Metric] = [
         gathered_metric_list[rank] for rank in range(world_size) if rank != local_rank
     ]
 
@@ -281,8 +272,8 @@ def get_synced_metric(
 
 def get_synced_metric_collection(
     metric_collection: MutableMapping[str, Metric],
-    process_group: Optional[dist.ProcessGroup] = None,
-) -> Union[Dict[str, Metric], MutableMapping[str, Metric]]:
+    process_group: dist.ProcessGroup | None = None,
+) -> dict[str, Metric] | MutableMapping[str, Metric]:
     """
     Returns a dict of metric objects to all ranks whose
     internal state variables are synced across processes in the process_group.
@@ -332,12 +323,12 @@ def get_synced_metric_collection(
         local_rank = dist.get_rank(process_group)
 
         # metric bundles are dicts.
-        synced_metric_dict: Dict[str, Metric] = {}
+        synced_metric_dict: dict[str, Metric] = {}
 
         for metric_key in metric_collection.keys():
             base_metric = metric_collection[metric_key]
             base_metric = clone_metric(base_metric).to(base_metric.device)
-            other_rank_metrics: List[Metric] = [
+            other_rank_metrics: list[Metric] = [
                 list_of_metric_collections[rank][metric_key]
                 for rank in range(world_size)
                 if rank != local_rank
@@ -367,7 +358,7 @@ def _sync_metric_object(
     local_metric_data: Metric,
     process_group: dist.ProcessGroup,
     world_size: int,
-) -> List[Metric]: ...
+) -> list[Metric]: ...
 
 
 @overload
@@ -375,11 +366,11 @@ def _sync_metric_object(
     local_metric_data: MutableMapping[str, Metric],
     process_group: dist.ProcessGroup,
     world_size: int,
-) -> List[MutableMapping[str, Metric]]: ...
+) -> list[MutableMapping[str, Metric]]: ...
 
 
 def _apply_device_to_tensor_states(
-    state_dict: Dict[str, Any], device: torch.device
+    state_dict: dict[str, Any], device: torch.device
 ) -> None:
     for state_name, state_value in state_dict.items():
         if isinstance(state_value, torch.Tensor):
@@ -393,10 +384,10 @@ def _apply_device_to_tensor_states(
 
 
 def _sync_metric_object(
-    local_metric_data: Union[Metric, MutableMapping[str, Metric]],
+    local_metric_data: Metric | MutableMapping[str, Metric],
     process_group: dist.ProcessGroup,
     world_size: int,
-) -> Union[List[Metric], List[MutableMapping[str, Metric]]]:
+) -> list[Metric] | list[MutableMapping[str, Metric]]:
     unpack = False  # unpack the dictionary into a single metric when returned. Only used when metric_data is a metric and not a dict of metrics.
     if isinstance(local_metric_data, Metric):
         local_metric_data = {_TMP: local_metric_data}
@@ -408,8 +399,8 @@ def _sync_metric_object(
         m._prepare_for_merge_state()
 
     # create a dict of state dicts for each metric in the collection, i.e. extract the state dicts from the Metric objects
-    metric_state_data: Dict[str, Dict[str, TState]] = {}
-    metric_to_device: Dict[str, torch.device] = {}
+    metric_state_data: dict[str, dict[str, TState]] = {}
+    metric_to_device: dict[str, torch.device] = {}
     backend = dist.get_backend(group=process_group)
     for metric_name, metric in local_metric_data.items():
         metric_state_data[metric_name] = metric.state_dict()
@@ -460,7 +451,7 @@ def _sync_metric_object(
 
 
 # pyre-ignore: Missing return annotation [3]
-def _convert_to_psuedo_metric(metric_state_dict: Dict[str, Any]) -> Any:
+def _convert_to_psuedo_metric(metric_state_dict: dict[str, Any]) -> Any:
     """
     Converts dictionary to object with attributes set according to key-value.
     """
@@ -522,8 +513,8 @@ def to_device(
 
 
 def classwise_converter(
-    input: torch.Tensor, name: str, labels: Optional[List[str]] = None
-) -> Dict[str, torch.Tensor]:
+    input: torch.Tensor, name: str, labels: list[str] | None = None
+) -> dict[str, torch.Tensor]:
     """
     Converts an unaveraged metric result tensor into a dictionary with
     each key being 'metricname_classlabel' and value being the data

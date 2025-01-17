@@ -7,7 +7,6 @@
 # pyre-strict
 
 import unittest
-from typing import Union
 
 import torch
 from torcheval.metrics.functional import sum
@@ -18,7 +17,7 @@ class TestSum(unittest.TestCase):
     def _test_sum_with_input(
         self,
         val: torch.Tensor,
-        weight: Union[float, torch.Tensor] = 1.0,
+        weight: float | torch.Tensor = 1.0,
     ) -> None:
         torch.testing.assert_close(
             sum(val),
@@ -38,7 +37,7 @@ class TestSum(unittest.TestCase):
 
     def test_sum_input_valid_weight(self) -> None:
         def _compute_result(
-            val: torch.Tensor, weight: Union[float, torch.Tensor]
+            val: torch.Tensor, weight: float | torch.Tensor
         ) -> torch.Tensor:
             weighted_sum = torch.tensor(0.0)
             if isinstance(weight, torch.Tensor):

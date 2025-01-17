@@ -9,7 +9,8 @@
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
 from collections import defaultdict
-from typing import Iterable, Optional, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -19,9 +20,7 @@ TDummySumMetric = TypeVar("TDummySumMetric")
 
 
 class DummySumMetric(Metric[torch.Tensor]):
-    def __init__(
-        self: TDummySumMetric, *, device: Optional[torch.device] = None
-    ) -> None:
+    def __init__(self: TDummySumMetric, *, device: torch.device | None = None) -> None:
         super().__init__(device=device)
         self._add_state("sum", torch.tensor(0.0, device=self.device))
 
@@ -49,7 +48,7 @@ TDummySumListStateMetric = TypeVar("TDummySumListStateMetric")
 
 class DummySumListStateMetric(Metric[torch.Tensor]):
     def __init__(
-        self: TDummySumListStateMetric, *, device: Optional[torch.device] = None
+        self: TDummySumListStateMetric, *, device: torch.device | None = None
     ) -> None:
         super().__init__(device=device)
         self._add_state("x", [])
@@ -81,7 +80,7 @@ TDummySumDictStateMetric = TypeVar("TDummySumDictStateMetric")
 
 class DummySumDictStateMetric(Metric[torch.Tensor]):
     def __init__(
-        self: TDummySumDictStateMetric, *, device: Optional[torch.device] = None
+        self: TDummySumDictStateMetric, *, device: torch.device | None = None
     ) -> None:
         super().__init__(device=device)
         self._add_state("x", defaultdict(lambda: torch.tensor(0.0, device=self.device)))

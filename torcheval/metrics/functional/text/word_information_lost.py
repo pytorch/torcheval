@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import List, Tuple, Union
 
 import torch
 
@@ -14,9 +13,9 @@ from torcheval.metrics.functional.text.helper import _get_errors_and_totals
 
 
 def _wil_update(
-    input: Union[str, List[str]],
-    target: Union[str, List[str]],
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    input: str | list[str],
+    target: str | list[str],
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Update the wil score with the current set of references and predictions.
     Args:
         input: Transcription(s) to score as a string or list of strings
@@ -53,8 +52,8 @@ def _wil_compute(
 
 @torch.inference_mode()
 def word_information_lost(
-    input: Union[str, List[str]],
-    target: Union[str, List[str]],
+    input: str | list[str],
+    target: str | list[str],
 ) -> torch.Tensor:
     """Word Information Lost rate is a metric of the performance of an automatic speech recognition system. This
     value indicates the percentage of characters that were incorrectly predicted. The lower the value, the better

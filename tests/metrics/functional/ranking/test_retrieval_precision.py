@@ -7,7 +7,7 @@
 # pyre-strict
 
 import unittest
-from typing import Any, Dict, Optional
+from typing import Any
 
 import torch
 from torcheval.metrics.functional import retrieval_precision
@@ -16,7 +16,7 @@ from torcheval.utils import random_data as rd
 
 class TestRetrievalPrecision(unittest.TestCase):
     def rp_1D(
-        self, inp: torch.Tensor, target: torch.Tensor, k: Optional[int]
+        self, inp: torch.Tensor, target: torch.Tensor, k: int | None
     ) -> torch.Tensor:
         """
         1D version of _retrieval_precision_compute
@@ -117,7 +117,7 @@ class TestRetrievalPrecision(unittest.TestCase):
                 torch.testing.assert_close(actual_prec, expected_prec)
 
     def test_retrieval_precision_with_invalid_parameters(self) -> None:
-        def prec(args: Dict[str, Any]) -> None:
+        def prec(args: dict[str, Any]) -> None:
             retrieval_precision(
                 input=torch.tensor([1]),
                 target=torch.tensor([1]),
@@ -139,7 +139,7 @@ class TestRetrievalPrecision(unittest.TestCase):
             prec({"k": None, "limit_k_to_size": True})
 
     def test_retrieval_precision_invalid_input(self) -> None:
-        def prec(args: Dict[str, Any]) -> None:
+        def prec(args: dict[str, Any]) -> None:
             retrieval_precision(
                 k=1,
                 limit_k_to_size=False,

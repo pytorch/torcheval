@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional
 
 import numpy as np
 
@@ -27,7 +26,7 @@ from torchvision import models
 class ResnetFeatureExtractor(nn.Module):
     def __init__(
         self,
-        weights: Optional[str] = "DEFAULT",
+        weights: str | None = "DEFAULT",
     ) -> None:
         """
         This class wraps the InceptionV3 model to compute FID.
@@ -52,7 +51,7 @@ class ResnetFeatureExtractor(nn.Module):
 
 class TestFrechetInceptionDistance(MetricClassTester):
     def setUp(self) -> None:
-        super(TestFrechetInceptionDistance, self).setUp()
+        super().setUp()
         torch.manual_seed(0)
 
     def _get_random_data_FrechetInceptionDistance(
@@ -104,7 +103,7 @@ class TestFrechetInceptionDistance(MetricClassTester):
         imgs: torch.Tensor,
         feature_dim: int,
         expected_result: torch.Tensor,
-        model: Optional[torch.nn.Module] = None,
+        model: torch.nn.Module | None = None,
     ) -> None:
         # create an alternating list of boolean values to
         # simulate a sequence of alternating real and generated images

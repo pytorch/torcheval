@@ -7,7 +7,6 @@
 # pyre-strict
 
 import unittest
-from typing import Optional
 
 import torch
 from sklearn.metrics import mean_squared_error
@@ -20,7 +19,7 @@ class TestMeanSquaredError(unittest.TestCase):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        sample_weight: Optional[torch.Tensor] = None,
+        sample_weight: torch.Tensor | None = None,
         multioutput: str = "uniform_average",
     ) -> None:
         compute_result = torch.tensor(

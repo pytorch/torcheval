@@ -7,7 +7,6 @@
 # pyre-strict
 
 import unittest
-from typing import Tuple
 
 import torch
 
@@ -53,7 +52,7 @@ class TestPeakSignalNoiseRatio(unittest.TestCase):
 
     def _get_random_data_peak_signal_to_noise_ratio(
         self, batch_size: int, num_channels: int, height: int, width: int
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         input = torch.rand(
             size=(batch_size, num_channels, height, width),
         )

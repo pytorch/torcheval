@@ -6,15 +6,14 @@
 
 # pyre-strict
 
-from typing import List, Tuple, Union
 
 import torch
 
 
 @torch.inference_mode()
 def word_error_rate(
-    input: Union[str, List[str]],
-    target: Union[str, List[str]],
+    input: str | list[str],
+    target: str | list[str],
 ) -> torch.Tensor:
     """
     Compute the word error rate of the predicted word sequence(s) with the reference word sequence(s).
@@ -42,9 +41,9 @@ def word_error_rate(
 
 
 def _word_error_rate_update(
-    input: Union[str, List[str]],
-    target: Union[str, List[str]],
-) -> Tuple[torch.Tensor, torch.Tensor]:
+    input: str | list[str],
+    target: str | list[str],
+) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Update the metric state with edit distance and the length of the reference sequence.
 
@@ -82,8 +81,8 @@ def _word_error_rate_compute(
 
 
 def _edit_distance(
-    prediction_tokens: List[str],
-    reference_tokens: List[str],
+    prediction_tokens: list[str],
+    reference_tokens: list[str],
 ) -> int:
     """
     Dynamic programming algorithm to compute the edit distance between two word sequences.
@@ -107,8 +106,8 @@ def _edit_distance(
 
 
 def _word_error_rate_input_check(
-    input: Union[str, List[str]],
-    target: Union[str, List[str]],
+    input: str | list[str],
+    target: str | list[str],
 ) -> None:
     if type(input) != type(target):
         raise ValueError(

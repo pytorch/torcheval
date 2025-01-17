@@ -7,8 +7,9 @@
 # pyre-strict
 
 import warnings
+from collections.abc import Iterable
 from importlib.util import find_spec
-from typing import Any, Iterable, Optional, TypeVar, Union
+from typing import Any, TypeVar
 
 import torch
 import torch.nn.functional as F
@@ -38,7 +39,7 @@ def _validate_torchvision_available() -> None:
 class FIDInceptionV3(nn.Module):
     def __init__(
         self,
-        weights: Optional[str] = "DEFAULT",
+        weights: str | None = "DEFAULT",
     ) -> None:
         """
         This class wraps the InceptionV3 model to compute FID.
@@ -63,9 +64,9 @@ class FIDInceptionV3(nn.Module):
 class FrechetInceptionDistance(Metric[torch.Tensor]):
     def __init__(
         self: TFrechetInceptionDistance,
-        model: Optional[nn.Module] = None,
+        model: nn.Module | None = None,
         feature_dim: int = 2048,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         """
         Computes the Frechet Inception Distance (FID) between two distributions of images (real and generated).
@@ -204,7 +205,7 @@ class FrechetInceptionDistance(Metric[torch.Tensor]):
 
     def _FID_parameter_check(
         self: TFrechetInceptionDistance,
-        model: Optional[nn.Module],
+        model: nn.Module | None,
         feature_dim: int,
     ) -> None:
         # Whatever the model, the feature_dim needs to be set
@@ -248,7 +249,7 @@ class FrechetInceptionDistance(Metric[torch.Tensor]):
 
     def to(
         self: TFrechetInceptionDistance,
-        device: Union[str, torch.device],
+        device: str | torch.device,
         *args: Any,
         **kwargs: Any,
     ) -> TFrechetInceptionDistance:

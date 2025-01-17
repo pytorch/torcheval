@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional
 
 import torch
 from sklearn.metrics import roc_auc_score
@@ -25,7 +24,7 @@ class TestWindowedBinaryAUROC(MetricClassTester):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        weight: Optional[torch.Tensor] = None,
+        weight: torch.Tensor | None = None,
         max_num_samples: int = 100,
     ) -> None:
         input_tensors = input.reshape(-1)[-max_num_samples:]

@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional, Tuple
 
 import torch
 
@@ -15,7 +14,7 @@ import torch
 def peak_signal_noise_ratio(
     input: torch.Tensor,
     target: torch.Tensor,
-    data_range: Optional[float] = None,
+    data_range: float | None = None,
 ) -> torch.Tensor:
     """
     Compute the peak signal-to-noise ratio between two images.
@@ -47,7 +46,7 @@ def peak_signal_noise_ratio(
     return psnr
 
 
-def _psnr_param_check(data_range: Optional[float]) -> None:
+def _psnr_param_check(data_range: float | None) -> None:
     # Check matching shapes
     if data_range is not None:
         if type(data_range) is not float:
@@ -67,7 +66,7 @@ def _psnr_input_check(input: torch.Tensor, target: torch.Tensor) -> None:
 
 def _psnr_update(
     input: torch.Tensor, target: torch.Tensor
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     _psnr_input_check(input, target)
     sum_squared_error = torch.sum(torch.pow(input - target, 2))
     num_observations = torch.tensor(target.numel(), device=target.device)

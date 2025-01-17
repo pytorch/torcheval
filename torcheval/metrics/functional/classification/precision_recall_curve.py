@@ -7,8 +7,6 @@
 # pyre-strict
 
 
-from typing import List, Optional, Tuple
-
 import torch
 import torch.nn.functional as F
 
@@ -21,7 +19,7 @@ This file contains binary_precision_recall_curve, multiclass_precision_recall_cu
 def binary_precision_recall_curve(
     input: torch.Tensor,
     target: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Returns precision-recall pairs and their corresponding thresholds for
     binary classification tasks. If a class is missing from the target tensor,
@@ -66,7 +64,7 @@ def _binary_precision_recall_curve_update(
 def _binary_precision_recall_curve_compute(
     input: torch.Tensor,
     target: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     precision, recall, threshold = _compute_for_each_class(input, target, 1)
 
     return precision, recall, threshold
@@ -98,8 +96,8 @@ def multiclass_precision_recall_curve(
     input: torch.Tensor,
     target: torch.Tensor,
     *,
-    num_classes: Optional[int] = None,
-) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]:
+    num_classes: int | None = None,
+) -> tuple[list[torch.Tensor], list[torch.Tensor], list[torch.Tensor]]:
     """
     Returns precision-recall pairs and their corresponding thresholds for
     multi-class classification tasks. If a class is missing from the target
@@ -150,7 +148,7 @@ def multiclass_precision_recall_curve(
 def _multiclass_precision_recall_curve_update(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int],
+    num_classes: int | None,
 ) -> None:
     _multiclass_precision_recall_curve_update_input_check(input, target, num_classes)
 
@@ -159,13 +157,13 @@ def _multiclass_precision_recall_curve_update(
 def _multiclass_precision_recall_curve_compute(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int],
-) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]:
+    num_classes: int | None,
+) -> tuple[list[torch.Tensor], list[torch.Tensor], list[torch.Tensor]]:
     if num_classes is None:
         num_classes = input.shape[1]
     thresholds, indices = input.T.sort(dim=1, descending=True)
     mask = F.pad(thresholds.diff(dim=1) != 0, [0, 1], value=1.0).flip(1)
-    sizes: List[int] = mask.sum(1).tolist()
+    sizes: list[int] = mask.sum(1).tolist()
     thresholds = thresholds.flip(1)[mask].split(sizes)
 
     arange = torch.arange(num_classes, device=target.device)
@@ -177,7 +175,7 @@ def _multiclass_precision_recall_curve_compute(
     precision = F.pad(num_tp / (num_tp + num_fp), [0, 1], value=1.0)
     recall = F.pad((num_tp / num_tp[:, :1]).nan_to_num_(1.0), [0, 1], value=0.0)
     mask = F.pad(mask, [0, 1], value=1.0)
-    sizes: List[int] = mask.sum(1).tolist()
+    sizes: list[int] = mask.sum(1).tolist()
 
     precision = precision[mask].split(sizes)
     recall = recall[mask].split(sizes)
@@ -187,7 +185,7 @@ def _multiclass_precision_recall_curve_compute(
 def _multiclass_precision_recall_curve_update_input_check(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int],
+    num_classes: int | None,
 ) -> None:
     if input.size(0) != target.size(0):
         raise ValueError(
@@ -212,7 +210,7 @@ def _compute_for_each_class(
     input: torch.Tensor,
     target: torch.Tensor,
     pos_label: int,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     threshold, indices = input.sort(descending=True)
     mask = F.pad(threshold.diff(dim=0) != 0, [0, 1], value=1.0)
     num_tp = (target[indices] == pos_label).cumsum(0)[mask]
@@ -238,8 +236,8 @@ def multilabel_precision_recall_curve(
     input: torch.Tensor,
     target: torch.Tensor,
     *,
-    num_labels: Optional[int] = None,
-) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]:
+    num_labels: int | None = None,
+) -> tuple[list[torch.Tensor], list[torch.Tensor], list[torch.Tensor]]:
     """
     Returns precision-recall pairs and their corresponding thresholds for
     multi-label classification tasks. If there are no samples for a label
@@ -300,7 +298,7 @@ def _multilabel_precision_recall_curve_compute(
     input: torch.Tensor,
     target: torch.Tensor,
     num_labels: int,
-) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]:
+) -> tuple[list[torch.Tensor], list[torch.Tensor], list[torch.Tensor]]:
     precisions, recalls, thresholds = [], [], []
     for i in range(num_labels):
         precision, recall, threshold = _compute_for_each_class(

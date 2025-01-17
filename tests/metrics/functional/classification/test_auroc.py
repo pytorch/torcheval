@@ -9,7 +9,6 @@
 # pyre-ignore-all-errors[56]: Pyre was not able to infer the type of argument
 
 import unittest
-from typing import Optional
 
 import torch
 from sklearn.metrics import roc_auc_score
@@ -23,9 +22,9 @@ class TestBinaryAUROC(unittest.TestCase):
         input: torch.Tensor,
         target: torch.Tensor,
         num_tasks: int = 1,
-        weight: Optional[torch.Tensor] = None,
-        compute_result: Optional[torch.Tensor] = None,
-        use_fbgemm: Optional[bool] = False,
+        weight: torch.Tensor | None = None,
+        compute_result: torch.Tensor | None = None,
+        use_fbgemm: bool | None = False,
     ) -> None:
         if compute_result is None:
             compute_result = (
@@ -53,7 +52,7 @@ class TestBinaryAUROC(unittest.TestCase):
             rtol=1e-5,
         )
 
-    def _test_auroc_set(self, use_fbgemm: Optional[bool] = False) -> None:
+    def _test_auroc_set(self, use_fbgemm: bool | None = False) -> None:
         input = torch.tensor([1, 1, 0, 0])
         target = torch.tensor([1, 0, 1, 0])
         weight = torch.tensor([0.2, 0.2, 1.0, 1.0], dtype=torch.float64)

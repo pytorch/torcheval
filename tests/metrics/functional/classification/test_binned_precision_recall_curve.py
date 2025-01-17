@@ -7,7 +7,6 @@
 # pyre-strict
 
 import unittest
-from typing import Tuple, Union
 
 import torch
 from torcheval.metrics.functional import (
@@ -22,8 +21,8 @@ class TestBinaryBinnedPrecisionRecallCurve(unittest.TestCase):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        threshold: Union[torch.Tensor, int],
-        compute_result: Tuple[torch.Tensor, torch.Tensor, torch.Tensor],
+        threshold: torch.Tensor | int,
+        compute_result: tuple[torch.Tensor, torch.Tensor, torch.Tensor],
     ) -> None:
         my_compute_result = binary_binned_precision_recall_curve(
             input,

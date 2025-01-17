@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional
 
 import torch
 from torch.nn import functional as F
@@ -29,8 +28,8 @@ def binary_auroc(
     target: torch.Tensor,
     *,
     num_tasks: int = 1,
-    weight: Optional[torch.Tensor] = None,
-    use_fbgemm: Optional[bool] = False,
+    weight: torch.Tensor | None = None,
+    use_fbgemm: bool | None = False,
 ) -> torch.Tensor:
     """
     Compute AUROC, which is the area under the ROC Curve, for binary classification.
@@ -79,7 +78,7 @@ def multiclass_auroc(
     target: torch.Tensor,
     *,
     num_classes: int,
-    average: Optional[str] = "macro",
+    average: str | None = "macro",
 ) -> torch.Tensor:
     """
     Compute AUROC, which is the area under the ROC Curve, for multiclass classification.
@@ -118,7 +117,7 @@ def multiclass_auroc(
 def _binary_auroc_compute_jit(
     input: torch.Tensor,
     target: torch.Tensor,
-    weight: Optional[torch.Tensor] = None,
+    weight: torch.Tensor | None = None,
 ) -> torch.Tensor:
     threshold, indices = input.sort(descending=True)
     mask = F.pad(threshold.diff(dim=-1) != 0, [0, 1], value=1.0)
@@ -157,8 +156,8 @@ def _binary_auroc_compute_jit(
 def _binary_auroc_compute(
     input: torch.Tensor,
     target: torch.Tensor,
-    weight: Optional[torch.Tensor] = None,
-    use_fbgemm: Optional[bool] = False,
+    weight: torch.Tensor | None = None,
+    use_fbgemm: bool | None = False,
 ) -> torch.Tensor:
     if use_fbgemm:
         assert input.is_cuda and target.is_cuda, "Tensors have to be on GPU"
@@ -181,7 +180,7 @@ def _binary_auroc_update_input_check(
     input: torch.Tensor,
     target: torch.Tensor,
     num_tasks: int,
-    weight: Optional[torch.Tensor] = None,
+    weight: torch.Tensor | None = None,
 ) -> None:
     if input.shape != target.shape:
         raise ValueError(
@@ -210,7 +209,7 @@ def _multiclass_auroc_compute(
     input: torch.Tensor,
     target: torch.Tensor,
     num_classes: int,
-    average: Optional[str] = "macro",
+    average: str | None = "macro",
 ) -> torch.Tensor:
     thresholds, indices = input.T.sort(dim=1, descending=True)
     mask = F.pad(thresholds.diff(dim=1) != 0, [0, 1], value=1.0)
@@ -239,7 +238,7 @@ def _multiclass_auroc_compute(
 
 def _multiclass_auroc_param_check(
     num_classes: int,
-    average: Optional[str],
+    average: str | None,
 ) -> None:
     average_options = ("macro", "none", None)
     if average not in average_options:

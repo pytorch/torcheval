@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import List, Union
 
 import torch
 from torcheval.metrics import Sum
@@ -68,8 +67,8 @@ class TestSum(MetricClassTester):
         ]
 
         def _compute_result(
-            update_inputs: List[torch.Tensor],
-            update_weights: List[Union[float, torch.Tensor]],
+            update_inputs: list[torch.Tensor],
+            update_weights: list[float | torch.Tensor],
         ) -> torch.Tensor:
             weighted_sum = torch.tensor(0.0, dtype=torch.float64)
             for v, w in zip(update_inputs, update_weights):

@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -88,7 +89,7 @@ class R2Score(Metric[torch.Tensor]):
         *,
         multioutput: str = "uniform_average",
         num_regressors: int = 0,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         _r2_score_param_check(multioutput, num_regressors)

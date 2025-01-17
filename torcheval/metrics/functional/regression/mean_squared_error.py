@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional, Tuple
 
 import torch
 
@@ -16,7 +15,7 @@ def mean_squared_error(
     input: torch.Tensor,
     target: torch.Tensor,
     *,
-    sample_weight: Optional[torch.Tensor] = None,
+    sample_weight: torch.Tensor | None = None,
     multioutput: str = "uniform_average",
 ) -> torch.Tensor:
     """
@@ -74,8 +73,8 @@ def mean_squared_error(
 def _mean_squared_error_update(
     input: torch.Tensor,
     target: torch.Tensor,
-    sample_weight: Optional[torch.Tensor],
-) -> Tuple[torch.Tensor, torch.Tensor]:
+    sample_weight: torch.Tensor | None,
+) -> tuple[torch.Tensor, torch.Tensor]:
     _mean_squared_error_update_input_check(input, target, sample_weight)
     return _update(input, target, sample_weight)
 
@@ -84,8 +83,8 @@ def _mean_squared_error_update(
 def _update(
     input: torch.Tensor,
     target: torch.Tensor,
-    sample_weight: Optional[torch.Tensor],
-) -> Tuple[torch.Tensor, torch.Tensor]:
+    sample_weight: torch.Tensor | None,
+) -> tuple[torch.Tensor, torch.Tensor]:
     squared_error = torch.square(target - input)
     if sample_weight is None:
         sum_squared_error = squared_error.sum(dim=0)
@@ -116,7 +115,7 @@ def _mean_squared_error_compute(
 def _mean_squared_error_update_input_check(
     input: torch.Tensor,
     target: torch.Tensor,
-    sample_weight: Optional[torch.Tensor],
+    sample_weight: torch.Tensor | None,
 ) -> None:
     if input.ndim >= 3 or target.ndim >= 3:
         raise ValueError(

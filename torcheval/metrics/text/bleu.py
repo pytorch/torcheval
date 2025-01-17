@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, Sequence, TypeVar, Union
+from collections.abc import Iterable, Sequence
+from typing import TypeVar
 
 import torch
 from torcheval.metrics.functional.text.bleu import (
@@ -50,8 +51,8 @@ class BLEUScore(Metric[torch.Tensor]):
         self: TBLEUScore,
         *,
         n_gram: int,
-        weights: Optional[torch.Tensor] = None,
-        device: Optional[torch.device] = None,
+        weights: torch.Tensor | None = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
 
@@ -83,8 +84,8 @@ class BLEUScore(Metric[torch.Tensor]):
     # pyre-ignore[14]: `update` overrides method defined in `Metric` inconsistently.
     def update(
         self: TBLEUScore,
-        input: Union[str, Sequence[str]],
-        target: Sequence[Union[str, Sequence[str]]],
+        input: str | Sequence[str],
+        target: Sequence[str | Sequence[str]],
     ) -> TBLEUScore:
         """
         Update the metric state with new inputs.

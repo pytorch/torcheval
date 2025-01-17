@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, List, Optional, Tuple, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -32,7 +33,7 @@ TMultilabelPrecisionRecallCurve = TypeVar("TMultilabelPrecisionRecallCurve")
 
 
 class BinaryPrecisionRecallCurve(
-    Metric[Tuple[torch.Tensor, torch.Tensor, torch.Tensor]]
+    Metric[tuple[torch.Tensor, torch.Tensor, torch.Tensor]]
 ):
     """
     Returns precision-recall pairs and their corresponding thresholds for
@@ -57,7 +58,7 @@ class BinaryPrecisionRecallCurve(
     def __init__(
         self: TBinaryPrecisionRecallCurve,
         *,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         self._add_state("inputs", [])
@@ -92,7 +93,7 @@ class BinaryPrecisionRecallCurve(
     @torch.inference_mode()
     def compute(
         self: TBinaryPrecisionRecallCurve,
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Returns:
             Tuple:
@@ -125,7 +126,7 @@ class BinaryPrecisionRecallCurve(
 
 
 class MulticlassPrecisionRecallCurve(
-    Metric[Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]]
+    Metric[tuple[list[torch.Tensor], list[torch.Tensor], list[torch.Tensor]]]
 ):
     """
     Returns precision-recall pairs and their corresponding thresholds for
@@ -165,8 +166,8 @@ class MulticlassPrecisionRecallCurve(
     def __init__(
         self: TMulticlassPrecisionRecallCurve,
         *,
-        num_classes: Optional[int] = None,
-        device: Optional[torch.device] = None,
+        num_classes: int | None = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         self.num_classes = num_classes
@@ -203,7 +204,7 @@ class MulticlassPrecisionRecallCurve(
     @torch.inference_mode()
     def compute(
         self: TMulticlassPrecisionRecallCurve,
-    ) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]:
+    ) -> tuple[list[torch.Tensor], list[torch.Tensor], list[torch.Tensor]]:
         """
         Returns:
 
@@ -237,7 +238,7 @@ class MulticlassPrecisionRecallCurve(
 
 
 class MultilabelPrecisionRecallCurve(
-    Metric[Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]]
+    Metric[tuple[list[torch.Tensor], list[torch.Tensor], list[torch.Tensor]]]
 ):
     """
     Returns precision-recall pairs and their corresponding thresholds for
@@ -274,7 +275,7 @@ class MultilabelPrecisionRecallCurve(
         self: TMultilabelPrecisionRecallCurve,
         *,
         num_labels: int,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         self.num_labels = num_labels
@@ -311,7 +312,7 @@ class MultilabelPrecisionRecallCurve(
     @torch.inference_mode()
     def compute(
         self: TMultilabelPrecisionRecallCurve,
-    ) -> Tuple[List[torch.Tensor], List[torch.Tensor], List[torch.Tensor]]:
+    ) -> tuple[list[torch.Tensor], list[torch.Tensor], list[torch.Tensor]]:
         """
         Returns:
 

@@ -8,7 +8,6 @@
 
 # pyre-ignore-all-errors[56]: Pyre was not able to infer the type of argument
 
-from typing import Optional, Tuple
 
 import numpy as np
 
@@ -427,7 +426,7 @@ class TestMultilabelAUPRC(MetricClassTester):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        average: Optional[str] = "macro",
+        average: str | None = "macro",
         device: str = "cpu",
     ) -> torch.Tensor:
         # Convert input/target to sklearn style inputs
@@ -445,7 +444,7 @@ class TestMultilabelAUPRC(MetricClassTester):
 
     def _get_rand_inputs_multilabel(
         self, num_updates: int, num_labels: int, batch_size: int
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         input = torch.rand(size=[num_updates, batch_size, num_labels])
         targets = torch.randint(
             low=0, high=2, size=[num_updates, batch_size, num_labels]
@@ -457,7 +456,7 @@ class TestMultilabelAUPRC(MetricClassTester):
         input: torch.Tensor,
         target: torch.Tensor,
         num_labels: int,
-        average: Optional[str] = "macro",
+        average: str | None = "macro",
         num_updates: int = NUM_TOTAL_UPDATES,
     ) -> None:
         device = "cuda" if torch.cuda.is_available() else "cpu"

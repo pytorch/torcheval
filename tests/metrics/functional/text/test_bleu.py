@@ -36,7 +36,7 @@ class TestBleu(unittest.TestCase):
         self.assertEqual(1, bp.item())
 
     def test_get_1grams(self) -> None:
-        sentence = str("a squirrel is eating a nut")
+        sentence = "a squirrel is eating a nut"
         sentence_tokenized = sentence.split()
         n = 1
         actual = _get_ngrams(sentence_tokenized, n)
@@ -46,7 +46,7 @@ class TestBleu(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_get_3grams(self) -> None:
-        sentence = str("a squirrel is eating a nut")
+        sentence = "a squirrel is eating a nut"
         sentence_tokenized = sentence.split()
         n = 3
         actual = _get_ngrams(sentence_tokenized, n)
@@ -71,7 +71,7 @@ class TestBleu(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_get_ngrams_invalid(self) -> None:
-        sentence = str("a squirrel is eating a nut")
+        sentence = "a squirrel is eating a nut"
         sentence_tokenized = sentence.split()
         n = 5
         with self.assertRaisesRegex(ValueError, "n_gram should be 1, 2, 3, or 4"):

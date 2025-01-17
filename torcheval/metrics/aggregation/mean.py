@@ -9,7 +9,8 @@
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
 import logging
-from typing import Iterable, Optional, TypeVar, Union
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -54,7 +55,7 @@ class Mean(Metric[torch.Tensor]):
     def __init__(
         self: TMean,
         *,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         # weighted sum of values over the entire state
@@ -72,7 +73,7 @@ class Mean(Metric[torch.Tensor]):
         self: TMean,
         input: torch.Tensor,
         *,
-        weight: Union[float, int, torch.Tensor] = 1.0,
+        weight: float | int | torch.Tensor = 1.0,
     ) -> TMean:
         """
         Compute weighted mean. When weight is not provided, it calculates the unweighted mean.

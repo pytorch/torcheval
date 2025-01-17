@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional, Tuple
 
 import torch
 
@@ -30,7 +29,7 @@ class TestPeakSignalNoiseRatio(MetricClassTester):
         num_channels: int,
         height: int,
         width: int,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         inputs = torch.rand(
             size=(num_updates, batch_size, num_channels, height, width),
         )
@@ -43,7 +42,7 @@ class TestPeakSignalNoiseRatio(MetricClassTester):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        data_range: Optional[float] = None,
+        data_range: float | None = None,
     ) -> None:
         input_np = input.numpy().ravel()
         target_np = target.numpy().ravel()

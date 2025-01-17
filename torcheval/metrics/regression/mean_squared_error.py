@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -74,7 +75,7 @@ class MeanSquaredError(Metric[torch.Tensor]):
         self: TMeanSquaredError,
         *,
         multioutput: str = "uniform_average",
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         _mean_squared_error_param_check(multioutput)
@@ -92,7 +93,7 @@ class MeanSquaredError(Metric[torch.Tensor]):
         input: torch.Tensor,
         target: torch.Tensor,
         *,
-        sample_weight: Optional[torch.Tensor] = None,
+        sample_weight: torch.Tensor | None = None,
     ) -> TMeanSquaredError:
         """
         Update states with the ground truth values and predictions.

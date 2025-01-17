@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import List, Union
 
 import numpy as np
 import torch
@@ -77,8 +76,8 @@ class TestMean(MetricClassTester):
         ]
 
         def _compute_result(
-            update_value: List[torch.Tensor],
-            update_weight: List[Union[float, int, torch.Tensor]],
+            update_value: list[torch.Tensor],
+            update_weight: list[float | int | torch.Tensor],
         ) -> torch.Tensor:
             weighted_sum = 0.0
             weights = 0.0

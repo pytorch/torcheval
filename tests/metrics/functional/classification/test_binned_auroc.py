@@ -7,7 +7,6 @@
 # pyre-strict
 
 import unittest
-from typing import Optional, Tuple, Union
 
 import torch
 from torcheval.metrics.functional.classification import (
@@ -22,8 +21,8 @@ class TestBinaryBinnedAUROC(unittest.TestCase):
         input: torch.Tensor,
         target: torch.Tensor,
         num_tasks: int,
-        threshold: Union[torch.Tensor, int],
-        compute_result: Tuple[torch.Tensor, torch.Tensor],
+        threshold: torch.Tensor | int,
+        compute_result: tuple[torch.Tensor, torch.Tensor],
     ) -> None:
         my_compute_result = binary_binned_auroc(
             input,
@@ -158,9 +157,9 @@ class TestMulticlassBinnedAUROC(unittest.TestCase):
         input: torch.Tensor,
         target: torch.Tensor,
         num_classes: int,
-        threshold: Union[torch.Tensor, int],
-        compute_result: Tuple[torch.Tensor, torch.Tensor],
-        average: Optional[str] = "macro",
+        threshold: torch.Tensor | int,
+        compute_result: tuple[torch.Tensor, torch.Tensor],
+        average: str | None = "macro",
     ) -> None:
         my_compute_result = multiclass_binned_auroc(
             input,

@@ -7,7 +7,6 @@
 # pyre-strict
 
 import unittest
-from typing import Union
 
 import numpy as np
 import torch
@@ -19,7 +18,7 @@ class TestMean(unittest.TestCase):
     def _test_mean_with_input(
         self,
         val: torch.Tensor,
-        weight: Union[float, torch.Tensor] = 1.0,
+        weight: float | torch.Tensor = 1.0,
     ) -> None:
         torch.testing.assert_close(
             mean(val),
@@ -39,7 +38,7 @@ class TestMean(unittest.TestCase):
 
     def test_mean_input_valid_weight(self) -> None:
         def _compute_result(
-            val: torch.Tensor, weights: Union[float, torch.Tensor]
+            val: torch.Tensor, weights: float | torch.Tensor
         ) -> torch.Tensor:
             # pyre-fixme[9]: val has type `Tensor`; used as `ndarray[Any, Any]`.
             val = val.numpy().flatten()

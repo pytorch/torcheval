@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional
 
 import torch
 
@@ -19,7 +18,7 @@ def binary_confusion_matrix(
     target: torch.Tensor,
     *,
     threshold: float = 0.5,
-    normalize: Optional[str] = None,
+    normalize: str | None = None,
 ) -> torch.Tensor:
     """
     Compute binary confusion matrix, a 2 by 2 tensor with counts ( (true positive, false negative) , (false positive, true negative) )
@@ -73,7 +72,7 @@ def multiclass_confusion_matrix(
     target: torch.Tensor,
     num_classes: int,
     *,
-    normalize: Optional[str] = None,
+    normalize: str | None = None,
 ) -> torch.Tensor:
     """
     Compute multi-class confusion matrix, a matrix of dimension num_classes x num_classes where each element at position `(i,j)` is the number of examples with true class `i` that were predicted to be class `j`.
@@ -152,7 +151,7 @@ def multiclass_confusion_matrix(
 
 
 def _binary_confusion_matrix_compute(
-    cm: torch.Tensor, normalize: Optional[str]
+    cm: torch.Tensor, normalize: str | None
 ) -> torch.Tensor:
     if normalize == "pred":
         return norm(cm.to(torch.float), p=1, dim=1)
@@ -197,7 +196,7 @@ def _binary_confusion_matrix_update_input_check(
 
 def _confusion_matrix_compute(
     confusion_matrix: torch.Tensor,
-    normalize: Optional[str],
+    normalize: str | None,
 ) -> torch.Tensor:
     if normalize == "pred":
         return norm(confusion_matrix.to(torch.float), p=1, dim=0)
@@ -236,7 +235,7 @@ def _update(
 
 def _confusion_matrix_param_check(
     num_classes: int,
-    normalize: Optional[str],
+    normalize: str | None,
 ) -> None:
     if num_classes < 2:
         raise ValueError("Must be at least two classes for confusion matrix")
@@ -247,7 +246,7 @@ def _confusion_matrix_param_check(
 def _confusion_matrix_update_input_check(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int],
+    num_classes: int | None,
 ) -> None:
     if input.size(0) != target.size(0):
         raise ValueError(

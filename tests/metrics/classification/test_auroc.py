@@ -9,7 +9,6 @@
 # pyre-ignore-all-errors[56]: Pyre was not able to infer the type of argument
 
 import unittest
-from typing import Optional
 
 import torch
 
@@ -29,9 +28,9 @@ class TestBinaryAUROC(MetricClassTester):
         input: torch.Tensor,
         target: torch.Tensor,
         num_tasks: int = 1,
-        weight: Optional[torch.Tensor] = None,
-        compute_result: Optional[torch.Tensor] = None,
-        use_fbgemm: Optional[bool] = False,
+        weight: torch.Tensor | None = None,
+        compute_result: torch.Tensor | None = None,
+        use_fbgemm: bool | None = False,
     ) -> None:
         input_tensors = input.reshape(-1, 1)
         target_tensors = target.reshape(-1, 1)
@@ -71,7 +70,7 @@ class TestBinaryAUROC(MetricClassTester):
                 test_devices=["cuda"] if use_fbgemm else None,
             )
 
-    def _test_auroc_class_set(self, use_fbgemm: Optional[bool] = False) -> None:
+    def _test_auroc_class_set(self, use_fbgemm: bool | None = False) -> None:
         input = torch.rand(NUM_TOTAL_UPDATES, BATCH_SIZE)
         target = torch.randint(high=2, size=(NUM_TOTAL_UPDATES, BATCH_SIZE))
         # fbgemm version does not support weight in AUROC calculation

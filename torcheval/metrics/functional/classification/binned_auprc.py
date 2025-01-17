@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import List, Optional, Tuple, Union
 
 import torch
 from torcheval.metrics.functional.classification.binned_precision_recall_curve import (
@@ -32,8 +31,8 @@ def binary_binned_auprc(
     target: torch.Tensor,
     *,
     num_tasks: int = 1,
-    threshold: Union[int, List[float], torch.Tensor] = DEFAULT_NUM_THRESHOLD,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+    threshold: int | list[float] | torch.Tensor = DEFAULT_NUM_THRESHOLD,
+) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Binned Version of AUPRC, which is the area under the AUPRC Curve, for binary classification.
     Its class version is ``torcheval.metrics.BinaryBinnedAUPRC``.
@@ -172,12 +171,12 @@ def _binary_binned_auprc_update_input_check(
 def multiclass_binned_auprc(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int] = None,
+    num_classes: int | None = None,
     *,
-    threshold: Union[int, List[float], torch.Tensor] = DEFAULT_NUM_THRESHOLD,
-    average: Optional[str] = "macro",
+    threshold: int | list[float] | torch.Tensor = DEFAULT_NUM_THRESHOLD,
+    average: str | None = "macro",
     optimization: str = "vectorized",
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Binned Version of AUPRC, which is the area under the AUPRC Curve, for multiclass classification.
     Its class version is ``torcheval.metrics.MulticlassBinnedAUPRC``.
@@ -249,7 +248,7 @@ def _multiclass_binned_auprc_compute(
     target: torch.Tensor,
     num_classes: int,
     threshold: torch.Tensor,
-    average: Optional[str] = "macro",
+    average: str | None = "macro",
     optimization: str = "vectorized",
 ) -> torch.Tensor:
     num_tp, num_fp, num_fn = _multiclass_binned_precision_recall_curve_update(
@@ -264,7 +263,7 @@ def _multiclass_binned_auprc_compute(
 def _multiclass_binned_auprc_param_check(
     num_classes: int,
     threshold: torch.Tensor,
-    average: Optional[str],
+    average: str | None,
 ) -> None:
     average_options = ("macro", "none", None)
     if average not in average_options:
@@ -319,12 +318,12 @@ def _multiclass_binned_auprc_update_input_check(
 def multilabel_binned_auprc(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_labels: Optional[int] = None,
+    num_labels: int | None = None,
     *,
-    threshold: Union[int, List[float], torch.Tensor] = DEFAULT_NUM_THRESHOLD,
-    average: Optional[str] = "macro",
+    threshold: int | list[float] | torch.Tensor = DEFAULT_NUM_THRESHOLD,
+    average: str | None = "macro",
     optimization: str = "vectorized",
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Binned Version of AUPRC, which is the area under the AUPRC Curve, for multilabel classification.
     Its class version is ``torcheval.metrics.MultilabelBinnedAUPRC``.
@@ -390,7 +389,7 @@ def _multilabel_binned_auprc_compute(
     target: torch.Tensor,
     num_labels: int,
     threshold: torch.Tensor,
-    average: Optional[str] = "macro",
+    average: str | None = "macro",
     optimization: str = "vectorized",
 ) -> torch.Tensor:
     num_tp, num_fp, num_fn = _multilabel_binned_precision_recall_curve_update(
@@ -405,7 +404,7 @@ def _multilabel_binned_auprc_compute(
 def _multilabel_binned_auprc_param_check(
     num_labels: int,
     threshold: torch.Tensor,
-    average: Optional[str],
+    average: str | None,
 ) -> None:
     average_options = ("macro", "none", None)
     if average not in average_options:
@@ -456,10 +455,10 @@ def _multilabel_binned_auprc_update_input_check(
 
 
 def _compute_riemann_integrals(
-    prec: List[torch.Tensor],
-    recall: List[torch.Tensor],
-    average: Optional[str] = "macro",
-    device: Optional[torch.device] = None,
+    prec: list[torch.Tensor],
+    recall: list[torch.Tensor],
+    average: str | None = "macro",
+    device: torch.device | None = None,
 ) -> torch.Tensor:
     auprcs = []
     for p, r in zip(prec, recall):

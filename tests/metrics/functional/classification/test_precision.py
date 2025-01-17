@@ -7,7 +7,6 @@
 # pyre-strict
 
 import unittest
-from typing import Optional
 
 import numpy as np
 
@@ -83,8 +82,8 @@ class TestMulticlassPrecision(unittest.TestCase):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        num_classes: Optional[int] = None,
-        average: Optional[str] = "micro",
+        num_classes: int | None = None,
+        average: str | None = "micro",
     ) -> None:
         if num_classes is None:
             if average == "micro":

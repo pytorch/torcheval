@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, Tuple, TypeVar, Union
+from collections.abc import Iterable
+from typing import TypeVar, Union
 
 import torch
 
@@ -21,7 +22,7 @@ TWindowedWeightedCalibration = TypeVar("TWindowedWeightedCalibration")
 
 
 class WindowedWeightedCalibration(
-    Metric[Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]]
+    Metric[Union[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]]
 ):
     """
     Compute weighted calibration metric. When weight is not provided, it calculates the unweighted calibration.
@@ -72,7 +73,7 @@ class WindowedWeightedCalibration(
         num_tasks: int = 1,
         max_num_updates: int = 100,
         enable_lifetime: bool = True,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         if num_tasks < 1:
@@ -118,7 +119,7 @@ class WindowedWeightedCalibration(
         self: TWindowedWeightedCalibration,
         input: torch.Tensor,
         target: torch.Tensor,
-        weight: Union[float, int, torch.Tensor] = 1.0,
+        weight: float | int | torch.Tensor = 1.0,
     ) -> TWindowedWeightedCalibration:
         """
         Update the metric state with the total sum of weighted inputs and the total sum of weighted labels.
@@ -146,7 +147,7 @@ class WindowedWeightedCalibration(
     @torch.inference_mode()
     def compute(
         self: TWindowedWeightedCalibration,
-    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+    ) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
         """
         Return the weighted calibration.  If no ``update()`` calls are made before
         ``compute()`` is called, return an empty tensor.

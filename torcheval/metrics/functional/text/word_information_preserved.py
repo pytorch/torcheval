@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import List, Tuple, Union
 
 import torch
 
@@ -15,8 +14,8 @@ from torcheval.metrics.functional.text.helper import _get_errors_and_totals
 
 @torch.inference_mode()
 def word_information_preserved(
-    input: Union[str, List[str]],
-    target: Union[str, List[str]],
+    input: str | list[str],
+    target: str | list[str],
 ) -> torch.Tensor:
     """
     Compute the word information preserved score of the predicted word sequence(s) against the reference word sequence(s).
@@ -46,9 +45,9 @@ def word_information_preserved(
 
 
 def _word_information_preserved_update(
-    input: Union[str, List[str]],
-    target: Union[str, List[str]],
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    input: str | list[str],
+    target: str | list[str],
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Update the word information preserved score with current set of predictions and references.
 
@@ -77,8 +76,8 @@ def _word_information_preserved_compute(
 
 
 def _word_information_preserved_input_check(
-    input: Union[str, List[str]],
-    target: Union[str, List[str]],
+    input: str | list[str],
+    target: str | list[str],
 ) -> None:
     if type(input) != type(target):
         raise ValueError(

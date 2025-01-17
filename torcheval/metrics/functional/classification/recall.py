@@ -7,7 +7,6 @@
 # pyre-strict
 
 import logging
-from typing import Optional, Tuple
 
 import torch
 
@@ -53,7 +52,7 @@ def _binary_recall_update(
     input: torch.Tensor,
     target: torch.Tensor,
     threshold: float = 0.5,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     _binary_recall_update_input_check(input, target)
 
     input = torch.where(input < threshold, 0, 1)
@@ -99,8 +98,8 @@ def multiclass_recall(
     input: torch.Tensor,
     target: torch.Tensor,
     *,
-    num_classes: Optional[int] = None,
-    average: Optional[str] = "micro",
+    num_classes: int | None = None,
+    average: str | None = "micro",
 ) -> torch.Tensor:
     """
     Compute recall score, which is calculated as the ratio between the number of
@@ -157,9 +156,9 @@ def multiclass_recall(
 def _recall_update(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int],
-    average: Optional[str],
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    num_classes: int | None,
+    average: str | None,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     _recall_update_input_check(input, target, num_classes)
 
     if input.ndim == 2:
@@ -186,7 +185,7 @@ def _recall_compute(
     num_tp: torch.Tensor,
     num_labels: torch.Tensor,
     num_predictions: torch.Tensor,
-    average: Optional[str],
+    average: str | None,
 ) -> torch.Tensor:
     if average in ("macro", "weighted"):
         # Ignore classes which have no samples in `target` and `input`
@@ -217,7 +216,7 @@ def _recall_compute(
         return recall
 
 
-def _recall_param_check(num_classes: Optional[int], average: Optional[str]) -> None:
+def _recall_param_check(num_classes: int | None, average: str | None) -> None:
     average_options = ("micro", "macro", "weighted", None)
     if average not in average_options:
         raise ValueError(
@@ -232,7 +231,7 @@ def _recall_param_check(num_classes: Optional[int], average: Optional[str]) -> N
 
 
 def _recall_update_input_check(
-    input: torch.Tensor, target: torch.Tensor, num_classes: Optional[int]
+    input: torch.Tensor, target: torch.Tensor, num_classes: int | None
 ) -> None:
     if input.size(0) != target.size(0):
         raise ValueError(

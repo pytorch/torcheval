@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import List, Optional, Union
 
 import torch
 from torcheval.metrics.classification.binned_auprc import (
@@ -33,7 +32,7 @@ class TestBinaryBinnedAUPRC(MetricClassTester):
         update_input: torch.Tensor,
         update_target: torch.Tensor,
         num_tasks: int,
-        threshold: Union[int, List[float], torch.Tensor],
+        threshold: int | list[float] | torch.Tensor,
         compute_result: torch.Tensor,
     ) -> None:
         self.run_class_implementation_tests(
@@ -266,12 +265,12 @@ class TestBinaryBinnedAUPRC(MetricClassTester):
 class TestMulticlassBinnedAUPRC(MetricClassTester):
     def _test_multiclass_binned_auprc_class_with_input(
         self,
-        update_input: Union[torch.Tensor, List[torch.Tensor]],
-        update_target: Union[torch.Tensor, List[torch.Tensor]],
+        update_input: torch.Tensor | list[torch.Tensor],
+        update_target: torch.Tensor | list[torch.Tensor],
         compute_result: torch.Tensor,
         num_classes: int,
-        threshold: Union[int, List[float], torch.Tensor],
-        average: Optional[str],
+        threshold: int | list[float] | torch.Tensor,
+        average: str | None,
     ) -> None:
         for optimization in ("vectorized", "memory"):
             self.run_class_implementation_tests(
@@ -483,12 +482,12 @@ class TestMulticlassBinnedAUPRC(MetricClassTester):
 class TestMultilabelBinnedAUPRC(MetricClassTester):
     def _test_multilabel_binned_auprc_class_with_input(
         self,
-        update_input: Union[torch.Tensor, List[torch.Tensor]],
-        update_target: Union[torch.Tensor, List[torch.Tensor]],
+        update_input: torch.Tensor | list[torch.Tensor],
+        update_target: torch.Tensor | list[torch.Tensor],
         compute_result: torch.Tensor,
         num_labels: int,
-        threshold: Union[int, List[float], torch.Tensor],
-        average: Optional[str],
+        threshold: int | list[float] | torch.Tensor,
+        average: str | None,
     ) -> None:
         for optimization in ["vectorized", "memory"]:
             self.run_class_implementation_tests(

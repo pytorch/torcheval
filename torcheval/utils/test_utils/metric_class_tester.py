@@ -10,10 +10,11 @@ import os
 import pickle
 import unittest
 import uuid
+from collections.abc import Sequence
 from copy import deepcopy
 from dataclasses import dataclass
 from socket import socket
-from typing import Any, Dict, List, Optional, Sequence, Set
+from typing import Any, Literal
 
 import torch
 import torch.distributed.launcher as pet
@@ -21,7 +22,6 @@ import torch.distributed.launcher as pet
 from torcheval.metrics import Metric
 from torcheval.metrics.toolkit import clone_metric, sync_and_compute
 from torchtnt.utils import copy_data_to_device, init_from_env
-from typing_extensions import Literal
 
 BATCH_SIZE = 16
 IMG_CHANNELS = 3
@@ -37,8 +37,8 @@ NUM_PROCESSES = 4
 @dataclass
 class _MetricClassTestCaseSpecs:
     metric: Metric
-    state_names: Set[str]
-    update_kwargs: Dict[str, Any]
+    state_names: set[str]
+    update_kwargs: dict[str, Any]
     # pyre-ignore[4]: There's no restrictions on return types of a specific metric computation
     compute_result: Any
     # pyre-ignore[4]: There's no restrictions on return types of a specific metric computation
@@ -58,8 +58,8 @@ class MetricClassTester(unittest.TestCase):
     def run_class_implementation_tests(
         self,
         metric: Metric,
-        state_names: Set[str],
-        update_kwargs: Dict[str, Any],
+        state_names: set[str],
+        update_kwargs: dict[str, Any],
         # pyre-ignore[2]: There's no restrictions on return types of a specific metric computation
         compute_result: Any,
         # pyre-ignore[2]: There's no restrictions on return types of a specific metric computation
@@ -70,7 +70,7 @@ class MetricClassTester(unittest.TestCase):
         min_updates_before_compute: int = 0,
         atol: float = 1e-8,
         rtol: float = 1e-5,
-        test_devices: Optional[List[str]] = None,
+        test_devices: list[str] | None = None,
     ) -> None:
         """
         Run a test case to verify metric class implementations.
@@ -200,7 +200,7 @@ class MetricClassTester(unittest.TestCase):
         num_processes = self._test_case_spec.num_processes
         num_total_updates = self._test_case_spec.num_total_updates
         state_names = self._test_case_spec.state_names
-        test_metrics: List[Metric] = [
+        test_metrics: list[Metric] = [
             deepcopy(self._test_case_spec.metric) for i in range(num_processes)
         ]
 
@@ -343,7 +343,7 @@ class MetricClassTester(unittest.TestCase):
             )
 
     def assert_state_unchanged(
-        self, state_names: Set[str], metric1: Metric, metric2: Metric
+        self, state_names: set[str], metric1: Metric, metric2: Metric
     ) -> None:
         for state in state_names:
             assert_result_close(

@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -82,9 +83,9 @@ class MulticlassF1Score(Metric[torch.Tensor]):
     def __init__(
         self: TF1Score,
         *,
-        num_classes: Optional[int] = None,
-        average: Optional[str] = "micro",
-        device: Optional[torch.device] = None,
+        num_classes: int | None = None,
+        average: str | None = "micro",
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         _f1_score_param_check(num_classes, average)
@@ -200,7 +201,7 @@ class BinaryF1Score(MulticlassF1Score):
         self: TBinaryF1Score,
         *,
         threshold: float = 0.5,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(average="micro", device=device)
         self.threshold = threshold

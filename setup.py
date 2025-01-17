@@ -10,8 +10,6 @@ import sys
 
 from datetime import date
 
-from typing import List
-
 from setuptools import find_packages, setup
 from torcheval import __version__
 
@@ -20,7 +18,7 @@ def current_path(file_name: str) -> str:
     return os.path.abspath(os.path.join(__file__, os.path.pardir, file_name))
 
 
-def read_requirements(file_name: str) -> List[str]:
+def read_requirements(file_name: str) -> list[str]:
     with open(current_path(file_name), encoding="utf8") as f:
         return f.read().strip().split()
 

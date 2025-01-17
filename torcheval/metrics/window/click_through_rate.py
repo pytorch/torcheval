@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, Tuple, TypeVar, Union
+from collections.abc import Iterable
+from typing import TypeVar, Union
 
 import torch
 
@@ -23,7 +24,7 @@ TWindowedClickThroughRate = TypeVar("TWindowedClickThroughRate")
 
 
 class WindowedClickThroughRate(
-    Metric[Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]]
+    Metric[Union[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]]
 ):
     """
     The windowed version of ClickThroughRate that provides both windowed and lifetime values.
@@ -59,7 +60,7 @@ class WindowedClickThroughRate(
         num_tasks: int = 1,
         max_num_updates: int = 100,
         enable_lifetime: bool = True,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         if num_tasks < 1:
@@ -108,7 +109,7 @@ class WindowedClickThroughRate(
     def update(
         self: TWindowedClickThroughRate,
         input: torch.Tensor,
-        weights: Union[torch.Tensor, float, int] = 1.0,
+        weights: torch.Tensor | float | int = 1.0,
     ) -> TWindowedClickThroughRate:
         """
         Update the metric state with new inputs.
@@ -134,7 +135,7 @@ class WindowedClickThroughRate(
     @torch.inference_mode()
     def compute(
         self: TWindowedClickThroughRate,
-    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
+    ) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
         """
         Return the stacked click through rank scores. If no ``update()`` calls are made before
         ``compute()`` is called, return tensor(0.0).

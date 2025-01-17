@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional, Tuple
 
 import torch
 
@@ -15,8 +14,8 @@ def get_rand_data_binary(
     num_updates: int,
     num_tasks: int,
     batch_size: int,
-    device: Optional[torch.device] = None,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+    device: torch.device | None = None,
+) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Generates a random binary dataset. For the returned tensors, shape[0] will correspond to the update, shape[1] will correspond to the task, and shape[2] will correspond to the sample.
 
@@ -55,8 +54,8 @@ def get_rand_data_multiclass(
     num_updates: int,
     num_classes: int,
     batch_size: int,
-    device: Optional[torch.device] = None,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+    device: torch.device | None = None,
+) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Generates a random multiclass dataset.
 
@@ -91,8 +90,8 @@ def get_rand_data_multilabel(
     num_updates: int,
     num_labels: int,
     batch_size: int,
-    device: Optional[torch.device] = None,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+    device: torch.device | None = None,
+) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Generates a random multilabel dataset.
 
@@ -127,8 +126,8 @@ def get_rand_data_binned_binary(
     num_tasks: int,
     batch_size: int,
     num_bins: int,
-    device: Optional[torch.device] = None,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    device: torch.device | None = None,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Get random binary dataset, along with a threshold for binned data.
 
@@ -166,8 +165,8 @@ def get_rand_data_binned_binary(
 def get_rand_data_wasserstein1d(
     num_updates: int,
     batch_size: int,
-    device: Optional[torch.device] = None,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    device: torch.device | None = None,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Generates a random distribution dataset.
 

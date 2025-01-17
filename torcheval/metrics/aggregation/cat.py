@@ -9,7 +9,8 @@
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
 
-from typing import Iterable, Optional, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -53,7 +54,7 @@ class Cat(Metric[torch.Tensor]):
         self: "Cat",
         *,
         dim: int = 0,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         """
         Initialize a Cat metric object.

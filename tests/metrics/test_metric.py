@@ -10,7 +10,8 @@
 # pyre-ignore-all-errors[56]: Pyre was not able to infer the type of argument
 
 import unittest
-from typing import Iterable, Tuple, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 from torcheval.metrics.metric import Metric
@@ -173,7 +174,7 @@ class MetricBaseClassTest(unittest.TestCase):
     def test_reset_primitive_type(self) -> None:
         TDummyMetric = TypeVar("TDummyMetric")
 
-        class DummyMetric(Metric[Tuple[float, int]]):
+        class DummyMetric(Metric[tuple[float, int]]):
             def __init__(self: TDummyMetric) -> None:
                 super().__init__()
                 self._add_state("sum", 10.0)
@@ -183,7 +184,7 @@ class MetricBaseClassTest(unittest.TestCase):
                 self.sum += 1.0
                 self.count += 1
 
-            def compute(self: TDummyMetric) -> Tuple[float, int]:
+            def compute(self: TDummyMetric) -> tuple[float, int]:
                 return (self.sum, self.count)
 
             def merge_state(self, metrics: Iterable[TDummyMetric]) -> TDummyMetric:

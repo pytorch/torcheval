@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional, Tuple, Union
 
 import torch
 
@@ -14,7 +13,7 @@ import torch
 @torch.inference_mode()
 def click_through_rate(
     input: torch.Tensor,
-    weights: Optional[torch.Tensor] = None,
+    weights: torch.Tensor | None = None,
     *,
     num_tasks: int = 1,
 ) -> torch.Tensor:
@@ -54,10 +53,10 @@ def click_through_rate(
 
 def _click_through_rate_update(
     input: torch.Tensor,
-    weights: Union[torch.Tensor, float, int] = 1.0,
+    weights: torch.Tensor | float | int = 1.0,
     *,
     num_tasks: int,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     _click_through_rate_input_check(input, weights, num_tasks=num_tasks)
     if isinstance(weights, torch.Tensor):
         weights = weights.type(torch.float)
@@ -82,7 +81,7 @@ def _click_through_rate_compute(
 
 def _click_through_rate_input_check(
     input: torch.Tensor,
-    weights: Union[torch.Tensor, float, int],
+    weights: torch.Tensor | float | int,
     *,
     num_tasks: int,
 ) -> None:

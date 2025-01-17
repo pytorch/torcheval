@@ -8,7 +8,6 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Tuple
 
 import torch
 
@@ -91,7 +90,7 @@ def r2_score(
 def _r2_score_update(
     input: torch.Tensor,
     target: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     _r2_score_update_input_check(input, target)
     return _update(input, target)
 
@@ -100,7 +99,7 @@ def _r2_score_update(
 def _update(
     input: torch.Tensor,
     target: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     sum_squared_obs = torch.sum(torch.square(target), dim=0)
     sum_obs = torch.sum(target, dim=0)
     sum_squared_residual = torch.sum(torch.square(target - input), dim=0)

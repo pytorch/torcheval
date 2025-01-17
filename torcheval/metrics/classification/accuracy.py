@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -86,10 +87,10 @@ class MulticlassAccuracy(Metric[torch.Tensor]):
     def __init__(
         self: TAccuracy,
         *,
-        average: Optional[str] = "micro",
-        num_classes: Optional[int] = None,
+        average: str | None = "micro",
+        num_classes: int | None = None,
         k: int = 1,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         _accuracy_param_check(average, num_classes, k)
@@ -186,7 +187,7 @@ class BinaryAccuracy(MulticlassAccuracy):
         self: TBinaryAccuracy,
         *,
         threshold: float = 0.5,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         self.threshold = threshold
@@ -284,7 +285,7 @@ class MultilabelAccuracy(MulticlassAccuracy):
         *,
         threshold: float = 0.5,
         criteria: str = "exact_match",
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         _multilabel_accuracy_param_check(criteria)
@@ -380,7 +381,7 @@ class TopKMultilabelAccuracy(MulticlassAccuracy):
         *,
         criteria: str = "exact_match",
         k: int = 1,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         _topk_multilabel_accuracy_param_check(criteria, k)

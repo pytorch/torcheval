@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, List, Optional, TypeVar, Union
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -49,7 +50,7 @@ class WordErrorRate(Metric[torch.Tensor]):
     def __init__(
         self: TWordErrorRate,
         *,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         self._add_state(
@@ -61,8 +62,8 @@ class WordErrorRate(Metric[torch.Tensor]):
     # pyre-ignore[14]: `update` overrides method defined in `Metric` inconsistently.
     def update(
         self: TWordErrorRate,
-        input: Union[str, List[str]],
-        target: Union[str, List[str]],
+        input: str | list[str],
+        target: str | list[str],
     ) -> TWordErrorRate:
         """
         Update the metric state with edit distance and the length of the reference sequence.

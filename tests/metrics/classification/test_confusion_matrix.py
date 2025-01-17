@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional
 
 import torch
 from sklearn.metrics import confusion_matrix as skcm
@@ -24,7 +23,7 @@ class TestBinaryConfusionMatrix(MetricClassTester):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        normalize: Optional[str] = None,
+        normalize: str | None = None,
     ) -> None:
         input_np = input.flatten().numpy()
         target_np = target.flatten().numpy()
@@ -185,7 +184,7 @@ class TestMulticlassConfusionMatrix(MetricClassTester):
         input: torch.Tensor,
         target: torch.Tensor,
         num_classes: int,
-        normalize: Optional[str] = None,
+        normalize: str | None = None,
     ) -> None:
         if input.ndim == 3:
             input_np = input.argmax(dim=2).flatten().numpy()

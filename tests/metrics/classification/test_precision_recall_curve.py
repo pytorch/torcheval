@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional
 
 import torch
 
@@ -124,7 +123,7 @@ class TestMulticlassPrecisionRecallCurve(MetricClassTester):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        num_classes: Optional[int] = None,
+        num_classes: int | None = None,
     ) -> None:
         if num_classes is None and input.ndim == 2:
             num_classes = input.shape[1]
@@ -258,7 +257,7 @@ class TestMultilabelPrecisionRecallCurve(MetricClassTester):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        num_labels: Optional[int] = None,
+        num_labels: int | None = None,
     ) -> None:
         input_tensors = input.reshape(-1, 1)
         target_tensors = target.reshape(-1, 1)

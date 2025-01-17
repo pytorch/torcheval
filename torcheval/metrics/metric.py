@@ -8,8 +8,9 @@
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
+from collections.abc import Iterable
 from copy import deepcopy
-from typing import Any, Dict, Generic, Iterable, List, Optional, TypeVar, Union
+from typing import Any, Generic, TypeVar, Union
 
 import torch
 
@@ -17,7 +18,7 @@ import torch
 TSelf = TypeVar("TSelf", bound="Metric")
 TComputeReturn = TypeVar("TComputeReturn")
 # pyre-ignore[33]: Flexible key data type for dictionary
-TState = Union[torch.Tensor, List[torch.Tensor], Dict[Any, torch.Tensor], int, float]
+TState = Union[torch.Tensor, list[torch.Tensor], dict[Any, torch.Tensor], int, float]
 
 
 class Metric(Generic[TComputeReturn], ABC):
@@ -31,7 +32,7 @@ class Metric(Generic[TComputeReturn], ABC):
     def __init__(
         self: TSelf,
         *,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         """
         Initialize a metric object and its internal states.
@@ -45,7 +46,7 @@ class Metric(Generic[TComputeReturn], ABC):
         # limit state variable type to tensor/[tensor] to avoid working with nested
         # data structures when move/detach/clone tensors. Can open more types up
         # upon user requests in the future.
-        self._state_name_to_default: Dict[str, TState] = {}
+        self._state_name_to_default: dict[str, TState] = {}
         self._device: torch.device = torch.device("cpu") if device is None else device
 
     def _add_state(self: TSelf, name: str, default: TState) -> None:
@@ -155,7 +156,7 @@ class Metric(Generic[TComputeReturn], ABC):
                 )
         return self
 
-    def state_dict(self: TSelf) -> Dict[str, TState]:
+    def state_dict(self: TSelf) -> dict[str, TState]:
         """
         Save metric state variables in state_dict.
 
@@ -183,7 +184,7 @@ class Metric(Generic[TComputeReturn], ABC):
 
     def load_state_dict(
         self: TSelf,
-        state_dict: Dict[str, Any],
+        state_dict: dict[str, Any],
         strict: bool = True,
     ) -> None:
         """
@@ -218,9 +219,7 @@ class Metric(Generic[TComputeReturn], ABC):
                     f"keys: {unexpected_keys}."
                 )
 
-    def to(
-        self: TSelf, device: Union[str, torch.device], *args: Any, **kwargs: Any
-    ) -> TSelf:
+    def to(self: TSelf, device: str | torch.device, *args: Any, **kwargs: Any) -> TSelf:
         """
         Move tensors in metric state variables to device.
 

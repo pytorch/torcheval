@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional, Tuple
 
 import torch
 import torch.nn.functional as F
@@ -17,7 +16,7 @@ def binary_normalized_entropy(
     input: torch.Tensor,
     target: torch.Tensor,
     *,
-    weight: Optional[torch.Tensor] = None,
+    weight: torch.Tensor | None = None,
     num_tasks: int = 1,
     from_logits: bool = False,
 ) -> torch.Tensor:
@@ -79,8 +78,8 @@ def _binary_normalized_entropy_update(
     target: torch.Tensor,
     from_logits: bool,
     num_tasks: int,
-    weight: Optional[torch.Tensor] = None,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    weight: torch.Tensor | None = None,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     _ne_input_check(input, target, from_logits, num_tasks, weight)
     return _update(input, target, from_logits, weight)
 
@@ -89,8 +88,8 @@ def _update(
     input: torch.Tensor,
     target: torch.Tensor,
     from_logits: bool,
-    weight: Optional[torch.Tensor] = None,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    weight: torch.Tensor | None = None,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     if from_logits:
         cross_entropy = F.binary_cross_entropy_with_logits(
             input, target, weight, reduction="none"
@@ -124,7 +123,7 @@ def _ne_input_check(
     target: torch.Tensor,
     from_logits: bool,
     num_tasks: int,
-    weight: Optional[torch.Tensor] = None,
+    weight: torch.Tensor | None = None,
 ) -> None:
     if input.shape != target.shape:
         raise ValueError(

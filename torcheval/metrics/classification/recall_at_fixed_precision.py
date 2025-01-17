@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, List, Optional, Tuple, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -28,7 +29,7 @@ TBinaryRecallAtFixedPrecision = TypeVar("TBinaryRecallAtFixedPrecision")
 TMultilabelRecallAtFixedPrecision = TypeVar("TMultilabelRecallAtFixedPrecision")
 
 
-class BinaryRecallAtFixedPrecision(Metric[Tuple[torch.Tensor, torch.Tensor]]):
+class BinaryRecallAtFixedPrecision(Metric[tuple[torch.Tensor, torch.Tensor]]):
     """
     Returns the highest possible recall value give the minimum precision
     for binary classification tasks.
@@ -55,7 +56,7 @@ class BinaryRecallAtFixedPrecision(Metric[Tuple[torch.Tensor, torch.Tensor]]):
         self: TBinaryRecallAtFixedPrecision,
         *,
         min_precision: float,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         self.min_precision = min_precision
@@ -82,7 +83,7 @@ class BinaryRecallAtFixedPrecision(Metric[Tuple[torch.Tensor, torch.Tensor]]):
     @torch.inference_mode()
     def compute(
         self: TBinaryRecallAtFixedPrecision,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         return _binary_recall_at_fixed_precision_compute(
             torch.cat(self.inputs), torch.cat(self.targets), self.min_precision
         )
@@ -108,7 +109,7 @@ class BinaryRecallAtFixedPrecision(Metric[Tuple[torch.Tensor, torch.Tensor]]):
 
 
 class MultilabelRecallAtFixedPrecision(
-    Metric[Tuple[List[torch.Tensor], List[torch.Tensor]]]
+    Metric[tuple[list[torch.Tensor], list[torch.Tensor]]]
 ):
     """
     Returns the highest possible recall value given the minimum precision
@@ -141,7 +142,7 @@ class MultilabelRecallAtFixedPrecision(
         *,
         num_labels: int,
         min_precision: float,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         self.num_labels = num_labels
@@ -169,7 +170,7 @@ class MultilabelRecallAtFixedPrecision(
     @torch.inference_mode()
     def compute(
         self: TMultilabelRecallAtFixedPrecision,
-    ) -> Tuple[List[torch.Tensor], List[torch.Tensor]]:
+    ) -> tuple[list[torch.Tensor], list[torch.Tensor]]:
         return _multilabel_recall_at_fixed_precision_compute(
             torch.cat(self.inputs),
             torch.cat(self.targets),

@@ -7,7 +7,6 @@
 # pyre-strict
 
 import unittest
-from typing import Optional
 
 import numpy as np
 import torch
@@ -39,7 +38,7 @@ def gen_sine_wave(
     freq: float = 600,
     length_seconds: float = 6,
     sample_rate: int = 16_000,
-    std_dev: Optional[float] = None,
+    std_dev: float | None = None,
 ) -> torch.Tensor:
     """Creates sine wave of the specified frequency, sample_rate and length."""
     t = np.linspace(0, length_seconds, int(length_seconds * sample_rate))
@@ -53,7 +52,7 @@ def gen_sine_wave(
     return torch.from_numpy(np.asarray(2**15 * samples, dtype=np.int16)).float()
 
 
-def gen_fad_test_batch(num_files: int, std_dev: Optional[float]) -> torch.Tensor:
+def gen_fad_test_batch(num_files: int, std_dev: float | None) -> torch.Tensor:
     """Creates a tensor representing a batch of sine waves with optional
     gaussian noise added in."""
     frequencies = np.linspace(100, 1000, num_files).tolist()

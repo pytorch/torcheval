@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional
 
 import numpy as np
 
@@ -26,8 +25,8 @@ class TestMulticlassRecall(MetricClassTester):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        num_classes: Optional[int] = None,
-        average: Optional[str] = "micro",
+        num_classes: int | None = None,
+        average: str | None = "micro",
     ) -> None:
         input_tensors = [torch.argmax(t, dim=1) if t.ndim == 2 else t for t in input]
         target_tensors = list(target)

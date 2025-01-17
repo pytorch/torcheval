@@ -7,7 +7,6 @@
 # pyre-strict
 
 import unittest
-from typing import Optional
 
 import torch
 from sklearn.metrics import confusion_matrix as skcm
@@ -23,7 +22,7 @@ class TestBinaryConfusionMatrix(unittest.TestCase):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        normalize: Optional[str] = None,
+        normalize: str | None = None,
     ) -> None:
         sklearn_result = torch.tensor(
             skcm(target, input, labels=[0, 1], normalize=normalize)
@@ -111,7 +110,7 @@ class TestMultiClassConfusionMatrix(unittest.TestCase):
         input: torch.Tensor,
         target: torch.Tensor,
         num_classes: int,
-        normalize: Optional[str] = None,
+        normalize: str | None = None,
     ) -> None:
         sklearn_result = torch.tensor(
             skcm(target, input, labels=list(range(num_classes)), normalize=normalize)

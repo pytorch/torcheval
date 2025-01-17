@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import List
 
 import torch
 from torcheval.metrics import Cat
@@ -19,7 +18,7 @@ from torcheval.utils.test_utils.metric_class_tester import (
 
 class TestCat(MetricClassTester):
     def _test_cat_class_with_input(
-        self, input_val_tensors: List[torch.Tensor], dim: int = 0
+        self, input_val_tensors: list[torch.Tensor], dim: int = 0
     ) -> None:
         self.run_class_implementation_tests(
             metric=Cat(),

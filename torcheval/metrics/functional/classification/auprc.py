@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional
 
 import torch
 from torcheval.metrics.functional.classification.precision_recall_curve import (
@@ -74,9 +73,9 @@ def binary_auprc(
 def multiclass_auprc(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int] = None,
+    num_classes: int | None = None,
     *,
-    average: Optional[str] = "macro",
+    average: str | None = "macro",
 ) -> torch.Tensor:
     r"""
     Compute AUPRC, also called Average Precision, which is the area under the Precision-Recall Curve, for multiclass classification.
@@ -154,9 +153,9 @@ def multiclass_auprc(
 def multilabel_auprc(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_labels: Optional[int] = None,
+    num_labels: int | None = None,
     *,
-    average: Optional[str] = "macro",
+    average: str | None = "macro",
 ) -> torch.Tensor:
     r"""
     Compute AUPRC, also called Average Precision, which is the area under the Precision-Recall Curve, for multilabel classification.
@@ -279,7 +278,7 @@ def _binary_auprc_update_input_check(
 
 
 def _multiclass_auprc_compute(
-    input: torch.Tensor, target: torch.Tensor, average: Optional[str] = "macro"
+    input: torch.Tensor, target: torch.Tensor, average: str | None = "macro"
 ) -> torch.Tensor:
     prec, recall, thresh = multiclass_precision_recall_curve(input, target)
     auprcs = []
@@ -295,7 +294,7 @@ def _multiclass_auprc_compute(
 
 def _multiclass_auprc_param_check(
     num_classes: int,
-    average: Optional[str],
+    average: str | None,
 ) -> None:
     average_options = ("macro", "none", None)
     if average not in average_options:
@@ -333,7 +332,7 @@ def _multilabel_auprc_compute(
     input: torch.Tensor,
     target: torch.Tensor,
     num_labels: int,
-    average: Optional[str] = "macro",
+    average: str | None = "macro",
 ) -> torch.Tensor:
     prec, recall, thresh = multilabel_precision_recall_curve(
         input, target, num_labels=num_labels
@@ -351,7 +350,7 @@ def _multilabel_auprc_compute(
 
 def _multilabel_auprc_param_check(
     num_labels: int,
-    average: Optional[str],
+    average: str | None,
 ) -> None:
     average_options = ("macro", "none", None)
     if average not in average_options:

@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -139,8 +140,8 @@ class MulticlassConfusionMatrix(Metric[torch.Tensor]):
         self: TMulticlassConfusionMatrix,
         num_classes: int,
         *,
-        normalize: Optional[str] = None,
-        device: Optional[torch.device] = None,
+        normalize: str | None = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         _confusion_matrix_param_check(num_classes, normalize)
@@ -187,7 +188,7 @@ class MulticlassConfusionMatrix(Metric[torch.Tensor]):
 
     @torch.inference_mode()
     def normalized(
-        self: TMulticlassConfusionMatrix, normalize: Optional[str] = None
+        self: TMulticlassConfusionMatrix, normalize: str | None = None
     ) -> torch.Tensor:
         """
         Return the normalized confusion matrix
@@ -290,8 +291,8 @@ class BinaryConfusionMatrix(MulticlassConfusionMatrix):
         self: TBinaryConfusionMatrix,
         *,
         threshold: float = 0.5,
-        normalize: Optional[str] = None,
-        device: Optional[torch.device] = None,
+        normalize: str | None = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(num_classes=2, device=device, normalize=normalize)
         self.threshold = threshold

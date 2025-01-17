@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import Optional, Tuple
 
 import torch
 
@@ -15,7 +14,7 @@ import torch
 def retrieval_recall(
     input: torch.Tensor,
     target: torch.Tensor,
-    k: Optional[int] = None,
+    k: int | None = None,
     limit_k_to_size: bool = False,
     num_tasks: int = 1,
 ) -> torch.Tensor:
@@ -75,7 +74,7 @@ def retrieval_recall(
 
 
 def _retrieval_recall_param_check(
-    k: Optional[int] = None, limit_k_to_size: bool = False
+    k: int | None = None, limit_k_to_size: bool = False
 ) -> None:
     if k is not None and k <= 0:
         raise ValueError(f"k must be a positive integer, got k={k}.")
@@ -90,7 +89,7 @@ def _retrieval_recall_update_input_check(
     input: torch.Tensor,
     target: torch.Tensor,
     num_tasks: int = 1,
-    indexes: Optional[torch.Tensor] = None,
+    indexes: torch.Tensor | None = None,
     num_queries: int = 1,
 ) -> None:
     if input.shape != target.shape:
@@ -112,7 +111,7 @@ def _retrieval_recall_update_input_check(
 def _retrieval_recall_compute(
     input: torch.Tensor,
     target: torch.Tensor,
-    k: Optional[int] = None,
+    k: int | None = None,
     limit_k_to_size: bool = False,
 ) -> torch.Tensor:
     nb_relevant_items = compute_nb_relevant_items_retrieved(input, k, target)
@@ -121,15 +120,13 @@ def _retrieval_recall_compute(
 
 def compute_nb_relevant_items_retrieved(
     input: torch.Tensor,
-    k: Optional[int],
+    k: int | None,
     target: torch.Tensor,
 ) -> torch.Tensor:
     return target.gather(dim=-1, index=get_topk(input, k)[1]).sum(dim=-1)
 
 
-def get_topk(
-    t: torch.Tensor, k: Optional[int]
-) -> Tuple[torch.Tensor, torch.LongTensor]:
+def get_topk(t: torch.Tensor, k: int | None) -> tuple[torch.Tensor, torch.LongTensor]:
     nb_samples = t.size(-1)
     if k is None:
         k = nb_samples

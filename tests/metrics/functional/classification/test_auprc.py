@@ -8,7 +8,6 @@
 
 import random
 import unittest
-from typing import Optional, Tuple
 
 import numpy as np
 
@@ -40,7 +39,7 @@ class TestBinaryAUPRC(unittest.TestCase):
         input: torch.Tensor,
         target: torch.Tensor,
         num_tasks: int = 1,
-        compute_result: Optional[torch.Tensor] = None,
+        compute_result: torch.Tensor | None = None,
     ) -> None:
         device = "cpu"
         if torch.cuda.is_available():
@@ -66,7 +65,7 @@ class TestBinaryAUPRC(unittest.TestCase):
 
     def _get_rand_inputs_binary(
         self, num_tasks: int, batch_size: int
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         input = torch.rand(size=[num_tasks, batch_size])
         targets = torch.randint(low=0, high=2, size=[num_tasks, batch_size])
         return input, targets
@@ -171,7 +170,7 @@ class TestMulticlassAUPRC(unittest.TestCase):
         input: torch.Tensor,
         target: torch.Tensor,
         num_classes: int,
-        compute_result: Optional[torch.Tensor] = None,
+        compute_result: torch.Tensor | None = None,
     ) -> None:
         device = "cpu"
         if torch.cuda.is_available():
@@ -200,7 +199,7 @@ class TestMulticlassAUPRC(unittest.TestCase):
 
     def _get_rand_inputs_multiclass(
         self, num_classes: int, batch_size: int
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         input = torch.rand(size=[batch_size, num_classes])
         targets = torch.randint(low=0, high=num_classes, size=[batch_size])
         return input, targets
@@ -345,7 +344,7 @@ class TestMultilabelAUPRC(unittest.TestCase):
         self,
         input: torch.Tensor,
         target: torch.Tensor,
-        average: Optional[str] = "macro",
+        average: str | None = "macro",
         device: str = "cpu",
     ) -> torch.Tensor:
         # Convert input/target to sklearn style inputs
@@ -366,8 +365,8 @@ class TestMultilabelAUPRC(unittest.TestCase):
         input: torch.Tensor,
         target: torch.Tensor,
         num_labels: int,
-        average: Optional[str] = "macro",
-        compute_result: Optional[torch.Tensor] = None,
+        average: str | None = "macro",
+        compute_result: torch.Tensor | None = None,
     ) -> None:
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -415,7 +414,7 @@ class TestMultilabelAUPRC(unittest.TestCase):
 
     def _get_rand_inputs_multilabel(
         self, num_labels: int, batch_size: int
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         input = torch.rand(size=[batch_size, num_labels])
         targets = torch.randint(low=0, high=2, size=[batch_size, num_labels])
         return input, targets

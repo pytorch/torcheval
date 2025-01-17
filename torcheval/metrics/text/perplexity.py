@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -73,8 +74,8 @@ class Perplexity(Metric[torch.Tensor]):
 
     def __init__(
         self: TPerplexity,
-        ignore_index: Optional[int] = None,
-        device: Optional[torch.device] = None,
+        ignore_index: int | None = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
 

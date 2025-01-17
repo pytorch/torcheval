@@ -10,7 +10,6 @@
 # pyre-ignore-all-errors[58]: - is not supported for operand types Optional[int] and int
 
 import logging
-from typing import Optional, Tuple
 
 import torch
 
@@ -59,8 +58,8 @@ def multiclass_precision(
     input: torch.Tensor,
     target: torch.Tensor,
     *,
-    num_classes: Optional[int] = None,
-    average: Optional[str] = "micro",
+    num_classes: int | None = None,
+    average: str | None = "micro",
 ) -> torch.Tensor:
     """
     Compute precision score, which is the ratio of the true positives (TP) and the
@@ -117,9 +116,9 @@ def multiclass_precision(
 def _precision_update(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int],
-    average: Optional[str],
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    num_classes: int | None,
+    average: str | None,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     _precision_update_input_check(input, target, num_classes)
 
     if input.ndim == 2:
@@ -145,7 +144,7 @@ def _precision_compute(
     num_tp: torch.Tensor,
     num_fp: torch.Tensor,
     num_label: torch.Tensor,
-    average: Optional[str],
+    average: str | None,
 ) -> torch.Tensor:
     if average in ("macro", "weighted"):
         # Ignore the class that has no samples in both `input` and `target`
@@ -179,8 +178,8 @@ def _precision_compute(
 
 
 def _precision_param_check(
-    num_classes: Optional[int],
-    average: Optional[str],
+    num_classes: int | None,
+    average: str | None,
 ) -> None:
     average_options = ("micro", "macro", "weighted", "None", None)
     if average not in average_options:
@@ -197,7 +196,7 @@ def _precision_param_check(
 def _precision_update_input_check(
     input: torch.Tensor,
     target: torch.Tensor,
-    num_classes: Optional[int],
+    num_classes: int | None,
 ) -> None:
     if input.size(0) != target.size(0):
         raise ValueError(
@@ -223,7 +222,7 @@ def _binary_precision_update(
     input: torch.Tensor,
     target: torch.Tensor,
     threshold: float = 0.5,
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     _binary_precision_update_input_check(input, target)
 
     input = torch.where(input < threshold, 0, 1)

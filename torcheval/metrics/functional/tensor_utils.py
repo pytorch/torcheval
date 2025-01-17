@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import List, Union
 
 import torch
 
@@ -19,7 +18,7 @@ def _riemann_integral(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
 
 
 def _create_threshold_tensor(
-    threshold: Union[int, List[float], torch.Tensor],
+    threshold: int | list[float] | torch.Tensor,
     device: torch.device,
 ) -> torch.Tensor:
     """

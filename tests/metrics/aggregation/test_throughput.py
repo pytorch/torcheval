@@ -7,7 +7,6 @@
 # pyre-strict
 
 import random
-from typing import List
 
 from torcheval.metrics import Throughput
 from torcheval.utils.test_utils.metric_class_tester import (
@@ -20,8 +19,8 @@ from torcheval.utils.test_utils.metric_class_tester import (
 class TestThroughput(MetricClassTester):
     def _test_throughput_class_with_input(
         self,
-        num_processed: List[int],
-        elapsed_time_sec: List[float],
+        num_processed: list[int],
+        elapsed_time_sec: list[float],
     ) -> None:
         num_individual_update = NUM_TOTAL_UPDATES // NUM_PROCESSES
         expected_num_total = sum(num_processed)

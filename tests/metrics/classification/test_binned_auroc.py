@@ -6,7 +6,6 @@
 
 # pyre-strict
 
-from typing import List, Tuple, Union
 
 import torch
 
@@ -24,8 +23,8 @@ class TestBinaryBinnedAUROC(MetricClassTester):
         input: torch.Tensor,
         target: torch.Tensor,
         num_tasks: int,
-        threshold: Union[int, List[float], torch.Tensor],
-        compute_result: Tuple[torch.Tensor, torch.Tensor],
+        threshold: int | list[float] | torch.Tensor,
+        compute_result: tuple[torch.Tensor, torch.Tensor],
     ) -> None:
         self.run_class_implementation_tests(
             metric=BinaryBinnedAUROC(num_tasks=num_tasks, threshold=threshold),

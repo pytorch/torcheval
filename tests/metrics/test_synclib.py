@@ -8,7 +8,6 @@
 
 import unittest
 import uuid
-from typing import Optional
 
 import torch
 import torch.distributed as dist
@@ -85,14 +84,14 @@ class SynclibTest(unittest.TestCase):
     @unittest.skipUnless(
         torch.distributed.is_available(), reason="Torch distributed is needed to run"
     )
-    def test_gather_uneven(self, world_size: Optional[int] = 4) -> None:
+    def test_gather_uneven(self, world_size: int | None = 4) -> None:
         config = _get_launch_config(2)
         pet.elastic_launch(config, entrypoint=self._test_ddp_gather_uneven_tensors)()
         # rank 0 gather test
         pet.elastic_launch(config, entrypoint=self._test_ddp_gather_uneven_tensors)(0)
 
     @staticmethod
-    def _test_ddp_gather_uneven_tensors(dst_rank: Optional[int] = None) -> None:
+    def _test_ddp_gather_uneven_tensors(dst_rank: int | None = None) -> None:
         dist.init_process_group("gloo")
         rank = dist.get_rank()
         world_size = dist.get_world_size()
@@ -124,7 +123,7 @@ class SynclibTest(unittest.TestCase):
 
     @staticmethod
     def _test_ddp_gather_uneven_tensors_multidim(
-        dst_rank: Optional[int] = None,
+        dst_rank: int | None = None,
     ) -> None:
         dist.init_process_group("gloo")
         rank = dist.get_rank()
@@ -158,7 +157,7 @@ class SynclibTest(unittest.TestCase):
 
     @staticmethod
     def _test_ddp_gather_uneven_tensors_multidim_nccl(
-        dst_rank: Optional[int] = None,
+        dst_rank: int | None = None,
     ) -> None:
         dist.init_process_group("nccl")
         rank = dist.get_rank()
@@ -223,7 +222,7 @@ def _test_sync_dtype_and_shape() -> None:
     tc.assertIsNone(synced_dtype)
 
 
-def _test_tensor_sync_state(dst_rank: Optional[int] = None) -> None:
+def _test_tensor_sync_state(dst_rank: int | None = None) -> None:
     device = init_from_env()
 
     if dist.get_rank() == 0:
@@ -259,14 +258,14 @@ def _test_tensor_sync_state(dst_rank: Optional[int] = None) -> None:
     if dst_rank is None or dist.get_rank() == dst_rank:
         tc.assertIsNotNone(synced_states)
         tc.assertEqual(len(synced_states), 3)
-        tc.assertTrue(all((len(synced_states[i]) == 1 for i in range(3))))
-        tc.assertTrue(all((_METRIC_NAME in synced_states[i] for i in range(3))))
-        tc.assertTrue(all((len(synced_states[i][_METRIC_NAME]) == 2 for i in range(3))))
+        tc.assertTrue(all(len(synced_states[i]) == 1 for i in range(3)))
+        tc.assertTrue(all(_METRIC_NAME in synced_states[i] for i in range(3)))
+        tc.assertTrue(all(len(synced_states[i][_METRIC_NAME]) == 2 for i in range(3)))
         tc.assertTrue(
-            all(("num_correct" in synced_states[i][_METRIC_NAME] for i in range(3)))
+            all("num_correct" in synced_states[i][_METRIC_NAME] for i in range(3))
         )
         tc.assertTrue(
-            all(("num_total" in synced_states[i][_METRIC_NAME] for i in range(3)))
+            all("num_total" in synced_states[i][_METRIC_NAME] for i in range(3))
         )
 
         torch.testing.assert_close(
@@ -297,7 +296,7 @@ def _test_tensor_sync_state(dst_rank: Optional[int] = None) -> None:
         tc.assertIsNone(synced_states)
 
 
-def _test_tensor_list_sync_state(dst_rank: Optional[int] = None) -> None:
+def _test_tensor_list_sync_state(dst_rank: int | None = None) -> None:
     device = init_from_env()
 
     if dist.get_rank() == 0:
@@ -336,13 +335,11 @@ def _test_tensor_list_sync_state(dst_rank: Optional[int] = None) -> None:
     if dst_rank is None or dist.get_rank() == dst_rank:
         tc.assertIsNotNone(synced_states)
         tc.assertEqual(len(synced_states), 3)
-        tc.assertTrue(all((len(synced_states[i]) == 1 for i in range(3))))
-        tc.assertTrue(all((_METRIC_NAME in synced_states[i] for i in range(3))))
-        tc.assertTrue(all((len(synced_states[i][_METRIC_NAME]) == 2 for i in range(3))))
-        tc.assertTrue(all(("seen" in synced_states[i][_METRIC_NAME] for i in range(3))))
-        tc.assertTrue(
-            all(("total" in synced_states[i][_METRIC_NAME] for i in range(3)))
-        )
+        tc.assertTrue(all(len(synced_states[i]) == 1 for i in range(3)))
+        tc.assertTrue(all(_METRIC_NAME in synced_states[i] for i in range(3)))
+        tc.assertTrue(all(len(synced_states[i][_METRIC_NAME]) == 2 for i in range(3)))
+        tc.assertTrue(all("seen" in synced_states[i][_METRIC_NAME] for i in range(3)))
+        tc.assertTrue(all("total" in synced_states[i][_METRIC_NAME] for i in range(3)))
 
         torch.testing.assert_close(
             synced_states[0][_METRIC_NAME]["seen"],
@@ -367,7 +364,7 @@ def _test_tensor_list_sync_state(dst_rank: Optional[int] = None) -> None:
         tc.assertIsNone(synced_states)
 
 
-def _test_tensor_dict_sync_state(dst_rank: Optional[int] = None) -> None:
+def _test_tensor_dict_sync_state(dst_rank: int | None = None) -> None:
     device = init_from_env()
 
     if dist.get_rank() == 0:
@@ -421,7 +418,7 @@ def _test_tensor_dict_sync_state(dst_rank: Optional[int] = None) -> None:
         tc.assertIsNone(synced_states)
 
 
-def _test_complex_mixed_state(dst_rank: Optional[int] = None) -> None:
+def _test_complex_mixed_state(dst_rank: int | None = None) -> None:
     device = init_from_env()
 
     if dist.get_rank() == 0:
@@ -456,13 +453,11 @@ def _test_complex_mixed_state(dst_rank: Optional[int] = None) -> None:
     if dst_rank is None or dist.get_rank() == dst_rank:
         tc.assertIsNotNone(synced_states)
         tc.assertEqual(len(synced_states), 2)
-        tc.assertTrue(all((len(synced_states[i]) == 1 for i in range(2))))
-        tc.assertTrue(all((_METRIC_NAME in synced_states[i] for i in range(2))))
-        tc.assertTrue(all((len(synced_states[i][_METRIC_NAME]) == 2 for i in range(2))))
-        tc.assertTrue(all(("seen" in synced_states[i][_METRIC_NAME] for i in range(2))))
-        tc.assertTrue(
-            all(("total" in synced_states[i][_METRIC_NAME] for i in range(2)))
-        )
+        tc.assertTrue(all(len(synced_states[i]) == 1 for i in range(2)))
+        tc.assertTrue(all(_METRIC_NAME in synced_states[i] for i in range(2)))
+        tc.assertTrue(all(len(synced_states[i][_METRIC_NAME]) == 2 for i in range(2)))
+        tc.assertTrue(all("seen" in synced_states[i][_METRIC_NAME] for i in range(2)))
+        tc.assertTrue(all("total" in synced_states[i][_METRIC_NAME] for i in range(2)))
 
         tc.assertEquals(len(synced_states[0][_METRIC_NAME]["seen"]), 2)
         tc.assertEquals(len(synced_states[1][_METRIC_NAME]["seen"]), 3)
@@ -477,7 +472,7 @@ def _test_complex_mixed_state(dst_rank: Optional[int] = None) -> None:
         tc.assertIsNone(synced_states)
 
 
-def _test_empty_tensor_list_sync_state(dst_rank: Optional[int] = None) -> None:
+def _test_empty_tensor_list_sync_state(dst_rank: int | None = None) -> None:
     device = init_from_env()
 
     if dist.get_rank() == 0:
@@ -507,13 +502,11 @@ def _test_empty_tensor_list_sync_state(dst_rank: Optional[int] = None) -> None:
     if dst_rank is None or dist.get_rank() == dst_rank:
         tc.assertIsNotNone(synced_states)
         tc.assertEqual(len(synced_states), 2)
-        tc.assertTrue(all((len(synced_states[i]) == 1 for i in range(2))))
-        tc.assertTrue(all((_METRIC_NAME in synced_states[i] for i in range(2))))
-        tc.assertTrue(all((len(synced_states[i][_METRIC_NAME]) == 2 for i in range(2))))
-        tc.assertTrue(all(("seen" in synced_states[i][_METRIC_NAME] for i in range(2))))
-        tc.assertTrue(
-            all(("total" in synced_states[i][_METRIC_NAME] for i in range(2)))
-        )
+        tc.assertTrue(all(len(synced_states[i]) == 1 for i in range(2)))
+        tc.assertTrue(all(_METRIC_NAME in synced_states[i] for i in range(2)))
+        tc.assertTrue(all(len(synced_states[i][_METRIC_NAME]) == 2 for i in range(2)))
+        tc.assertTrue(all("seen" in synced_states[i][_METRIC_NAME] for i in range(2)))
+        tc.assertTrue(all("total" in synced_states[i][_METRIC_NAME] for i in range(2)))
 
         tc.assertEquals(len(synced_states[0][_METRIC_NAME]["seen"]), 2)
         tc.assertEquals(len(synced_states[1][_METRIC_NAME]["seen"]), 0)
@@ -521,7 +514,7 @@ def _test_empty_tensor_list_sync_state(dst_rank: Optional[int] = None) -> None:
         tc.assertIsNone(synced_states)
 
 
-def _test_numeric_sync_state(dst_rank: Optional[int] = None) -> None:
+def _test_numeric_sync_state(dst_rank: int | None = None) -> None:
     device = init_from_env()
 
     if dist.get_rank() == 0:
@@ -556,14 +549,14 @@ def _test_numeric_sync_state(dst_rank: Optional[int] = None) -> None:
     if dst_rank is None or dist.get_rank() == dst_rank:
         tc.assertIsNotNone(synced_states)
         tc.assertEqual(len(synced_states), 3)
-        tc.assertTrue(all((len(synced_states[i]) == 1 for i in range(3))))
-        tc.assertTrue(all((_METRIC_NAME in synced_states[i] for i in range(3))))
-        tc.assertTrue(all((len(synced_states[i][_METRIC_NAME]) == 2 for i in range(3))))
+        tc.assertTrue(all(len(synced_states[i]) == 1 for i in range(3)))
+        tc.assertTrue(all(_METRIC_NAME in synced_states[i] for i in range(3)))
+        tc.assertTrue(all(len(synced_states[i][_METRIC_NAME]) == 2 for i in range(3)))
         tc.assertTrue(
-            all(("num_correct" in synced_states[i][_METRIC_NAME] for i in range(3)))
+            all("num_correct" in synced_states[i][_METRIC_NAME] for i in range(3))
         )
         tc.assertTrue(
-            all(("num_total" in synced_states[i][_METRIC_NAME] for i in range(3)))
+            all("num_total" in synced_states[i][_METRIC_NAME] for i in range(3))
         )
 
         torch.testing.assert_close(synced_states[0][_METRIC_NAME]["num_correct"], 11)

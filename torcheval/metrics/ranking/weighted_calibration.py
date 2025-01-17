@@ -8,7 +8,8 @@
 
 # pyre-ignore-all-errors[16]: Undefined attribute of metric states.
 
-from typing import Iterable, Optional, TypeVar, Union
+from collections.abc import Iterable
+from typing import TypeVar
 
 import torch
 
@@ -59,7 +60,7 @@ class WeightedCalibration(Metric[torch.Tensor]):
         self: TWeightedCalibration,
         *,
         num_tasks: int = 1,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ) -> None:
         super().__init__(device=device)
         if num_tasks < 1:
@@ -82,7 +83,7 @@ class WeightedCalibration(Metric[torch.Tensor]):
         self: TWeightedCalibration,
         input: torch.Tensor,
         target: torch.Tensor,
-        weight: Union[float, int, torch.Tensor] = 1.0,
+        weight: float | int | torch.Tensor = 1.0,
     ) -> TWeightedCalibration:
         """
         Update the metric state with the total sum of weighted inputs and the total sum of weighted labels.

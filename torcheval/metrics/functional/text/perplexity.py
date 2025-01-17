@@ -7,7 +7,6 @@
 # pyre-strict
 
 from copy import deepcopy
-from typing import Optional, Tuple
 
 import torch
 import torch.nn.functional as F
@@ -17,7 +16,7 @@ import torch.nn.functional as F
 def perplexity(
     input: torch.Tensor,
     target: torch.Tensor,
-    ignore_index: Optional[int] = None,
+    ignore_index: int | None = None,
 ) -> torch.Tensor:
     """
     Perplexity measures how well a model predicts sample data. It is calculated by:
@@ -68,8 +67,8 @@ def perplexity(
 def _perplexity_update(
     input: torch.Tensor,
     target: torch.Tensor,
-    ignore_index: Optional[int] = None,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+    ignore_index: int | None = None,
+) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Sums the log probabilities of the inputs tokens given the target tokens, and counts
     the total number of tokens.
@@ -119,7 +118,7 @@ def _perplexity_compute(
 def _perplexity_input_check(
     input: torch.Tensor,
     target: torch.Tensor,
-    ignore_index: Optional[int] = None,
+    ignore_index: int | None = None,
 ) -> None:
     if target.ndim != 2:
         raise ValueError(

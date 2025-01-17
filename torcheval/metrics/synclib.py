@@ -21,7 +21,7 @@ The overall process goes as follows:
 """
 
 import logging
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import torch
 from pyre_extensions import none_throws
@@ -35,9 +35,9 @@ _logger: logging.Logger = logging.getLogger(__name__)
 def _simple_send_tensors(
     tensor: Tensor,
     world_size: int,
-    group: Optional[dist.ProcessGroup],
-    rank: Optional[int],
-) -> Optional[List[Tensor]]:
+    group: dist.ProcessGroup | None,
+    rank: int | None,
+) -> list[Tensor] | None:
     """
     Helper function that sends tensor to specified rank (or all ranks), and
     returns the received results. Assumes tensors have same dimensions.
@@ -69,9 +69,9 @@ def _simple_send_tensors(
 def _send_uneven_tensors(
     tensor: Tensor,
     world_size: int,
-    group: Optional[dist.ProcessGroup],
-    rank: Optional[int],
-) -> Optional[List[Tensor]]:
+    group: dist.ProcessGroup | None,
+    rank: int | None,
+) -> list[Tensor] | None:
     """
     Helper function that sends tensor to specified rank (or all ranks), and
     returns the received results. If tensor dimensions differ across ranks,
@@ -120,9 +120,9 @@ def _send_uneven_tensors(
 
 def send_tensors(
     result: Tensor,
-    group: Optional[dist.ProcessGroup] = None,
-    rank: Optional[int] = None,
-) -> Optional[List[Tensor]]:
+    group: dist.ProcessGroup | None = None,
+    rank: int | None = None,
+) -> list[Tensor] | None:
     """Function to gather tensors from several distributed processes onto a list that is broadcasted to specified processes.
     Works on tensors that have the same number of dimensions, but where each dimension may differ. In this case
     tensors are padded, gathered and then trimmed to secure equal workload for all processes.
@@ -153,8 +153,8 @@ def send_tensors(
 
 
 def metrics_traversal_order(
-    state_dict: Dict[str, Dict[str, TState]],
-) -> List[Tuple[str, str]]:
+    state_dict: dict[str, dict[str, TState]],
+) -> list[tuple[str, str]]:
     """
     Args:
         state_dict: a dictionary of metric states (metric name -> metric's state dict).
@@ -171,8 +171,8 @@ def metrics_traversal_order(
 
 
 def _get_empty_metric_state_collection(
-    metrics_traversal_order: List[Tuple[str, str]],
-) -> Dict[str, Dict[str, Any]]:
+    metrics_traversal_order: list[tuple[str, str]],
+) -> dict[str, dict[str, Any]]:
     metric_state_collection = {}
     for metric_name, state_name in metrics_traversal_order:
         if metric_name not in metric_state_collection.keys():
@@ -185,9 +185,9 @@ def _sync_tensor_states(
     metric_name: str,
     state_name: str,
     my_state_data: torch.Tensor,
-    gathered_states: List[Dict[str, Dict[str, Any]]],
-    process_group: Optional[dist.ProcessGroup],
-    rank: Optional[int],
+    gathered_states: list[dict[str, dict[str, Any]]],
+    process_group: dist.ProcessGroup | None,
+    rank: int | None,
 ) -> None:
     gathered_state_data = send_tensors(my_state_data, group=process_group, rank=rank)
 
@@ -199,9 +199,9 @@ def _sync_tensor_states(
 
 
 def _sync_dtype_and_shape(
-    tensor: Optional[torch.Tensor],
-    process_group: Optional[dist.ProcessGroup],
-) -> Optional[Tuple[torch.dtype, torch.Size]]:
+    tensor: torch.Tensor | None,
+    process_group: dist.ProcessGroup | None,
+) -> tuple[torch.dtype, torch.Size] | None:
     my_rank = dist.get_rank(group=process_group)
     world_size = dist.get_world_size(group=process_group)
 
@@ -231,9 +231,9 @@ def _sync_dtype_and_shape(
 
 
 def _sync_list_length(
-    state_data: List[torch.Tensor],
-    process_group: Optional[dist.ProcessGroup],
-) -> List[int]:
+    state_data: list[torch.Tensor],
+    process_group: dist.ProcessGroup | None,
+) -> list[int]:
     my_length = len(state_data)
     world_size = dist.get_world_size(group=process_group)
 
@@ -255,17 +255,17 @@ def _generate_dummy_tensor(
 def _sync_list_tensor_states(
     metric_name: str,
     state_name: str,
-    my_state_data: List[torch.Tensor],
+    my_state_data: list[torch.Tensor],
     device: torch.device,
-    gathered_states: List[Dict[str, Dict[str, Any]]],
-    process_group: Optional[dist.ProcessGroup],
-    rank: Optional[int],
+    gathered_states: list[dict[str, dict[str, Any]]],
+    process_group: dist.ProcessGroup | None,
+    rank: int | None,
 ) -> None:
     # get length of lists across all ranks
     gathered_list_lengths = _sync_list_length(
         my_state_data, process_group=process_group
     )
-    if any((length == 0 for length in gathered_list_lengths)):
+    if any(length == 0 for length in gathered_list_lengths):
         # one or more ranks has empty list, need to sync dtype and shape
         # so those ranks can send appropriate dummy tensor for allgather
 
@@ -314,11 +314,11 @@ def _sync_list_tensor_states(
 def _sync_dict_tensor_states(
     metric_name: str,
     state_name: str,
-    my_state_data: Dict[str, torch.Tensor],
+    my_state_data: dict[str, torch.Tensor],
     device: torch.device,
-    gathered_states: List[Dict[str, Dict[str, Any]]],
-    process_group: Optional[dist.ProcessGroup],
-    rank: Optional[int],
+    gathered_states: list[dict[str, dict[str, Any]]],
+    process_group: dist.ProcessGroup | None,
+    rank: int | None,
 ) -> None:
     sorted_keys = sorted(my_state_data.keys())
     tensor_list = [my_state_data[key] for key in sorted_keys]
@@ -347,9 +347,9 @@ def _sync_obj_states(
     state_name: str,
     # pyre-ignore: Missing parameter annotation [2]
     my_state_data: Any,
-    gathered_states: List[Dict[str, Dict[str, Any]]],
-    process_group: Optional[dist.ProcessGroup],
-    rank: Optional[int],
+    gathered_states: list[dict[str, dict[str, Any]]],
+    process_group: dist.ProcessGroup | None,
+    rank: int | None,
 ) -> None:
     local_rank = dist.get_rank(group=process_group)
     world_size = dist.get_world_size(group=process_group)
@@ -373,12 +373,12 @@ def _sync_obj_states(
 
 
 def sync_states(
-    states: Dict[str, Dict[str, Any]],
-    devices: Dict[str, torch.device],
-    metrics_traversal_order: List[Tuple[str, str]],
-    process_group: Optional[dist.ProcessGroup] = None,
-    rank: Optional[int] = None,
-) -> Optional[List[Dict[str, Dict[str, Any]]]]:
+    states: dict[str, dict[str, Any]],
+    devices: dict[str, torch.device],
+    metrics_traversal_order: list[tuple[str, str]],
+    process_group: dist.ProcessGroup | None = None,
+    rank: int | None = None,
+) -> list[dict[str, dict[str, Any]]] | None:
     """
     Retrieves metric states across all ranks.
 

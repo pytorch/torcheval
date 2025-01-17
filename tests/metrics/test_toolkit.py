@@ -9,7 +9,7 @@
 import os
 import unittest
 import uuid
-from typing import Callable, List, Type
+from collections.abc import Callable
 
 import pytest
 
@@ -135,7 +135,7 @@ class MetricToolkitTest(unittest.TestCase):
         self,
         num_processes: int,
         input_tensor: torch.Tensor,
-        metric_class: Type[Metric],
+        metric_class: type[Metric],
     ) -> None:
         lc = pet.LaunchConfig(
             min_nodes=1,
@@ -203,7 +203,7 @@ class MetricCollectionToolkitTest(unittest.TestCase):
     @staticmethod
     def _test_per_process_metric_collection_sync(
         input_tensor: torch.Tensor,
-        metric_constructors: List[Callable[[], Metric]],
+        metric_constructors: list[Callable[[], Metric]],
     ) -> None:
         device = init_from_env()
         if device.type == "cuda":
@@ -283,7 +283,7 @@ class MetricCollectionToolkitTest(unittest.TestCase):
         self,
         num_processes: int,
         input_tensor: torch.Tensor,
-        metric_classes: List[Type[Metric]],
+        metric_classes: list[type[Metric]],
     ) -> None:
         lc = pet.LaunchConfig(
             min_nodes=1,
