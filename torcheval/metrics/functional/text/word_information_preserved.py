@@ -6,6 +6,7 @@
 
 # pyre-strict
 
+from typing import List, Optional, Tuple, Union
 
 import torch
 
@@ -16,14 +17,16 @@ from torcheval.metrics.functional.text.helper import _get_errors_and_totals
 def word_information_preserved(
     input: str | list[str],
     target: str | list[str],
+    device: Optional[torch.device] = None,
 ) -> torch.Tensor:
     """
     Compute the word information preserved score of the predicted word sequence(s) against the reference word sequence(s).
-    Its class version is ``torcheval.metrics.WordInformationPreserved``.
+    Its class version is :obj:`torcheval.metrics.text.WordInformationPreserved`.
 
     Args:
         input (str, List[str]): Predicted word sequence(s) to score as a string or list of strings.
         target (str, List[str]): Reference word sequence(s) as a string or list of strings.
+        device: The device to allocate Tensors on
 
     Examples:
 
@@ -39,7 +42,7 @@ def word_information_preserved(
         tensor(0.3472)
     """
     correct_total, target_total, input_total = _word_information_preserved_update(
-        input, target
+        input, target, device
     )
     return _word_information_preserved_compute(correct_total, target_total, input_total)
 
@@ -47,6 +50,7 @@ def word_information_preserved(
 def _word_information_preserved_update(
     input: str | list[str],
     target: str | list[str],
+    device: torch.device,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Update the word information preserved score with current set of predictions and references.
@@ -54,9 +58,12 @@ def _word_information_preserved_update(
         Args:
             input (str, List[str]): Predicted word sequence(s) to score as a string or list of strings.
             target (str, List[str]): Reference word sequence(s) as a string or list of strings.
+            device: The device to allocate tensors on
     """
     _word_information_preserved_input_check(input, target)
-    errors, max_total, target_total, input_total = _get_errors_and_totals(input, target)
+    errors, max_total, target_total, input_total = _get_errors_and_totals(
+        input, target, device
+    )
 
     return max_total - errors, target_total, input_total
 
