@@ -16,8 +16,8 @@ from torcheval.utils.device import largest_float
 
 @torch.inference_mode()
 def word_error_rate(
-    input: str | list[str],
-    target: str | list[str],
+    input: Union[str, List[str]],
+    target: Union[str, List[str]],
     device: Optional[torch.device] = None,
 ) -> torch.Tensor:
     """
@@ -47,10 +47,10 @@ def word_error_rate(
 
 
 def _word_error_rate_update(
-    input: str | list[str],
-    target: str | list[str],
+    input: Union[str, List[str]],
+    target: Union[str, List[str]],
     device: torch.device,
-) -> tuple[torch.Tensor, torch.Tensor]:
+) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Update the metric state with edit distance and the length of the reference sequence.
 
@@ -89,34 +89,9 @@ def _word_error_rate_compute(
     return errors / total
 
 
-def _edit_distance(
-    prediction_tokens: List[str],
-    reference_tokens: List[str],
-) -> int:
-    """
-    Dynamic programming algorithm to compute the edit distance between two word sequences.
-
-    Args:
-        prediction_tokens (List[str]): A tokenized predicted sentence
-        reference_tokens (List[str]): A tokenized reference sentence
-    """
-    dp = [[0] * (len(reference_tokens) + 1) for _ in range(len(prediction_tokens) + 1)]
-    for i in range(len(prediction_tokens) + 1):
-        dp[i][0] = i
-    for j in range(len(reference_tokens) + 1):
-        dp[0][j] = j
-    for i in range(1, len(prediction_tokens) + 1):
-        for j in range(1, len(reference_tokens) + 1):
-            if prediction_tokens[i - 1] == reference_tokens[j - 1]:
-                dp[i][j] = dp[i - 1][j - 1]
-            else:
-                dp[i][j] = min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]) + 1
-    return dp[-1][-1]
-
-
 def _word_error_rate_input_check(
-    input: str | list[str],
-    target: str | list[str],
+    input: Union[str, List[str]],
+    target: Union[str, List[str]],
 ) -> None:
     if type(input) != type(target):
         raise ValueError(

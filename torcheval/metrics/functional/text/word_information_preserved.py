@@ -15,8 +15,8 @@ from torcheval.metrics.functional.text.helper import _get_errors_and_totals
 
 @torch.inference_mode()
 def word_information_preserved(
-    input: str | list[str],
-    target: str | list[str],
+    input: Union[str, List[str]],
+    target: Union[str, List[str]],
     device: Optional[torch.device] = None,
 ) -> torch.Tensor:
     """
@@ -48,10 +48,10 @@ def word_information_preserved(
 
 
 def _word_information_preserved_update(
-    input: str | list[str],
-    target: str | list[str],
+    input: Union[str, List[str]],
+    target: Union[str, List[str]],
     device: torch.device,
-) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Update the word information preserved score with current set of predictions and references.
 
@@ -83,8 +83,8 @@ def _word_information_preserved_compute(
 
 
 def _word_information_preserved_input_check(
-    input: str | list[str],
-    target: str | list[str],
+    input: Union[str, List[str]],
+    target: Union[str, List[str]],
 ) -> None:
     if type(input) != type(target):
         raise ValueError(

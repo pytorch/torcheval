@@ -7,14 +7,16 @@
 # pyre-strict
 
 
+from typing import List, Tuple, Union
+
 import torch
 
 from torcheval.utils.device import largest_float
 
 
 def _edit_distance(
-    prediction_tokens: list[str],
-    reference_tokens: list[str],
+    prediction_tokens: List[str],
+    reference_tokens: List[str],
 ) -> int:
     """
     Dynamic programming algorithm to compute the edit distance between two word sequences.
