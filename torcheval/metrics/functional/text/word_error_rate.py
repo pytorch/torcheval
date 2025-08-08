@@ -109,11 +109,13 @@ def _word_error_rate_input_check(
     input: str | list[str],
     target: str | list[str],
 ) -> None:
-    if type(input) != type(target):
+    if (isinstance(input, str) and not isinstance(target, str)) or (
+        isinstance(input, list) and not isinstance(target, list)
+    ):
         raise ValueError(
             f"input and target should have the same type, got {type(input)} and {type(target)}."
         )
-    if type(input) == list:
+    if isinstance(input, list):
         if len(input) != len(target):
             raise ValueError(
                 f"input and target lists should have the same length, got {len(input)} and {len(target)}",
