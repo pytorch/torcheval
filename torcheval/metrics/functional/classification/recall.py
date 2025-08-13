@@ -210,7 +210,7 @@ def _recall_compute(
         return recall.mean()
     elif average == "weighted":
         # pyre-fixme[61]: `mask` is undefined, or not always defined.
-        weights = num_labels[mask] / num_labels.sum()
+        weights = num_labels / num_labels.sum()
         return (recall * weights).sum()
     else:  # average is None
         return recall
