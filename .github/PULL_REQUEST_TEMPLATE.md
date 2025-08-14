@@ -1,4 +1,4 @@
-Please read through our [contribution guide](https://github.com/meta-pytorch/torcheval/blob/main/CONTRIBUTING.md) prior to creating your pull request.
+Please read through our [contribution guide](https://github.com/pytorch/torcheval/blob/main/CONTRIBUTING.md) prior to creating your pull request.
 
 Summary:
 <!-- Change Summary -->
