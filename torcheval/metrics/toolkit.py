@@ -450,7 +450,6 @@ def _sync_metric_object(
     return gathered_data_list
 
 
-# pyre-ignore: Missing return annotation [3]
 def _convert_to_psuedo_metric(metric_state_dict: dict[str, Any]) -> Any:
     """
     Converts dictionary to object with attributes set according to key-value.

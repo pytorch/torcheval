@@ -17,7 +17,6 @@ import torch
 # pyre-fixme[24]: Generic type `Metric` expects 1 type parameter.
 TSelf = TypeVar("TSelf", bound="Metric")
 TComputeReturn = TypeVar("TComputeReturn")
-# pyre-ignore[33]: Flexible key data type for dictionary
 TState = Union[torch.Tensor, list[torch.Tensor], dict[Any, torch.Tensor], int, float]
 
 
@@ -264,7 +263,6 @@ class Metric(Generic[TComputeReturn], ABC):
         return self._device
 
 
-# pyre-ignore[2]: Type checking for ``value`` which could be any type.
 def _check_state_variable_type(name: str, value: Any) -> None:
     """
     Check the type of a state variable value.
