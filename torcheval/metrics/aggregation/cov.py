@@ -47,7 +47,9 @@ class Covariance(Metric[_Output]):
             # Welford's algorithm for numerical stability
             delta = (self.sum / self.n) - (sum / n)
             outer = torch.outer(delta, delta)
-            self.ss_sum += ss_sum + outer * (n * self.n) / (self.n + n)
+
+            scale = n * self.n / (self.n + n)
+            self.ss_sum += ss_sum + outer * scale
             self.sum += sum
             self.n += n
 

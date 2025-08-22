@@ -32,3 +32,11 @@ class TestCovariance(MetricClassTester):
 
     def test_covariance_one_by_one(self) -> None:
         self._test_covariance_with_input(list(range(2, 22)))
+
+    def test_covariance_overflow(self) -> None:
+        cov = Covariance()
+        s = torch.zeros(10)
+        ss_sum = torch.ones(10, 10)
+
+        cov._update(s, ss_sum, torch.iinfo(torch.uint64).max)
+        cov._update(s, ss_sum, 1)  # No overflow!
