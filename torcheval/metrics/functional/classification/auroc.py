@@ -125,7 +125,7 @@ def _binary_auroc_compute_jit(
     sorted_weight = (
         torch.tensor(1.0, device=target.device)
         if weight is None
-        else torch.gather(weight, -1, indices)
+        else torch.gather(weight, -1, indices.to(target.device))
     )
     cum_tp_before_pad = (sorted_weight * sorted_target).cumsum(-1)
     cum_fp_before_pad = (sorted_weight * (1 - sorted_target)).cumsum(-1)
